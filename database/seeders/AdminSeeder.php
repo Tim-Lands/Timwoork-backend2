@@ -3,6 +3,7 @@
 namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\DB;
 
 class AdminSeeder extends Seeder
 {
@@ -13,6 +14,11 @@ class AdminSeeder extends Seeder
      */
     public function run()
     {
-        //
+        DB::table('admins')->insert([
+            'first_name' => 'super',
+            'last_name' => 'admin',
+            'email' => 'admin@timlands.com',
+            'password' => bcrypt('password'),
+        ]);
     }
 }
