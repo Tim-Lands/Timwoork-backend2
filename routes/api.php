@@ -25,3 +25,11 @@ Route::get('/test', function (Request $request) {
     ];
     return response()->json($data, 200);
 });
+
+Route::get('/test2', function (Request $request) {
+    $data = [
+        'status' => 200,
+        'msg' => "test"
+    ];
+    return response()->json($data, 200);
+});
