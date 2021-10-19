@@ -3,7 +3,7 @@
 namespace App\Http\Controllers\Dashboard;
 
 use App\Http\Controllers\Controller;
-use App\Models\Dashboard\Admin;
+use App\Models\Admin;
 use Illuminate\Http\Request;
 
 class AdminController extends Controller
