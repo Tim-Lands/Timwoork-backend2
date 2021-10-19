@@ -42,22 +42,24 @@ class AdminController extends Controller
         //
     }
 
+
     /**
-     * Display the specified resource.
+     * show
      *
-     * @param  \App\Models\Dashboard\Admin  $admin
-     * @return \Illuminate\Http\Response
+     * @param  mixed $admin
+     * @return void
      */
     public function show(Admin $admin)
     {
         //
     }
 
+
     /**
-     * Show the form for editing the specified resource.
+     * edit
      *
-     * @param  \App\Models\Dashboard\Admin  $admin
-     * @return \Illuminate\Http\Response
+     * @param  mixed $admin
+     * @return void
      */
     public function edit(Admin $admin)
     {
@@ -65,11 +67,11 @@ class AdminController extends Controller
     }
 
     /**
-     * Update the specified resource in storage.
+     * update
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Models\Dashboard\Admin  $admin
-     * @return \Illuminate\Http\Response
+     * @param  mixed $request
+     * @param  mixed $admin
+     * @return void
      */
     public function update(Request $request, Admin $admin)
     {
@@ -77,10 +79,10 @@ class AdminController extends Controller
     }
 
     /**
-     * Remove the specified resource from storage.
+     * destroy
      *
-     * @param  \App\Models\Dashboard\Admin  $admin
-     * @return \Illuminate\Http\Response
+     * @param  mixed $admin
+     * @return void
      */
     public function destroy(Admin $admin)
     {
