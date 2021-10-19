@@ -3,58 +3,63 @@
 namespace App\Http\Controllers\Dashboard;
 
 use App\Http\Controllers\Controller;
-use App\Models\Dashboard\Admin;
+use App\Models\Admin;
 use Illuminate\Http\Request;
 
 class AdminController extends Controller
 {
+
     /**
-     * Display a listing of the resource.
+     * index
      *
-     * @return \Illuminate\Http\Response
+     * @return void
      */
-    public function index()
+    public function index(): void
     {
         //
     }
 
+
     /**
-     * Show the form for creating a new resource.
+     * create
      *
-     * @return \Illuminate\Http\Response
+     * @return void
      */
-    public function create()
+    public function create(): void
     {
         //
     }
 
+
     /**
-     * Store a newly created resource in storage.
+     * store
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
+     * @param  mixed $request
+     * @return void
      */
     public function store(Request $request)
     {
         //
     }
 
+
     /**
-     * Display the specified resource.
+     * show
      *
-     * @param  \App\Models\Dashboard\Admin  $admin
-     * @return \Illuminate\Http\Response
+     * @param  mixed $admin
+     * @return void
      */
     public function show(Admin $admin)
     {
         //
     }
 
+
     /**
-     * Show the form for editing the specified resource.
+     * edit
      *
-     * @param  \App\Models\Dashboard\Admin  $admin
-     * @return \Illuminate\Http\Response
+     * @param  mixed $admin
+     * @return void
      */
     public function edit(Admin $admin)
     {
@@ -62,11 +67,11 @@ class AdminController extends Controller
     }
 
     /**
-     * Update the specified resource in storage.
+     * update
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Models\Dashboard\Admin  $admin
-     * @return \Illuminate\Http\Response
+     * @param  mixed $request
+     * @param  mixed $admin
+     * @return void
      */
     public function update(Request $request, Admin $admin)
     {
@@ -74,10 +79,10 @@ class AdminController extends Controller
     }
 
     /**
-     * Remove the specified resource from storage.
+     * destroy
      *
-     * @param  \App\Models\Dashboard\Admin  $admin
-     * @return \Illuminate\Http\Response
+     * @param  mixed $admin
+     * @return void
      */
     public function destroy(Admin $admin)
     {
