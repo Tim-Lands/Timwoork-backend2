@@ -16,7 +16,7 @@ class CreateRatingsTable extends Migration
         Schema::create('ratings', function (Blueprint $table) {
             $table->id();
             // relation model of Profile
-            $table->foreignId('profile_id')->constrained();
+            $table->foreignId('user_id')->constrained();
             // relation model of Country
             $table->foreignId('product_id')->constrained();
 
