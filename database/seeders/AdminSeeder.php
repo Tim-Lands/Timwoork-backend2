@@ -20,5 +20,10 @@ class AdminSeeder extends Seeder
             'email' => 'admin@timlands.com',
             'password' => bcrypt('password'),
         ]);
+
+        DB::table('users')->insert([
+            'email' => 'user@timlands.com',
+            'password' => bcrypt('password'),
+        ]);
     }
 }
