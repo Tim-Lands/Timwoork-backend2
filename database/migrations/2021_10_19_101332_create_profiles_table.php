@@ -41,7 +41,7 @@ class CreateProfilesTable extends Migration
             // relation model of Country
             $table->foreignId('level_id')->constrained();
 
-            $table->$table->timestamps();
+            $table->timestamps();
         });
     }
 
