@@ -32,4 +32,13 @@ class Admin extends Authenticatable
     protected $casts = [
         'email_verified_at' => 'datetime',
     ];
+
+    // ===========================Contants =============================
+    // code
+    // ================== Acssesor & mutators ==========================
+    // code
+    // ============================ Scopes =============================
+    // code
+    // ========================== Relations ============================
+    // code
 }
