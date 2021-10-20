@@ -23,7 +23,7 @@ class CreateCategoriesTable extends Migration
             $table->string('description')->nullable();
 
             // relation of Model Category => Subcategory
-            $table->foreignId('parent_id')->nullable()->constrained();
+            $table->foreignId('parent_id')->nullable()->constrained('categories');
             $table->timestamps();
         });
     }
