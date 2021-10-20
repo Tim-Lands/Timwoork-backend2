@@ -20,8 +20,7 @@ class CreateSkillsTable extends Migration
             $table->string('name_en');
             $table->string('name_fr');
 
-            // relation model of ProfileSeller
-            $table->foreignId('profile_seller_id')->constrained();
+            $table->string("level");
             $table->timestamps();
         });
     }

@@ -20,7 +20,7 @@ class CreateGalariesTable extends Migration
             // type file => pdf , photo , video
             $table->string('type_file');
             $table->string('mime_type');
-            $table->timestamps();
+            $table->$table->timestamps();
         });
     }
 

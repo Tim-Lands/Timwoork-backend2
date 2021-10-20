@@ -25,7 +25,7 @@ class CreateLevelsTable extends Migration
             $table->tinyInteger('numbr_sales')->default(0);
             $table->float('value_bayer', 5, 2);
 
-            $table->timestamps();
+            $table->$table->timestamps();
         });
     }
 
