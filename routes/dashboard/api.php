@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Dashboard\AuthController;
+use App\Http\Controllers\Dashboard\LevelController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -21,3 +22,19 @@ Route::middleware('auth:sanctum')->group(function () {
 Route::post('/login', [AuthController::class, 'login']);
 
 /****************** End Auth Routes ***********************/
+
+Route::prefix('levels')->group(function () {
+    Route::get('/', [LevelController::class, 'index']);
+    Route::post('/store', [LevelController::class, 'store']);
+    Route::get('/{id}', [LevelController::class, 'show']);
+    Route::post('/{id}/update', [LevelController::class, 'update']);
+    Route::post('/{id}/delete', [LevelController::class, 'destroy']);
+});
+
+Route::prefix('levels')->group(function () {
+    Route::get('/', [LevelController::class, 'index']);
+    Route::post('/store', [LevelController::class, 'store']);
+    Route::get('/{id}', [LevelController::class, 'show']);
+    Route::post('/{id}/update', [LevelController::class, 'update']);
+    Route::post('/{id}/delete', [LevelController::class, 'destroy']);
+});
