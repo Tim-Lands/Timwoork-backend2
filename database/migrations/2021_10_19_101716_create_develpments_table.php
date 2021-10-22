@@ -19,6 +19,8 @@ class CreateDevelpmentsTable extends Migration
             $table->float('price', 5, 2);
 
             $table->string('duration')->nullable();
+            $table->float('price', 5, 2);
+
             // is_duration: 0 => have a time of product , 1 => no any time
             $table->boolean('is_duration')->default(0);
 
