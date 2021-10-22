@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateGalariesTable extends Migration
+class CreateVerifyEmailCodesTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,13 +13,11 @@ class CreateGalariesTable extends Migration
      */
     public function up()
     {
-        Schema::create('galaries', function (Blueprint $table) {
+        Schema::create('verify_email_codes', function (Blueprint $table) {
             $table->id();
-            $table->string('path');
-            $table->string('size');
-            // type file => pdf , photo , video
-            $table->string('type_file');
-            $table->string('mime_type');
+            $table->string('code');
+            $table->string('email');
+            $table->foreignId('user_id')->constrained();
             $table->timestamps();
         });
     }
@@ -31,6 +29,6 @@ class CreateGalariesTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('galaries');
+        Schema::dropIfExists('verify_email_codes');
     }
 }

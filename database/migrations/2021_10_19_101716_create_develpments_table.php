@@ -16,6 +16,8 @@ class CreateDevelpmentsTable extends Migration
         Schema::create('develpments', function (Blueprint $table) {
             $table->id();
             $table->string('title');
+            $table->float('price', 5, 2);
+
             $table->string('duration')->nullable();
             $table->float('price', 5, 2);
 
