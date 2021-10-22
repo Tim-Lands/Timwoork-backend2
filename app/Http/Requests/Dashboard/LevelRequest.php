@@ -24,7 +24,7 @@ class LevelRequest extends FormRequest
     public function rules()
     {
         return [
-            'type' => 'required|integer',
+            'type' => 'required',
             'name_ar' => 'required',
             'number_developments' => 'required_if:type,=,1|integer',
             'price_developments' => 'required_if:type,=,1',
@@ -36,6 +36,8 @@ class LevelRequest extends FormRequest
     public function messages()
     {
         return [
+            'name_ar.required' => ' اسم المستوى مطلوب',
+            'type.required' => 'حقل نوع المستوى مطلوب',
             'number_developments.required_if' => 'حقل عدد التطويرات مطلوب',
             'price_developments.required_if' => 'أقصى سعر للتطوير مطلوب',
             'number_sales.required_if' => 'عدد المبيعات المستوى مطلوب',

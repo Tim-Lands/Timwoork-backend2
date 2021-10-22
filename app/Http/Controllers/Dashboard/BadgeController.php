@@ -3,29 +3,24 @@
 namespace App\Http\Controllers\Dashboard;
 
 use App\Http\Controllers\Controller;
-use App\Http\Requests\Dashboard\LevelRequest;
-use App\Models\Level;
+use App\Http\Requests\Dashboard\BadgeRequest;
+use App\Models\Badge;
 use Illuminate\Http\Request;
 
-class LevelController extends Controller
+class BadgeController extends Controller
 {
     /**
      * Display a listing of the resource.
      *
      * @return \Illuminate\Http\Response
      */
-    public function index(Request $request)
+    public function index()
     {
-        if ($request->query('type')) {
-            $type = $request->query('type');
-            $levels = Level::where('type', $type)->get();
-        } else {
-            $levels = Level::all();
-        }
+        $badges = Badge::all();
         return response()->json([
             'success' => true,
             'msg' => 'تم العثور على قائمة المستويات',
-            'data' => $levels
+            'data' => $badges
         ], 200);
     }
 
@@ -35,13 +30,13 @@ class LevelController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(LevelRequest $request)
+    public function store(BadgeRequest $request)
     {
-        $level = Level::create($request->all());
+        $badge = Badge::create($request->all());
         return response()->json([
             'success' => true,
-            'msg' => 'تمّ إضافة المستوى بنجاح',
-            'data' => $level
+            'msg' => 'تمّ إضافة الشارة بنجاح',
+            'data' => $badge
         ], 200);
     }
 
@@ -53,11 +48,11 @@ class LevelController extends Controller
      */
     public function show($id)
     {
-        $level = Level::findOrFail($id);
+        $badge = Badge::findOrFail($id);
         return response()->json([
             'success' => true,
-            'msg' => 'تمّ العثور على المستوى بنجاح',
-            'data' => $level
+            'msg' => 'تمّ العثور على الشارة بنجاح',
+            'data' => $badge
         ], 200);
     }
 
@@ -68,14 +63,14 @@ class LevelController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(LevelRequest $request, $id)
+    public function update(BadgeRequest $request, $id)
     {
-        $level = Level::findOrFail($id);
-        $level->update($request->all());
+        $badge = Badge::findOrFail($id);
+        $badge->update($request->all());
         return response()->json([
             'success' => true,
-            'msg' => 'تمّ التعديل على المستوى بنجاح',
-            'data' => $level
+            'msg' => 'تمّ التعديل على الشارة بنجاح',
+            'data' => $badge
         ], 200);
     }
 
@@ -87,11 +82,11 @@ class LevelController extends Controller
      */
     public function destroy($id)
     {
-        $level = Level::findOrFail($id);
-        if ($level->delete()) {
+        $badge = Badge::findOrFail($id);
+        if ($badge->delete()) {
             return response()->json([
                 'success' => true,
-                'msg' => 'تمّ حذف المستوى بنجاح',
+                'msg' => 'تمّ حذف الشارة بنجاح',
             ], 200);
         }
     }
