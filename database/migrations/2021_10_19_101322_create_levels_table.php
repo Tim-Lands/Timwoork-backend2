@@ -22,9 +22,9 @@ class CreateLevelsTable extends Migration
             //  1 الصنف: مستوى بائع 0 / مستوى المشتري
             $table->tinyInteger('type');
             $table->tinyInteger('number_developments')->default(0);
-            $table->float('price_developments', 5, 2);
+            $table->float('price_developments', 5, 2)->nullable();
             $table->tinyInteger('number_sales')->default(0);
-            $table->float('value_bayer', 5, 2);
+            $table->float('value_bayer', 5, 2)->nullable();
 
 
             $table->timestamps();
