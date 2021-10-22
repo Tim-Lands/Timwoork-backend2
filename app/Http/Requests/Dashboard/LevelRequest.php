@@ -13,7 +13,7 @@ class LevelRequest extends FormRequest
      */
     public function authorize()
     {
-        return false;
+        return true;
     }
 
     /**
@@ -24,7 +24,23 @@ class LevelRequest extends FormRequest
     public function rules()
     {
         return [
-            //
+            'type' => 'required|integer',
+            'name_ar' => 'required',
+            'number_developments' => 'required_if:type,=,1|integer',
+            'price_developments' => 'required_if:type,=,1',
+            'number_sales' => 'required_if:type,=,1',
+            'value_bayer' => 'required_if:type,=,0'
+        ];
+    }
+
+    public function messages()
+    {
+        return [
+            'number_developments.required_if' => 'حقل عدد التطويرات مطلوب',
+            'price_developments.required_if' => 'أقصى سعر للتطوير مطلوب',
+            'number_sales.required_if' => 'عدد المبيعات المستوى مطلوب',
+            'value_bayer.required_if' => 'حقل القيمة الشرائية مطلوب',
+
         ];
     }
 }
