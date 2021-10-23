@@ -11,8 +11,8 @@ class Level extends Model
     use HasFactory;
     protected $table = 'levels';
 
-    const IS_BUYER = 0;
-    const IS_SELLER = 1;
+    public const IS_BUYER = 0;
+    public const IS_SELLER = 1;
     // ===========================Contants =============================
     // code
     // ================== Acssesor & mutators ==========================
