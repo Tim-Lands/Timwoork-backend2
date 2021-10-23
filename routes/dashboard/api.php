@@ -3,6 +3,7 @@
 use App\Http\Controllers\Dashboard\{
     AuthController,
     CategoryController,
+    SubCategoryController,
     LevelController,
     BadgeController
 };
@@ -35,6 +36,21 @@ Route::prefix('categories')->group(function () {
     Route::post('/{id}/update',   [CategoryController::class, 'update']);
     // مسار حذف العنصر
     Route::post('/{id}/delete',   [CategoryController::class, 'delete']);
+});
+
+// =============================== مسارات التصنيف الفرعي ====================================
+Route::prefix('subcategories')->group(function () {
+
+    // مسار عرض عنصر من اجل انشاء
+    Route::get('/create',          [SubCategoryController::class, 'create']);
+    // مسار انشاء عنصر جديد
+    Route::post('/store',           [SubCategoryController::class, 'store']);
+    // مسار جلب عنصر الواحد
+    Route::get('/{id}/show',        [SubCategoryController::class, 'show']);
+    // مسار التعديل على العنصر
+    Route::post('/{id}/update',     [SubCategoryController::class, 'update']);
+    // مسار حذف العنصر
+    Route::post('/{id}/delete',     [SubCategoryController::class, 'delete']);
 });
 
 
