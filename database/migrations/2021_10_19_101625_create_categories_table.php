@@ -18,9 +18,12 @@ class CreateCategoriesTable extends Migration
             // names of languages (arabic,english,french)
             $table->string('name_ar');
             $table->string('name_en');
-            $table->string('name_fr');
-
-            $table->string('description')->nullable();
+            $table->string('name_fr')->nullable();
+            $table->string('slug');
+            $table->string('description_ar')->nullable();
+            $table->string('description_en')->nullable();
+            $table->string('description_fr')->nullable();
+            $table->string('icon');
 
             // relation of Model Category => Subcategory
             $table->foreignId('parent_id')->nullable()->constrained('categories');
