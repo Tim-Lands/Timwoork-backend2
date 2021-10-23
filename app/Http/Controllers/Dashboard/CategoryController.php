@@ -112,13 +112,13 @@ class CategoryController extends Controller
             //  في حالة ما اذا وجد الاسم بالفرنيسة , اضفها الى مصفوفة التعديل: 
             if ($request->name_fr)
                 $data['name_fr'] = $request->name_fr;
-            //  في حالة ما اذا وجد الاسم بالفرنيسة , اضفها الى مصفوفة التعديل: 
+            //  في حالة ما اذا وجد الوصف بالعربية , اضفها الى مصفوفة التعديل: 
             if ($request->description_ar)
                 $data['description_ar'] = $request->description_ar;
-            //  في حالة ما اذا وجد الاسم بالفرنيسة , اضفها الى مصفوفة التعديل: 
+            //  في حالة ما اذا وجد الوصف بالانجليزية , اضفها الى مصفوفة التعديل: 
             if ($request->description_en)
                 $data['description_en'] = $request->description_en;
-            //  في حالة ما اذا وجد الاسم بالفرنيسة , اضفها الى مصفوفة التعديل: 
+            //  في حالة ما اذا وجد الاسم بالفرنسية , اضفها الى مصفوفة التعديل: 
             if ($request->description_fr)
                 $data['description_fr'] = $request->description_fr;
 

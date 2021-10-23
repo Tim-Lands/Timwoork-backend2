@@ -5,18 +5,22 @@ namespace App\Http\Controllers\Dashboard;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Dashboard\BadgeRequest;
 use App\Models\Badge;
-use Illuminate\Http\Request;
+use Exception;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Support\Facades\DB;
 
 class BadgeController extends Controller
 {
+
     /**
-     * Display a listing of the resource.
+     * index => دالة عرض كل الشارات
      *
-     * @return \Illuminate\Http\Response
+     * @return JsonResponse
      */
-    public function index()
+    public function index(): JsonResponse
     {
-        $badges = Badge::all();
+        // جلب جميع الاصناف عن طريق التصفح
+        $badges = Badge::Selection()->get();
         return response()->json([
             'success' => true,
             'msg' => 'تم العثور على قائمة المستويات',
@@ -25,69 +29,135 @@ class BadgeController extends Controller
     }
 
     /**
-     * Store a newly created resource in storage.
+     * store => دالة اضافة تصنيف جديد
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
+     * @param  BadgeRequest $request => انشاء هذا الكائن من اجل عملية التحقيق على المدخلات
+     * @return object
      */
-    public function store(BadgeRequest $request)
+    public function store(BadgeRequest $request): ?object
     {
-        $badge = Badge::create($request->all());
-        return response()->json([
-            'success' => true,
-            'msg' => 'تمّ إضافة الشارة بنجاح',
-            'data' => $badge
-        ], 200);
+        try {
+            // جلب البيانات و وضعها في مصفوفة:
+            $data = [
+                'name_ar'            => $request->name_ar,
+                'name_en'            => $request->name_en,
+                'name_fr'            => $request->name_fr,
+                'precent_deducation' => $request->precent_deducation
+            ];
+            // ============= انشاء شارة جديدة ================:
+            // بداية المعاملة مع البيانات المرسلة لقاعدة بيانات :
+            DB::beginTransaction();
+            // عملية اضافة شارة :
+            Badge::create($data);
+            // انهاء المعاملة بشكل جيد :
+            DB::commit();
+            // =================================================
+            // رسالة نجاح عملية الاضافة:
+            return response()->json('تم انشاء شارة جديدة بنجاح', 201);
+        } catch (Exception $ex) {
+            // لم تتم المعاملة بشكل نهائي و لن يتم ادخال اي بيانات لقاعدة البيانات
+            DB::rollback();
+            return $ex;
+            return response()->json('هناك خطأ ما حدث في قاعدة بيانات , يرجى التأكد من ذلك', 400);
+        }
     }
 
     /**
-     * Display the specified resource.
+     * show => slug  دالة جلب الشارة معين بواسطة سلاق
      *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
+     *s @param  string $slug => slug متغير المعرف 
+     * @return JsonResponse
      */
-    public function show($id)
+    public function show($slug): JsonResponse
     {
-        $badge = Badge::findOrFail($id);
-        return response()->json([
-            'success' => true,
-            'msg' => 'تمّ العثور على الشارة بنجاح',
-            'data' => $badge
-        ], 200);
+        //slug  جلب العنصر بواسطة
+        $badge = Badge::Selection()->whereSlug($slug)->first();
+        // شرط اذا كان العنصر موجود
+        if (!$badge)
+            // رسالة خطأ
+            return response()->json('هذا العنصر غير موجود', 403);
+
+        // اظهار العنصر
+        return response()->json($badge, 200);
+    }
+
+
+    /**
+     * update => دالة تعديل على الشارة
+     *
+     * @param  mixed $id
+     * @param  BadgeRequest $request
+     * @return object
+     */
+    public function update(BadgeRequest $request, mixed $id): ?object
+    {
+        try {
+            //من اجل التعديل  id  جلب العنصر بواسطة المعرف 
+            $badge = Badge::find($id);
+
+            // شرط اذا كان العنصر موجود او المعرف اذا كان رقم غير صحيح
+            if (!$badge || !is_numeric($id))
+                // رسالة خطأ
+                return response()->json('هذا العنصر غير موجود', 403);
+
+            // جلب البيانات و وضعها في مصفوفة:
+            $data = [
+                'name_ar'            => $request->name_ar,
+                'precent_deducation' => $request->precent_deducation
+            ];
+            //  في حالة ما اذا وجد الاسم بالانجليزية , اضفها الى مصفوفة التعديل: 
+            if ($request->name_en)
+                $data['name_en'] = $request->name_en;
+            //  في حالة ما اذا وجد الاسم بالفرنيسة , اضفها الى مصفوفة التعديل: 
+            if ($request->name_fr)
+                $data['name_fr'] = $request->name_fr;
+            // ============= التعديل على التصنيف  ================:
+            // بداية المعاملة مع البيانات المرسلة لقاعدة بيانات :
+            DB::beginTransaction();
+            // عملية التعديل على التصنيف :
+            $badge->update($data);
+            // انهاء المعاملة بشكل جيد :
+            DB::commit();
+            // =================================================
+
+            // رسالة نجاح عملية التعديل:
+            return response()->json('تم التعديل على الشارة بنجاح', 201);
+        } catch (Exception $ex) {
+            // رسالة خطأ :
+            return response()->json('هناك خطأ ما حدث في قاعدة بيانات , يرجى التأكد من ذلك', 400);
+        }
     }
 
     /**
-     * Update the specified resource in storage.
+     * delete => دالة حذف الشارة
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
+     * @param  mixed $id
+     * @return object
      */
-    public function update(BadgeRequest $request, $id)
+    public function delete(mixed $id): ?object
     {
-        $badge = Badge::findOrFail($id);
-        $badge->update($request->all());
-        return response()->json([
-            'success' => true,
-            'msg' => 'تمّ التعديل على الشارة بنجاح',
-            'data' => $badge
-        ], 200);
-    }
+        try {
+            //من اجل الحذف  id  جلب العنصر بواسطة المعرف 
+            $badge = Badge::find($id);
+            // شرط اذا كان العنصر موجود او المعرف اذا كان رقم غير صحيح
+            if (!$badge || !is_numeric($id))
+                // رسالة خطأ
+                return response()->json('هذا العنصر غير موجود', 403);
 
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function destroy($id)
-    {
-        $badge = Badge::findOrFail($id);
-        if ($badge->delete()) {
-            return response()->json([
-                'success' => true,
-                'msg' => 'تمّ حذف الشارة بنجاح',
-            ], 200);
+            // ============= حذف الشارة  ================:
+            // بداية المعاملة مع البيانات المرسلة لقاعدة بيانات :
+            DB::beginTransaction();
+            // عملية حذف الشارة :
+            $badge->delete();
+            // انهاء المعاملة بشكل جيد :
+            DB::commit();
+            // =================================================
+
+            // رسالة نجاح عملية الحذف:
+            return response()->json('تم حذف الشارة بنجاح', 201);
+        } catch (Exception $ex) {
+            // return $ex;
+            return response()->json('هناك خطأ ما حدث في قاعدة بيانات , يرجى التأكد من ذلك', 400);
         }
     }
 }
