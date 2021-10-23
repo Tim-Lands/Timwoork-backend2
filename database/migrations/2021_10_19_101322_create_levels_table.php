@@ -21,9 +21,9 @@ class CreateLevelsTable extends Migration
             $table->string('name_fr')->nullable();
             //  1 الصنف: مستوى بائع 0 / مستوى المشتري
             $table->tinyInteger('type');
-            $table->tinyInteger('number_developments')->default(0);
+            $table->tinyInteger('number_developments')->nullable();
             $table->float('price_developments', 5, 2)->nullable();
-            $table->tinyInteger('number_sales')->default(0);
+            $table->tinyInteger('number_sales')->nullable();
             $table->float('value_bayer', 5, 2)->nullable();
 
             $table->timestamps();
