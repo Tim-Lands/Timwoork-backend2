@@ -13,6 +13,7 @@ class Category extends Model
 
     // ===========================Contants =============================
 
+
     // عدد الصفحات التي سيظهرهم
     public const PAGINATE = 5;
 
@@ -22,6 +23,7 @@ class Category extends Model
 
     // ============================ Scopes =============================
     // code
+
 
     /**
      * scopeSelection => دالة من اجل جلب البيانات
@@ -33,6 +35,7 @@ class Category extends Model
     {
         return $query->select('id', 'name_ar', 'name_en', 'name_fr', 'slug', 'description_ar', 'description_en', 'description_fr', 'icon', 'parent_id', 'created_at');
     }
+
 
     // ========================== Relations ============================
 

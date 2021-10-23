@@ -45,6 +45,7 @@ class User extends Authenticatable
     // ========================== Relations ============================
 
     /**
+
      * verify email token 
      *
      * @return HasOne
@@ -66,15 +67,16 @@ class User extends Authenticatable
 
 
     /**
+    
      * profile
      *
      * @return HasOne
      */
     public function profile(): HasOne
     {
+
         return $this->hasOne(Profile::class);
     }
-
 
     /**
      * favorites
