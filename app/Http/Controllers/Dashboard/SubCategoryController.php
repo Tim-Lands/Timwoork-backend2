@@ -3,53 +3,48 @@
 namespace App\Http\Controllers\Dashboard;
 
 use App\Http\Controllers\Controller;
-use App\Http\Requests\Dashboard\CategoryRequest;
+use App\Http\Requests\Dashboard\SubCategoryRequest;
 use App\Models\Category;
 use Exception;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 
-class CategoryController extends Controller
+class SubCategoryController extends Controller
 {
 
-
     /**
-     * index => دالة عرض كل التصنيفات
+     * create => دالة عرض تصنيفات الرئيسية من اجل الانشاء تصنيف الفرعي
      *
      * @return JsonResponse
      */
-    public function index(): JsonResponse
+    public function create(): JsonResponse
     {
-        // جلب جميع الاصناف الرئيسة و الاصناف الفرعية عن طريق التصفح
-        $categories = Category::Selection()->with(['subcategories' => function ($q) {
-            $q->select('id', 'name_ar', 'name_en', 'parent_id', 'icon');
-        }])->whereParentId(null)->get();
-
+        // جلب التصنيفات الرئيسية
+        $categories = Category::selection()->whereNull('parent_id')->pluck('name_ar', 'id');
         // اظهار العنصر
         return response()->json(
             [
                 'status' => true,
+                'الرسالة' => 'عرض التصنيفات الرئيسية من اجل انشاء',
                 'data'   => $categories
             ],
             200
         );
     }
-
-
     /**
-     * show => slug  دالة جلب تصنيف معين بواسطة سلاق
+     * show => id  دالة جلب تصنيف فرعي معين بواسطة المعرف
      *
-     *s @param  string $slug => slug متغير المعرف 
-     * @return object
+     *s @param  mixed $id => id متغير المعرف 
+     * @return JsonResponse
      */
-    public function show(string $slug): ?object
+    public function show(mixed $id): JsonResponse
     {
-        //slug  جلب العنصر بواسطة
-        $category = Category::Selection()->whereSlug($slug)->first();
-        // شرط اذا كان العنصر موجود
-        if (!$category)
-            //رسالة خطأ    
+
+        //id  جلب العنصر بواسطة
+        $subcategory = Category::selection()->whereId($id)->whereNotNull('parent_id')->first();
+        // شرط اذا كان العنصر موجود ام لا
+        if (!$subcategory)
             return response()->json(
                 [
                     'الرسالة' => 'هذا العنصر غير موجود',
@@ -59,16 +54,22 @@ class CategoryController extends Controller
             );
 
         // اظهار العنصر
-        return response()->json($category, 200);
+        return response()->json(
+            [
+                'status' => true,
+                'data'   => $subcategory
+            ],
+            200
+        );
     }
 
     /**
-     * store => دالة اضافة تصنيف جديد
+     * store => دالة اضافة تصنيف فرعي جديد
      *
-     * @param  CategoryRequest $request => انشاء هذا الكائن من اجل عملية التحقيق على المدخلات
+     * @param  SubCategoryRequest $request => انشاء هذا الكائن من اجل عملية التحقيق على المدخلات
      * @return object
      */
-    public function store(CategoryRequest $request)
+    public function store(SubCategoryRequest $request): ?object
     {
         try {
             // جلب البيانات و وضعها في مصفوفة:
@@ -80,26 +81,35 @@ class CategoryController extends Controller
                 'description_ar' => $request->description_ar,
                 'description_en' => $request->description_en,
                 'description_fr' => $request->description_fr,
+                'parent_id'      => $request->parent_id,
                 'icon'           => $request->icon
             ];
             // ============= انشاء تصنيف جديد ================:
             // بداية المعاملة مع البيانات المرسلة لقاعدة بيانات :
             DB::beginTransaction();
             // عملية اضافة تصنيف :
-            Category::create($data);
+            $subcategory = Category::create($data);
             // انهاء المعاملة بشكل جيد :
             DB::commit();
             // =================================================
+
             // رسالة نجاح عملية الاضافة:
-            return response()->json('تم انشاء تصنيف جديد بنجاح', 201);
+            return response()->json(
+                [
+                    'status' => true,
+                    'الرسالة' => 'تم انشاء تصنيف فرعي جديد بنجاح',
+                    'data' => $subcategory
+                ],
+                201
+            );
         } catch (Exception $ex) {
             // لم تتم المعاملة بشكل نهائي و لن يتم ادخال اي بيانات لقاعدة البيانات
             DB::rollback();
-            // رسالة خطأ :
+            // رسالة خطأ
             return response()->json(
                 [
-                    'الرسالة' => 'هناك خطأ ما حدث في قاعدة بيانات , يرجى التأكد من ذلك',
                     'status' => false,
+                    'الرسالة' => 'هناك خطأ ما حدث في قاعدة بيانات , يرجى التأكد من ذلك',
                 ],
                 403
             );
@@ -110,17 +120,16 @@ class CategoryController extends Controller
      * update => دالة تعديل على التصنيف
      *
      * @param  mixed $id
-     * @param  CategoryRequest $request
+     * @param  SubCategoryRequest $request
      * @return object
      */
-    public function update(mixed $id, CategoryRequest $request): ?object
+    public function update(mixed $id, SubCategoryRequest $request): ?object
     {
         try {
             //من اجل التعديل  id  جلب العنصر بواسطة المعرف 
-            $category = Category::find($id);
-
+            $subcategory = Category::selection()->whereId($id)->whereNotNull('parent_id')->first();
             // شرط اذا كان العنصر موجود او المعرف اذا كان رقم غير صحيح
-            if (!$category || !is_numeric($id))
+            if (!$subcategory || !is_numeric($id))
                 // رسالة خطأ
                 return response()->json(
                     [
@@ -135,7 +144,8 @@ class CategoryController extends Controller
                 'name_ar'        => $request->name_ar,
                 'name_en'        => $request->name_en,
                 'slug'           => Str::slug($request->name_en),
-                'icon'           => $request->icon
+                'icon'           => $request->icon,
+                'parent_id'      => $request->parent_id
             ];
             //  في حالة ما اذا وجد الاسم بالفرنيسة , اضفها الى مصفوفة التعديل: 
             if ($request->name_fr)
@@ -154,21 +164,28 @@ class CategoryController extends Controller
             // بداية المعاملة مع البيانات المرسلة لقاعدة بيانات :
             DB::beginTransaction();
             // عملية التعديل على التصنيف :
-            $category->update($data);
+            $subcategory->update($data);
             // انهاء المعاملة بشكل جيد :
             DB::commit();
             // =================================================
 
-            // رسالة نجاح عملية التعديل:
-            return response()->json('تم التعديل على تصنيف بنجاح', 201);
+            // رسالة نجاح عملية الاضافة:
+            return response()->json(
+                [
+                    'status' => true,
+                    'الرسالة' => 'تم التعديل على تصنيف الفرعي بنجاح',
+                    'data' => $subcategory
+                ],
+                201
+            );
         } catch (Exception $ex) {
             // لم تتم المعاملة بشكل نهائي و لن يتم ادخال اي بيانات لقاعدة البيانات
             DB::rollback();
-            // رسالة خطأ
+            // رسالة خطأ :
             return response()->json(
                 [
-                    'status' => false,
                     'الرسالة' => 'هناك خطأ ما حدث في قاعدة بيانات , يرجى التأكد من ذلك',
+                    'status' => false,
                 ],
                 403
             );
@@ -185,9 +202,9 @@ class CategoryController extends Controller
     {
         try {
             //من اجل الحذف  id  جلب العنصر بواسطة المعرف 
-            $category = Category::find($id);
+            $subcategory = Category::selection()->whereId($id)->whereNotNull('parent_id')->first();
             // شرط اذا كان العنصر موجود او المعرف اذا كان رقم غير صحيح
-            if (!$category || !is_numeric($id))
+            if (!$subcategory || !is_numeric($id))
                 // رسالة خطأ
                 return response()->json(
                     [
@@ -196,39 +213,25 @@ class CategoryController extends Controller
                     ],
                     403
                 );
-            // جلب عدد التصنيفات الفرعية
-            $subcategory = $category->whereNotNull('parent_id')->count();
-
-            // شرط اذا كان العنصر لديه تصنيفات فرعية ام لا
-            if ($subcategory > 0)
-                // رسالة خطأ   
-                return response()->json(
-                    [
-                        'الرسالة' => 'لا تستطيع حذف هذا العنصر بسبب علاقته مع العناصر الفرعية',
-                        'status' => false,
-                    ],
-                    403
-                );
-
             // ============= التعديل على التصنيف  ================:
             // بداية المعاملة مع البيانات المرسلة لقاعدة بيانات :
             DB::beginTransaction();
             // عملية حذف التصنيف :
-            $category->delete();
+            $subcategory->delete();
             // انهاء المعاملة بشكل جيد :
             DB::commit();
             // =================================================
 
             // رسالة نجاح عملية التعديل:
-            return response()->json('تم حذف تصنيف بنجاح', 201);
+            return response()->json('تم حذف تصنيف الفرعي بنجاح', 201);
         } catch (Exception $ex) {
             // لم تتم المعاملة بشكل نهائي و لن يتم ادخال اي بيانات لقاعدة البيانات
             DB::rollback();
             // رسالة خطأ
             return response()->json(
                 [
-                    'status' => false,
                     'الرسالة' => 'هناك خطأ ما حدث في قاعدة بيانات , يرجى التأكد من ذلك',
+                    'status' => false,
                 ],
                 403
             );
