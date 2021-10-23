@@ -3,36 +3,36 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
-use App\Http\Requests\LoginRequest;
+
+use App\Http\Requests\Dashboard\Auth\LoginRequest;
 use App\Models\User;
+use App\Traits\LoginUser;
+use GuzzleHttp\Exception\ClientException;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use Laravel\Socialite\Facades\Socialite;
 
 class LoginController extends Controller
 {
+    use LoginUser;
     public function login(LoginRequest $request)
     {
-        // Get User from users table
-        $user = User::where('email', $request->only('username'))
-            ->orWhere('username', $request->only('username'))
-            ->orWhere('phone', $request->only('username'))
+        // تتم عملية التسجيل الدخول بواسطة البريد الالكتروني أو اسم المستخدم أو رقم الهاتف
+        $user = User::where('username', $request->username)
+            ->orWhere('email', $request->username)
+            ->orWhere('phone', $request->username)
             ->first();
-        // if user not found or password is wrong return error message
+        // في حالة عدم وجود المستخدم في قاعدة البيانات أو عدم تطابق كلمة المرور المحفوظة مع كلمة المرور المرسلة
+        // يتم إرسال رسالة عدم صحة البيانات
         if (!$user || !Hash::check($request->password, $user->password)) {
             return response()->json([
                 'msg' => "invalid credentials"
             ], Response::HTTP_UNAUTHORIZED);
         }
-        // if user found loggedin
-        Auth::login($user);
-        // create token $ store  in cookie with success message
-        $token = $user->createToken('token')->plainTextToken;
-        $cookie = cookie('timwoork_token', $token, 6 * 24);
-        return response([
-            'msg' => "Success"
-        ])->withCookie($cookie);
+
+        // في حالة صحة البيانات سيتم إنشاء توكن وتخزينه في جلسة كوكي وإرساله مع كل طلب
+        return $this->login_with_token($user);
     }
 
     public function me(Request $request)
@@ -46,4 +46,30 @@ class LoginController extends Controller
             'msg' => "Success"
         ])->withCookie($cookie);
     }
+
+    /*************************Socialite Login *************************/
+
+    public function redirectToProvider($provider)
+    {
+        return Socialite::driver($provider)->stateless()->redirect();
+    }
+
+
+    public function handleProviderCallback($provider)
+    {
+        try {
+            $s_user = Socialite::driver($provider)->stateless()->user();
+        } catch (ClientException $exception) {
+            return $this->error("invalid credentials");
+        }
+
+        $user = User::create();
+        $user->providers()->create([
+            'provider' => $provider,
+            'provider_id' => $s_user->getId()
+        ]);
+        return $this->login_with_token($user);
+    }
+    // test branch
+    /**************************************************************** */
 }

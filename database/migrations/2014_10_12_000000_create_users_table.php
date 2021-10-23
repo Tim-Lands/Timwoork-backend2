@@ -17,9 +17,6 @@ class CreateUsersTable extends Migration
             $table->id();
             $table->string('username')->unique()->nullable();
             $table->string('email')->unique()->nullable();
-            // this field for get id from google or facebook .....
-            $table->bigInteger('provider_id')->nullable();
-            $table->string('provider_type')->nullable();
             $table->string('phone')->unique()->nullable();
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password')->nullable();
