@@ -1,10 +1,10 @@
 <?php
 
-namespace App\Http\Requests\Dashboard\Auth;
+namespace App\Http\Requests\Dashboard;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class LoginRequest extends FormRequest
+class BadgeRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -24,8 +24,17 @@ class LoginRequest extends FormRequest
     public function rules()
     {
         return [
-            'username' => 'required',
-            'password' => 'required'
+            'name_ar' => 'required',
+            'precent_deducation' => 'required',
+
+        ];
+    }
+
+    public function messages()
+    {
+        return [
+            'name_ar.required' => ' اسم المستوى مطلوب',
+            'precent_deducation.required' => 'نسبة الاقتطاع مطلوبة',
         ];
     }
 }

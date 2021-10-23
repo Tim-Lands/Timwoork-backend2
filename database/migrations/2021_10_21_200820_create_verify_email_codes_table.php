@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateBadgesTable extends Migration
+class CreateVerifyEmailCodesTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,15 +13,11 @@ class CreateBadgesTable extends Migration
      */
     public function up()
     {
-        Schema::create('badges', function (Blueprint $table) {
+        Schema::create('verify_email_codes', function (Blueprint $table) {
             $table->id();
-            // names of languages (arabic,english,french)
-
-            $table->string('name_ar')->nullable();
-            $table->string('name_en')->nullable();
-            $table->string('name_fr')->nullable();
-
-            $table->tinyInteger('precent_deducation')->default(0);
+            $table->string('code');
+            $table->string('email');
+            $table->foreignId('user_id')->constrained();
             $table->timestamps();
         });
     }
@@ -33,6 +29,6 @@ class CreateBadgesTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('badges');
+        Schema::dropIfExists('verify_email_codes');
     }
 }

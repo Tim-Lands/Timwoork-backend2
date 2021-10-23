@@ -16,14 +16,16 @@ class CreateLevelsTable extends Migration
         Schema::create('levels', function (Blueprint $table) {
             $table->id();
             // names of languages (arabic,english,french)
-            $table->string('name_ar');
+
+            $table->string('name_ar')->nullable();
             $table->string('name_en')->nullable();
             $table->string('name_fr')->nullable();
-
-            $table->tinyInteger('numbr_develop')->default(0);
-            $table->float('price_develop', 5, 2);
-            $table->tinyInteger('numbr_sales')->default(0);
-            $table->float('value_bayer', 5, 2);
+            //  1 الصنف: مستوى بائع 0 / مستوى المشتري
+            $table->tinyInteger('type');
+            $table->tinyInteger('number_developments')->default(0);
+            $table->float('price_developments', 5, 2)->nullable();
+            $table->tinyInteger('number_sales')->default(0);
+            $table->float('value_bayer', 5, 2)->nullable();
 
             $table->timestamps();
         });

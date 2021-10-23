@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
@@ -44,15 +45,38 @@ class User extends Authenticatable
     // ========================== Relations ============================
 
     /**
+
+     * verify email token 
+     *
+     * @return HasOne
+     */
+    public function verifyEmailCode(): HasOne
+    {
+        return $this->hasOne(VerifyEmailCode::class);
+    }
+
+    /**
+     * providers
+     *
+     * @return HasMany
+     */
+    public function providers(): HasMany
+    {
+        return $this->hasMany(Provider::class);
+    }
+
+
+    /**
+    
      * profile
      *
      * @return HasOne
      */
     public function profile(): HasOne
     {
-        return $this->hasOne(Profile::class, 'profile_id');
-    }
 
+        return $this->hasOne(Profile::class);
+    }
 
     /**
      * favorites

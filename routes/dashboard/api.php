@@ -1,6 +1,7 @@
 <?php
 
-use App\Http\Controllers\Dashboard\{AuthController, CategoryController};
+
+use App\Http\Controllers\Dashboard\{AuthController, CategoryController,BadgeController,LevelController};
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -9,6 +10,8 @@ use Illuminate\Support\Facades\Route;
 |--------------------------------------------------------------------------
 |
 */
+
+/*****************Auth Routes ****************************/
 
 Route::middleware('auth:sanctum')->group(function () {
     // =======================  مسارات التسجيل و التسجيل دخول المدير ======================
@@ -33,3 +36,21 @@ Route::prefix('categories')->group(function () {
 
 // مسار تسجيل الدخول
 Route::post('/login', [AuthController::class, 'login']);
+
+/****************** End Auth Routes ***********************/
+
+Route::prefix('levels')->group(function () {
+    Route::get('/', [LevelController::class, 'index']);
+    Route::post('/store', [LevelController::class, 'store']);
+    Route::get('/{id}', [LevelController::class, 'show']);
+    Route::post('/{id}/update', [LevelController::class, 'update']);
+    Route::post('/{id}/delete', [LevelController::class, 'destroy']);
+});
+
+Route::prefix('badges')->group(function () {
+    Route::get('/', [BadgeController::class, 'index']);
+    Route::post('/store', [BadgeController::class, 'store']);
+    Route::get('/{id}', [BadgeController::class, 'show']);
+    Route::post('/{id}/update', [BadgeController::class, 'update']);
+    Route::post('/{id}/delete', [BadgeController::class, 'destroy']);
+});

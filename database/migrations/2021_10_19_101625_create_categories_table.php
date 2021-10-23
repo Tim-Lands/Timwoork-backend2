@@ -16,6 +16,7 @@ class CreateCategoriesTable extends Migration
         Schema::create('categories', function (Blueprint $table) {
             $table->id();
             // names of languages (arabic,english,french)
+
             $table->string('name_ar');
             $table->string('name_en');
             $table->string('name_fr')->nullable();
@@ -24,6 +25,7 @@ class CreateCategoriesTable extends Migration
             $table->string('description_en')->nullable();
             $table->string('description_fr')->nullable();
             $table->string('icon');
+
 
             // relation of Model Category => Subcategory
             $table->foreignId('parent_id')->nullable()->constrained('categories');
