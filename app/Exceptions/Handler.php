@@ -38,12 +38,8 @@ class Handler extends ExceptionHandler
         $this->reportable(function (Throwable $e) {
             //
         });
-    }
 
-    public function render($request, \Throwable $exception)
-    {
-
-        if ($exception instanceof ModelNotFoundException) {
+        $this->renderable(function (ModelNotFoundException $ex) {
             return response()->json(
                 [
                     'success' => false,
@@ -51,7 +47,6 @@ class Handler extends ExceptionHandler
                 ],
                 400
             );
-        }
-        return parent::render($request, $exception);
+        });
     }
 }
