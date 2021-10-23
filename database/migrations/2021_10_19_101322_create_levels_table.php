@@ -16,6 +16,7 @@ class CreateLevelsTable extends Migration
         Schema::create('levels', function (Blueprint $table) {
             $table->id();
             // names of languages (arabic,english,french)
+
             $table->string('name_ar')->nullable();
             $table->string('name_en')->nullable();
             $table->string('name_fr')->nullable();
@@ -25,7 +26,6 @@ class CreateLevelsTable extends Migration
             $table->float('price_developments', 5, 2)->nullable();
             $table->tinyInteger('number_sales')->default(0);
             $table->float('value_bayer', 5, 2)->nullable();
-
 
             $table->timestamps();
         });

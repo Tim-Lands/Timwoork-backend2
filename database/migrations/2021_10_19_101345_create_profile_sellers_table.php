@@ -16,7 +16,7 @@ class CreateProfileSellersTable extends Migration
         Schema::create('profile_sellers', function (Blueprint $table) {
             $table->id();
             $table->tinyInteger('numbr_sales')->default(0);
-            $table->text('bio');
+            $table->text('bio')->nullable();
             // =======================================================
             // relation model of Country
             $table->foreignId('profile_id')->constrained();
