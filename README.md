@@ -104,7 +104,7 @@ Write instructions here
         -   success : false,
         -   msg: "حدث خطأ غير متوقع"
 
-2- Badges:
+3- Badges:
 
 -   Show Badges - url : `http:localhost:8000/dashboard/badges` - method: get - response: - success : true, - msg: "لقد تمّ جلب الشارات بنجاح" - data: badges
 
@@ -134,7 +134,7 @@ Write instructions here
         -   data: badge
     -   error response:
         -   success : false,
-        -   msg: "حدث خطأ غير متوقع"
+        -   msg: "هناك خطأ ما حدث في قاعدة بيانات , يرجى التأكد من ذلك"
 
 -   Update Current Badge
 
@@ -148,18 +148,153 @@ Write instructions here
     -   success response:
         -   success : true,
         -   msg: "لقد تمّ التعديل على الشارة بنجاح"
-        -   data: level
+        -   data: badge
     -   error response:
         -   success : false,
         -   msg: "حدث خطأ غير متوقع"
 
--   Delete Current Level
+-   Delete Current Badge
 
-    -   url : `http:localhost:8000/dashboard/badges/{id}/delete`
+        -   url : `http:localhost:8000/dashboard/badges/{id}/delete`
+        -   method: post
+        -   success response:
+            -   success : true,
+            -   msg: "لقد تمّ حذف الشارة بنجاح"
+        -   error response:
+            -   success : false,
+            -   msg: "هناك خطأ ما حدث في قاعدة بيانات , يرجى التأكد من ذلك"
+
+4 - Categories :
+
+-   Show Catogories - url : `http:localhost:8000/dashboard/categories` - method: get - response: - success : true, - msg: 'عرض كل تصنيفات الرئيسية و الفرعية' - data: categories
+
+-   Show Category Details
+
+    -   url : `http:localhost:8000/dashboard/categories/{id}`
+    -   method: get
+    -   response:
+        -   success : true,
+        -   msg: "تم جلب العنصر بنجاح"
+        -   data: category
+
+-   Add New Category
+
+    -   url : `http:localhost:8000/dashboard/categories/store`
+    -   method: post
+    -   parameters:
+
+        -   name_ar: string|required|unique
+        -   name_en: string|required|unique
+        -   name_fr: string|nullable|unique
+        -   description_ar: string|nullable
+        -   description_en: string|nullable
+        -   description_fr: string|nullable
+        -   icon: rerquired
+
+    -   success response:
+        -   success : true,
+        -   msg: "لقد تمّ إضافة التصنيف بنجاح"
+        -   data: category
+    -   error response:
+        -   success : false,
+        -   msg: "هناك خطأ ما حدث في قاعدة بيانات , يرجى التأكد من ذلك"
+
+-   Update Current Category
+
+    -   url : `http:localhost:8000/dashboard/categories/{id}/update`
+    -   method: post
+    -   parameters:
+        -   name_ar: string|required|unique
+        -   name_en: string|required|unique
+        -   name_fr: string|nullable|unique
+        -   description_ar: string|nullable
+        -   description_en: string|nullable
+        -   description_fr: string|nullable
+        -   icon: rerquired
+    -   success response:
+        -   success : true,
+        -   msg: "لقد تمّ التعديل على التصنيف بنجاح"
+        -   data: category
+    -   error response:
+        -   success : false,
+        -   msg: "هناك خطأ ما حدث في قاعدة بيانات , يرجى التأكد من ذلك"
+
+-   Delete Current Category
+
+        -   url : `http:localhost:8000/dashboard/categories/{id}/delete`
+        -   method: post
+        -   success response:
+            -   success : true,
+            -   data: category
+            -   msg: "لقد تمّ حذف التصنيف بنجاح"
+        -   error response:
+            -   success : false,
+            -   msg: "هناك خطأ ما حدث في قاعدة بيانات , يرجى التأكد من ذلك"
+
+5 - SubCategories :
+
+-   Show Catogories - url : `http:localhost:8000/dashboard/subcategories` - method: get - response: - success : true, - msg: 'عرض كل تصنيفات الرئيسية' - data: categories
+
+-   Show SubCategory Details
+
+    -   url : `http:localhost:8000/dashboard/subcategories/{id}`
+    -   method: get
+    -   response:
+        -   success : true,
+        -   msg: "تم جلب العنصر بنجاح"
+        -   data: subcategory
+
+-   Add New Category
+
+    -   url : `http:localhost:8000/dashboard/subcategories/store`
+    -   method: post
+    -   parameters:
+
+        -   name_ar: string|required|unique
+        -   name_en: string|required|unique
+        -   name_fr: string|nullable|unique
+        -   description_ar: string|nullable
+        -   description_en: string|nullable
+        -   description_fr: string|nullable
+        -   icon: rerquired
+        -   parent_id: rerquired
+
+    -   success response:
+        -   success : true,
+        -   msg: "لقد تمّ إضافة التصنيف الفرعي بنجاح"
+        -   data: subcategory
+    -   error response:
+        -   success : false,
+        -   msg: "هناك خطأ ما حدث في قاعدة بيانات , يرجى التأكد من ذلك"
+
+-   Update Current SubCategory
+
+    -   url : `http:localhost:8000/dashboard/subcategories/{id}/update`
+    -   method: post
+    -   parameters:
+        -   name_ar: string|required|unique
+        -   name_en: string|required|unique
+        -   name_fr: string|nullable|unique
+        -   description_ar: string|nullable
+        -   description_en: string|nullable
+        -   description_fr: string|nullable
+        -   icon: rerquired
+        -   parent_id
+    -   success response:
+        -   success : true,
+        -   msg: "لقد تمّ التعديل على التصنيف الفرعي بنجاح"
+        -   data: subcategory
+    -   error response:
+        -   success : false,
+        -   msg: "هناك خطأ ما حدث في قاعدة بيانات , يرجى التأكد من ذلك"
+
+-   Delete Current SubCategory
+
+    -   url : `http:localhost:8000/dashboard/subcategories/{id}/delete`
     -   method: post
     -   success response:
         -   success : true,
-        -   msg: "لقد تمّ حذف الشارة بنجاح"
+        -   msg: "لقد تمّ حذف التصنيف الفرعي بنجاح"
     -   error response:
         -   success : false,
-        -   msg: "حدث خطأ غير متوقع"
+        -   msg: "هناك خطأ ما حدث في قاعدة بيانات , يرجى التأكد من ذلك"

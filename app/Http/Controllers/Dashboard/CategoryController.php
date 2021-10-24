@@ -26,40 +26,27 @@ class CategoryController extends Controller
             $q->select('id', 'name_ar', 'name_en', 'parent_id', 'icon');
         }])->whereParentId(null)->get();
 
-        // اظهار العنصر
-        return response()->json(
-            [
-                'status' => true,
-                'data'   => $categories
-            ],
-            200
-        );
+        // اظهار العناصر
+        return response()->success('عرض كل تصنيفات الرئيسية و الفرعية', $categories);
     }
 
 
     /**
-     * show => slug  دالة جلب تصنيف معين بواسطة سلاق
+     * show => id  دالة جلب تصنيف معين بواسطة سلاق
      *
-     *s @param  string $slug => slug متغير المعرف 
+     *s @param  mixed $id => id متغير المعرف 
      * @return object
      */
-    public function show(string $slug): ?object
+    public function show(mixed $id): ?object
     {
-        //slug  جلب العنصر بواسطة
-        $category = Category::Selection()->whereSlug($slug)->first();
+        //id  جلب العنصر بواسطة
+        $category = Category::find($id);
         // شرط اذا كان العنصر موجود
         if (!$category)
             //رسالة خطأ    
-            return response()->json(
-                [
-                    'الرسالة' => 'هذا العنصر غير موجود',
-                    'status' => false,
-                ],
-                403
-            );
-
+            return response()->error('هذا العنصر غير موجود', 403);
         // اظهار العنصر
-        return response()->json($category, 200);
+        return response()->success('تم جلب العنصر بنجاح', $category);
     }
 
     /**
@@ -86,23 +73,17 @@ class CategoryController extends Controller
             // بداية المعاملة مع البيانات المرسلة لقاعدة بيانات :
             DB::beginTransaction();
             // عملية اضافة تصنيف :
-            Category::create($data);
+            $category = Category::create($data);
             // انهاء المعاملة بشكل جيد :
             DB::commit();
             // =================================================
             // رسالة نجاح عملية الاضافة:
-            return response()->json('تم انشاء تصنيف جديد بنجاح', 201);
+            return response()->success('تم انشاء تصنيف جديد بنجاح', $category);
         } catch (Exception $ex) {
             // لم تتم المعاملة بشكل نهائي و لن يتم ادخال اي بيانات لقاعدة البيانات
             DB::rollback();
             // رسالة خطأ :
-            return response()->json(
-                [
-                    'الرسالة' => 'هناك خطأ ما حدث في قاعدة بيانات , يرجى التأكد من ذلك',
-                    'status' => false,
-                ],
-                403
-            );
+            return response()->error('هناك خطأ ما حدث في قاعدة بيانات , يرجى التأكد من ذلك', 403);
         }
     }
 
@@ -121,14 +102,8 @@ class CategoryController extends Controller
 
             // شرط اذا كان العنصر موجود او المعرف اذا كان رقم غير صحيح
             if (!$category || !is_numeric($id))
-                // رسالة خطأ
-                return response()->json(
-                    [
-                        'الرسالة' => 'هذا العنصر غير موجود',
-                        'status' => false,
-                    ],
-                    403
-                );
+                //رسالة خطأ    
+                return response()->error('هذا العنصر غير موجود', 403);
 
             // جلب البيانات و وضعها في مصفوفة:
             $data = [
@@ -160,18 +135,12 @@ class CategoryController extends Controller
             // =================================================
 
             // رسالة نجاح عملية التعديل:
-            return response()->json('تم التعديل على تصنيف بنجاح', 201);
+            return response()->success('تم التعديل على تصنيف بنجاح', $category);
         } catch (Exception $ex) {
             // لم تتم المعاملة بشكل نهائي و لن يتم ادخال اي بيانات لقاعدة البيانات
             DB::rollback();
             // رسالة خطأ
-            return response()->json(
-                [
-                    'status' => false,
-                    'الرسالة' => 'هناك خطأ ما حدث في قاعدة بيانات , يرجى التأكد من ذلك',
-                ],
-                403
-            );
+            return response()->error('هناك خطأ ما حدث في قاعدة بيانات , يرجى التأكد من ذلك', 403);
         }
     }
 
@@ -188,27 +157,15 @@ class CategoryController extends Controller
             $category = Category::find($id);
             // شرط اذا كان العنصر موجود او المعرف اذا كان رقم غير صحيح
             if (!$category || !is_numeric($id))
-                // رسالة خطأ
-                return response()->json(
-                    [
-                        'الرسالة' => 'هذا العنصر غير موجود',
-                        'status' => false,
-                    ],
-                    403
-                );
+                //رسالة خطأ    
+                return response()->error('هذا العنصر غير موجود', 403);
             // جلب عدد التصنيفات الفرعية
             $subcategory = $category->whereNotNull('parent_id')->count();
 
             // شرط اذا كان العنصر لديه تصنيفات فرعية ام لا
             if ($subcategory > 0)
-                // رسالة خطأ   
-                return response()->json(
-                    [
-                        'الرسالة' => 'لا تستطيع حذف هذا العنصر بسبب علاقته مع العناصر الفرعية',
-                        'status' => false,
-                    ],
-                    403
-                );
+                // رسالة خطأ    
+                return response()->error('لا تستطيع حذف هذا العنصر بسبب علاقته مع العناصر الفرعية', 403);
 
             // ============= التعديل على التصنيف  ================:
             // بداية المعاملة مع البيانات المرسلة لقاعدة بيانات :
@@ -220,18 +177,12 @@ class CategoryController extends Controller
             // =================================================
 
             // رسالة نجاح عملية التعديل:
-            return response()->json('تم حذف تصنيف بنجاح', 201);
+            return response()->success('تم حذف تصنيف بنجاح', $category);
         } catch (Exception $ex) {
             // لم تتم المعاملة بشكل نهائي و لن يتم ادخال اي بيانات لقاعدة البيانات
             DB::rollback();
             // رسالة خطأ
-            return response()->json(
-                [
-                    'status' => false,
-                    'الرسالة' => 'هناك خطأ ما حدث في قاعدة بيانات , يرجى التأكد من ذلك',
-                ],
-                403
-            );
+            return response()->error('هناك خطأ ما حدث في قاعدة بيانات , يرجى التأكد من ذلك', 403);
         }
     }
 }

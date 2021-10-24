@@ -22,15 +22,8 @@ class SubCategoryController extends Controller
     {
         // جلب التصنيفات الرئيسية
         $categories = Category::selection()->whereNull('parent_id')->pluck('name_ar', 'id');
-        // اظهار العنصر
-        return response()->json(
-            [
-                'status' => true,
-                'الرسالة' => 'عرض التصنيفات الرئيسية من اجل انشاء',
-                'data'   => $categories
-            ],
-            200
-        );
+        // اظهار العناصر
+        return response()->success('عرض كل تصنيفات الرئيسية ', $categories);
     }
     /**
      * show => id  دالة جلب تصنيف فرعي معين بواسطة المعرف
@@ -45,22 +38,10 @@ class SubCategoryController extends Controller
         $subcategory = Category::selection()->whereId($id)->whereNotNull('parent_id')->first();
         // شرط اذا كان العنصر موجود ام لا
         if (!$subcategory)
-            return response()->json(
-                [
-                    'الرسالة' => 'هذا العنصر غير موجود',
-                    'status' => false,
-                ],
-                403
-            );
-
+            // رسالة خطأ
+            return response()->error('هذا العنصر غير موجود', 403);
         // اظهار العنصر
-        return response()->json(
-            [
-                'status' => true,
-                'data'   => $subcategory
-            ],
-            200
-        );
+        return response()->success('تم جلب العنصر بنجاح', $subcategory);
     }
 
     /**
@@ -94,25 +75,12 @@ class SubCategoryController extends Controller
             // =================================================
 
             // رسالة نجاح عملية الاضافة:
-            return response()->json(
-                [
-                    'status' => true,
-                    'الرسالة' => 'تم انشاء تصنيف فرعي جديد بنجاح',
-                    'data' => $subcategory
-                ],
-                201
-            );
+            return response()->success('تم انشاء تصنيف فرعي جديد بنجاح', $subcategory);
         } catch (Exception $ex) {
             // لم تتم المعاملة بشكل نهائي و لن يتم ادخال اي بيانات لقاعدة البيانات
             DB::rollback();
             // رسالة خطأ
-            return response()->json(
-                [
-                    'status' => false,
-                    'الرسالة' => 'هناك خطأ ما حدث في قاعدة بيانات , يرجى التأكد من ذلك',
-                ],
-                403
-            );
+            return response()->error('هناك خطأ ما حدث في قاعدة بيانات , يرجى التأكد من ذلك', 403);
         }
     }
 
@@ -131,13 +99,7 @@ class SubCategoryController extends Controller
             // شرط اذا كان العنصر موجود او المعرف اذا كان رقم غير صحيح
             if (!$subcategory || !is_numeric($id))
                 // رسالة خطأ
-                return response()->json(
-                    [
-                        'الرسالة' => 'هذا العنصر غير موجود',
-                        'status' => false,
-                    ],
-                    403
-                );
+                return response()->error('هذا العنصر غير موجود', 403);
 
             // جلب البيانات و وضعها في مصفوفة:
             $data = [
@@ -169,26 +131,13 @@ class SubCategoryController extends Controller
             DB::commit();
             // =================================================
 
-            // رسالة نجاح عملية الاضافة:
-            return response()->json(
-                [
-                    'status' => true,
-                    'الرسالة' => 'تم التعديل على تصنيف الفرعي بنجاح',
-                    'data' => $subcategory
-                ],
-                201
-            );
+            // رسالة نجاح عملية التعديل:
+            return response()->success('تم التعديل على تصنيف الفرعي بنجاح', $subcategory);
         } catch (Exception $ex) {
             // لم تتم المعاملة بشكل نهائي و لن يتم ادخال اي بيانات لقاعدة البيانات
             DB::rollback();
             // رسالة خطأ :
-            return response()->json(
-                [
-                    'الرسالة' => 'هناك خطأ ما حدث في قاعدة بيانات , يرجى التأكد من ذلك',
-                    'status' => false,
-                ],
-                403
-            );
+            return response()->error('هناك خطأ ما حدث في قاعدة بيانات , يرجى التأكد من ذلك', 403);
         }
     }
 
@@ -206,35 +155,24 @@ class SubCategoryController extends Controller
             // شرط اذا كان العنصر موجود او المعرف اذا كان رقم غير صحيح
             if (!$subcategory || !is_numeric($id))
                 // رسالة خطأ
-                return response()->json(
-                    [
-                        'الرسالة' => 'هذا العنصر غير موجود',
-                        'status' => false,
-                    ],
-                    403
-                );
-            // ============= التعديل على التصنيف  ================:
+                return response()->error('هذا العنصر غير موجود', 403);
+
+            // ============= حذف التصنيف الفرعي  ================:
             // بداية المعاملة مع البيانات المرسلة لقاعدة بيانات :
             DB::beginTransaction();
-            // عملية حذف التصنيف :
+            // عملية حذف التصنيف الفرعي:
             $subcategory->delete();
             // انهاء المعاملة بشكل جيد :
             DB::commit();
             // =================================================
 
             // رسالة نجاح عملية التعديل:
-            return response()->json('تم حذف تصنيف الفرعي بنجاح', 201);
+            return response()->success('تم حذف تصنيف الفرعي بنجاح', $subcategory);
         } catch (Exception $ex) {
             // لم تتم المعاملة بشكل نهائي و لن يتم ادخال اي بيانات لقاعدة البيانات
             DB::rollback();
             // رسالة خطأ
-            return response()->json(
-                [
-                    'الرسالة' => 'هناك خطأ ما حدث في قاعدة بيانات , يرجى التأكد من ذلك',
-                    'status' => false,
-                ],
-                403
-            );
+            return response()->error('هناك خطأ ما حدث في قاعدة بيانات , يرجى التأكد من ذلك', 403);
         }
     }
 }
