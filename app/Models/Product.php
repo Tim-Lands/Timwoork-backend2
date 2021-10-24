@@ -18,7 +18,18 @@ class Product extends Model
     // ================== Accessor & Metators ==========================
     // code
     // ============================ Scopes =============================
-    // code
+
+    /**
+     * scopeSelection => دالة من اجل جلب البيانات
+     *
+     * @param  mixed $query
+     * @return object
+     */
+    public function scopeSelection(mixed $query): ?object
+    {
+        return $query->select('id', 'name_ar', 'name_en', 'name_fr', 'slug', 'description_ar', 'description_en', 'description_fr', 'icon', 'parent_id', 'created_at');
+    }
+
     // ========================== Relations ============================
 
 
