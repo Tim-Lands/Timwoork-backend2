@@ -5,7 +5,8 @@ use App\Http\Controllers\Dashboard\{
     CategoryController,
     SubCategoryController,
     LevelController,
-    BadgeController
+    BadgeController,
+    ProductController
 };
 use Illuminate\Support\Facades\Route;
 
@@ -31,7 +32,7 @@ Route::prefix('categories')->group(function () {
     // مسار انشاء عنصر جديد
     Route::post('/store',         [CategoryController::class, 'store']);
     // مسار جلب عنصر الواحد
-    Route::get('/{slug}/show',    [CategoryController::class, 'show']);
+    Route::get('/{id}',           [CategoryController::class, 'show']);
     // مسار التعديل على العنصر
     Route::post('/{id}/update',   [CategoryController::class, 'update']);
     // مسار حذف العنصر
@@ -42,11 +43,11 @@ Route::prefix('categories')->group(function () {
 Route::prefix('subcategories')->group(function () {
 
     // مسار عرض عنصر من اجل انشاء
-    Route::get('/create',          [SubCategoryController::class, 'create']);
+    Route::get('/create',           [SubCategoryController::class, 'create']);
     // مسار انشاء عنصر جديد
     Route::post('/store',           [SubCategoryController::class, 'store']);
     // مسار جلب عنصر الواحد
-    Route::get('/{id}/show',        [SubCategoryController::class, 'show']);
+    Route::get('/{id}',             [SubCategoryController::class, 'show']);
     // مسار التعديل على العنصر
     Route::post('/{id}/update',     [SubCategoryController::class, 'update']);
     // مسار حذف العنصر
@@ -65,7 +66,7 @@ Route::prefix('levels')->group(function () {
     // مسار انشاء عنصر جديد
     Route::post('/store',       [LevelController::class, 'store']);
     // مسار جلب عنصر الواحد
-    Route::get('/{slug}/show',  [LevelController::class, 'show']);
+    Route::get('/{id}',         [LevelController::class, 'show']);
     // مسار التعديل على العنصر
     Route::post('/{id}/update', [LevelController::class, 'update']);
     // مسار حذف العنصر
@@ -80,9 +81,23 @@ Route::prefix('badges')->group(function () {
     // مسار انشاء عنصر جديد
     Route::post('/store',       [BadgeController::class, 'store']);
     // مسار جلب عنصر الواحد
-    Route::get('/{slug}/show',  [BadgeController::class, 'show']);
+    Route::get('/{id}',         [BadgeController::class, 'show']);
     // مسار التعديل على العنصر
     Route::post('/{id}/update', [BadgeController::class, 'update']);
     // مسار حذف العنصر
     Route::post('/{id}/delete', [BadgeController::class, 'delete']);
+});
+
+// =============================== مسارات الخدمة ====================================
+Route::prefix('products')->group(function () {
+    // مسار العرض
+    Route::get('/',               [ProductController::class, 'index']);
+    // مسار انشاء عنصر جديد
+    Route::post('/store',         [ProductController::class, 'store']);
+    // مسار جلب عنصر الواحد
+    Route::get('/{id}',           [ProductController::class, 'show']);
+    // مسار التعديل على العنصر
+    Route::post('/{id}/update',   [ProductController::class, 'update']);
+    // مسار حذف العنصر
+    Route::post('/{id}/delete',   [ProductController::class, 'delete']);
 });
