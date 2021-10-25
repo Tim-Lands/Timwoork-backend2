@@ -1,4 +1,5 @@
 ## Timwoork
+
 Write instructions here
 
 ## How to use Endpoints:
@@ -232,7 +233,7 @@ Write instructions here
 
 5 - SubCategories :
 
--   Show Catogories - url : `http:localhost:8000/dashboard/subcategories` - method: get - response: - success : true, - msg: 'عرض كل تصنيفات الرئيسية' - data: categories
+-   Show Catogories - url : `http:localhost:8000/dashboard/categories/{id}` - method: get - response: - success : true, - msg: 'عرض كل تصنيفات الرئيسية' - data: categories
 
 -   Show SubCategory Details
 
