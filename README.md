@@ -289,11 +289,71 @@ Write instructions here
 
 -   Delete Current SubCategory
 
-    -   url : `http:localhost:8000/dashboard/subcategories/{id}/delete`
+        -   url : `http:localhost:8000/dashboard/subcategories/{id}/delete`
+        -   method: post
+        -   success response:
+            -   success : true,
+            -   msg: "لقد تمّ حذف التصنيف الفرعي بنجاح"
+        -   error response:
+            -   success : false,
+            -   msg: "هناك خطأ ما حدث في قاعدة بيانات , يرجى التأكد من ذلك"
+
+6 - Tags :
+
+-   Show tags - url : `http:localhost:8000/dashboard/tags` - method: get - response: - success : true, - msg: 'عرض كل الوسوم' - data: tags
+
+-   Show Tag Details
+
+    -   url : `http:localhost:8000/dashboard/tags/{id}`
+    -   method: get
+    -   response:
+        -   success : true,
+        -   msg: "تم جلب العنصر بنجاح"
+        -   data: tag
+
+-   Add New Category
+
+    -   url : `http:localhost:8000/dashboard/tags/store`
+    -   method: post
+    -   parameters:
+
+        -   name_ar: string|required|unique
+        -   name_en: string|nullable|unique
+        -   name_fr: string|nullable|unique
+
+    -   success response:
+        -   success : true,
+        -   msg: "لقد تمّ إضافة وسم بنجاح"
+        -   data: tag
+    -   error response:
+        -   success : false,
+        -   msg: "هناك خطأ ما حدث في قاعدة بيانات , يرجى التأكد من ذلك"
+
+-   Update Current Tag
+
+    -   url : `http:localhost:8000/dashboard/tags/{id}/update`
+    -   method: post
+    -   parameters:
+
+        -   name_ar: string|required|unique
+        -   name_en: string|required|unique
+        -   name_fr: string|nullable|unique
+
+    -   success response:
+        -   success : true,
+        -   msg: "لقد تمّ التعديل على الوسم بنجاح"
+        -   data: tag
+    -   error response:
+        -   success : false,
+        -   msg: "هناك خطأ ما حدث في قاعدة بيانات , يرجى التأكد من ذلك"
+
+-   Delete Current SubCategory
+
+    -   url : `http:localhost:8000/dashboard/tags/{id}/delete`
     -   method: post
     -   success response:
         -   success : true,
-        -   msg: "لقد تمّ حذف التصنيف الفرعي بنجاح"
+        -   msg: "لقد تمّ حذف الوسم بنجاح"
     -   error response:
         -   success : false,
         -   msg: "هناك خطأ ما حدث في قاعدة بيانات , يرجى التأكد من ذلك"
