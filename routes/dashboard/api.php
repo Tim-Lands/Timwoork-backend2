@@ -6,7 +6,8 @@ use App\Http\Controllers\Dashboard\{
     SubCategoryController,
     LevelController,
     BadgeController,
-    ProductController
+    ProductController,
+    TagController
 };
 use Illuminate\Support\Facades\Route;
 
@@ -100,4 +101,18 @@ Route::prefix('products')->group(function () {
     Route::post('/{id}/update',   [ProductController::class, 'update']);
     // مسار حذف العنصر
     Route::post('/{id}/delete',   [ProductController::class, 'delete']);
+});
+
+// =============================== مسارات الوسم ====================================
+Route::prefix('tags')->group(function () {
+    // مسار العرض
+    Route::get('/',               [TagController::class, 'index']);
+    // مسار انشاء عنصر جديد
+    Route::post('/store',         [TagController::class, 'store']);
+    // مسار جلب عنصر الواحد
+    Route::get('/{id}',           [TagController::class, 'show']);
+    // مسار التعديل على العنصر
+    Route::post('/{id}/update',   [TagController::class, 'update']);
+    // مسار حذف العنصر
+    Route::post('/{id}/delete',   [TagController::class, 'delete']);
 });
