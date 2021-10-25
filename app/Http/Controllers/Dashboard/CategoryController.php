@@ -40,7 +40,9 @@ class CategoryController extends Controller
     public function show(mixed $id): ?object
     {
         //id  جلب العنصر بواسطة
-        $category = Category::find($id);
+        $category = Category::whereId($id)->with(['subcategories' => function ($q) {
+            $q->select('id', 'name_ar', 'name_en', 'parent_id', 'icon');
+        }])->first();
         // شرط اذا كان العنصر موجود
         if (!$category)
             //رسالة خطأ    
