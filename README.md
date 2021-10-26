@@ -40,7 +40,16 @@ Write instructions here
 
 2- Levels:
 
--   Show Levels - url : `http:localhost:8000/dashboard/levels` - method: get - parameters: - type (get query ?type=): 0 buyer levels , 1 seller levels, null all levels - response: - success : true, - msg: "لقد تمّ جلب المستويات بنجاح" - data: levels
+-   Show Levels
+
+    -   url : `http:localhost:8000/dashboard/levels`
+    -   method: get
+    -   parameters:
+        -   type (get query ?type=): 0 buyer levels , 1 seller levels, null all levels
+    -   response:
+        -   success : true,
+        -   msg: "لقد تمّ جلب المستويات بنجاح"
+        -   data: levels
 
 -   Show Level Details
 
@@ -106,7 +115,14 @@ Write instructions here
 
 3- Badges:
 
--   Show Badges - url : `http:localhost:8000/dashboard/badges` - method: get - response: - success : true, - msg: "لقد تمّ جلب الشارات بنجاح" - data: badges
+-   Show Badges
+
+    -   url : `http:localhost:8000/dashboard/badges`
+    -   method: get
+    -   response:
+        -   success : true,
+        -   msg: "لقد تمّ جلب الشارات بنجاح"
+        -   data: badges
 
 -   Show Badge Details
 
@@ -166,7 +182,14 @@ Write instructions here
 
 4 - Categories :
 
--   Show Catogories - url : `http:localhost:8000/dashboard/categories` - method: get - response: - success : true, - msg: 'عرض كل تصنيفات الرئيسية و الفرعية' - data: categories
+-   Show Catogories
+
+    -   url : `http:localhost:8000/dashboard/categories`
+    -   method: get
+    -   response:
+        -   success : true,
+        -   msg: 'عرض كل تصنيفات الرئيسية و الفرعية'
+        -   data: categories
 
 -   Show Category Details
 
@@ -233,7 +256,14 @@ Write instructions here
 
 5 - SubCategories :
 
--   Show Catogories - url : `http:localhost:8000/dashboard/categories/{id}` - method: get - response: - success : true, - msg: 'عرض كل تصنيفات الرئيسية' - data: categories
+-   Show Catogories
+
+    -   url : `http:localhost:8000/dashboard/categories/{id}`
+    -   method: get
+    -   response:
+        -   success : true,
+        -   msg: 'عرض كل تصنيفات الرئيسية'
+        -   data: categories
 
 -   Show SubCategory Details
 
@@ -301,7 +331,13 @@ Write instructions here
 
 6 - Tags :
 
--   Show tags - url : `http:localhost:8000/dashboard/tags` - method: get - response: - success : true, - msg: 'عرض كل الوسوم' - data: tags
+-   Show tags - url : `http:localhost:8000/dashboard/tags`
+
+    -   method: get
+    -   response:
+        -   success : true,
+        -   msg: 'عرض كل الوسوم'
+        -   data: tags
 
 -   Show Tag Details
 
@@ -372,7 +408,7 @@ Write instructions here
 
 -   Show product Actived :
 
-    -   url : `http:localhost:8000/dashboard/active/status`
+    -   url : `http:localhost:8000/dashboard/products/active/status`
     -   method: get
     -   response:
         -   success : true,
@@ -381,7 +417,7 @@ Write instructions here
 
 -   Show product Rejected :
 
-    -   url : `http:localhost:8000/dashboard/reject/status`
+    -   url : `http:localhost:8000/dashboard/products/reject/status`
     -   method: get
     -   response:
         -   success : true,
