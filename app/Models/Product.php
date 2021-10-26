@@ -15,6 +15,8 @@ class Product extends Model
 
     // ===========================Contants =============================
     // code
+    const PRDUCT_REJECT = 0;
+    const PRDUCT_ACTIVE = 1;
     // ================== Accessor & Metators ==========================
     // code
     // ============================ Scopes =============================
@@ -27,7 +29,7 @@ class Product extends Model
      */
     public function scopeSelection(mixed $query): ?object
     {
-        return $query->select('id', 'name_ar', 'name_en', 'name_fr', 'slug', 'description_ar', 'description_en', 'description_fr', 'icon', 'parent_id', 'created_at');
+        return $query->select('id', 'title', 'slug', 'content', 'price', 'duration', 'category_id', 'profile_seller_id', 'buyer_instruct', 'status', 'created_at');
     }
 
     // ========================== Relations ============================

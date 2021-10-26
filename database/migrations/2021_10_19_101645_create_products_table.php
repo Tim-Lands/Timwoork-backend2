@@ -20,11 +20,12 @@ class CreateProductsTable extends Migration
             $table->text('content');
             $table->float('price', 5, 2);
             $table->string('duration');
-            $table->string('some_develop');
+            // $table->string('some_develop');
             $table->text('buyer_instruct');
-
+            $table->boolean('status')->nullable();
             // relation model of ProfileSeller
-            $table->foreignId('profile_seller_id')->constrained();
+            $table->bigInteger('profile_seller_id')->unsigned();
+            // $table->foreignId('profile_seller_id')->constrained();
             // relation model of Category
             $table->foreignId('category_id')->constrained();
 

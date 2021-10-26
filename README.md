@@ -1,4 +1,5 @@
 ## Timwoork
+
 Write instructions here
 
 ## How to use Endpoints:
@@ -39,7 +40,16 @@ Write instructions here
 
 2- Levels:
 
--   Show Levels - url : `http:localhost:8000/dashboard/levels` - method: get - parameters: - type (get query ?type=): 0 buyer levels , 1 seller levels, null all levels - response: - success : true, - msg: "لقد تمّ جلب المستويات بنجاح" - data: levels
+-   Show Levels
+
+    -   url : `http:localhost:8000/dashboard/levels`
+    -   method: get
+    -   parameters:
+        -   type (get query ?type=): 0 buyer levels , 1 seller levels, null all levels
+    -   response:
+        -   success : true,
+        -   msg: "لقد تمّ جلب المستويات بنجاح"
+        -   data: levels
 
 -   Show Level Details
 
@@ -105,7 +115,14 @@ Write instructions here
 
 3- Badges:
 
--   Show Badges - url : `http:localhost:8000/dashboard/badges` - method: get - response: - success : true, - msg: "لقد تمّ جلب الشارات بنجاح" - data: badges
+-   Show Badges
+
+    -   url : `http:localhost:8000/dashboard/badges`
+    -   method: get
+    -   response:
+        -   success : true,
+        -   msg: "لقد تمّ جلب الشارات بنجاح"
+        -   data: badges
 
 -   Show Badge Details
 
@@ -165,7 +182,14 @@ Write instructions here
 
 4 - Categories :
 
--   Show Catogories - url : `http:localhost:8000/dashboard/categories` - method: get - response: - success : true, - msg: 'عرض كل تصنيفات الرئيسية و الفرعية' - data: categories
+-   Show Catogories
+
+    -   url : `http:localhost:8000/dashboard/categories`
+    -   method: get
+    -   response:
+        -   success : true,
+        -   msg: 'عرض كل تصنيفات الرئيسية و الفرعية'
+        -   data: categories
 
 -   Show Category Details
 
@@ -232,7 +256,14 @@ Write instructions here
 
 5 - SubCategories :
 
--   Show Catogories - url : `http:localhost:8000/dashboard/subcategories` - method: get - response: - success : true, - msg: 'عرض كل تصنيفات الرئيسية' - data: categories
+-   Show Catogories
+
+    -   url : `http:localhost:8000/dashboard/categories/{id}`
+    -   method: get
+    -   response:
+        -   success : true,
+        -   msg: 'عرض كل تصنيفات الرئيسية'
+        -   data: categories
 
 -   Show SubCategory Details
 
@@ -300,7 +331,13 @@ Write instructions here
 
 6 - Tags :
 
--   Show tags - url : `http:localhost:8000/dashboard/tags` - method: get - response: - success : true, - msg: 'عرض كل الوسوم' - data: tags
+-   Show tags - url : `http:localhost:8000/dashboard/tags`
+
+    -   method: get
+    -   response:
+        -   success : true,
+        -   msg: 'عرض كل الوسوم'
+        -   data: tags
 
 -   Show Tag Details
 
@@ -357,3 +394,59 @@ Write instructions here
     -   error response:
         -   success : false,
         -   msg: "هناك خطأ ما حدث في قاعدة بيانات , يرجى التأكد من ذلك"
+
+7 - Product :
+
+-   Show all products
+
+    -   url : `http:localhost:8000/dashboard/products`
+    -   method: get
+    -   response:
+        -   success : true,
+        -   msg: 'عرض كل الخدمات'
+        -   data: products
+
+-   Show product Actived :
+
+    -   url : `http:localhost:8000/dashboard/products/active/status`
+    -   method: get
+    -   response:
+        -   success : true,
+        -   msg: 'عرض كل الخدمات التي تم تنشيطها'
+        -   data: products_actived
+
+-   Show product Rejected :
+
+    -   url : `http:localhost:8000/dashboard/products/reject/status`
+    -   method: get
+    -   response:
+        -   success : true,
+        -   msg: 'عرض كل الخدمات التي تم رفضها'
+        -   data: products_rejected
+
+-   Show products Details
+
+    -   url : `http:localhost:8000/dashboard/products/{id}`
+    -   method: get
+    -   response:
+        -   success : true,
+        -   msg: "تم جلب العنصر بنجاح"
+        -   data: product
+
+-   Active product
+
+    -   url : `http:localhost:8000/dashboard/products/{id}/activeProduct`
+    -   method: post
+    -   response:
+        -   success : true,
+        -   msg: "تم تنشيط الخدمة بنجاح"
+        -   data: product
+
+-   Reject product
+
+    -   url : `http:localhost:8000/dashboard/products/{id}/rejectProduct`
+    -   method: post
+    -   response:
+        -   success : true,
+        -   msg: "تم رفض الخدمة بنجاح"
+        -   data: product
