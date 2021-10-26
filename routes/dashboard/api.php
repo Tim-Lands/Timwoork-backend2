@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Dashboard\{
+    ActivedProductController,
     AuthController,
     CategoryController,
     SubCategoryController,
@@ -91,16 +92,18 @@ Route::prefix('badges')->group(function () {
 
 // =============================== مسارات الخدمة ====================================
 Route::prefix('products')->group(function () {
-    // مسار العرض
-    Route::get('/',               [ProductController::class, 'index']);
-    // مسار انشاء عنصر جديد
-    Route::post('/store',         [ProductController::class, 'store']);
+    // مسار العرض الخدمات
+    Route::get('/',                     [ProductController::class, 'index']);
+    // مسار العرض الخدمات التي تم تنشيطها 
+    Route::get('/active/status',        [ProductController::class, 'getRroductsActived']);
+    // مسار العرض الخدمات التي تم تنشيطها 
+    Route::get('/reject/status',        [ProductController::class, 'getProductsRejected']);
     // مسار جلب عنصر الواحد
-    Route::get('/{id}',           [ProductController::class, 'show']);
-    // مسار التعديل على العنصر
-    Route::post('/{id}/update',   [ProductController::class, 'update']);
-    // مسار حذف العنصر
-    Route::post('/{id}/delete',   [ProductController::class, 'delete']);
+    Route::get('/{id}',                 [ProductController::class, 'show']);
+    // مسار تنشيط الخدمة
+    Route::post('/{id}/activeProduct',  [ActivedProductController::class, 'activeProduct']);
+    // مسار رفض الخدمة
+    Route::post('/{id}/rejectProduct',  [ActivedProductController::class, 'rejectProduct']);
 });
 
 // =============================== مسارات الوسم ====================================

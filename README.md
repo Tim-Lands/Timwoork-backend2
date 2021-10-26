@@ -358,3 +358,59 @@ Write instructions here
     -   error response:
         -   success : false,
         -   msg: "هناك خطأ ما حدث في قاعدة بيانات , يرجى التأكد من ذلك"
+
+7 - Product :
+
+-   Show all products
+
+    -   url : `http:localhost:8000/dashboard/products`
+    -   method: get
+    -   response:
+        -   success : true,
+        -   msg: 'عرض كل الخدمات'
+        -   data: products
+
+-   Show product Actived :
+
+    -   url : `http:localhost:8000/dashboard/active/status`
+    -   method: get
+    -   response:
+        -   success : true,
+        -   msg: 'عرض كل الخدمات التي تم تنشيطها'
+        -   data: products_actived
+
+-   Show product Rejected :
+
+    -   url : `http:localhost:8000/dashboard/reject/status`
+    -   method: get
+    -   response:
+        -   success : true,
+        -   msg: 'عرض كل الخدمات التي تم رفضها'
+        -   data: products_rejected
+
+-   Show products Details
+
+    -   url : `http:localhost:8000/dashboard/products/{id}`
+    -   method: get
+    -   response:
+        -   success : true,
+        -   msg: "تم جلب العنصر بنجاح"
+        -   data: product
+
+-   Active product
+
+    -   url : `http:localhost:8000/dashboard/products/{id}/activeProduct`
+    -   method: post
+    -   response:
+        -   success : true,
+        -   msg: "تم تنشيط الخدمة بنجاح"
+        -   data: product
+
+-   Reject product
+
+    -   url : `http:localhost:8000/dashboard/products/{id}/rejectProduct`
+    -   method: post
+    -   response:
+        -   success : true,
+        -   msg: "تم رفض الخدمة بنجاح"
+        -   data: product
