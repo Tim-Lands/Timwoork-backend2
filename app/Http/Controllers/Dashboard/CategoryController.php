@@ -40,7 +40,7 @@ class CategoryController extends Controller
     public function show(mixed $id): ?object
     {
         //id  جلب العنصر بواسطة
-        $category = Category::whereId($id)->with(['subcategories' => function ($q) {
+        $category = Category::selection()->whereId($id)->with(['subcategories' => function ($q) {
             $q->select('id', 'name_ar', 'name_en', 'parent_id', 'icon');
         }])->first();
         // شرط اذا كان العنصر موجود
@@ -156,13 +156,13 @@ class CategoryController extends Controller
     {
         try {
             //من اجل الحذف  id  جلب العنصر بواسطة المعرف 
-            $category = Category::find($id);
+            $category = Category::selection()->whereId($id)->first();
             // شرط اذا كان العنصر موجود او المعرف اذا كان رقم غير صحيح
             if (!$category || !is_numeric($id))
                 //رسالة خطأ    
                 return response()->error('هذا العنصر غير موجود', 403);
             // جلب عدد التصنيفات الفرعية
-            $subcategory = $category->whereNotNull('parent_id')->count();
+            $subcategory = $category->whereId($id)->withCount('subCategories')->first()->sub_categories_count;
 
             // شرط اذا كان العنصر لديه تصنيفات فرعية ام لا
             if ($subcategory > 0)
