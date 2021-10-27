@@ -10,6 +10,7 @@ use App\Traits\LoginUser;
 use GuzzleHttp\Exception\ClientException;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Laravel\Socialite\Facades\Socialite;
 
@@ -26,11 +27,9 @@ class LoginController extends Controller
         // في حالة عدم وجود المستخدم في قاعدة البيانات أو عدم تطابق كلمة المرور المحفوظة مع كلمة المرور المرسلة
         // يتم إرسال رسالة عدم صحة البيانات
         if (!$user || !Hash::check($request->password, $user->password)) {
-            return response()->json([
-                'msg' => "invalid credentials"
-            ], Response::HTTP_UNAUTHORIZED);
+            return response()->error('المعلومات التي أدخلتها خاطئة', 401);
         }
-
+        Auth::login($user);
         // في حالة صحة البيانات سيتم إنشاء توكن وتخزينه في جلسة كوكي وإرساله مع كل طلب
         return $this->login_with_token($user);
     }
@@ -60,7 +59,7 @@ class LoginController extends Controller
         try {
             $s_user = Socialite::driver($provider)->stateless()->user();
         } catch (ClientException $exception) {
-            return $this->error("invalid credentials");
+            return response()->error('المعلومات التي أدخلتها خاطئة', 401);
         }
 
         $user = User::create();
@@ -70,6 +69,5 @@ class LoginController extends Controller
         ]);
         return $this->login_with_token($user);
     }
-    // test branch
     /**************************************************************** */
 }

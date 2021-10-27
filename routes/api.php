@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\RegisterController;
+use App\Http\Controllers\ProfileController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -27,3 +28,11 @@ Route::post('/email/verify', [RegisterController::class, 'verifyEmail']);
 Route::post('/email/resend', [RegisterController::class, 'resend_verify_code']);
 
 /****************** End Auth Routes ***********************/
+
+// =============================== مسارات الملف الشخصي ==================================
+
+Route::prefix('profiles')->group(function () {
+
+    Route::post('/step_one', [ProfileController::class, 'step_one']);
+    Route::get('/{username}', [ProfileController::class, 'show']);
+});
