@@ -157,6 +157,13 @@ class SubCategoryController extends Controller
                 // رسالة خطأ
                 return response()->error('هذا العنصر غير موجود', 403);
 
+            // جلب عدد الخدمات التابعين لهذا التصنيف الفرعي    
+            $products = $subcategory->whereId($id)->withCount('products')->first()->products_count;
+            // شرط اذا كان العنصر لديه خدمات ام لا
+            if ($products > 0)
+                // رسالة خطأ    
+                return response()->error('لا تستطيع حذف هذا العنصر بسبب علاقته مع الخدمات', 403);
+
             // ============= حذف التصنيف الفرعي  ================:
             // بداية المعاملة مع البيانات المرسلة لقاعدة بيانات :
             DB::beginTransaction();
