@@ -35,7 +35,7 @@ class User extends Authenticatable
     protected $casts = [
         'email_verified_at' => 'datetime',
     ];
-
+    protected $with = ['profile'];
     // ===========================Contants =============================
     // code
     // ================== Acssesor & mutators ==========================
