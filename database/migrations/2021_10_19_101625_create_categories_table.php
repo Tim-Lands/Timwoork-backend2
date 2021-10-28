@@ -26,7 +26,11 @@ class CreateCategoriesTable extends Migration
             $table->string('icon');
 
             // relation of Model Category => Subcategory
-            $table->foreignId('parent_id')->nullable()->constrained('categories');
+            $table->foreignId('parent_id')
+                ->nullable()->constrained('categories')
+                ->onDelete('SET NULL')
+                ->onUpdate('SET NULL');
+
             $table->timestamps();
         });
     }

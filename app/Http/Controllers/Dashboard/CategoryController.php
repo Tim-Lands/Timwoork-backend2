@@ -161,13 +161,6 @@ class CategoryController extends Controller
             if (!$category || !is_numeric($id))
                 //رسالة خطأ    
                 return response()->error('هذا العنصر غير موجود', 403);
-            // جلب عدد التصنيفات الفرعية
-            $subcategory = $category->whereId($id)->withCount('subCategories')->first()->sub_categories_count;
-
-            // شرط اذا كان العنصر لديه تصنيفات فرعية ام لا
-            if ($subcategory > 0)
-                // رسالة خطأ    
-                return response()->error('لا تستطيع حذف هذا العنصر بسبب علاقته مع العناصر الفرعية', 403);
 
             // ============= التعديل على التصنيف  ================:
             // بداية المعاملة مع البيانات المرسلة لقاعدة بيانات :
@@ -181,6 +174,7 @@ class CategoryController extends Controller
             // رسالة نجاح عملية التعديل:
             return response()->success('تم حذف تصنيف بنجاح', $category);
         } catch (Exception $ex) {
+            return $ex;
             // لم تتم المعاملة بشكل نهائي و لن يتم ادخال اي بيانات لقاعدة البيانات
             DB::rollback();
             // رسالة خطأ
