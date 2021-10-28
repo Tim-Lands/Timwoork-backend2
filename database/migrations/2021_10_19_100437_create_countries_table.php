@@ -20,6 +20,8 @@ class CreateCountriesTable extends Migration
             $table->string('name_ar')->nullable();
             $table->string('name_en')->nullable();
             $table->string('name_fr')->nullable();
+            $table->string('flag')->default('flag.png');
+            $table->string('code_phone')->nullable();
             $table->timestamps();
         });
     }
