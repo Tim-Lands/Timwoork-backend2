@@ -348,7 +348,7 @@ Write instructions here
         -   msg: "تم جلب العنصر بنجاح"
         -   data: tag
 
--   Add New Category
+-   Add New Tag
 
     -   url : `http:localhost:8000/dashboard/tags/store`
     -   method: post
@@ -384,7 +384,7 @@ Write instructions here
         -   success : false,
         -   msg: "هناك خطأ ما حدث في قاعدة بيانات , يرجى التأكد من ذلك"
 
--   Delete Current SubCategory
+-   Delete Current Tag
 
     -   url : `http:localhost:8000/dashboard/tags/{id}/delete`
     -   method: post
@@ -444,9 +444,77 @@ Write instructions here
 
 -   Reject product
 
-    -   url : `http:localhost:8000/dashboard/products/{id}/rejectProduct`
-    -   method: post
+        -   url : `http:localhost:8000/dashboard/products/{id}/rejectProduct`
+        -   method: post
+        -   response:
+            -   success : true,
+            -   msg: "تم رفض الخدمة بنجاح"
+            -   data: product
+
+8 - Countries :
+
+-   Show tags - url : `http:localhost:8000/dashboard/countries`
+
+    -   method: get
     -   response:
         -   success : true,
-        -   msg: "تم رفض الخدمة بنجاح"
-        -   data: product
+        -   msg: 'عرض كل الدول'
+        -   data: countries
+
+-   Show Tag Details
+
+    -   url : `http:localhost:8000/dashboard/countries/{id}`
+    -   method: get
+    -   response:
+        -   success : true,
+        -   msg: "تم جلب العنصر بنجاح"
+        -   data: country
+
+-   Add New Tag
+
+    -   url : `http:localhost:8000/dashboard/countries/store`
+    -   method: post
+    -   parameters:
+
+        -   name_ar: string|required|unique
+        -   name_en: string|nullable|unique
+        -   name_fr: string|nullable|unique
+        -   code_phone: string|nullable|unique
+
+    -   success response:
+        -   success : true,
+        -   msg: "لقد تمّ إضافة دولة بنجاح"
+        -   data: country
+    -   error response:
+        -   success : false,
+        -   msg: "هناك خطأ ما حدث في قاعدة بيانات , يرجى التأكد من ذلك"
+
+-   Update Current Country
+
+    -   url : `http:localhost:8000/dashboard/countries/{id}/update`
+    -   method: post
+    -   parameters:
+
+        -   name_ar: string|required|unique
+        -   name_en: string|required|unique
+        -   name_fr: string|nullable|unique
+        -   code_phone: string|nullable|unique
+
+    -   success response:
+        -   success : true,
+        -   msg: "لقد تمّ التعديل على الدولة بنجاح"
+        -   data: country
+    -   error response:
+        -   success : false,
+        -   msg: "هناك خطأ ما حدث في قاعدة بيانات , يرجى التأكد من ذلك"
+
+-   Delete Current Country
+
+    -   url : `http:localhost:8000/dashboard/countries/{id}/delete`
+    -   method: post
+    -   success response:
+        -   success : true,
+        -   msg: "لقد تمّ حذف الدولة بنجاح"
+    -   error response:
+        -   success : false,
+        -   msg: "هناك خطأ ما حدث في قاعدة بيانات , يرجى التأكد من ذلك"

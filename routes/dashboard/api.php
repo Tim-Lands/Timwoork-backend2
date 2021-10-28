@@ -4,6 +4,7 @@ use App\Http\Controllers\Dashboard\{
     ActivedProductController,
     AuthController,
     CategoryController,
+    CountryController,
     SubCategoryController,
     LevelController,
     BadgeController,
@@ -118,4 +119,18 @@ Route::prefix('tags')->group(function () {
     Route::post('/{id}/update',   [TagController::class, 'update']);
     // مسار حذف العنصر
     Route::post('/{id}/delete',   [TagController::class, 'delete']);
+});
+// =============================== مسارات الدولة ==================================
+
+Route::prefix('countries')->group(function () {
+    // مسار العرض
+    Route::get('/',             [CountryController::class, 'index']);
+    // مسار انشاء عنصر جديد
+    Route::post('/store',       [CountryController::class, 'store']);
+    // مسار جلب عنصر الواحد
+    Route::get('/{id}',         [CountryController::class, 'show']);
+    // مسار التعديل على العنصر
+    Route::post('/{id}/update', [CountryController::class, 'update']);
+    // مسار حذف العنصر
+    Route::post('/{id}/delete', [CountryController::class, 'delete']);
 });
