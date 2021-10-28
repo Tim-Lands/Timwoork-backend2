@@ -21,8 +21,8 @@ class CreateProfilesTable extends Migration
             // type => male or female
             $table->boolean('gender')->nullable();
             $table->date('date_of_birth')->nullable();
-            $table->float('credit', 5, 2);
-            // dark mood => dark od light
+            $table->float('credit', 5, 2)->nullable();
+            // dark mode => dark or light
             $table->boolean('dark_mode')->default(0);
             // lang => ar or en or fr
             $table->string('lang')->nullable();
@@ -35,11 +35,11 @@ class CreateProfilesTable extends Migration
             // relation model of User
             $table->foreignId('user_id')->constrained();
             // relation model of Country
-            $table->foreignId('country_id')->constrained()->nullable();
+            $table->foreignId('country_id')->nullable();
             // relation model of Badge
-            $table->foreignId('badge_id')->constrained()->nullable();
+            $table->foreignId('badge_id')->nullable()->constrained();
             // relation model of Country
-            $table->foreignId('level_id')->constrained()->nullable();
+            $table->foreignId('level_id')->nullable()->constrained();
 
             $table->timestamps();
         });

@@ -41,5 +41,12 @@ class AppServiceProvider extends ServiceProvider
                 'msg' => $msg,
             ], $status_code);
         });
+
+        Response::macro('withCookie', function ($msg, $cookie) {
+            return response([
+                'success' => true,
+                'msg' => $msg,
+            ])->withCookie($cookie);
+        });
     }
 }
