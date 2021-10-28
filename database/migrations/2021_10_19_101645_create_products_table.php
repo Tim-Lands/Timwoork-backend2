@@ -27,7 +27,11 @@ class CreateProductsTable extends Migration
             $table->bigInteger('profile_seller_id')->unsigned();
             // $table->foreignId('profile_seller_id')->constrained();
             // relation model of Category
-            $table->foreignId('category_id')->constrained();
+            $table->foreignId('category_id')
+                ->nullable()
+                ->constrained()
+                ->onDelete('SET NULL')
+                ->onUpdate('SET NULL');
 
             $table->timestamps();
         });
