@@ -9,7 +9,8 @@ use App\Http\Controllers\Dashboard\{
     LevelController,
     BadgeController,
     ProductController,
-    TagController
+    StatisticContoller,
+    TagController,
 };
 use Illuminate\Support\Facades\Route;
 
@@ -25,9 +26,8 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/me', [AuthController::class, 'me']);
     Route::post('/logout', [AuthController::class, 'logout']);
 });
-
-
-
+// =================================== مسار الاحصائيات ===============================
+Route::get('/', StatisticContoller::class);
 // =============================== مسارات التصنيف ====================================
 Route::prefix('categories')->group(function () {
     // مسار العرض
