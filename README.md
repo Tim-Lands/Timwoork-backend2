@@ -510,11 +510,21 @@ Write instructions here
 
 -   Delete Current Country
 
-    -   url : `http:localhost:8000/dashboard/countries/{id}/delete`
-    -   method: post
-    -   success response:
+        -   url : `http:localhost:8000/dashboard/countries/{id}/delete`
+        -   method: post
+        -   success response:
+            -   success : true,
+            -   msg: "لقد تمّ حذف الدولة بنجاح"
+        -   error response:
+            -   success : false,
+            -   msg: "هناك خطأ ما حدث في قاعدة بيانات , يرجى التأكد من ذلك"
+
+9 - Statistic Dashboard :
+
+-   Show tags - url : `http:localhost:8000/dashboard`
+
+    -   method: get
+    -   response:
         -   success : true,
-        -   msg: "لقد تمّ حذف الدولة بنجاح"
-    -   error response:
-        -   success : false,
-        -   msg: "هناك خطأ ما حدث في قاعدة بيانات , يرجى التأكد من ذلك"
+        -   msg: 'احصائيات لوحة التحكم'
+        -   data: data
