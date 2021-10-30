@@ -12,6 +12,9 @@ class Profile extends Model
 {
     use HasFactory;
     protected $table = 'profiles';
+    public const COMPLETED_SETP_ONE = 1;
+    public const COMPLETED_SETP_TWO = 2;
+    public const COMPLETED_SETP_THREE = 3;
 
     // ===========================Contants =============================
     // code

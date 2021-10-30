@@ -37,8 +37,9 @@ trait VerificationEmailTrait
         // تفعيل البريد الالكتروني بادخال البريد الالكتروني مع رمز التفعيل
         $verify = VerifyEmailCode::where('email', $email)
             ->where('code', $code)
-            ->firstOrFail();
-
+            ->first();
+        if (!$verify)
+            return response()->error('حدث خطأ ما لم يتم العثور على رمز التفعيل الخاص بك');
         // التأكد من أن البريد الالكتروني مفعّل ام لا 
 
         if (!$verify->user->email_verified_at) {
