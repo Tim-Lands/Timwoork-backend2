@@ -4,7 +4,7 @@ namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class ProfileStepOneRequest extends FormRequest
+class ProfileStepTwoRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -24,12 +24,7 @@ class ProfileStepOneRequest extends FormRequest
     public function rules()
     {
         return [
-            'first_name' => 'required',
-            'last_name' => 'required',
-            'username' => ['required', 'unique:users,username', 'regex:/(^([a-zA-Z]+)(\d+)?$)/u'],
-            'date_of_birth' => 'required|date_format:Y-m-d',
-            'gender' => 'required',
-            'country_id' => 'required',
+            'avatar' => 'required',
         ];
     }
 }

@@ -33,6 +33,8 @@ Route::post('/email/resend', [RegisterController::class, 'resend_verify_code']);
 
 Route::prefix('profiles')->group(function () {
 
-    Route::post('/step_one', [ProfileController::class, 'step_one']);
+    Route::middleware('auth:sanctum')->post('/step_one', [ProfileController::class, 'step_one']);
+    Route::middleware('auth:sanctum')->post('/step_two', [ProfileController::class, 'step_two']);
+    Route::middleware('auth:sanctum')->post('/step_three', [ProfileController::class, 'step_three']);
     Route::get('/{username}', [ProfileController::class, 'show']);
 });
