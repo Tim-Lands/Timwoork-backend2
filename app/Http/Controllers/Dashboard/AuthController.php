@@ -18,16 +18,11 @@ class AuthController extends Controller
         ]);
 
         if (!auth('admin')->attempt($request->only('email', 'password'))) {
-            return response()->json([
-                'msg' => "invalid credentials"
-            ], Response::HTTP_UNAUTHORIZED);
+            return response()->error('المعلومات التي أدخلتها خاطئة');
         }
         $user = auth('admin')->user();
         $token = $user->createToken('token')->plainTextToken;
-        $cookie = cookie('timwoork_token', $token, 6 * 24);
-        return response([
-            'msg' => "Success"
-        ])->withCookie($cookie);
+        return response()->success('تم تسجيل الدخول بنجاح', $token);
     }
 
     public function me(Request $request)
@@ -36,9 +31,6 @@ class AuthController extends Controller
     }
     public function logout()
     {
-        $cookie = cookie()->forget('timwoork_token');
-        return response([
-            'msg' => "Success"
-        ])->withCookie($cookie);
+        return response()->success('تم تسجيل الخروج بنجاح');
     }
 }
