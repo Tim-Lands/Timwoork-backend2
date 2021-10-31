@@ -3,34 +3,35 @@
 namespace App\Http\Controllers\Dashboard;
 
 use App\Http\Controllers\Controller;
-use App\Http\Requests\Dashboard\CountryRequest;
-use App\Models\Country;
+use App\Http\Requests\Dashboard\SkillRequest;
+use App\Models\Skill;
 use Exception;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\DB;
 
-class CountryController extends Controller
+class SkillController extends Controller
 {
+
     /**
-     * index => دالة عرض كل الدول
+     * index => دالة عرض كل المهارات
      *
      * @return JsonResponse
      */
     public function index(): JsonResponse
     {
-        // جلب جميع الدول عن طريق التصفح
-        $countries = Country::Selection()->get();
+        // جلب جميع المهارات عن طريق التصفح
+        $skills = Skill::Selection()->get();
         // اظهار العناصر
-        return response()->success('تم العثور على قائمة الدول', $countries);
+        return response()->success('تم العثور على قائمة المهارات', $skills);
     }
 
     /**
-     * store => دالة اضافة دولة جديد
+     * store => دالة اضافة مهارة جديدة
      *
-     * @param  CountryRequest $request => انشاء هذا الكائن من اجل عملية التحقيق على المدخلات
+     * @param  SkillRequest $request => انشاء هذا الكائن من اجل عملية التحقيق على المدخلات
      * @return object
      */
-    public function store(CountryRequest $request): ?object
+    public function store(SkillRequest $request): ?object
     {
         try {
             // جلب البيانات و وضعها في مصفوفة:
@@ -38,19 +39,17 @@ class CountryController extends Controller
                 'name_ar'            => $request->name_ar,
                 'name_en'            => $request->name_en,
                 'name_fr'            => $request->name_fr,
-                'code_phone'         => $request->code_phone
             ];
-
-            // ============= انشاء دولة جديد ================:
+            // ============= انشاء مهارة جديد ================:
             // بداية المعاملة مع البيانات المرسلة لقاعدة بيانات :
             DB::beginTransaction();
-            // عملية اضافة دولة :
-            $country = Country::create($data);
+            // عملية اضافة مهارة :
+            $skill = Skill::create($data);
             // انهاء المعاملة بشكل جيد :
             DB::commit();
             // =================================================
             // رسالة نجاح عملية الاضافة:
-            return response()->success('تم انشاء دولة جديد بنجاح', $country);
+            return response()->success('تم انشاء مهارة جديدة بنجاح', $skill);
         } catch (Exception $ex) {
             // لم تتم المعاملة بشكل نهائي و لن يتم ادخال اي بيانات لقاعدة البيانات
             DB::rollback();
@@ -59,7 +58,7 @@ class CountryController extends Controller
     }
 
     /**
-     * show => id  دالة جلب دولة معين بواسطة المعرف
+     * show => id  دالة جلب مهارة معينة بواسطة المعرف
      *
      *s @param  string $id => id متغير المعرف 
      * @return JsonResponse
@@ -67,38 +66,37 @@ class CountryController extends Controller
     public function show(mixed $id): JsonResponse
     {
         //id  جلب العنصر بواسطة
-        $country = Country::Selection()->whereId($id)->first();
+        $skill = Skill::Selection()->whereId($id)->first();
         // شرط اذا كان العنصر موجود
-        if (!$country)
+        if (!$skill)
             // رسالة خطأ
             return response()->error('هذا العنصر غير موجود', 403);
         // اظهار العنصر
-        return response()->success('تم جلب العنصر بنجاح', $country);
+        return response()->success('تم جلب العنصر بنجاح', $skill);
     }
 
 
     /**
-     * update => دالة تعديل على الدولة
+     * update => دالة تعديل على المهارة
      *
      * @param  mixed $id
-     * @param  CountryRequest $request
+     * @param  SkillRequest $request
      * @return object
      */
-    public function update(CountryRequest $request, mixed $id): ?object
+    public function update(SkillRequest $request, mixed $id): ?object
     {
         try {
             //من اجل التعديل  id  جلب العنصر بواسطة المعرف 
-            $country = Country::find($id);
+            $skill = Skill::find($id);
 
             // شرط اذا كان العنصر موجود او المعرف اذا كان رقم غير صحيح
-            if (!$country || !is_numeric($id))
+            if (!$skill || !is_numeric($id))
                 // رسالة خطأ
                 return response()->error('هذا العنصر غير موجود', 403);
 
             // جلب البيانات و وضعها في مصفوفة:
             $data = [
-                'name_ar'    => $request->name_ar,
-                'code_phone' => $request->code_phone
+                'name_ar' => $request->name_ar,
             ];
             //  في حالة ما اذا وجد الاسم بالانجليزية , اضفها الى مصفوفة التعديل: 
             if ($request->name_en)
@@ -106,17 +104,17 @@ class CountryController extends Controller
             //  في حالة ما اذا وجد الاسم بالفرنيسة , اضفها الى مصفوفة التعديل: 
             if ($request->name_fr)
                 $data['name_fr'] = $request->name_fr;
-            // ============= التعديل على الدولة  ================:
+            // ============= التعديل على المهارة  ================:
             // بداية المعاملة مع البيانات المرسلة لقاعدة بيانات :
             DB::beginTransaction();
-            // عملية التعديل على الدولة :
-            $country->update($data);
+            // عملية التعديل على المهارة :
+            $skill->update($data);
             // انهاء المعاملة بشكل جيد :
             DB::commit();
             // =================================================
 
             // رسالة نجاح عملية التعديل:
-            return response()->success('تم التعديل على الدولة بنجاح', $country);
+            return response()->success('تم التعديل على المهارة بنجاح', $skill);
         } catch (Exception $ex) {
             // لم تتم المعاملة بشكل نهائي و لن يتم ادخال اي بيانات لقاعدة البيانات
             DB::rollback();
@@ -126,7 +124,7 @@ class CountryController extends Controller
     }
 
     /**
-     * delete => دالة حذف الدولة
+     * delete => دالة حذف المهارة
      *
      * @param  mixed $id
      * @return object
@@ -135,23 +133,23 @@ class CountryController extends Controller
     {
         try {
             //من اجل الحذف  id  جلب العنصر بواسطة المعرف 
-            $country = Country::find($id);
+            $skill = Skill::find($id);
             // شرط اذا كان العنصر موجود او المعرف اذا كان رقم غير صحيح
-            if (!$country || !is_numeric($id))
+            if (!$skill || !is_numeric($id))
                 // رسالة خطأ
                 return response()->error('هذا العنصر غير موجود', 403);
 
-            // ============= حذف الدولة  ================:
+            // ============= حذف المهارة  ================:
             // بداية المعاملة مع البيانات المرسلة لقاعدة بيانات :
             DB::beginTransaction();
-            // عملية حذف الدولة :
-            $country->delete();
+            // عملية حذف المهارة :
+            $skill->delete();
             // انهاء المعاملة بشكل جيد :
             DB::commit();
             // =================================================
 
             // رسالة نجاح عملية الحذف:
-            return response()->success('تم حذف الدولة بنجاح', $country);
+            return response()->success('تم حذف المهارة بنجاح', $skill);
         } catch (Exception $ex) {
             // لم تتم المعاملة بشكل نهائي و لن يتم ادخال اي بيانات لقاعدة البيانات
             DB::rollback();
