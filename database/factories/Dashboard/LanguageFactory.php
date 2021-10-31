@@ -1,18 +1,18 @@
 <?php
 
-namespace Database\Factories;
+namespace Database\Factories\Dashboard;
 
-use App\Models\Skill;
+use App\Models\Model;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
-class SkillFactory extends Factory
+class LanguageFactory extends Factory
 {
     /**
      * The name of the factory's corresponding model.
      *
      * @var string
      */
-    protected $model = Skill::class;
+    protected $model = Model::class;
 
     /**
      * Define the model's default state.

@@ -1,6 +1,6 @@
 <?php
 
-namespace Database\Factories;
+namespace Database\Factories\Dashboard;
 
 use App\Models\Country;
 use Illuminate\Database\Eloquent\Factories\Factory;
