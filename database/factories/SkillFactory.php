@@ -1,18 +1,18 @@
 <?php
 
-namespace Database\Factories\Dashboard;
+namespace Database\Factories;
 
-use App\Models\Dashboard\Admin;
+use App\Models\Skill;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
-class AdminFactory extends Factory
+class SkillFactory extends Factory
 {
     /**
      * The name of the factory's corresponding model.
      *
      * @var string
      */
-    protected $model = Admin::class;
+    protected $model = Skill::class;
 
     /**
      * Define the model's default state.
@@ -22,7 +22,7 @@ class AdminFactory extends Factory
     public function definition()
     {
         return [
-            //
+            'name_ar' => $this->faker->word,
         ];
     }
 }

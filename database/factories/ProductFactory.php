@@ -1,6 +1,6 @@
 <?php
 
-namespace Database\Factories\Dashboard;
+namespace Database\Factories;
 
 use App\Models\Product;
 use Illuminate\Support\Str;
@@ -29,7 +29,7 @@ class ProductFactory extends Factory
             'content'               => $this->faker->paragraph(1),
             'price'                 => $this->faker->numberbetween(5, 10),
             'duration'              => $this->faker->dateTimeBetween('now', '+05 days'),
-            'thumbnail'             => $this->faker->image('public/storage/images-thumb', 640, 480, null, false),
+            'thumbnail'             => $this->faker->image('public/images-thumb', 640, 480, null, false),
             'buyer_instruct'        => $this->faker->paragraph(1),
             'profile_seller_id'     => $this->faker->numberBetween(1, 3),
             // اختر اي تصنيف فرعي او ضع اعداد عشوائية للتصنيفات المتواجدة
