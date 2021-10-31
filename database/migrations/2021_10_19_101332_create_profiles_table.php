@@ -15,6 +15,7 @@ class CreateProfilesTable extends Migration
     {
         Schema::create('profiles', function (Blueprint $table) {
             $table->id();
+            $table->tinyInteger('steps')->default(0);
             $table->string("first_name")->nullable();
             $table->string('last_name')->nullable();
             $table->string('avatar')->default('avatar.png');
