@@ -566,7 +566,7 @@ Write instructions here
         -   success : false,
         -   msg: "هناك خطأ ما حدث في قاعدة بيانات , يرجى التأكد من ذلك"
 
--   Update Current Tag
+-   Update Current Skill
 
     -   url : `http:localhost:8000/dashboard/skills/{id}/update`
     -   method: post
@@ -586,11 +586,77 @@ Write instructions here
 
 -   Delete Current Skill
 
-    -   url : `http:localhost:8000/dashboard/skills/{id}/delete`
+        -   url : `http:localhost:8000/dashboard/skills/{id}/delete`
+        -   method: post
+        -   success response:
+            -   success : true,
+            -   msg: "لقد تمّ حذف الوسم بنجاح"
+        -   error response:
+            -   success : false,
+            -   msg: "هناك خطأ ما حدث في قاعدة بيانات , يرجى التأكد من ذلك"
+
+11 - Languages :
+
+-   Show languages - url : `http:localhost:8000/dashboard/languages`
+
+    -   method: get
+    -   response:
+        -   success : true,
+        -   msg: 'عرض كل اللغات'
+        -   data: languages
+
+-   Show Languages Details
+
+    -   url : `http:localhost:8000/dashboard/languages/{id}`
+    -   method: get
+    -   response:
+        -   success : true,
+        -   msg: "تم جلب العنصر بنجاح"
+        -   data: language
+
+-   Add New Language
+
+    -   url : `http:localhost:8000/dashboard/languages/store`
+    -   method: post
+    -   parameters:
+
+        -   name_ar: string|required|unique
+        -   name_en: string|nullable|unique
+        -   name_fr: string|nullable|unique
+
+    -   success response:
+        -   success : true,
+        -   msg: "لقد تمّ إضافة اللغة بنجاح"
+        -   data: language
+    -   error response:
+        -   success : false,
+        -   msg: "هناك خطأ ما حدث في قاعدة بيانات , يرجى التأكد من ذلك"
+
+-   Update Current Language
+
+    -   url : `http:localhost:8000/dashboard/languages/{id}/update`
+    -   method: post
+    -   parameters:
+
+        -   name_ar: string|required|unique
+        -   name_en: string|required|unique
+        -   name_fr: string|nullable|unique
+
+    -   success response:
+        -   success : true,
+        -   msg: "لقد تمّ التعديل على اللغة بنجاح"
+        -   data: language
+    -   error response:
+        -   success : false,
+        -   msg: "هناك خطأ ما حدث في قاعدة بيانات , يرجى التأكد من ذلك"
+
+-   Delete Current Language
+
+    -   url : `http:localhost:8000/dashboard/languages/{id}/delete`
     -   method: post
     -   success response:
         -   success : true,
-        -   msg: "لقد تمّ حذف الوسم بنجاح"
+        -   msg: "لقد تمّ حذف اللغة بنجاح"
     -   error response:
         -   success : false,
         -   msg: "هناك خطأ ما حدث في قاعدة بيانات , يرجى التأكد من ذلك"

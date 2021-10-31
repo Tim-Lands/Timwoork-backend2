@@ -20,10 +20,6 @@ class CreateLanguagesTable extends Migration
             $table->string('name_en')->nullable();
             $table->string('name_fr')->nullable();
 
-            // relation model of ProfileSeller
-            $table->foreignId('profile_seller_id')->constrained();
-
-            $table->string('level');
             $table->timestamps();
         });
     }
