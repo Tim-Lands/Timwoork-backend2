@@ -2,9 +2,6 @@
 
 namespace Database\Seeders;
 
-use Database\Factories\CategoryFactory;
-use Database\Factories\ProdutFactory;
-use Database\Factories\SubCategoryFactory;
 use Illuminate\Database\Seeder;
 
 class DatabaseSeeder extends Seeder

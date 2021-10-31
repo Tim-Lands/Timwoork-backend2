@@ -1,18 +1,18 @@
 <?php
 
-namespace Database\Factories\Dashboard;
+namespace Database\Factories;
 
-use App\Models\Model;
+use App\Models\Tag;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
-class LanguageFactory extends Factory
+class TagFactory extends Factory
 {
     /**
      * The name of the factory's corresponding model.
      *
      * @var string
      */
-    protected $model = Model::class;
+    protected $model = Tag::class;
 
     /**
      * Define the model's default state.
