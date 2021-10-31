@@ -20,7 +20,6 @@ class CreateSkillsTable extends Migration
             $table->string('name_en')->nullable();
             $table->string('name_fr')->nullable();
 
-            $table->tinyInteger("level")->default(0);
             $table->timestamps();
         });
     }

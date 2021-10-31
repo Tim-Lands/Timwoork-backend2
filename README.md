@@ -453,7 +453,7 @@ Write instructions here
 
 8 - Countries :
 
--   Show tags - url : `http:localhost:8000/dashboard/countries`
+-   Show countries - url : `http:localhost:8000/dashboard/countries`
 
     -   method: get
     -   response:
@@ -461,7 +461,7 @@ Write instructions here
         -   msg: 'عرض كل الدول'
         -   data: countries
 
--   Show Tag Details
+-   Show Country Details
 
     -   url : `http:localhost:8000/dashboard/countries/{id}`
     -   method: get
@@ -470,7 +470,7 @@ Write instructions here
         -   msg: "تم جلب العنصر بنجاح"
         -   data: country
 
--   Add New Tag
+-   Add New Country
 
     -   url : `http:localhost:8000/dashboard/countries/store`
     -   method: post
@@ -523,8 +523,74 @@ Write instructions here
 
 -   Show tags - url : `http:localhost:8000/dashboard`
 
+        -   method: get
+        -   response:
+            -   success : true,
+            -   msg: 'احصائيات لوحة التحكم'
+            -   data: data
+
+10 - Skills :
+
+-   Show skills - url : `http:localhost:8000/dashboard/skills`
+
     -   method: get
     -   response:
         -   success : true,
-        -   msg: 'احصائيات لوحة التحكم'
-        -   data: data
+        -   msg: 'عرض كل المهارات'
+        -   data: skills
+
+-   Show Skill Details
+
+    -   url : `http:localhost:8000/dashboard/skills/{id}`
+    -   method: get
+    -   response:
+        -   success : true,
+        -   msg: "تم جلب العنصر بنجاح"
+        -   data: skill
+
+-   Add New Skill
+
+    -   url : `http:localhost:8000/dashboard/skills/store`
+    -   method: post
+    -   parameters:
+
+        -   name_ar: string|required|unique
+        -   name_en: string|nullable|unique
+        -   name_fr: string|nullable|unique
+
+    -   success response:
+        -   success : true,
+        -   msg: "لقد تمّ إضافة مهارة بنجاح"
+        -   data: skill
+    -   error response:
+        -   success : false,
+        -   msg: "هناك خطأ ما حدث في قاعدة بيانات , يرجى التأكد من ذلك"
+
+-   Update Current Tag
+
+    -   url : `http:localhost:8000/dashboard/skills/{id}/update`
+    -   method: post
+    -   parameters:
+
+        -   name_ar: string|required|unique
+        -   name_en: string|required|unique
+        -   name_fr: string|nullable|unique
+
+    -   success response:
+        -   success : true,
+        -   msg: "لقد تمّ التعديل على الوسم بنجاح"
+        -   data: skill
+    -   error response:
+        -   success : false,
+        -   msg: "هناك خطأ ما حدث في قاعدة بيانات , يرجى التأكد من ذلك"
+
+-   Delete Current Skill
+
+    -   url : `http:localhost:8000/dashboard/skills/{id}/delete`
+    -   method: post
+    -   success response:
+        -   success : true,
+        -   msg: "لقد تمّ حذف الوسم بنجاح"
+    -   error response:
+        -   success : false,
+        -   msg: "هناك خطأ ما حدث في قاعدة بيانات , يرجى التأكد من ذلك"
