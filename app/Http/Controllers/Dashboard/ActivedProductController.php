@@ -29,7 +29,7 @@ class ActivedProductController extends Controller
             // بداية المعاملة مع البيانات المرسلة لقاعدة بيانات :
             DB::beginTransaction();
             // عملية تنشيط الخدمة :
-            $product->status = Product::PRDUCT_ACTIVE;
+            $product->status = Product::PRODUCT_ACTIVE;
             $product->save();
             // انهاء المعاملة بشكل جيد :
             DB::commit();
@@ -62,7 +62,7 @@ class ActivedProductController extends Controller
             // بداية المعاملة مع البيانات المرسلة لقاعدة بيانات :
             DB::beginTransaction();
             // عملية رفض الخدمة :
-            $product->status = Product::PRDUCT_REJECT;
+            $product->status = Product::PRODUCT_REJECT;
             $product->save();
             // انهاء المعاملة بشكل جيد :
             DB::commit();

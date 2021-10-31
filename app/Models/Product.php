@@ -15,8 +15,10 @@ class Product extends Model
 
     // ===========================Contants =============================
     // code
-    const PRDUCT_REJECT = 0;
-    const PRDUCT_ACTIVE = 1;
+    // حالة الخدمة مرفوضة
+    const PRODUCT_REJECT = 0;
+    // حالة الخدمة نشطة
+    const PRODUCT_ACTIVE = 1;
     // ================== Accessor & Metators ==========================
     // code
     // ============================ Scopes =============================
@@ -29,7 +31,29 @@ class Product extends Model
      */
     public function scopeSelection(mixed $query): ?object
     {
-        return $query->select('id', 'title', 'slug', 'content', 'price', 'duration', 'category_id', 'profile_seller_id', 'buyer_instruct', 'status', 'created_at');
+        return $query->select('id', 'title', 'slug', 'content', 'price', 'duration', 'category_id', 'profile_seller_id', 'thumbnail', 'buyer_instruct', 'status', 'created_at');
+    }
+
+    /**
+     * scopeProductActive عملية تصفية الخدمات المنشطة
+     *
+     * @param  mixed $query
+     * @return object
+     */
+    public function scopeProductActive($query): ?object
+    {
+        return $query->whereStatus(Product::PRODUCT_ACTIVE);
+    }
+
+    /**
+     * scopeProductReject => عملية تصفية الخدمات المرفوضة
+     *
+     * @param  mixed $query
+     * @return object
+     */
+    public function scopeProductReject($query): ?object
+    {
+        return $query->whereStatus(Product::PRODUCT_REJECT);
     }
 
     // ========================== Relations ============================

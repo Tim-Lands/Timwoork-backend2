@@ -16,7 +16,7 @@ class CategoryTableSeeder extends Seeder
     {
         // انشاء حقول عشوائية مع العلاقة
         Category::factory()->times(9)->create()->each(function ($category) {
-            $category->subcategories()->saveMany(Category::factory()->times(3)->make());
+            $category->subcategories()->saveMany(Category::factory()->times(20)->make());
         });
     }
 }

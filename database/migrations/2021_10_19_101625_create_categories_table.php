@@ -28,8 +28,8 @@ class CreateCategoriesTable extends Migration
             // relation of Model Category => Subcategory
             $table->foreignId('parent_id')
                 ->nullable()->constrained('categories')
-                ->onDelete('SET NULL')
-                ->onUpdate('SET NULL');
+                ->onDelete('CASCADE')
+                ->onUpdate('CASCADE');
 
             $table->timestamps();
         });
