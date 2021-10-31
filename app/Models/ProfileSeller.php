@@ -13,7 +13,11 @@ class ProfileSeller extends Model
     use HasFactory;
     protected $table = 'profile_sellers';
 
-    // ===========================Contants =============================
+    protected $with = ['languages', 'skills', 'professions'];
+
+    // ===========================Constants =============================
+    public const COMPLETED_SETP_ONE = 1;
+    public const COMPLETED_SETP_TWO = 2;
     // code
     // ================== Acssesor & mutators ==========================
     // code
@@ -22,15 +26,6 @@ class ProfileSeller extends Model
     // ========================== Relations ============================
     // code
 
-    /**
-     * profile_seller_skill
-     *
-     * @return BelongsToMany
-     */
-    public function profile_seller_skill(): BelongsToMany
-    {
-        return $this->belongsToMany(ProfileSeller::class, 'profile_seller_skill', 'product_id', 'tag_id');
-    }
 
 
     /**
@@ -68,9 +63,11 @@ class ProfileSeller extends Model
      *
      * @return HasMany
      */
-    public function languages(): HasMany
+    public function languages(): belongsToMany
     {
-        return $this->hasMany(Language::class, 'profile_seller_id');
+        return $this->belongsToMany(Language::class)
+            ->withTimestamps()
+            ->withPivot('level');
     }
 
     /**
@@ -78,8 +75,18 @@ class ProfileSeller extends Model
      *
      * @return BelongsToMany
      */
-    public function profissions(): BelongsToMany
+    public function professions(): BelongsToMany
     {
-        return $this->belongsToMany(Category::class, 'profissions');
+        return $this->belongsToMany(Category::class, 'professions');
+    }
+
+    /**
+     * profile_seller_skills
+     *
+     * @return BelongsToMany
+     */
+    public function skills(): BelongsToMany
+    {
+        return $this->belongsToMany(Skill::class);
     }
 }

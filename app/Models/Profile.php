@@ -12,11 +12,13 @@ class Profile extends Model
 {
     use HasFactory;
     protected $table = 'profiles';
+
+    protected $with = ['profile_seller'];
+
+    // ===========================Constants =============================
     public const COMPLETED_SETP_ONE = 1;
     public const COMPLETED_SETP_TWO = 2;
     public const COMPLETED_SETP_THREE = 3;
-
-    // ===========================Contants =============================
     // code
     // ================== Acssesor & mutators ==========================
     // code
@@ -62,5 +64,15 @@ class Profile extends Model
     public function badge(): BelongsTo
     {
         return $this->belongsTo(Badge::class, "badge_id");
+    }
+
+    /**
+     * profile_selller
+     *
+     * @return HasOne
+     */
+    public function profile_seller(): HasOne
+    {
+        return $this->hasOne(ProfileSeller::class, 'profile_id');
     }
 }
