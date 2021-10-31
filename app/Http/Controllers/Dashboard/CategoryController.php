@@ -24,7 +24,7 @@ class CategoryController extends Controller
         // جلب جميع الاصناف الرئيسة و الاصناف الفرعية عن طريق التصفح
         $categories = Category::Selection()->with(['subcategories' => function ($q) {
             $q->select('id', 'name_ar', 'name_en', 'parent_id', 'icon');
-        }])->whereParentId(null)->get();
+        }])->parent()->get();
 
         // اظهار العناصر
         return response()->success('عرض كل تصنيفات الرئيسية و الفرعية', $categories);
