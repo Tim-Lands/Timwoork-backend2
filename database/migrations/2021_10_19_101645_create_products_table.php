@@ -20,6 +20,8 @@ class CreateProductsTable extends Migration
             $table->text('content');
             $table->float('price', 5, 2);
             $table->string('duration');
+            // nullable sometime
+            $table->string('thumbnail')->nullable();
             // $table->string('some_develop');
             $table->text('buyer_instruct');
             $table->boolean('status')->nullable();

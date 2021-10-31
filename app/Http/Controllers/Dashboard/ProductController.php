@@ -48,7 +48,7 @@ class ProductController extends Controller
     public function getRroductsActived(): JsonResponse
     {
         // جلب جميع الخدمات التي تم تنشيطها
-        $products_actived = Product::selection()->whereStatus(Product::PRDUCT_ACTIVE)->with(['category', 'profileSeller'])->get();
+        $products_actived = Product::selection()->productActive()->with(['category', 'profileSeller'])->get();
         // اظهار العناصر
         return response()->success('تم العثور على قائمة الخدمات التي تم تنشيطها', $products_actived);
     }
@@ -61,7 +61,7 @@ class ProductController extends Controller
     public function getProductsRejected(): JsonResponse
     {
         // جلب جميع الخدمات التي تم رفضها
-        $products_rejected = Product::selection()->whereStatus(Product::PRDUCT_REJECT)->with(['category', 'profileSeller'])->get();
+        $products_rejected = Product::selection()->productReject()->with(['category', 'profileSeller'])->get();
         // اظهار العناصر
         return response()->success('تم العثور على قائمة الخدمات التي تم رفضها', $products_rejected);
     }

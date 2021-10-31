@@ -21,7 +21,7 @@ class SubCategoryController extends Controller
     public function create(): JsonResponse
     {
         // جلب التصنيفات الرئيسية
-        $categories = Category::selection()->whereNull('parent_id')->pluck('name_ar', 'id');
+        $categories = Category::selection()->parent()->pluck('name_ar', 'id');
         // اظهار العناصر
         return response()->success('عرض كل تصنيفات الرئيسية ', $categories);
     }
@@ -35,7 +35,7 @@ class SubCategoryController extends Controller
     {
 
         //id  جلب العنصر بواسطة
-        $subcategory = Category::selection()->whereId($id)->whereNotNull('parent_id')->first();
+        $subcategory = Category::selection()->whereId($id)->child()->first();
         // شرط اذا كان العنصر موجود ام لا
         if (!$subcategory)
             // رسالة خطأ
@@ -95,7 +95,7 @@ class SubCategoryController extends Controller
     {
         try {
             //من اجل التعديل  id  جلب العنصر بواسطة المعرف 
-            $subcategory = Category::selection()->whereId($id)->whereNotNull('parent_id')->first();
+            $subcategory = Category::selection()->whereId($id)->child()->first();
             // شرط اذا كان العنصر موجود او المعرف اذا كان رقم غير صحيح
             if (!$subcategory || !is_numeric($id))
                 // رسالة خطأ
@@ -151,7 +151,7 @@ class SubCategoryController extends Controller
     {
         try {
             //من اجل الحذف  id  جلب العنصر بواسطة المعرف 
-            $subcategory = Category::selection()->whereId($id)->whereNotNull('parent_id')->first();
+            $subcategory = Category::selection()->whereId($id)->child()->first();
             // شرط اذا كان العنصر موجود او المعرف اذا كان رقم غير صحيح
             if (!$subcategory || !is_numeric($id))
                 // رسالة خطأ

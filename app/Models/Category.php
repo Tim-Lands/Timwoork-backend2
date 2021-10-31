@@ -36,6 +36,28 @@ class Category extends Model
         return $query->select('id', 'name_ar', 'name_en', 'name_fr', 'slug', 'description_ar', 'description_en', 'description_fr', 'icon', 'parent_id', 'created_at');
     }
 
+    /**
+     * scopeParent => دالة تعمل على تصفية التصنيفات الرئيسية 
+     *
+     * @param  mixed $query
+     * @return void
+     */
+    public function scopeParent(mixed $query): ?object
+    {
+        return $query->whereNull('parent_id');
+    }
+
+
+    /**
+     * scopeChild => دالة تعمل على تصفية التصنيفات الفرعية
+     *
+     * @param  mixed $query
+     * @return void
+     */
+    public function scopeChild(mixed $query): ?object
+    {
+        return $query->whereNotNull('parent_id');
+    }
 
     // ========================== Relations ============================
 
