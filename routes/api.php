@@ -1,8 +1,7 @@
 <?php
 
-use App\Http\Controllers\Auth\LoginController;
-use App\Http\Controllers\Auth\RegisterController;
-use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\Auth\{LoginController, RegisterController};
+use App\Http\Controllers\{ProfileController, SellerController};
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -37,4 +36,13 @@ Route::prefix('profiles')->group(function () {
     Route::middleware('auth:sanctum')->post('/step_two', [ProfileController::class, 'step_two']);
     Route::middleware('auth:sanctum')->post('/step_three', [ProfileController::class, 'step_three']);
     Route::get('/{username}', [ProfileController::class, 'show']);
+});
+
+
+// ===============================   مسارات الملف الشخصي البائع==================================
+
+Route::prefix('sellers')->group(function () {
+    Route::middleware('auth:sanctum')->post('/store', [SellerController::class, 'store']);
+    Route::middleware('auth:sanctum')->post('/step_one', [SellerController::class, 'step_one']);
+    Route::middleware('auth:sanctum')->post('/step_two', [SellerController::class, 'step_two']);
 });

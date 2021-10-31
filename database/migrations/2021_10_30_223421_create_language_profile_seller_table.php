@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateProfileSellerSkillTable extends Migration
+class CreateLanguageProfileSellerTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,12 +13,12 @@ class CreateProfileSellerSkillTable extends Migration
      */
     public function up()
     {
-        Schema::create('profile_seller_skill', function (Blueprint $table) {
+        Schema::create('language_profile_seller', function (Blueprint $table) {
             $table->id();
             // relation model of ProfileSeller
             $table->foreignId('profile_seller_id')->constrained();
-            // relation model of Skill
-            $table->foreignId('skill_id')->constrained();
+            // relation model of Language
+            $table->foreignId('language_id')->constrained();
 
             $table->tinyInteger('level')->default(0);
             $table->timestamps();
@@ -32,6 +32,6 @@ class CreateProfileSellerSkillTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('profile_seller_skill');
+        Schema::dropIfExists('language_profile_seller');
     }
 }
