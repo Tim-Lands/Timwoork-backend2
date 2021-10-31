@@ -15,15 +15,18 @@ class CreateProfileSellersTable extends Migration
     {
         Schema::create('profile_sellers', function (Blueprint $table) {
             $table->id();
-            $table->tinyInteger('numbr_sales')->default(0);
+            $table->tinyInteger('steps')->default(0);
+            $table->tinyInteger('number_of_sales')->default(0);
+            $table->string('portfolio')->nullable();
             $table->text('bio')->nullable();
+
             // =======================================================
             // relation model of Country
             $table->foreignId('profile_id')->constrained();
             // relation model of Badge
-            $table->foreignId('badge_id')->constrained();
+            $table->foreignId('badge_id')->nullable()->constrained();
             // relation model of Country
-            $table->foreignId('level_id')->constrained();
+            $table->foreignId('level_id')->nullable()->constrained();
             $table->timestamps();
         });
     }
