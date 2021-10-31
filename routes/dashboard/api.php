@@ -12,6 +12,7 @@ use App\Http\Controllers\Dashboard\{
     StatisticContoller,
     TagController,
     SkillController,
+    LanguageController
 };
 use Illuminate\Support\Facades\Route;
 
@@ -148,4 +149,18 @@ Route::prefix('skills')->group(function () {
     Route::post('/{id}/update',   [SkillController::class, 'update']);
     // مسار حذف العنصر
     Route::post('/{id}/delete',   [SkillController::class, 'delete']);
+});
+
+// =============================== مسارات الوسم ====================================
+Route::prefix('languages')->group(function () {
+    // مسار العرض
+    Route::get('/',               [LanguageController::class, 'index']);
+    // مسار انشاء عنصر جديد
+    Route::post('/store',         [LanguageController::class, 'store']);
+    // مسار جلب عنصر الواحد
+    Route::get('/{id}',           [LanguageController::class, 'show']);
+    // مسار التعديل على العنصر
+    Route::post('/{id}/update',   [LanguageController::class, 'update']);
+    // مسار حذف العنصر
+    Route::post('/{id}/delete',   [LanguageController::class, 'delete']);
 });

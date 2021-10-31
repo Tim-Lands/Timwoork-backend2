@@ -1,6 +1,6 @@
 <?php
 
-namespace Database\Factories;
+namespace Database\Factories\Dashboard;
 
 use App\Models\Product;
 use Illuminate\Support\Str;

@@ -18,6 +18,18 @@ class Language extends Model
     // code
     // ============================ Scopes =============================
     // code
+
+    /**
+     * scopeSelection => دالة من اجل جلب البيانات
+     *
+     * @param  mixed $query
+     * @return object
+     */
+    public function scopeSelection(mixed $query): ?object
+    {
+        return $query->select('id', 'name_ar', 'name_en', 'name_fr', 'created_at');
+    }
+
     // ========================== Relations ============================
 
 
