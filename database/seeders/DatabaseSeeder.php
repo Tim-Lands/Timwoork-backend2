@@ -22,6 +22,7 @@ class DatabaseSeeder extends Seeder
             ProductTableSeeder::class,
             CountryTableSeeder::class,
             TagTableSeeder::class,
+            SkillTableSeeder::class,
         ]);
     }
 }
