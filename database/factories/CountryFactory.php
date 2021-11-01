@@ -25,7 +25,7 @@ class CountryFactory extends Factory
         return [
             'name_ar'        => $name_country,
             'code_phone'     => $this->faker->numerify('+' . $this->faker->randomNumber(3, false)),
-            'flag'           => $this->faker->imageUrl(100, 100, $name_country, true)
+            'flag'           => $this->faker->name
         ];
     }
 }
