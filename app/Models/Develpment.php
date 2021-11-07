@@ -9,7 +9,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 class Develpment extends Model
 {
     use HasFactory;
-    protected $table = 'develpment';
+    protected $table = 'develpments';
 
     // ===========================Contants =============================
     // code

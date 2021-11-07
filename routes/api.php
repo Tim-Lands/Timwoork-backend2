@@ -1,8 +1,11 @@
 <?php
 
 use App\Http\Controllers\Auth\{LoginController, RegisterController};
-use App\Http\Controllers\{ProfileController, SellerController};
-use Illuminate\Http\Request;
+use App\Http\Controllers\{
+    Product\InsertProductContoller,
+    ProfileController,
+    SellerController
+};
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -45,4 +48,15 @@ Route::prefix('sellers')->group(function () {
     Route::middleware('auth:sanctum')->post('/store', [SellerController::class, 'store']);
     Route::middleware('auth:sanctum')->post('/step_one', [SellerController::class, 'step_one']);
     Route::middleware('auth:sanctum')->post('/step_two', [SellerController::class, 'step_two']);
+});
+
+
+// =============================== مسارات انشاء خدمة جديدة ==================================
+Route::prefix('addedProduct')->group(function () {
+    Route::get('create',                     [InsertProductContoller::class, 'create']);
+    Route::post('/product-step-one',         [InsertProductContoller::class, 'storeStepOne']);
+    Route::post('/{id}/product-step-two',    [InsertProductContoller::class, 'storeStepTwo']);
+    Route::post('/{id}/product-step-three',  [InsertProductContoller::class, 'storeStepThree']);
+    Route::post('/{id}/product-step-four',   [InsertProductContoller::class, 'storeStepFour']);
+    Route::post('/{id}/product-step-five',   [InsertProductContoller::class, 'storeStepFive']);
 });
