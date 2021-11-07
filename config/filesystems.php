@@ -42,11 +42,6 @@ return [
             'visibility' => 'public',
         ],
 
-        'public_images' => [
-            'driver' => 'local',
-            'root' => public_path('images'),
-        ],
-
         'avatars' => [
             'driver' => 'local',
             'root' => storage_path('app/avatars'),
@@ -54,10 +49,10 @@ return [
             'visibility' => 'public',
         ],
 
-        'images-thumb' => [
+        'products' => [
             'driver' => 'local',
-            'root' => storage_path('app/images-thumb'),
-            'url' => env('APP_URL') . '/images-thumb',
+            'root' => storage_path('app/products'),
+            'url' => env('APP_URL') . '/products',
             'visibility' => 'public',
         ],
 

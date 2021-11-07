@@ -19,6 +19,14 @@ class Product extends Model
     const PRODUCT_REJECT = 0;
     // حالة الخدمة نشطة
     const PRODUCT_ACTIVE = 1;
+    // مراحل انشاء الخدمة
+    const PRODUCT_STEP_ONE    = 1;
+    const PRODUCT_STEP_TWO    = 2;
+    const PRODUCT_STEP_THREE  = 3;
+    const PRODUCT_STEP_FOUR   = 4;
+    const PRODUCT_STEP_FIVE   = 5;
+    // اكتمال عملية انشاء الخدمة
+    const PRODUCT_IS_COMPLETED = 1;
     // ================== Accessor & Metators ==========================
     // code
     // ============================ Scopes =============================
