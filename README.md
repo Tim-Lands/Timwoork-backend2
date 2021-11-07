@@ -652,11 +652,121 @@ Write instructions here
 
 -   Delete Current Language
 
-    -   url : `http:localhost:8000/dashboard/languages/{id}/delete`
-    -   method: post
-    -   success response:
-        -   success : true,
-        -   msg: "لقد تمّ حذف اللغة بنجاح"
-    -   error response:
-        -   success : false,
-        -   msg: "هناك خطأ ما حدث في قاعدة بيانات , يرجى التأكد من ذلك"
+        -   url : `http:localhost:8000/dashboard/languages/{id}/delete`
+        -   method: post
+        -   success response:
+            -   success : true,
+            -   msg: "لقد تمّ حذف اللغة بنجاح"
+        -   error response:
+            -   success : false,
+            -   msg: "هناك خطأ ما حدث في قاعدة بيانات , يرجى التأكد من ذلك"
+
+12 - Insert product :
+
+    -   fetch categories and tags - url : `http:localhost:8000/api/addedProduct/create`
+
+        -   method: get
+        -   response:
+
+            -   success : true,
+            -   msg: 'عرض كل تصنيفات الرئيسية و الفرعيىة و الوسوم من اجل انشاء خدمة'
+            -   data: languages
+
+    -   store step one
+
+        -   url : `http:localhost:8000/api/addedProduct/product-step-one`
+        -   method: post
+        -   parameters:
+
+            -   title : required|string|max:255|unique
+            -   content : required
+            -   subcategory : required|exists
+            -   tags[] : required|exists
+
+        -   response:
+
+            -   success : true,
+            -   msg: "تم انشاء المرحلة الاولى بنجاح"
+            -   data: product
+
+        -   error response:
+            -   success : false,
+            -   msg: "هناك خطأ ما حدث في قاعدة بيانات , يرجى التأكد من ذلك"
+
+    -   store step two
+
+        -   url : `http:localhost:8000/api/addedProduct/{id}/product-step-two`
+        -   method: post
+        -   parameters:
+
+            -   price : required|integer
+            -   duration : required
+            -   developments[] : sometimes
+            -   developments.title : required|string|max:255
+            -   developments.duration : required
+            -   developments.price : required|integer
+
+        -   response:
+
+            -   success : true,
+            -   msg: "تم انشاء المرحلة الثانية بنجاح"
+            -   data: product
+
+        -   error response:
+            -   success : false,
+            -   msg: "هناك خطأ ما حدث في قاعدة بيانات , يرجى التأكد من ذلك"
+
+    -   store step three
+
+        -   url : `http:localhost:8000/api/addedProduct/{id}/product-step-three`
+        -   method: post
+        -   parameters:
+
+            -   buyer_instruct : required|string|max: 255
+
+        -   response:
+
+            -   success : true,
+            -   msg: "تم انشاء المرحلة الثالثة بنجاح"
+            -   data: product
+
+        -   error response:
+            -   success : false,
+            -   msg: "هناك خطأ ما حدث في قاعدة بيانات , يرجى التأكد من ذلك"
+
+    -   store step four
+
+        -   url : `http:localhost:8000/api/addedProduct/{id}/product-step-four`
+        -   method: post
+        -   parameters:
+
+            -   thumbnail : required|image|mimes:png,jpg,jpeg|max:2048
+            -   images : required
+            -   images[]     : mimes:png,jpg,jpeg|max:2048
+            -   file          : mimes:pdf|max:2048
+            -   url_video    : nullable|url
+
+        -   response:
+
+            -   success : true,
+            -   msg: "تم انشاء المرحلة الرابعة بنجاح"
+            -   data: product
+
+        -   error response:
+            -   success : false,
+            -   msg: "هناك خطأ ما حدث في قاعدة بيانات , يرجى التأكد من ذلك"
+
+    -   Store step five and completed
+
+        -   url : `http:localhost:8000/api/addedProduct/{id}/product-step-five`
+        -   method: post
+
+        -   response:
+
+            -   success : true,
+            -   msg: "تم انهاء المراحل و انشاء الخدمة بنجاح"
+            -   data: product
+
+        -   error response:
+            -   success : false,
+            -   msg: "هناك خطأ ما حدث في قاعدة بيانات , يرجى التأكد من ذلك"
