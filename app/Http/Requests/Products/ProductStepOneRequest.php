@@ -25,7 +25,6 @@ class ProductStepOneRequest extends FormRequest
     {
         return [
             'title'               => 'required|string|max:255|unique:products,title,' . $this->id,
-            'content'         => 'required',
             'subcategory'         => 'required|exists:categories,id',
             'tags.*'              => 'required|exists:tags,id'
         ];

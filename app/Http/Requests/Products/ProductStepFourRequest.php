@@ -24,8 +24,8 @@ class ProductStepFourRequest extends FormRequest
     public function rules()
     {
         return [
-            'thumbnail'      => 'required|image|mimes:png,jpg,jpeg|max:2048',
-            'images'         => 'required',
+            'thumbnail'      => 'sometimes|image|mimes:png,jpg,jpeg|max:2048',
+            'images'         => 'sometimes',
             'images.*'       => 'mimes:png,jpg,jpeg|max:2048',
             'file'           => 'mimes:pdf|max:2048',
             'url_video'      => 'nullable|url'

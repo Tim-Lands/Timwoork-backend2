@@ -3,6 +3,7 @@
 use App\Http\Controllers\Auth\{LoginController, RegisterController};
 use App\Http\Controllers\{
     Product\InsertProductContoller,
+    Product\DeleteProductController,
     ProfileController,
     SellerController
 };
@@ -52,11 +53,19 @@ Route::prefix('sellers')->group(function () {
 
 
 // =============================== مسارات انشاء خدمة جديدة ==================================
-Route::prefix('addedProduct')->group(function () {
+Route::prefix('product')->group(function () {
+    // انشاء خدمة جديدة
     Route::get('create',                     [InsertProductContoller::class, 'create']);
-    Route::post('/product-step-one',         [InsertProductContoller::class, 'storeStepOne']);
+    // المحلة الاولى
+    Route::post('{id}/product-step-one',     [InsertProductContoller::class, 'storeStepOne']);
+    // المحلة الثانية
     Route::post('/{id}/product-step-two',    [InsertProductContoller::class, 'storeStepTwo']);
+    // المحلة الثالثة
     Route::post('/{id}/product-step-three',  [InsertProductContoller::class, 'storeStepThree']);
+    // المحلة الرابعة
     Route::post('/{id}/product-step-four',   [InsertProductContoller::class, 'storeStepFour']);
+    // المحلة الخامسة
     Route::post('/{id}/product-step-five',   [InsertProductContoller::class, 'storeStepFive']);
+    // حذف الخدمة
+    Route::post('/{id}/deleteProduct', DeleteProductController::class);
 });
