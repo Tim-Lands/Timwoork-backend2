@@ -663,7 +663,7 @@ Write instructions here
 
 12 - Insert product :
 
-    -   fetch categories and tags - url : `http:localhost:8000/api/addedProduct/create`
+    -   fetch categories and tags - url : `http:localhost:8000/api/product/create`
 
         -   method: get
         -   response:
@@ -674,12 +674,11 @@ Write instructions here
 
     -   store step one
 
-        -   url : `http:localhost:8000/api/addedProduct/product-step-one`
+        -   url : `http:localhost:8000/api/product/id/product-step-one`
         -   method: post
         -   parameters:
 
             -   title : required|string|max:255|unique
-            -   content : required
             -   subcategory : required|exists
             -   tags[] : required|exists
 
@@ -695,7 +694,7 @@ Write instructions here
 
     -   store step two
 
-        -   url : `http:localhost:8000/api/addedProduct/{id}/product-step-two`
+        -   url : `http:localhost:8000/api/product/{id}/product-step-two`
         -   method: post
         -   parameters:
 
@@ -718,11 +717,12 @@ Write instructions here
 
     -   store step three
 
-        -   url : `http:localhost:8000/api/addedProduct/{id}/product-step-three`
+        -   url : `http:localhost:8000/api/product/{id}/product-step-three`
         -   method: post
         -   parameters:
 
             -   buyer_instruct : required|string|max: 255
+            -   content : required|string|max: 255
 
         -   response:
 
@@ -736,12 +736,12 @@ Write instructions here
 
     -   store step four
 
-        -   url : `http:localhost:8000/api/addedProduct/{id}/product-step-four`
+        -   url : `http:localhost:8000/api/product/{id}/product-step-four`
         -   method: post
         -   parameters:
 
-            -   thumbnail : required|image|mimes:png,jpg,jpeg|max:2048
-            -   images : required
+            -   thumbnail : sometimes|image|mimes:png,jpg,jpeg|max:2048
+            -   images : sometimes
             -   images[]     : mimes:png,jpg,jpeg|max:2048
             -   file          : mimes:pdf|max:2048
             -   url_video    : nullable|url
@@ -758,7 +758,7 @@ Write instructions here
 
     -   Store step five and completed
 
-        -   url : `http:localhost:8000/api/addedProduct/{id}/product-step-five`
+        -   url : `http:localhost:8000/api/product/{id}/product-step-five`
         -   method: post
 
         -   response:
@@ -770,3 +770,14 @@ Write instructions here
         -   error response:
             -   success : false,
             -   msg: "هناك خطأ ما حدث في قاعدة بيانات , يرجى التأكد من ذلك"
+
+13 - Delete product :
+
+    -   url : `http:localhost:8000/api/product/{id}/deleteProduct`
+    -   method: post
+    -   success response:
+        -   success : true,
+        -   msg: "لقد تمّ حذف الخدمة بنجاح"
+    -   error response:
+        -   success : false,
+        -   msg: "هناك خطأ ما حدث في قاعدة بيانات , يرجى التأكد من ذلك"

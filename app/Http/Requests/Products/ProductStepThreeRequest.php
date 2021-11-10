@@ -24,7 +24,8 @@ class ProductStepThreeRequest extends FormRequest
     public function rules()
     {
         return [
-            'buyer_instruct' => 'required|string|max:255'
+            'buyer_instruct' => 'required|string|max:255',
+            'content' => 'required|string|max:255'
         ];
     }
 }

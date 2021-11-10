@@ -18,7 +18,9 @@ class CreateProductTagTable extends Migration
             // relation model of Profile
             $table->foreignId('product_id')->constrained();
             // relation model of Country
-            $table->foreignId('tag_id')->constrained();
+            $table->foreignId('tag_id')->constrained()
+                ->onDelete('CASCADE')
+                ->onUpdate('CASCADE');
             $table->timestamps();
         });
     }
