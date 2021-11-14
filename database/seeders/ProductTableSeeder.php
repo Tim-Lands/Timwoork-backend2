@@ -2,7 +2,7 @@
 
 namespace Database\Seeders;
 
-use App\Models\Develpment;
+use App\Models\Development;
 use App\Models\Product;
 use App\Models\Tag;
 use Illuminate\Database\Seeder;
@@ -21,7 +21,7 @@ class ProductTableSeeder extends Seeder
                 $product->product_tag()->saveMany(Tag::factory()->times(4)->make());
             })
             ->each(function ($product) {
-                $product->develpments()->saveMany(Develpment::factory()->times(3)->make());
+                $product->developments()->saveMany(Development::factory()->times(3)->make());
             });
     }
 }

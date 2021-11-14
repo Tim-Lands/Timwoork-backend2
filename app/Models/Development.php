@@ -6,10 +6,10 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
-class Develpment extends Model
+class Development extends Model
 {
     use HasFactory;
-    protected $table = 'develpments';
+    protected $table = 'developments';
 
     // ===========================Contants =============================
     // code

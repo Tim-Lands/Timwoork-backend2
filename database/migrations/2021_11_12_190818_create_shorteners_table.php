@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateDevelpmentsTable extends Migration
+class CreateShortenersTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,16 +13,14 @@ class CreateDevelpmentsTable extends Migration
      */
     public function up()
     {
-        Schema::create('developments', function (Blueprint $table) {
+        Schema::create('shorteners', function (Blueprint $table) {
             $table->id();
-            $table->string('title');
-            $table->tinyInteger('duration');
-            $table->float('price', 5, 2);
+            // code of product
+            $table->string('code');
+            // url of product
+            $table->string('url');
 
-            // is_duration: 0 => have a time of product , 1 => no any time
-            //$table->boolean('is_duration')->default(0);
-
-            // relation of Model Product
+            // relation model of Product
             $table->foreignId('product_id')->constrained()
                 ->onDelete('CASCADE')
                 ->onUpdate('CASCADE');
@@ -38,6 +36,6 @@ class CreateDevelpmentsTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('develpments');
+        Schema::dropIfExists('shorteners');
     }
 }

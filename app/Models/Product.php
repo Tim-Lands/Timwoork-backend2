@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 
 class Product extends Model
 {
@@ -72,7 +73,7 @@ class Product extends Model
      *
      * @return BelongsTo
      */
-    public function category(): BelongsTo
+    public function subcategory(): BelongsTo
     {
         return $this->belongsTo(Category::class, 'category_id');
     }
@@ -82,9 +83,9 @@ class Product extends Model
      *
      * @return HasMany
      */
-    public function develpments(): HasMany
+    public function developments(): HasMany
     {
-        return $this->hasMany(Develpment::class, 'product_id');
+        return $this->hasMany(Development::class, 'product_id');
     }
 
     /**
@@ -117,5 +118,15 @@ class Product extends Model
     public function product_tag(): BelongsToMany
     {
         return $this->belongsToMany(Tag::class);
+    }
+
+    /**
+     * shortener
+     *
+     * @return HasOne
+     */
+    public function shortener(): HasOne
+    {
+        return $this->hasOne(Shortener::class, "product_id");
     }
 }
