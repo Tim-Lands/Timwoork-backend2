@@ -4,9 +4,10 @@ use App\Http\Controllers\Auth\{LoginController, RegisterController};
 use App\Http\Controllers\{
     Product\InsertProductContoller,
     Product\DeleteProductController,
-    ProfileController,
-    SellerController
+    Product\SellerController,
+    ProfileController
 };
+use App\Http\Controllers\Product\ShortenerController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -54,6 +55,8 @@ Route::prefix('sellers')->group(function () {
 
 // =============================== مسارات انشاء خدمة جديدة ==================================
 Route::prefix('product')->group(function () {
+    // عرض الخدمة
+    Route::get('/{slug}',                    [InsertProductContoller::class, 'show']);
     // انشاء خدمة جديدة
     Route::get('create',                     [InsertProductContoller::class, 'create']);
     // المحلة الاولى
@@ -67,5 +70,7 @@ Route::prefix('product')->group(function () {
     // المحلة الخامسة
     Route::post('/{id}/product-step-five',   [InsertProductContoller::class, 'storeStepFive']);
     // حذف الخدمة
-    Route::post('/{id}/deleteProduct', DeleteProductController::class);
+    Route::post('/{id}/deleteProduct',       DeleteProductController::class);
 });
+// ======================== مسار رابط المختصر للخدمة ==================================
+Route::get('/s/{code}', ShortenerController::class);

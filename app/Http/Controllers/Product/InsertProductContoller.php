@@ -9,7 +9,7 @@ use App\Http\Requests\Products\{
     ProductStepThreeRequest,
     ProductStepTwoRequest
 };
-use App\Models\{Category, Product, Tag};
+use App\Models\{Category, Product, Shortener, Tag};
 use Exception;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Auth;
@@ -22,6 +22,23 @@ class InsertProductContoller extends Controller
     public function __construct()
     {
         // $this->middleware('auth:sanctum');
+    }
+
+    /**
+     * show => عرض الخدمة الواحدة
+     *
+     * @param  string $slug
+     * @return JsonResponse
+     */
+    public function show(string $slug): JsonResponse
+    {
+        // slug جلب الخدمة بواسطة 
+        $product = Product::selection()->whereSlug($slug)->first();
+        if (!$product)
+            // رسالة خطأ
+            return response()->error('هذا العنصر غير موجود', 403);
+        // اظهار العناصر
+        return response()->success('عرض خدمة', $product);
     }
 
     /**
@@ -147,10 +164,10 @@ class InsertProductContoller extends Controller
             // شرط اذا كانت هناط تطويرات من قبل
             if ($product->develpments)
                 // حدف كل التطويرات
-                $product->develpments()->delete();
+                $product->developments()->delete();
 
             // اضافة تطويرات جديدة 
-            $product->develpments()->createMany($developments);
+            $product->developments()->createMany($developments);
             // انهاء المعاملة بشكل جيد :
             DB::commit();
             // رسالة نجاح عملية الاضافة:
@@ -436,27 +453,42 @@ class InsertProductContoller extends Controller
             //id  جلب العنصر بواسطة
             $product = Product::find($id);
             // شرط اذا كان العنصر موجود
-            if (!$product || !is_numeric($id))
+            if (!$product || !is_numeric($id)) {
                 // رسالة خطأ
                 return response()->error('هذا العنصر غير موجود', 403);
-            // وضع معلومات في مصفوفة من اجل عملية الانشاء
+                exit();
+            }
+            // شرط هل يوجد رابط مختصر من قبل
+            $shorterner = Shortener::whereProductId($id)->exists();
+            // شرط اذا كان لا يوجد رابط مختصر
+            if (!$shorterner) {
+                // وضع معلومات في مصفوفة من اجل عملية الانشاء رابط مختصر
+                $data_shortener = [
+                    'code'  => Str::random(7),
+                    'url'  => "http://timwoork.test/api/product/{$product['slug']}"
+                ];
+            }
+            //  وضع معلومات في مصفوفة من اجل عملية الانشاء المرحلة الخامسة
             $data = [
                 'is_draft'      => 1,
                 'current_step'  => Product::PRODUCT_STEP_FIVE,
                 'is_completed'  => Product::PRODUCT_IS_COMPLETED,
             ];
-
             // ============= انشاء المرحلة الاخيرة في الخدمة و نشرها ================:
             // بداية المعاملة مع البيانات المرسلة لقاعدة بيانات :
             DB::beginTransaction();
             // عملية انشاء المرحلة الثالثة
             $product->update($data);
+            // شرط هل يوجد رابط مختصر من قبل
+            if (!$shorterner)
+                $product->shortener()->create($data_shortener);
             // انهاء المعاملة بشكل جيد :
             DB::commit();
             // ================================================================
             // رسالة نجاح عملية الاضافة:
             return response()->success('تم انهاء المراحل و انشاء الخدمة بنجاح', $product);
         } catch (Exception $ex) {
+            return $ex;
             // لم تتم المعاملة بشكل نهائي و لن يتم ادخال اي بيانات لقاعدة البيانات
             DB::rollback();
             // رسالة خطأ
