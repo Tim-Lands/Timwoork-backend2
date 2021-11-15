@@ -97,4 +97,24 @@ class User extends Authenticatable
     {
         return $this->belongsToMany(Product::class, 'ratings');
     }
+
+    /**
+     * carts
+     *
+     * @return HasMany
+     */
+    public function carts(): HasMany
+    {
+        return $this->hasMany(Cart::class);
+    }
+
+    /**
+     * messages
+     *
+     * @return HasMany
+     */
+    public function messages(): HasMany
+    {
+        return $this->hasMany(Message::class);
+    }
 }

@@ -129,4 +129,10 @@ class Product extends Model
     {
         return $this->hasOne(Shortener::class, "product_id");
     }
+
+
+    public function carts(): HasMany
+    {
+        return $this->hasMany(Cart::class);
+    }
 }
