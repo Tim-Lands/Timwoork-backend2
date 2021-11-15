@@ -23,10 +23,10 @@ class CreateCardsTable extends Migration
 
             $table->tinyInteger('type');
             $table->integer('number');
-            $table->integer('code');
-            $table->integer('postal');
-            $table->tinyInteger('end_number');
-            $table->date('date_expiry');
+            $table->integer('cvc');
+            $table->integer('code_postal');
+            $table->tinyInteger('last_four_numbers');
+            $table->string('date_expiry');
 
             $table->timestamps();
         });

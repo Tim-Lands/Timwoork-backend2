@@ -26,7 +26,7 @@ class CreateCartsTable extends Migration
                 ->onDelete('CASCADE')
                 ->onUpdate('CASCADE');
 
-            $table->integer('count_product')->unsigned();
+            $table->integer('quantity')->unsigned();
 
             $table->timestamps();
         });

@@ -22,7 +22,7 @@ class CreateCartDevelopmentTable extends Migration
                 ->onUpdate('CASCADE');
 
             // relation model of Development
-            $table->foreignId('development')->constrained()
+            $table->foreignId('development_id')->constrained()
                 ->onDelete('CASCADE')
                 ->onUpdate('CASCADE');
 

@@ -16,7 +16,7 @@ class CreateMessagesTable extends Migration
         Schema::create('messages', function (Blueprint $table) {
             $table->id();
             // relation model of User
-            $table->foreignId('wallet_id')->constrained()
+            $table->foreignId('user_id')->constrained()
                 ->onDelete('CASCADE')
                 ->onUpdate('CASCADE');
             // relation model of Conversation
