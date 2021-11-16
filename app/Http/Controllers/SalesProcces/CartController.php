@@ -3,9 +3,86 @@
 namespace App\Http\Controllers\SalesProcces;
 
 use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
+use App\Http\Requests\SalesProcces\CartRequest;
+use App\Models\Card;
+use App\Models\Cart;
+use Exception;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 
 class CartController extends Controller
 {
-    //
+    /**
+     * store
+     *
+     * @param  mixed $id
+     * @param  CartRequest $request
+     * @return JsonResponse
+     */
+    public function store(CartRequest $request): JsonResponse
+    {
+        try {
+            // وضع البيانات فالمصفوفة من اجل اضافة عنصر فالسلة
+            $data = [
+                'user_id'    => 2,
+                'product_id' => (int)$request->product_id,
+                'quantity'   => (int)$request->quantity
+            ];
+            // ============= انشاء عنصر جديد فالسلة ================:
+            // بداية المعاملة مع البيانات المرسلة لقاعدة بيانات :
+            DB::beginTransaction();
+            // عملية اضافة تصنيف :
+            $cart = Cart::create($data);
+            // شرط في حالة ما كانت هناك تطويرات مضافة
+            if ($request->has('developments')) {
+                // عملية اضافة تطويرات فالسلة
+                $cart->cart_development()->syncWithoutDetaching(collect($request->developments));
+            }
+            // انهاء المعاملة بشكل جيد :
+            DB::commit();
+            // =================================================
+            // رسالة نجاح عملية الاضافة:
+            return response()->success('تم انشاء عنصر فالسلة', $cart);
+        } catch (Exception $ex) {
+            // لم تتم المعاملة بشكل نهائي و لن يتم ادخال اي بيانات لقاعدة البيانات
+            DB::rollback();
+            // رسالة خطأ
+            return response()->error('هناك خطأ ما حدث في قاعدة بيانات , يرجى التأكد من ذلك', 403);
+        }
+    }
+
+    /**
+     * delete
+     *
+     * @param  mixed $id
+     * @return JsonResponse
+     */
+    public function delete(mixed $id): JsonResponse
+    {
+        try {
+            //id  جلب العنصر بواسطة
+            $cart = Card::find($id);
+            // شرط اذا كان العنصر موجود
+            if (!$cart || !is_numeric($id))
+                // رسالة خطأ
+                return response()->error('هذا العنصر غير موجود', 403);
+            // ============= التعديل على التصنيف  ================:
+
+            // بداية المعاملة مع البيانات المرسلة لقاعدة بيانات :
+            DB::beginTransaction();
+            // عملية حذف العنصر من السلة :
+            $cart->delete();
+            // انهاء المعاملة بشكل جيد :
+            DB::commit();
+            // =================================================
+            // رسالة نجاح عملية التعديل:
+            return response()->success('تم حذف عنصر من السلة بنجاح', $cart);
+        } catch (Exception $ex) {
+            // لم تتم المعاملة بشكل نهائي و لن يتم ادخال اي بيانات لقاعدة البيانات
+            DB::rollback();
+            // رسالة خطأ
+            return response()->error('هناك خطأ ما حدث في قاعدة بيانات , يرجى التأكد من ذلك', 403);
+        }
+    }
 }
