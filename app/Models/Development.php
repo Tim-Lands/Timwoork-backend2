@@ -10,6 +10,7 @@ class Development extends Model
 {
     use HasFactory;
     protected $table = 'developments';
+    protected $hidden = ['pivot'];
 
     // ===========================Contants =============================
     // code
