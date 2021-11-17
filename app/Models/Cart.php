@@ -13,9 +13,7 @@ class Cart extends Model
     use HasFactory;
 
     protected $table = 'carts';
-
-    protected $with = ['cart_development'];
-
+    protected $hidden = ['pivot', 'id'];
     // ===========================Contants =============================
     // code
     // ================== Acssesor & mutators ==========================
@@ -30,7 +28,7 @@ class Cart extends Model
      */
     public function scopeSelection(mixed $query): ?object
     {
-        return $query->select('id', 'user_id', 'product_id', 'quantity',  'created_at');
+        return $query->select('id', 'user_id', 'product_id', 'quantity');
     }
     // ========================== Relations ============================
     // code
@@ -70,7 +68,7 @@ class Cart extends Model
      *
      * @return BelongsToMany
      */
-    public function cart_development(): BelongsToMany
+    public function cart_developments(): BelongsToMany
     {
         return $this->belongsToMany(Development::class);
     }

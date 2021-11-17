@@ -79,9 +79,9 @@ Route::get('/s/{code}', ShortenerController::class);
 // =============================== مسارات انشاء عناصر جديدة فالسلة ==================================
 Route::prefix('cart')->group(function () {
     // عرض السلة
-    // Route::get('/',               [CartController::class, 'show']);
+    Route::get('/',               [CartController::class, 'index']);
     // انشاء عنصر فالسلة
     Route::post('/store',         [CartController::class, 'store']);
     //حذف عنصر من السلة
-    Route::post('{id}/delete',    [CartController::class, 'delete']);
+    Route::post('/{id}/delete',    [CartController::class, 'delete']);
 });
