@@ -86,7 +86,7 @@ Route::prefix('conversations')->middleware('auth:sanctum')->group(function () {
     Route::get('/{id}', [ConversationController::class, 'show']);
     Route::post('/store', [ConversationController::class, 'store']);
     Route::post('/{conversation}/sendMessage', [ConversationController::class, 'sendMessage']);
-  
+});
 // =============================== مسارات انشاء عناصر جديدة فالسلة ==================================
 Route::prefix('cart')->group(function () {
     // عرض السلة
@@ -95,5 +95,4 @@ Route::prefix('cart')->group(function () {
     Route::post('/store',         [CartController::class, 'store']);
     //حذف عنصر من السلة
     Route::post('/{id}/delete',    [CartController::class, 'delete']);
-
 });
