@@ -7,7 +7,8 @@ use App\Http\Controllers\{
     Product\InsertProductContoller,
     Product\DeleteProductController,
     Product\SellerController,
-    ProfileController
+    ProfileController,
+    SalesProcces\CartController,
 };
 use App\Http\Controllers\Product\ShortenerController;
 use Illuminate\Support\Facades\Route;
@@ -77,12 +78,22 @@ Route::prefix('product')->group(function () {
 // ======================== مسار رابط المختصر للخدمة ==================================
 Route::get('/s/{code}', ShortenerController::class);
 
+
 // ===================== المحادثات والرسائل ============================================
 
-// ===================== المحادثات ====================
 Route::prefix('conversations')->middleware('auth:sanctum')->group(function () {
     Route::get('/', [ConversationController::class, 'index']);
     Route::get('/{id}', [ConversationController::class, 'show']);
     Route::post('/store', [ConversationController::class, 'store']);
     Route::post('/{conversation}/sendMessage', [ConversationController::class, 'sendMessage']);
+  
+// =============================== مسارات انشاء عناصر جديدة فالسلة ==================================
+Route::prefix('cart')->group(function () {
+    // عرض السلة
+    Route::get('/',               [CartController::class, 'index']);
+    // انشاء عنصر فالسلة
+    Route::post('/store',         [CartController::class, 'store']);
+    //حذف عنصر من السلة
+    Route::post('/{id}/delete',    [CartController::class, 'delete']);
+
 });
