@@ -9,6 +9,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Support\Facades\Auth;
 use Laravel\Sanctum\HasApiTokens;
 
 class User extends Authenticatable
@@ -35,10 +36,28 @@ class User extends Authenticatable
     protected $casts = [
         'email_verified_at' => 'datetime',
     ];
-    protected $with = ['profile'];
+
+    /**
+     * The attributes that should be appends.
+     */
+    protected $appends = ['unread_messages_count'];
+    //protected $with = ['profile'];
     // ===========================Contants =============================
     // code
     // ================== Acssesor & mutators ==========================
+    public function getUnreadMessagesCountAttribute()
+    {
+        /*         $count = $this->conversations()->whereHas('messages', function ($query) {
+            $query->whereNull('read_at')
+                ->where('user_id', '!=', Auth::id());
+        })->count(); */
+        $count = $this->conversations->loadCount(['messages' => function ($q) {
+            $q->whereNull('read_at')
+                ->where('user_id', '!=', Auth::id());
+        }]);
+        return $count[0]->messages_count;
+    }
+
     // code
     // ============================ Scopes =============================
     // code
@@ -117,4 +136,19 @@ class User extends Authenticatable
     {
         return $this->hasMany(Message::class);
     }
+
+    /**
+     * conversations
+     *
+     * @return HasMany
+     */
+    public function conversations(): BelongsToMany
+    {
+        return $this->belongsToMany(Conversation::class, 'conversation_users');
+    }
+
+    /**
+     * Unread message count
+     * @return int
+     */
 }

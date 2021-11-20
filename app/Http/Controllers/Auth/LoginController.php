@@ -48,6 +48,9 @@ class LoginController extends Controller
 
     /*************************Socialite Login *************************/
 
+    /**
+     * @var \Laravel\Socialite\Facades\Socialite
+     */
     public function redirectToProvider($provider)
     {
         return Socialite::driver($provider)->stateless()->redirect();
