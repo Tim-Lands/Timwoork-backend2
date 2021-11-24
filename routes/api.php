@@ -4,11 +4,12 @@ use App\Http\Controllers\Auth\{LoginController, RegisterController};
 use App\Http\Controllers\{
     Product\InsertProductContoller,
     Product\DeleteProductController,
+    Product\ShortenerController,
     Product\SellerController,
     ProfileController,
     SalesProcces\CartController,
+    SalesProcces\OrderController
 };
-use App\Http\Controllers\Product\ShortenerController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -57,9 +58,9 @@ Route::prefix('sellers')->group(function () {
 // =============================== مسارات انشاء خدمة جديدة ==================================
 Route::prefix('product')->group(function () {
     // عرض الخدمة
-    Route::get('/{slug}',                    [InsertProductContoller::class, 'show']);
+    Route::get('/create',                     [InsertProductContoller::class, 'create']);
     // انشاء خدمة جديدة
-    Route::get('create',                     [InsertProductContoller::class, 'create']);
+    Route::get('/{slug}',                    [InsertProductContoller::class, 'show']);
     // المحلة الاولى
     Route::post('{id}/product-step-one',     [InsertProductContoller::class, 'storeStepOne']);
     // المحلة الثانية
@@ -84,4 +85,14 @@ Route::prefix('cart')->group(function () {
     Route::post('/store',         [CartController::class, 'store']);
     //حذف عنصر من السلة
     Route::post('/{id}/delete',    [CartController::class, 'delete']);
+});
+
+// =============================== مسارات انشاء عناصر جديدة فالسلة ==================================
+Route::prefix('order')->group(function () {
+    // عرض السلة
+    Route::get('/',               [OrderController::class, 'index']);
+    // انشاء عنصر فالسلة
+    Route::post('/store',         [OrderController::class, 'createOrderWithItems']);
+    //حذف عنصر من السلة
+    //Route::post('/{id}/delete',    [OrderController::class, 'delete']);
 });

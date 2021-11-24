@@ -15,6 +15,8 @@ class CreateItemsTable extends Migration
     {
         Schema::create('items', function (Blueprint $table) {
             $table->id();
+            $table->string('uuid')->unique();
+            $table->bigInteger('number_product');
             // relation model of Order
             $table->foreignId('order_id')->constrained()
                 ->onDelete('CASCADE')

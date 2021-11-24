@@ -16,6 +16,10 @@ class Item extends Model
 
     // ===========================Contants =============================
     // code
+    const STATUS_NEW_REQUEST       = 0;
+    const STATUS_PENDING_REQUEST   = 1;
+    const STATUS_CLOSED_REQUEST    = 2;
+    const STATUS_FULFILLED_REQUEST = 3;
     // ================== Acssesor & mutators ==========================
     // code
     // ============================ Scopes =============================
