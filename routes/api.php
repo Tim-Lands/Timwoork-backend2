@@ -58,10 +58,10 @@ Route::prefix('sellers')->group(function () {
 
 // =============================== مسارات انشاء خدمة جديدة ==================================
 Route::prefix('product')->group(function () {
-    // عرض الخدمة
-    Route::get('/{slug}',                    [InsertProductContoller::class, 'show']);
     // انشاء خدمة جديدة
     Route::get('create',                     [InsertProductContoller::class, 'create']);
+    // عرض الخدمة
+    Route::get('/{slug}',                    [InsertProductContoller::class, 'show']);
     // المحلة الاولى
     Route::post('{id}/product-step-one',     [InsertProductContoller::class, 'storeStepOne']);
     // المحلة الثانية
