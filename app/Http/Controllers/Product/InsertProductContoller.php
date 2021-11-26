@@ -21,7 +21,7 @@ class InsertProductContoller extends Controller
 {
     public function __construct()
     {
-        // $this->middleware('auth:sanctum');
+        $this->middleware('auth:sanctum');
     }
 
     /**
@@ -59,7 +59,7 @@ class InsertProductContoller extends Controller
             // بداية المعاملة مع البيانات المرسلة لقاعدة بيانات :
             DB::beginTransaction();
             // عملية انشاء معرف جديد للخدمة
-            Product::create();
+            Product::create(['profile_seller_id' => Auth::user()->id]);
             // انهاء المعاملة بشكل جيد :
             DB::commit();
 

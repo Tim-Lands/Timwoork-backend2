@@ -35,8 +35,10 @@ class CreateProductsTable extends Migration
             // اذا كان في المسودة ام لا
             $table->tinyInteger('is_draft')->default(0);
             // relation model of ProfileSeller
-            $table->bigInteger('profile_seller_id')->unsigned()->nullable();
-            // $table->foreignId('profile_seller_id')->constrained();
+            // $table->bigInteger('profile_seller_id')->unsigned()->nullable();
+            $table->foreignId('profile_seller_id')->constrained()
+                ->onDelete('CASCADE')
+                ->onUpdate('CASCADE');
             // relation model of Category
             $table->foreignId('category_id')
                 ->nullable()
