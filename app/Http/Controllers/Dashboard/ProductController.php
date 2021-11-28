@@ -16,7 +16,7 @@ class ProductController extends Controller
     public function index(): JsonResponse
     {
         // جلب جميع الخدمات
-        $products = Product::selection()->with(['category', 'profileSeller'])->get();
+        $products = Product::selection()->with(['subcategory', 'profileSeller'])->get();
         // اظهار العناصر
         return response()->success('تم العثور على قائمة الخدمات', $products);
     }

@@ -47,15 +47,15 @@ class User extends Authenticatable
     // ================== Acssesor & mutators ==========================
     public function getUnreadMessagesCountAttribute()
     {
-        /*         $count = $this->conversations()->whereHas('messages', function ($query) {
-            $query->whereNull('read_at')
-                ->where('user_id', '!=', Auth::id());
-        })->count(); */
         $count = $this->conversations->loadCount(['messages' => function ($q) {
             $q->whereNull('read_at')
                 ->where('user_id', '!=', Auth::id());
         }]);
-        return $count[0]->messages_count;
+        if (!empty($count)) {
+            return $count[0]->messages_count;
+        } else {
+            return 0;
+        }
     }
 
     // code
