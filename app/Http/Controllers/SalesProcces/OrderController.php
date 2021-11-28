@@ -17,24 +17,44 @@ class OrderController extends Controller
     {
         try {
             // متغير به سلة المشتري
-            $cart = Cart::selection()->where('user_id', 2)->with(['product', 'cart_developments'])->get();
+            $cart = Cart::selection()->where('user_id', 2)->with(['product', 'cart_developments'])->get()[0];
+            $product_cart = $cart;
+            // الخدمات المتواجدة في سلة المشتري
+            $count_products = $cart->pluck('product_id')->count();
+            return  $product_cart;
 
-            return $cart;
 
             // وضع البيانات فالمصفوفة من اجل اضافة طلبيىة
+            // return $cart->pluck('product_id')[1];
             $data_order = [
                 'uuid' => Str::uuid(),
                 'cart_id' => request('cart_id'),
                 'payment_id' => request('payment_id'),
             ];
 
-
-
+            $data_items = [];
             // ============= انشاء طلبية جديدة ================:
             // بداية المعاملة مع البيانات المرسلة لقاعدة بيانات :
             DB::beginTransaction();
             // عملية اضافة الطلبية :
-            $cart_id = Order::insertId($data_order);
+            $order_id = Order::insertGetId($data_order);
+
+            if ($count_products == 1)
+                $data_items = [
+                    "order_id" => $order_id,
+                    "uuid" => Str::uuid(),
+                    "statu" => Item::STATUS_NEW_REQUEST,
+                    "number_product" => $cart->pluck('product_id')[0],
+
+                ];
+            else
+                foreach ($cart->pluck('product_id') as $item => $value) {
+                    $data_items[] = [
+                        'number_product' => $value,
+                        'status' => Item::STATUS_NEW_REQUEST
+                    ];
+                }
+
             // انهاء المعاملة بشكل جيد :
             DB::commit();
             // =================================================

@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateCartsTable extends Migration
+class CreateSubcartDevelopmentTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,17 +13,17 @@ class CreateCartsTable extends Migration
      */
     public function up()
     {
-        Schema::create('carts', function (Blueprint $table) {
+        Schema::create('subcart_development', function (Blueprint $table) {
             $table->id();
-
-            // relation model of User
-            $table->foreignId('user_id')->constrained()
+            // relation model of SubCart
+            $table->foreignId('sub_cart_id')->constrained()
                 ->onDelete('CASCADE')
                 ->onUpdate('CASCADE');
 
-            $table->float('total_price', 5, 2)->unsigned()->default(0);
-            $table->boolean('is_buying')->default(0);
-
+            // relation model of Development
+            $table->foreignId('development_id')->constrained()
+                ->onDelete('CASCADE')
+                ->onUpdate('CASCADE');
             $table->timestamps();
         });
     }
@@ -35,6 +35,6 @@ class CreateCartsTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('carts');
+        Schema::dropIfExists('subcart_development');
     }
 }

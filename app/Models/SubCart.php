@@ -6,15 +6,13 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
-use Illuminate\Database\Eloquent\Relations\HasMany;
-use Illuminate\Database\Eloquent\Relations\HasOne;
 
-class Cart extends Model
+class SubCart extends Model
 {
     use HasFactory;
 
-    protected $table = 'carts';
-    protected $hidden = ['pivot', 'id'];
+    protected $table = 'sub_carts';
+    // protected $hidden = ['pivot', 'id'];
     // ===========================Contants =============================
     // code
     // ================== Acssesor & mutators ==========================
@@ -29,39 +27,42 @@ class Cart extends Model
      */
     public function scopeSelection(mixed $query): ?object
     {
-        return $query->select('id', 'user_id', 'product_id', 'quantity');
+        return $query->select('id', 'price_product', 'product_id', 'quantity');
     }
     // ========================== Relations ============================
     // code
 
+
     /**
-     * user
+     * cart
      *
      * @return BelongsTo
      */
-    public function user(): BelongsTo
+    public function cart(): BelongsTo
     {
-        return $this->belongsTo(User::class);
+        return $this->belongsTo(Cart::class);
     }
 
+
+
     /**
-     * order
+     * product
      *
      * @return BelongsTo
      */
-    public function order(): HasOne
+    public function product(): BelongsTo
     {
-        return $this->hasOne(Order::class);
+        return $this->belongsTo(Product::class);
     }
 
 
     /**
-     * subcarts
+     * cart_development
      *
-     * @return hasMany
+     * @return BelongsToMany
      */
-    public function subcarts(): HasMany
+    public function subcart_developments(): BelongsToMany
     {
-        return $this->hasMany(SubCart::class);
+        return $this->belongsToMany(Development::class);
     }
 }

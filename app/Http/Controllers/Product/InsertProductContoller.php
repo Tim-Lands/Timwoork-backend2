@@ -59,10 +59,10 @@ class InsertProductContoller extends Controller
             // بداية المعاملة مع البيانات المرسلة لقاعدة بيانات :
             DB::beginTransaction();
             // عملية انشاء معرف جديد للخدمة
-            Product::create(['profile_seller_id' => Auth::user()->id]);
+            $product = Product::create(['profile_seller_id' => Auth::user()->id]);
+            $data['id'] = $product->id;
             // انهاء المعاملة بشكل جيد :
             DB::commit();
-
             // اظهار العناصر
             return response()->success('عرض كل تصنيفات الرئيسية و الفرعيىة و الوسوم من اجل انشاء خدمة ', $data);
         } catch (Exception $ex) {

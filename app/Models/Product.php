@@ -131,8 +131,8 @@ class Product extends Model
     }
 
 
-    public function carts(): HasMany
+    public function subcarts(): HasMany
     {
-        return $this->hasMany(Cart::class);
+        return $this->hasMany(SubCart::class);
     }
 }
