@@ -49,22 +49,17 @@ class InsertProductContoller extends Controller
     public function create(): JsonResponse
     {
         try {
-            // جلب البيانات و وضعها في مصفوفة
-            $data = [
-                'categories'    => Category::selection()->parent()->pluck('name_ar', 'id'),
-                'tags'          => Tag::selection()->pluck('name_ar', 'id')
-            ];
             // ============= انشاء المعرف للخدمة ================:
 
             // بداية المعاملة مع البيانات المرسلة لقاعدة بيانات :
             DB::beginTransaction();
             // عملية انشاء معرف جديد للخدمة
-            Product::create(['profile_seller_id' => Auth::user()->id]);
+            $product = Product::create(['profile_seller_id' => Auth::user()->id]);
             // انهاء المعاملة بشكل جيد :
             DB::commit();
 
             // اظهار العناصر
-            return response()->success('عرض كل تصنيفات الرئيسية و الفرعيىة و الوسوم من اجل انشاء خدمة ', $data);
+            return response()->success('عرض كل تصنيفات الرئيسية و الفرعيىة و الوسوم من اجل انشاء خدمة ', Product::selection()->where('id', $product->id)->first());
         } catch (Exception $ex) {
             // لم تتم المعاملة بشكل نهائي و لن يتم ادخال اي بيانات لقاعدة البيانات
             DB::rollback();

@@ -36,7 +36,7 @@ class LoginController extends Controller
 
     public function me(Request $request)
     {
-        return $request->user();
+        return $request->user()->load('profile');
     }
     public function logout()
     {
