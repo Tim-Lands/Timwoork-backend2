@@ -33,7 +33,10 @@ class InsertProductContoller extends Controller
     public function show(string $slug): JsonResponse
     {
         // slug جلب الخدمة بواسطة 
-        $product = Product::selection()->whereSlug($slug)->first();
+        $product = Product::selection()
+            ->whereSlug($slug)
+            ->orWhere('id', $slug)
+            ->first();
         if (!$product)
             // رسالة خطأ
             return response()->error('هذا العنصر غير موجود', 403);
@@ -46,7 +49,7 @@ class InsertProductContoller extends Controller
      *
      * @return void
      */
-    public function create(): JsonResponse
+    public function store(): JsonResponse
     {
         try {
             // ============= انشاء المعرف للخدمة ================:
