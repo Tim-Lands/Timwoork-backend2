@@ -59,7 +59,7 @@ Route::prefix('sellers')->group(function () {
 // =============================== مسارات انشاء خدمة جديدة ==================================
 Route::prefix('product')->group(function () {
     // انشاء خدمة جديدة
-    Route::get('create',                     [InsertProductContoller::class, 'create']);
+    Route::post('create',                     [InsertProductContoller::class, 'store']);
     // عرض الخدمة
     Route::get('/{slug}',                    [InsertProductContoller::class, 'show']);
     // المحلة الاولى
