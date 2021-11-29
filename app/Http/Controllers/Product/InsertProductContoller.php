@@ -36,6 +36,7 @@ class InsertProductContoller extends Controller
         $product = Product::selection()
             ->whereSlug($slug)
             ->orWhere('id', $slug)
+            ->with('subcategory', 'product_tag')
             ->first();
         if (!$product)
             // رسالة خطأ
