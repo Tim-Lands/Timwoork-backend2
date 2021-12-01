@@ -130,7 +130,7 @@ class InsertProductContoller extends Controller
      * @param  ProductStepTwoRequest $request
      * @return object
      */
-    public function storeStepTwo(mixed $id, ProductStepTwoRequest $request): JsonResponse
+    public function storeStepTwo(mixed $id, ProductStepTwoRequest $request)
     {
         try {
             //id  جلب العنصر بواسطة
@@ -146,15 +146,16 @@ class InsertProductContoller extends Controller
                 'current_step'    => Product::PRODUCT_STEP_TWO,
             ];
             // انشاء مصفوفة جديدة من اجل عملية اضافة تطويرات
-            $developments = [];
+            (object)$developments = [];
             // شرط اذا كانت هناك توجد تطورات
             if ($request->only('developments') != null) {
                 // جلب المرسلات من العميل و وضعهم فالمصفوفة الجديدة
                 foreach ($request->only('developments') as $key => $value) {
-                    $developments[] = $value;
+                    $developments = $value;
                 }
-                $developments = $developments[0];
+                // $developments = $developments[1][0];
             }
+            return $developments;
             // return $product->develpments;
             // ============= انشاء المرحلة الثانية في الخدمة ================:
             // بداية المعاملة مع البيانات المرسلة لقاعدة بيانات :
@@ -173,6 +174,7 @@ class InsertProductContoller extends Controller
             // رسالة نجاح عملية الاضافة:
             return response()->success('تم انشاء المرحلة الثانية بنجاح', $product);
         } catch (Exception $ex) {
+            return $ex;
             // لم تتم المعاملة بشكل نهائي و لن يتم ادخال اي بيانات لقاعدة البيانات
             DB::rollback();
             // رسالة خطأ
@@ -187,7 +189,7 @@ class InsertProductContoller extends Controller
      * @param  ProductStepThreeRequest $request
      * @return JsonResponse
      */
-    public function storeStepThree(mixed $id, ProductStepThreeRequest $request): JsonResponse
+    public function storeStepThree(mixed $id, ProductStepThreeRequest $request)
     {
         try {
             //id  جلب العنصر بواسطة
@@ -226,7 +228,7 @@ class InsertProductContoller extends Controller
      * @param  ProductStepFourRequest $request
      * @return JsonResponse
      */
-    public function storeStepFour(mixed $id, ProductStepFourRequest $request): JsonResponse
+    public function storeStepFour(mixed $id, ProductStepFourRequest $request)
     {
         try {
 

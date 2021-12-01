@@ -5,7 +5,6 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 
@@ -14,7 +13,6 @@ class Cart extends Model
     use HasFactory;
 
     protected $table = 'carts';
-    protected $hidden = ['pivot', 'id'];
     // ===========================Contants =============================
     // code
     // ================== Acssesor & mutators ==========================
@@ -29,7 +27,7 @@ class Cart extends Model
      */
     public function scopeSelection(mixed $query): ?object
     {
-        return $query->select('id', 'user_id', 'product_id', 'quantity');
+        return $query->select('id', 'user_id', 'is_buying', 'total_price');
     }
     // ========================== Relations ============================
     // code

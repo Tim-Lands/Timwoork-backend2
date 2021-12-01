@@ -12,7 +12,6 @@ class SubCart extends Model
     use HasFactory;
 
     protected $table = 'sub_carts';
-    // protected $hidden = ['pivot', 'id'];
     // ===========================Contants =============================
     // code
     // ================== Acssesor & mutators ==========================
@@ -63,6 +62,6 @@ class SubCart extends Model
      */
     public function subcart_developments(): BelongsToMany
     {
-        return $this->belongsToMany(Development::class);
+        return $this->belongsToMany(Development::class, 'subcart_development', 'sub_cart_id', 'development_id');
     }
 }
