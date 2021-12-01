@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateItemsTable extends Migration
+class CreateSubcartDevelopmentTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,18 +13,17 @@ class CreateItemsTable extends Migration
      */
     public function up()
     {
-        Schema::create('items', function (Blueprint $table) {
+        Schema::create('subcart_development', function (Blueprint $table) {
             $table->id();
-            $table->string('uuid')->unique();
-            $table->bigInteger('number_product');
-            // relation model of Order
-            $table->foreignId('order_id')->constrained()
+            // relation model of SubCart
+            $table->foreignId('sub_cart_id')->constrained()
                 ->onDelete('CASCADE')
                 ->onUpdate('CASCADE');
 
-            $table->tinyInteger('status')->default(0);
-            $table->tinyInteger('duration');
-            $table->text('instructions');
+            // relation model of Development
+            $table->foreignId('development_id')->constrained()
+                ->onDelete('CASCADE')
+                ->onUpdate('CASCADE');
             $table->timestamps();
         });
     }
@@ -36,6 +35,6 @@ class CreateItemsTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('items');
+        Schema::dropIfExists('subcart_development');
     }
 }

@@ -21,12 +21,8 @@ class CreateCartsTable extends Migration
                 ->onDelete('CASCADE')
                 ->onUpdate('CASCADE');
 
-            // relation model of Product
-            $table->foreignId('product_id')->constrained()
-                ->onDelete('CASCADE')
-                ->onUpdate('CASCADE');
-
-            $table->integer('quantity')->unsigned();
+            $table->float('total_price', 5, 2)->unsigned()->default(0);
+            $table->boolean('is_buying')->default(0);
 
             $table->timestamps();
         });

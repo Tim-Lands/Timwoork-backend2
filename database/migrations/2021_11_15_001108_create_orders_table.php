@@ -15,7 +15,7 @@ class CreateOrdersTable extends Migration
     {
         Schema::create('orders', function (Blueprint $table) {
             $table->id();
-
+            $table->string('uuid')->unique();
             // relation model of Cart
             $table->foreignId('cart_id')->constrained()
                 ->onDelete('CASCADE')

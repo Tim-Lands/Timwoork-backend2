@@ -6,20 +6,14 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
-use Illuminate\Database\Eloquent\Relations\HasMany;
 
-class Item extends Model
+class SubCart extends Model
 {
     use HasFactory;
 
-    protected $table = 'items';
-
+    protected $table = 'sub_carts';
     // ===========================Contants =============================
     // code
-    const STATUS_NEW_REQUEST       = 0;
-    const STATUS_PENDING_REQUEST   = 1;
-    const STATUS_CLOSED_REQUEST    = 2;
-    const STATUS_FULFILLED_REQUEST = 3;
     // ================== Acssesor & mutators ==========================
     // code
     // ============================ Scopes =============================
@@ -32,40 +26,42 @@ class Item extends Model
      */
     public function scopeSelection(mixed $query): ?object
     {
-        return $query->select('id', 'order_id', 'status', 'duration', 'instruction',  'created_at');
+        return $query->select('id', 'price_product', 'product_id', 'quantity');
     }
-
     // ========================== Relations ============================
     // code
 
+
     /**
-     * order
+     * cart
      *
      * @return BelongsTo
      */
-    public function order(): BelongsTo
+    public function cart(): BelongsTo
     {
-        return $this->belongsTo(Order::class);
-    }
-
-    /**
-     * amounts
-     *
-     * @return HasMany
-     */
-    public function amounts(): HasMany
-    {
-        return $this->hasMany(Amount::class);
+        return $this->belongsTo(Cart::class);
     }
 
 
+
     /**
-     * attachments
+     * product
      *
-     * @return HasMany
+     * @return BelongsTo
      */
-    public function attachments(): HasMany
+    public function product(): BelongsTo
     {
-        return $this->hasMany(Attachment::class);
+        return $this->belongsTo(Product::class);
+    }
+
+
+    /**
+     * cart_development
+     *
+     * @return BelongsToMany
+     */
+    public function subcart_developments(): BelongsToMany
+    {
+        return $this->belongsToMany(Development::class, 'subcart_development', 'sub_cart_id', 'development_id');
     }
 }
