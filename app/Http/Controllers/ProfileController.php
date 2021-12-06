@@ -20,7 +20,8 @@ class ProfileController extends Controller
         // البحث في قاعدة البيانات عن اسم المستخدم
         $user = User::where('username', $username)
             ->orWhere('id', $username)
-            ->get();
+            ->with('profile.profile_seller')
+            ->first();
         if ($user->isEmpty()) {
             // في حالة عدم وجود اسم مستخدم يتم إرسال رسالة الخطأ
             return response()->error('عذرا لم نجد معلومات مطابقة لهذا الاسم');
