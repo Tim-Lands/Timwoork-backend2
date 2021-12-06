@@ -19,7 +19,7 @@ class CategoryController extends Controller
      *
      * @return JsonResponse
      */
-    public function index(): JsonResponse
+    public function index()
     {
         // جلب جميع الاصناف الرئيسة و الاصناف الفرعية عن طريق التصفح
         $categories = Category::Selection()->with(['subcategories' => function ($q) {
@@ -29,8 +29,6 @@ class CategoryController extends Controller
         // اظهار العناصر
         return response()->success('عرض كل تصنيفات الرئيسية و الفرعية', $categories);
     }
-
-
     /**
      * show => id  دالة جلب تصنيف معين بواسطة سلاق
      *
