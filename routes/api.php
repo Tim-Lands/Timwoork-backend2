@@ -20,6 +20,9 @@ use Illuminate\Support\Facades\Route;
 |--------------------------------------------------------------------------
 */
 
+Route::fallback(function () {
+    return response()->json('هذا الرابط غير موجود ', 200);
+});
 /*****************Auth Routes ****************************/
 Route::middleware('auth:sanctum')->group(function () {
     Route::get('/me', [LoginController::class, 'me']);

@@ -36,7 +36,13 @@ class LoginController extends Controller
 
     public function me(Request $request)
     {
-        return $request->user()->load('profile');
+        $user =  $request->user()->load('profile');
+        $msg_count = $this->getUnreadMessagesCount($user);
+        $data = [
+            'user_details' => $user,
+            'msg_unread_count' => $msg_count
+        ];
+        return response()->json($data, 200);
     }
     public function logout()
     {
@@ -44,6 +50,18 @@ class LoginController extends Controller
         return response([
             'msg' => "Success"
         ])->withCookie($cookie);
+    }
+
+    /**
+     * get user unread messeges count   
+     */
+    public function getUnreadMessagesCount($user)
+    {
+        $count = $user->conversations->loadCount(['messages' => function ($q) {
+            $q->whereNull('read_at')
+                ->where('user_id', '!=', Auth::id());
+        }])->sum('messages_count');
+        return $count;
     }
 
     /*************************Socialite Login *************************/
