@@ -4,6 +4,7 @@ use App\Http\Controllers\Auth\{LoginController, RegisterController};
 use App\Http\Controllers\{
     ChatController,
     ConversationController,
+    FilterController,
     FrontEndController,
     Product\InsertProductContoller,
     Product\DeleteProductController,
@@ -116,5 +117,14 @@ Route::prefix('order')->group(function () {
     //Route::post('/{id}/delete',    [OrderController::class, 'delete']);
 });
 
+
+// ============================ مسارات عملية الفلترة======================================= //
+
+Route::prefix('filter')->group(function () {
+
+    Route::get('/', FilterController::class);
+});
+
 // عرض التصنيفات الرئيسية و الفرعية
 Route::get('/display_categories', [FrontEndController::class, 'get_categories_subcategories_porducts']);
+
