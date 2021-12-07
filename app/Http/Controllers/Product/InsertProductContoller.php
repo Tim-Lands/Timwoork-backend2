@@ -36,7 +36,11 @@ class InsertProductContoller extends Controller
         $product = Product::selection()
             ->whereSlug($slug)
             ->orWhere('id', $slug)
-            ->with('subcategory', 'product_tag')
+            ->with(['subcategory' => function ($q) {
+                $q->select('id', 'parent_id', 'name_ar', 'name_en', 'name_fr')->with('category', function ($q) {
+                    $q->select('id', 'name_ar', 'name_en', 'name_fr')->withCount('subcategories');
+                })->withCount('products');
+            }, 'developments', 'product_tag', 'profileSeller'])
             ->first();
         if (!$product)
             // رسالة خطأ
@@ -44,7 +48,6 @@ class InsertProductContoller extends Controller
         // اظهار العناصر
         return response()->success('عرض خدمة', $product);
     }
-
     /**
      * create => دالة جلب البيانات و انشاء معرف جديد
      *
@@ -150,13 +153,11 @@ class InsertProductContoller extends Controller
             if ($request->only('developments') != null) {
                 // جلب المرسلات من العميل و وضعهم فالمصفوفة الجديدة
                 foreach ($request->only('developments') as $key => $value) {
-                    $developments = $value;
+                    $developments[] = $value;
                 }
-                // $developments = $developments[1][0];
+                $developments = $developments[0];
             }
-            return $developments;
-            // return $product->develpments;
-            // ============= انشاء المرحلة الثانية في الخدمة ================:
+            // =============== انشاء المرحلة الثانية في الخدمة ================:
             // بداية المعاملة مع البيانات المرسلة لقاعدة بيانات :
             DB::beginTransaction();
             // عملية انشاء المرحلة الثانية

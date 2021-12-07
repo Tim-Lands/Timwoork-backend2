@@ -5,6 +5,7 @@ use App\Http\Controllers\{
     ChatController,
     ConversationController,
     FilterController,
+    FrontEndController,
     Product\InsertProductContoller,
     Product\DeleteProductController,
     Product\ShortenerController,
@@ -64,9 +65,11 @@ Route::prefix('sellers')->group(function () {
 // =============================== مسارات انشاء خدمة جديدة ==================================
 Route::prefix('product')->group(function () {
     // عرض الخدمة
-    Route::get('/create',                     [InsertProductContoller::class, 'create']);
+    Route::get('/store',                     [InsertProductContoller::class, 'store']);
     // انشاء خدمة جديدة
     Route::get('/{slug}',                    [InsertProductContoller::class, 'show']);
+
+    Route::get('/count_categories_subcategorie_products', [InsertProductContoller::class, 'get_count_category_subcategories_product']);
     // المحلة الاولى
     Route::post('{id}/product-step-one',     [InsertProductContoller::class, 'storeStepOne']);
     // المحلة الثانية
@@ -95,11 +98,13 @@ Route::prefix('conversations')->middleware('auth:sanctum')->group(function () {
 // =============================== مسارات انشاء عناصر جديدة فالسلة ==================================
 Route::prefix('cart')->group(function () {
     // عرض السلة
-    Route::get('/',               [CartController::class, 'index']);
+    Route::get('/',                             [CartController::class, 'index']);
     // انشاء عنصر فالسلة
-    Route::post('/store',         [CartController::class, 'store']);
+    Route::post('/store',                       [CartController::class, 'store']);
+    // تحديث عنصر فالسلة
+    Route::post('/subcart/update/{id}',         [CartController::class, 'update']);
     //حذف عنصر من السلة
-    Route::post('/{id}/delete',    [CartController::class, 'delete']);
+    Route::post('/{id}/delete',                 [CartController::class, 'delete']);
 });
 
 // =============================== مسارات انشاء عناصر جديدة فالسلة ==================================
@@ -112,9 +117,14 @@ Route::prefix('order')->group(function () {
     //Route::post('/{id}/delete',    [OrderController::class, 'delete']);
 });
 
+
 // ============================ مسارات عملية الفلترة======================================= //
 
 Route::prefix('filter')->group(function () {
 
     Route::get('/', FilterController::class);
 });
+
+// عرض التصنيفات الرئيسية و الفرعية
+Route::get('/display_categories', [FrontEndController::class, 'get_categories_subcategories_porducts']);
+

@@ -6,8 +6,10 @@ use App\Http\Controllers\Controller;
 use App\Models\Cart;
 use App\Models\Item;
 use App\Models\Order;
+use App\Models\Product;
 use Exception;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 
@@ -16,44 +18,75 @@ class OrderController extends Controller
     public function createOrderWithItems()
     {
         try {
-            // متغير به سلة المشتري
-            $cart = Cart::selection()->where('user_id', 2)->with(['product', 'cart_developments'])->get()[0];
-            $product_cart = $cart;
-            // الخدمات المتواجدة في سلة المشتري
-            $count_products = $cart->pluck('product_id')->count();
-            return  $product_cart;
+            //سلة المشتري
+            $cart = Cart::selection()->with(['subcarts' => function ($q) {
+                $q->with('subcart_developments')->get();
+            }])->where('user_id', 3)->where('is_buying', 0)->first();
 
+            // جلب المعرفات الخدمات المتواجدة في عناصر السلة
+            $subcats = $cart['subcarts']->pluck('product_id');
+            //return $cart['subcarts'][1]['subcart_developments']->sum('duration');
 
             // وضع البيانات فالمصفوفة من اجل اضافة طلبيىة
-            // return $cart->pluck('product_id')[1];
             $data_order = [
                 'uuid' => Str::uuid(),
-                'cart_id' => request('cart_id'),
+                'cart_id' => $cart->id,
                 'payment_id' => request('payment_id'),
             ];
 
             $data_items = [];
+            foreach ($subcats as $key => $value) {
+                // جلب الخدمة
+                $product = Product::whereId($value);
+                // المدة الزمنية للخدمة
+                $duration_product = $product->first()->duration;
+                // جلب تطويرات المضافة في العنصر السلة
+                $developments = $cart['subcarts'][$key]['subcart_developments'];
+                // جلب كمية الخدمة
+                $quantity = $cart['subcarts'][$key]->quantity;
+                // المدة الزمنية للتطويرات
+                $duration_developments =  $developments->sum('duration');
+
+                $duration_total = ($duration_product + $duration_developments) * $quantity;
+
+                $price_product = ($cart['subcarts'][$key]->price_product + $developments->sum('price')) * $quantity;
+
+
+                $data_items[] = [
+                    'uuid' => Str::uuid(),
+                    'order_id' => 1,
+                    'number_product' => $value,
+                    'price_prduct' => $price_product,
+                    'duration' => $duration_total,
+                    'status' => Item::STATUS_NEW_REQUEST,
+                ];
+            }
+            return $data_items;
             // ============= انشاء طلبية جديدة ================:
             // بداية المعاملة مع البيانات المرسلة لقاعدة بيانات :
             DB::beginTransaction();
             // عملية اضافة الطلبية :
-            $order_id = Order::insertGetId($data_order);
+            $order = Order::create($data_order);
 
-            if ($count_products == 1)
-                $data_items = [
-                    "order_id" => $order_id,
-                    "uuid" => Str::uuid(),
-                    "statu" => Item::STATUS_NEW_REQUEST,
-                    "number_product" => $cart->pluck('product_id')[0],
 
-                ];
-            else
-                foreach ($cart->pluck('product_id') as $item => $value) {
-                    $data_items[] = [
-                        'number_product' => $value,
-                        'status' => Item::STATUS_NEW_REQUEST
-                    ];
-                }
+
+            //$order_id = Order::insertGetId($data_order);
+
+            // if ($count_products == 1)
+            //     $data_items = [
+            //         "order_id" => $order_id,
+            //         "uuid" => Str::uuid(),
+            //         "statu" => Item::STATUS_NEW_REQUEST,
+            //         "number_product" => $cart->pluck('product_id')[0],
+
+            //     ];
+            // else
+            //     foreach ($cart->pluck('product_id') as $item => $value) {
+            //         $data_items[] = [
+            //             'number_product' => $value,
+            //             'status' => Item::STATUS_NEW_REQUEST
+            //         ];
+            //     }
 
             // انهاء المعاملة بشكل جيد :
             DB::commit();
