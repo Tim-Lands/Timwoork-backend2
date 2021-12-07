@@ -22,7 +22,7 @@ class ProfileController extends Controller
             ->orWhere('id', $username)
             ->with('profile.profile_seller')
             ->first();
-        if ($user->isEmpty()) {
+        if ($user) {
             // في حالة عدم وجود اسم مستخدم يتم إرسال رسالة الخطأ
             return response()->error('عذرا لم نجد معلومات مطابقة لهذا الاسم');
         } else {
