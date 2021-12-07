@@ -4,6 +4,7 @@ use App\Http\Controllers\Auth\{LoginController, RegisterController};
 use App\Http\Controllers\{
     ChatController,
     ConversationController,
+    FilterController,
     Product\InsertProductContoller,
     Product\DeleteProductController,
     Product\ShortenerController,
@@ -109,4 +110,11 @@ Route::prefix('order')->group(function () {
     Route::post('/store',         [OrderController::class, 'createOrderWithItems']);
     //حذف عنصر من السلة
     //Route::post('/{id}/delete',    [OrderController::class, 'delete']);
+});
+
+// ============================ مسارات عملية الفلترة======================================= //
+
+Route::prefix('filter')->group(function () {
+
+    Route::get('/', FilterController::class);
 });
