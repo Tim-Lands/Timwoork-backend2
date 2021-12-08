@@ -7,11 +7,11 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
-class SubCart extends Model
+class CartItem extends Model
 {
     use HasFactory;
 
-    protected $table = 'sub_carts';
+    protected $table = 'cart_items';
     // ===========================Contants =============================
     // code
     // ================== Acssesor & mutators ==========================
@@ -26,7 +26,7 @@ class SubCart extends Model
      */
     public function scopeSelection(mixed $query): ?object
     {
-        return $query->select('id', 'price_product', 'product_id', 'quantity');
+        return $query->select('id', 'cart_id', 'price_product', 'product_id', 'quantity');
     }
     // ========================== Relations ============================
     // code
@@ -60,8 +60,8 @@ class SubCart extends Model
      *
      * @return BelongsToMany
      */
-    public function subcart_developments(): BelongsToMany
+    public function cartItem_developments(): BelongsToMany
     {
-        return $this->belongsToMany(Development::class, 'subcart_development', 'sub_cart_id', 'development_id');
+        return $this->belongsToMany(Development::class, 'cartitem_development', 'cart_item_id', 'development_id');
     }
 }
