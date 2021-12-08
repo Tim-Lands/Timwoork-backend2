@@ -29,18 +29,19 @@ class ProductFactory extends Factory
             'title'                 => $title,
             'slug'                  => Str::slug($title),
             'content'               => $this->faker->paragraph(1),
-            'price'                 => $this->faker->numberbetween(5, 10),
+            'price'                 => $this->faker->numberbetween(5, 100),
             // 'duration'              => $this->faker->dateTimeBetween('now', '+05 days'),
-            'duration'              => $this->faker->numberBetween(1, 10),
+            'duration'              => $this->faker->numberBetween(1, 60),
+            'count_buying'              => $this->faker->numberBetween(0, 80),
             'current_step'          => $current_step,
             'is_active'             => $this->faker->numberBetween(0, 1),
             'is_completed'          => $completed,
             'is_draft'              => $completed,
-            // 'thumbnail'             => $this->faker->image('public/storage/images-thumb', 640, 480, null, false),
+            'thumbnail'             => $this->faker->image(storage_path('app/products/thumbnails'), 640, 480, null, false),
             'buyer_instruct'        => $this->faker->paragraph(1),
             'profile_seller_id'     => $this->faker->numberBetween(1, 3),
             // اختر اي تصنيف فرعي او ضع اعداد عشوائية للتصنيفات المتواجدة
-            'category_id'           => rand(10, 27) // $this->faker->numberBetween(n,m);
+            'category_id'           => rand(10, 180) // $this->faker->numberBetween(n,m);
         ];
     }
 }

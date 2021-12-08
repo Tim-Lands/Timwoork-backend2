@@ -6,7 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\SalesProcces\CartRequest;
 use App\Models\Cart;
 use App\Models\Product;
-use App\Models\SubCart;
+use App\Models\CartItem;
 use Exception;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Auth;
@@ -22,8 +22,8 @@ class CartController extends Controller
     public function index()
     {
         // عرض السلة المستخدم
-        $cart = Cart::selection()->with(['subcarts' => function ($q) {
-            $q->with('subcart_developments')->get();
+        $cart = Cart::selection()->with(['cart_items' => function ($q) {
+            $q->with('cartItem_developments')->get();
         }])->where('user_id', Auth::user()->id)->where('is_buying', 0)->get();
 
         // اظهار السلة مع عناصرها
@@ -49,7 +49,7 @@ class CartController extends Controller
                 'user_id' => Auth::user()->id,
             ];
             // وضع البيانات فالمصفوفة من اجل اضافة عناصر فالسلة السلة
-            $data_sub_cart = [
+            $data_cart_items = [
                 'product_id'    => $request->product_id,
                 'quantity'      => $request->quantity,
             ];
@@ -76,36 +76,34 @@ class CartController extends Controller
                 // اضافة سلة جديدة
                 $cart = Cart::create($data_cart);
                 // وضع معرف السلة في مصفوفة العنصر
-                $data_sub_cart['cart_id'] = $cart->first()->id;
+                $data_cart_items['cart_id'] = $cart->first()->id;
                 // انشاء عنصر جديد
-                $sub_cart = SubCart::create($data_sub_cart);
+                $cart_item = CartItem::create($data_cart_items);
                 // شرط في حالة ما كانت هناك تطويرات مضافة
                 if ($request->has('developments')) {
                     // عملية اضافة تطويرات فالسلة
-                    $sub_cart->subcart_developments()->syncWithoutDetaching(collect($request->developments));
-                    $sub_cart->load('subcart_developments');
+                    $cart_item->cartItem_developments()->syncWithoutDetaching(collect($request->developments));
+                    $cart_item->load('cartItem_developments');
                 }
                 // عمليات حساب السعر المتواجد في السلة 
-                $this->calculate_price($cart, $sub_cart, $request->quantity);
+                $this->calculate_price($cart, $cart_item, $request->quantity);
             } else {
-                $sub_cart_found = SubCart::whereCartId($cart->first()->id)->where('product_id', $request->product_id)->first();
-                // return $sub_cart_found;
-                // return $cart->with('subcarts')->first()['subcarts']->sum('price_product');
-                if ($sub_cart_found)
+                $cart_item_found = CartItem::whereCartId($cart->first()->id)->where('product_id', $request->product_id)->first();
+                if ($cart_item_found)
                     // رسالة خطأ
                     return response()->error('هذا العنصر موجود السلة , اضف عنصر آخر', 403);
                 // وضع معرف السلة في مصفوفة العنصر
-                $data_sub_cart['cart_id'] = $cart->first()->id;
+                $data_cart_items['cart_id'] = $cart->first()->id;
                 // انشاء عنصر جديد
-                $sub_cart = SubCart::create($data_sub_cart);
+                $cart_item = CartItem::create($data_cart_items);
                 // شرط في حالة ما كانت هناك تطويرات مضافة
                 if ($request->has('developments')) {
                     // عملية اضافة تطويرات فالسلة
-                    $sub_cart->subcart_developments()->syncWithoutDetaching(collect($request->developments));
-                    $sub_cart->load('subcart_developments');
+                    $cart_item->cartItem_developments()->syncWithoutDetaching(collect($request->developments));
+                    $cart_item->load('cartItem_developments');
                 }
                 // عمليات حساب السعر المتواجد في السلة 
-                $this->calculate_price($cart->first(), $sub_cart, $request->quantity);
+                $this->calculate_price($cart->first(), $cart_item, $request->quantity);
             }
             // انهاء المعاملة بشكل جيد :
             DB::commit();
@@ -114,6 +112,7 @@ class CartController extends Controller
             // رسالة نجاح عملية الاضافة:
             return response()->success('تم انشاء عنصر فالسلة', $cart);
         } catch (Exception $ex) {
+            return $ex;
             // لم تتم المعاملة بشكل نهائي و لن يتم ادخال اي بيانات لقاعدة البيانات
             //return $ex;
             DB::rollback();
@@ -130,9 +129,9 @@ class CartController extends Controller
             // جلب سلة مستخدم في حالة تم بيعها
             $cart_found =  Cart::where('user_id', Auth::user()->id)->where('is_buying', 0)->exists();
             // جلب عنصر السلة
-            $sub_cart_founded = SubCart::whereId($id)->whereCartId($cart->id)->where('product_id', $request->product_id);
+            $cart_item_founded = CartItem::whereId($id)->whereCartId($cart->id)->where('product_id', $request->product_id);
 
-            if (!$sub_cart_founded->first())
+            if (!$cart_item_founded->first())
                 // رسالة خطأ
                 return response()->error('هذا العنصر غير موجود', 403);
             // شرط في حالة ما اذا قام المستخدم بارسال تطويرات
@@ -154,18 +153,18 @@ class CartController extends Controller
             //شرط اذا كانت هناك سلة غير مباعة
             if ($cart_found) {
                 // جلب عنصر السلة
-                $sub_cart = $sub_cart_founded->with(['product', 'subcart_developments'])->first();
+                $cart_item = $cart_item_founded->with(['product', 'cartItem_developments'])->first();
                 // حفظ الكمية
-                $sub_cart->quantity = $request->quantity;
-                $sub_cart->save();
+                $cart_item->quantity = $request->quantity;
+                $cart_item->save();
                 //شرط اذا كان هناك تطويرات
                 if ($request->has('developments')) {
                     // عملية اضافة تطويرات فالسلة
-                    $sub_cart->subcart_developments()->sync(collect($request->developments));
-                    $sub_cart->load('subcart_developments');
+                    $cart_item->cartItem_developments()->sync(collect($request->developments));
+                    $cart_item->load('cartItem_developments');
                 }
                 // عمليات حساب السعر المتواجد في السلة 
-                $this->calculate_price($cart, $sub_cart, $request->quantity);
+                $this->calculate_price($cart, $cart_item, $request->quantity);
             } else {
                 return response()->error('لا توجد سلة غير مباعة , اضف سلة جديدة من فضلك');
             }
@@ -173,7 +172,7 @@ class CartController extends Controller
             DB::commit();
             // =================================================
             // رسالة نجاح عملية الاضافة:
-            return response()->success('تم تحديث عنصر فالسلة', $sub_cart);
+            return response()->success('تم تحديث عنصر فالسلة', $cart_item);
         } catch (Exception $ex) {
             // لم تتم المعاملة بشكل نهائي و لن يتم ادخال اي بيانات لقاعدة البيانات
             //return $ex;
@@ -194,27 +193,27 @@ class CartController extends Controller
         try {
 
             //id  جلب العنصر بواسطة
-            $sub_cart = SubCart::find($id);
+            $cart_item = CartItem::find($id);
             // شرط اذا كان العنصر موجود
-            if (!$sub_cart || !is_numeric($id))
+            if (!$cart_item || !is_numeric($id))
                 // رسالة خطأ
                 return response()->error('هذا العنصر غير موجود فالسلة', 403);
             // ============= حذف عنصر من السلة  ================:
             // بداية المعاملة مع البيانات المرسلة لقاعدة بيانات :
             DB::beginTransaction();
             // ============= عملية حذف العنصر من السلة ====================:
-            $cart = Cart::whereId($sub_cart->cart_id)->withCount('subcarts')->first();
-            if ($cart['subcarts_count'] == 1) {
+            $cart = Cart::whereId($cart_item->cart_id)->withCount('cart_items')->first();
+            if ($cart['cart_items_count'] == 1) {
                 // عمليات حساب السعر المتواجد في السلة 
-                $this->calculate_price($cart, $sub_cart, 0);
+                $this->calculate_price($cart, $cart_item, 0);
                 // حذف العنصر من السلة
-                $sub_cart->delete();
+                $cart_item->delete();
                 $cart->delete();
             } else {
                 // عمليات حساب السعر المتواجد في السلة 
-                $this->calculate_price($cart, $sub_cart, 0);
+                $this->calculate_price($cart, $cart_item, 0);
                 // حذف العنصر من السلة
-                $sub_cart->delete();
+                $cart_item->delete();
             }
 
 
@@ -222,7 +221,7 @@ class CartController extends Controller
             DB::commit();
             // =================================================
             // رسالة نجاح عملية الحذف:
-            return response()->success('تم حذف عنصر من السلة بنجاح', $sub_cart);
+            return response()->success('تم حذف عنصر من السلة بنجاح', $cart_item);
         } catch (Exception $ex) {
             return $ex;
             // لم تتم المعاملة بشكل نهائي و لن يتم ادخال اي بيانات لقاعدة البيانات
@@ -236,26 +235,26 @@ class CartController extends Controller
      * calculate_price
      *
      * @param  mixed $cart
-     * @param  mixed $sub_cart
+     * @param  mixed $cart_item
      * @param  mixed $quantity
      * @return void
      */
-    private function calculate_price($cart, $sub_cart, $quantity)
+    private function calculate_price($cart, $cart_item, $quantity)
     {
         // سعر العنصر الموجود فالسلة
-        $price_subcart_product = $sub_cart['product']->price;
+        $price_cart_item_product = $cart_item['product']->price;
         // سعر تطويرات العنصر الموجود فالسلة
-        $price_subcart_developments = $sub_cart['subcart_developments']->sum('price');
+        $price_cart_item_developments = $cart_item['cartItem_developments']->sum('price');
 
         // تحديث السعر العنصر
-        $sub_cart->price_product = ($price_subcart_product + $price_subcart_developments) * $quantity;
-        $sub_cart->save();
+        $cart_item->price_product = ($price_cart_item_product + $price_cart_item_developments) * $quantity;
+        $cart_item->save();
         // سعر الكلي 
-        $cart->total_price = $cart->with('subcarts')->first()['subcarts']->sum('price_product');
+        $cart->total_price = $cart->with('cart_items')->first()['cart_items']->sum('price_product');
         // سعر الكلي مع الرسوم 
-        $cart->price_with_tax = calculate_price_with_tax($cart->with('subcarts')->first()['subcarts']->sum('price_product'))['price_with_tax'];
+        $cart->price_with_tax = calculate_price_with_tax($cart->with('cart_items')->first()['cart_items']->sum('price_product'))['price_with_tax'];
         // سعر الرسوم
-        $cart->tax = calculate_price_with_tax($cart->with('subcarts')->first()['subcarts']->sum('price_product'))['tax'];
+        $cart->tax = calculate_price_with_tax($cart->with('cart_items')->first()['cart_items']->sum('price_product'))['tax'];
         // تحديث سعر السلة
         $cart->save();
     }

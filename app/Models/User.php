@@ -41,7 +41,7 @@ class User extends Authenticatable
      * The attributes that should be appends.
      */
     protected $appends = ['unread_messages_count'];
-    //protected $with = ['profile'];
+    // protected $with = ['profile'];
     // ===========================Contants =============================
     // code
     // ================== Acssesor & mutators ==========================
@@ -94,7 +94,7 @@ class User extends Authenticatable
     public function profile(): HasOne
     {
 
-        return $this->hasOne(Profile::class);
+        return $this->hasOne(Profile::class, 'user_id');
     }
 
     /**

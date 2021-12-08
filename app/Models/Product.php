@@ -8,11 +8,13 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
+// use Mehradsadeghi\FilterQueryString\FilterQueryString;
 
 class Product extends Model
 {
     use HasFactory;
     protected $table = 'products';
+    //protected $filters = ['sort'];
 
     // ===========================Contants =============================
     // code
@@ -131,8 +133,8 @@ class Product extends Model
     }
 
 
-    public function subcarts(): HasMany
+    public function cart_items(): HasMany
     {
-        return $this->hasMany(SubCart::class);
+        return $this->hasMany(CartItem::class);
     }
 }

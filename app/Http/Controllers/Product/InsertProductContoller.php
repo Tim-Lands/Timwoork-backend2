@@ -23,31 +23,6 @@ class InsertProductContoller extends Controller
     {
         $this->middleware('auth:sanctum');
     }
-
-    /**
-     * show => عرض الخدمة الواحدة
-     *
-     * @param  string $slug
-     * @return JsonResponse
-     */
-    public function show(string $slug): JsonResponse
-    {
-        // slug جلب الخدمة بواسطة 
-        $product = Product::selection()
-            ->whereSlug($slug)
-            ->orWhere('id', $slug)
-            ->with(['subcategory' => function ($q) {
-                $q->select('id', 'parent_id', 'name_ar', 'name_en', 'name_fr')->with('category', function ($q) {
-                    $q->select('id', 'name_ar', 'name_en', 'name_fr')->withCount('subcategories');
-                })->withCount('products');
-            }, 'developments', 'product_tag', 'profileSeller'])
-            ->first();
-        if (!$product)
-            // رسالة خطأ
-            return response()->error('هذا العنصر غير موجود', 403);
-        // اظهار العناصر
-        return response()->success('عرض خدمة', $product);
-    }
     /**
      * create => دالة جلب البيانات و انشاء معرف جديد
      *

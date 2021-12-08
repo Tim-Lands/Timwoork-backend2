@@ -3,36 +3,101 @@
 namespace App\Http\Controllers;
 
 use App\Models\Category;
+use App\Models\Product;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
 class FrontEndController extends Controller
 {
     /**
-     * get_categories_subcategories_porducts => دالة عرض تصنيفات الرئيسية و الفرعية مع عدد التصنيفات الفرعية و الخدمات 
+     * get_categories => دالة اظهار التصنيفات الرئيسية
      *
      * @return void
      */
-    public function get_categories_subcategories_porducts()
+    public function get_categories()
     {
-        // جلب جميع الاصناف الرئيسة و الاصناف الفرعية عن طريق التصفح
-        $categories = Category::Selection()->withCount('subcategories')->with(['subcategories' => function ($q) {
-            $q->select('id', 'name_ar', 'name_en', 'parent_id', 'icon')->withCount('products');
-        }])->parent()->get();
+        // جلب التصنيفات الرئيسية
+        $categories = Category::Selection()->with('subcategories', function ($q) {
+            $q->withCount('products');
+        })->parent()->get();
         $data = [];
-        foreach ($categories as $sub) {
-            $data[] = [
-                'category' => [
-                    "name_ar"           => $sub['name_ar'],
-                    "name_en"           => $sub['name_en'],
-                    "name_fr"           => $sub['name_fr'],
-                    "slug"              => $sub['slug'],
-                    "subcategories_count" => $sub['subcategories_count'],
-                    "icon"              => $sub['icon'],
-                    'subcategories' => $sub['subcategories']->take(6)
-                ],
-            ];
+        // عمل لووب من اجل فرز التصنيفات الرئيسية مع عدد الخدمات التابعة لها
+        foreach ($categories as $category) {
+            $data[] =
+                [
+                    'id'      => $category['id'],
+                    'name_ar' => $category['name_ar'],
+                    'icon'    => $category['icon'],
+                    'products_count' => $category['subcategories']->sum('products_count')
+                ];
         }
+
         // اظهار العناصر
-        return response()->success('عرض كل تصنيفات الرئيسية و الفرعية', $data);
+        return response()->success('عرض تصنيفات الرئيسية', $data);
+    }
+
+    /**
+     * get_subcategories => دالة اظهار التصنيفات الفرعية
+     *
+     * @param  mixed $id
+     * @return void
+     */
+    public function get_subcategories(mixed $id): JsonResponse
+    {
+        // جلب التصنيف الرئيسي من اجل التحقق
+        $catagory = Category::find($id);
+        if (!$catagory)
+            return response()->error('هذا العنصر غير موجود', 403);
+        // جلب التصنيفات الفرعية
+        $subcategorie = Category::select('id', 'name_ar', 'icon')->withCount('products')->where('parent_id', $id)->child()->get();
+
+        // اظهار العناصر
+        return response()->success('عرض تصنيفات الفرعية', $subcategorie);
+    }
+
+
+    /**
+     * show => slug او  id  عرض الخدمة الواحدة بواسطة 
+     *
+     * @param  mixed $slug
+     * @return JsonResponse
+     */
+    public function show(mixed $slug): JsonResponse
+    {
+        // id او slug جلب الخدمة بواسطة 
+        $product = Product::selection()
+            ->whereSlug($slug)
+            ->orWhere('id', $slug)
+            ->with([
+                'subcategory' => function ($q) {
+                    $q->select('id', 'parent_id', 'name_ar',)
+                        ->with('category', function ($q) {
+                            $q->select('id', 'name_ar')
+                                ->without('subcategories');
+                        })->withCount('products');
+                },
+                'developments' => function ($q) {
+                    $q->select('id', 'title', 'price', 'duration', 'product_id');
+                },
+                'product_tag',
+
+                'profileSeller' => function ($q) {
+                    $q->select('id', 'profile_id', 'number_of_sales', 'portfolio', 'profile_id', 'badge_id', 'level_id')
+                        ->with(
+                            'profile',
+                            function ($q) {
+                                $q->select('id', 'first_name', 'last_name', 'avatar', 'precent_rating')
+                                    ->without('profile_seller');
+                            }
+                        );
+                }
+            ])
+            ->first();
+        // فحص اذا كان يوجد هذا العنصر
+        if (!$product)
+            // رسالة خطأ
+            return response()->error('هذا العنصر غير موجود', 403);
+        // اظهار العناصر
+        return response()->success('عرض خدمة', $product);
     }
 }
