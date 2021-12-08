@@ -40,23 +40,11 @@ class User extends Authenticatable
     /**
      * The attributes that should be appends.
      */
-    protected $appends = ['unread_messages_count'];
-    // protected $with = ['profile'];
+  
     // ===========================Contants =============================
     // code
     // ================== Acssesor & mutators ==========================
-    public function getUnreadMessagesCountAttribute()
-    {
-        $count = $this->conversations->loadCount(['messages' => function ($q) {
-            $q->whereNull('read_at')
-                ->where('user_id', '!=', Auth::id());
-        }]);
-        if (!empty($count)) {
-            return $count[0]->messages_count;
-        } else {
-            return 0;
-        }
-    }
+
 
     // code
     // ============================ Scopes =============================

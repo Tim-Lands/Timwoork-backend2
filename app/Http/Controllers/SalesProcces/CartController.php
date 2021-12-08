@@ -22,6 +22,7 @@ class CartController extends Controller
     public function index()
     {
         // عرض السلة المستخدم
+
         $cart = Cart::selection()->with(['cart_items' => function ($q) {
             $q->with('cartItem_developments')->get();
         }])->where('user_id', Auth::user()->id)->where('is_buying', 0)->get();
@@ -104,6 +105,7 @@ class CartController extends Controller
                 }
                 // عمليات حساب السعر المتواجد في السلة 
                 $this->calculate_price($cart->first(), $cart_item, $request->quantity);
+
             }
             // انهاء المعاملة بشكل جيد :
             DB::commit();
@@ -130,7 +132,6 @@ class CartController extends Controller
             $cart_found =  Cart::where('user_id', Auth::user()->id)->where('is_buying', 0)->exists();
             // جلب عنصر السلة
             $cart_item_founded = CartItem::whereId($id)->whereCartId($cart->id)->where('product_id', $request->product_id);
-
             if (!$cart_item_founded->first())
                 // رسالة خطأ
                 return response()->error('هذا العنصر غير موجود', 403);

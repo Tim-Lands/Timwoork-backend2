@@ -4,6 +4,7 @@ use App\Http\Controllers\Auth\{LoginController, RegisterController};
 use App\Http\Controllers\{
     ChatController,
     ConversationController,
+    FilterController,
     FrontEndController,
     Product\InsertProductContoller,
     Product\DeleteProductController,
@@ -21,6 +22,9 @@ use Illuminate\Support\Facades\Route;
 |--------------------------------------------------------------------------
 */
 
+Route::fallback(function () {
+    return response()->json('هذا الرابط غير موجود ', 200);
+});
 /*****************Auth Routes ****************************/
 Route::middleware('auth:sanctum')->group(function () {
     Route::get('/me', [LoginController::class, 'me']);
@@ -97,6 +101,7 @@ Route::prefix('cart')->group(function () {
     Route::post('/cartitem/update/{id}',         [CartController::class, 'update']);
     //حذف عنصر من السلة
     Route::post('/cartitem/delete/{id}',                 [CartController::class, 'delete']);
+
 });
 
 // =============================== مسارات انشاء عناصر جديدة فالسلة ==================================
@@ -109,9 +114,9 @@ Route::prefix('order')->group(function () {
     //Route::post('/{id}/delete',    [OrderController::class, 'delete']);
 });
 
+
 // عرض التصنيفات الرئيسية و الفرعية
 Route::get('/display_categories', [FrontEndController::class, 'get_categories_subcategories_porducts']);
-
 // عرض التصنيفات الرئيسية
 Route::get('/get_categories', [FrontEndController::class, 'get_categories']);
 // عرض التصنيفات الفرعية
@@ -120,3 +125,9 @@ Route::get('/get_categories/{id}', [FrontEndController::class, 'get_subcategorie
 Route::get('product/{slug}',                    [FrontEndController::class, 'show']);
 // عرض جميع الخدمات 
 Route::get('/get_products', [FrontEndController::class, 'getProducts']);
+
+Route::prefix('filter')->group(function () {
+
+    Route::get('/', FilterController::class);
+});
+

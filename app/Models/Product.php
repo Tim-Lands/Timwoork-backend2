@@ -8,14 +8,22 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
-// use Mehradsadeghi\FilterQueryString\FilterQueryString;
+use Mehradsadeghi\FilterQueryString\FilterQueryString;
 
 class Product extends Model
 {
-    use HasFactory;
+    use HasFactory, FilterQueryString;
     protected $table = 'products';
-    //protected $filters = ['sort'];
-
+    protected $filters = [
+        'sort',
+        'greater',
+        'greater_or_equal',
+        'less',
+        'less_or_equal',
+        'between',
+        'not_between',
+        'like'
+    ];
     // ===========================Contants =============================
     // code
     // حالة الخدمة مرفوضة
