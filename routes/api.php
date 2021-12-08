@@ -64,12 +64,8 @@ Route::prefix('sellers')->group(function () {
 
 // =============================== مسارات انشاء خدمة جديدة ==================================
 Route::prefix('product')->group(function () {
-    // عرض الخدمة
+    // انشاء الخدمة
     Route::get('/store',                     [InsertProductContoller::class, 'store']);
-    // انشاء خدمة جديدة
-    Route::get('/{slug}',                    [InsertProductContoller::class, 'show']);
-
-    Route::get('/count_categories_subcategorie_products', [InsertProductContoller::class, 'get_count_category_subcategories_product']);
     // المحلة الاولى
     Route::post('{id}/product-step-one',     [InsertProductContoller::class, 'storeStepOne']);
     // المحلة الثانية
@@ -102,9 +98,9 @@ Route::prefix('cart')->group(function () {
     // انشاء عنصر فالسلة
     Route::post('/store',                       [CartController::class, 'store']);
     // تحديث عنصر فالسلة
-    Route::post('/subcart/update/{id}',         [CartController::class, 'update']);
+    Route::post('/cartitem/update/{id}',         [CartController::class, 'update']);
     //حذف عنصر من السلة
-    Route::post('/{id}/delete',                 [CartController::class, 'delete']);
+    Route::post('/cartitem/delete/{id}',                 [CartController::class, 'delete']);
 });
 
 // =============================== مسارات انشاء عناصر جديدة فالسلة ==================================
@@ -128,3 +124,14 @@ Route::prefix('filter')->group(function () {
 // عرض التصنيفات الرئيسية و الفرعية
 Route::get('/display_categories', [FrontEndController::class, 'get_categories_subcategories_porducts']);
 
+<<<<<<< HEAD
+=======
+// عرض التصنيفات الرئيسية
+Route::get('/get_categories', [FrontEndController::class, 'get_categories']);
+// عرض التصنيفات الفرعية
+Route::get('/get_categories/{id}', [FrontEndController::class, 'get_subcategories']);
+// عرض الخدمة الواحدة
+Route::get('product/{slug}',                    [FrontEndController::class, 'show']);
+// عرض جميع الخدمات 
+Route::get('/get_products', [FrontEndController::class, 'getProducts']);
+>>>>>>> fix-some-problem-for-carts-and-frontend
