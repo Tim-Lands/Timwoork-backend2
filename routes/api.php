@@ -4,6 +4,7 @@ use App\Http\Controllers\Auth\{LoginController, RegisterController};
 use App\Http\Controllers\{
     ChatController,
     ConversationController,
+    FilterController,
     FrontEndController,
     Product\InsertProductContoller,
     Product\DeleteProductController,
@@ -21,6 +22,9 @@ use Illuminate\Support\Facades\Route;
 |--------------------------------------------------------------------------
 */
 
+Route::fallback(function () {
+    return response()->json('هذا الرابط غير موجود ', 200);
+});
 /*****************Auth Routes ****************************/
 Route::middleware('auth:sanctum')->group(function () {
     Route::get('/me', [LoginController::class, 'me']);
@@ -113,5 +117,14 @@ Route::prefix('order')->group(function () {
     //Route::post('/{id}/delete',    [OrderController::class, 'delete']);
 });
 
+
+// ============================ مسارات عملية الفلترة======================================= //
+
+Route::prefix('filter')->group(function () {
+
+    Route::get('/', FilterController::class);
+});
+
 // عرض التصنيفات الرئيسية و الفرعية
 Route::get('/display_categories', [FrontEndController::class, 'get_categories_subcategories_porducts']);
+
