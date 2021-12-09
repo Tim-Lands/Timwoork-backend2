@@ -19,8 +19,10 @@ class CreateRatingsTable extends Migration
             $table->foreignId('user_id')->constrained();
             // relation model of Country
             $table->foreignId('product_id')->constrained();
-
             $table->tinyInteger('rating')->default(0);
+            $table->text('comment');
+            $table->text('reply')->nullable();
+            $table->integer('status')->default(1);
             $table->timestamps();
         });
     }

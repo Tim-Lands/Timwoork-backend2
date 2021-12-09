@@ -40,7 +40,7 @@ class User extends Authenticatable
     /**
      * The attributes that should be appends.
      */
-  
+
     // ===========================Contants =============================
     // code
     // ================== Acssesor & mutators ==========================
@@ -134,9 +134,4 @@ class User extends Authenticatable
     {
         return $this->belongsToMany(Conversation::class, 'conversation_users');
     }
-
-    /**
-     * Unread message count
-     * @return int
-     */
 }

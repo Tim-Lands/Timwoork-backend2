@@ -14,6 +14,7 @@ use App\Http\Controllers\{
     SalesProcces\CartController,
     SalesProcces\OrderController
 };
+use App\Http\Controllers\Product\RatingController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -78,6 +79,10 @@ Route::prefix('product')->group(function () {
     Route::post('/{id}/product-step-five',   [InsertProductContoller::class, 'storeStepFive']);
     // حذف الخدمة
     Route::post('/{id}/deleteProduct',       DeleteProductController::class);
+
+    // تقييم الخدمة
+
+    Route::post('/{id}/rating', [RatingController::class, 'rate']);
 });
 // ======================== مسار رابط المختصر للخدمة ==================================
 Route::get('/s/{code}', ShortenerController::class);
@@ -101,7 +106,6 @@ Route::prefix('cart')->group(function () {
     Route::post('/cartitem/update/{id}',         [CartController::class, 'update']);
     //حذف عنصر من السلة
     Route::post('/cartitem/delete/{id}',                 [CartController::class, 'delete']);
-
 });
 
 // =============================== مسارات انشاء عناصر جديدة فالسلة ==================================
@@ -131,3 +135,8 @@ Route::prefix('filter')->group(function () {
     Route::get('/', FilterController::class);
 });
 
+// ============================= مسارات تقييم الخدمة بعد نجاح عملية البيع ==============================//
+
+Route::prefix('rating')->group(function () {
+    Route::post('/{id}/reply', [RatingController::class, 'reply']);
+});

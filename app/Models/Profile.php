@@ -14,7 +14,7 @@ class Profile extends Model
     use HasFactory;
     protected $table = 'profiles';
 
-    protected $with = ['profile_seller'];
+    //protected $with = ['profile_seller'];
 
     // ===========================Constants =============================
     public const COMPLETED_SETP_ONE = 1;
