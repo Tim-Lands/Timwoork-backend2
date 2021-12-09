@@ -23,7 +23,7 @@ class RatingController extends Controller
             // رسالة خطأ
             return response()->error('هذا العنصر غير موجود', 403);
 
-        $user_id = 3;
+        $user_id = Auth::id();
         $rate = Rating::where('user_id', $user_id)->where('product_id', $product->id)->first();
         if (!empty($rate)) {
             $rate->rating = $request->rating;
