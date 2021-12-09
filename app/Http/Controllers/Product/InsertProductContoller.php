@@ -23,6 +23,8 @@ class InsertProductContoller extends Controller
     {
         $this->middleware('auth:sanctum')->except(['show']);
     }
+  
+  
     /**
      * create => دالة جلب البيانات و انشاء معرف جديد
      *

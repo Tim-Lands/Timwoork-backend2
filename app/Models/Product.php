@@ -24,7 +24,6 @@ class Product extends Model
         'not_between',
         'like'
     ];
-
     // ===========================Contants =============================
     // code
     // حالة الخدمة مرفوضة
@@ -145,5 +144,10 @@ class Product extends Model
     public function cart_items(): HasMany
     {
         return $this->hasMany(CartItem::class);
+    }
+
+    public function ratings(): HasMany
+    {
+        return $this->hasMany(Rating::class);
     }
 }

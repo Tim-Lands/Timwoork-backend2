@@ -133,9 +133,4 @@ class User extends Authenticatable
     {
         return $this->belongsToMany(Conversation::class, 'conversation_users');
     }
-
-    /**
-     * Unread message count
-     * @return int
-     */
 }

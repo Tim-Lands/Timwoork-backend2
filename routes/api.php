@@ -14,6 +14,7 @@ use App\Http\Controllers\{
     SalesProcces\CartController,
     SalesProcces\OrderController
 };
+use App\Http\Controllers\Product\RatingController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -78,6 +79,10 @@ Route::prefix('product')->group(function () {
     Route::post('/{id}/product-step-five',   [InsertProductContoller::class, 'storeStepFive']);
     // حذف الخدمة
     Route::post('/{id}/deleteProduct',       DeleteProductController::class);
+
+    // تقييم الخدمة
+
+    Route::post('/{id}/rating', [RatingController::class, 'rate']);
 });
 // ======================== مسار رابط المختصر للخدمة ==================================
 Route::get('/s/{code}', ShortenerController::class);
@@ -114,18 +119,14 @@ Route::prefix('order')->group(function () {
 });
 
 
-// ============================ مسارات عملية الفلترة======================================= //
-
-Route::prefix('filter')->group(function () {
-
-    Route::get('/', FilterController::class);
-});
-
 // عرض التصنيفات الرئيسية و الفرعية
 Route::get('/display_categories', [FrontEndController::class, 'get_categories_subcategories_porducts']);
+<<<<<<< HEAD
 
 <<<<<<< HEAD
 =======
+=======
+>>>>>>> f552fee868ebf3207b123f50804fa647d6f6e2de
 // عرض التصنيفات الرئيسية
 Route::get('/get_categories', [FrontEndController::class, 'get_categories']);
 // عرض التصنيفات الفرعية
@@ -134,4 +135,18 @@ Route::get('/get_categories/{id}', [FrontEndController::class, 'get_subcategorie
 Route::get('product/{slug}',                    [FrontEndController::class, 'show']);
 // عرض جميع الخدمات 
 Route::get('/get_products', [FrontEndController::class, 'getProducts']);
+<<<<<<< HEAD
 >>>>>>> fix-some-problem-for-carts-and-frontend
+=======
+
+Route::prefix('filter')->group(function () {
+
+    Route::get('/', FilterController::class);
+});
+
+// ============================= مسارات تقييم الخدمة بعد نجاح عملية البيع ==============================//
+
+Route::prefix('rating')->group(function () {
+    Route::post('/{id}/reply', [RatingController::class, 'reply']);
+});
+>>>>>>> f552fee868ebf3207b123f50804fa647d6f6e2de

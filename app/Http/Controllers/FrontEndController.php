@@ -3,9 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Models\Category;
+
 use App\Models\Product;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Http\Request;
 
 class FrontEndController extends Controller
 {
@@ -80,7 +80,9 @@ class FrontEndController extends Controller
                     $q->select('id', 'title', 'price', 'duration', 'product_id');
                 },
                 'product_tag',
-
+                'ratings' => function ($q) {
+                    $q->with('user.profile');
+                },
                 'profileSeller' => function ($q) {
                     $q->select('id', 'profile_id', 'number_of_sales', 'portfolio', 'profile_id', 'badge_id', 'level_id')
                         ->with(
@@ -91,7 +93,8 @@ class FrontEndController extends Controller
                             }
                         );
                 }
-            ])
+            ])->withAvg('ratings', 'rating')
+            ->withCount('ratings')
             ->first();
         // فحص اذا كان يوجد هذا العنصر
         if (!$product)
