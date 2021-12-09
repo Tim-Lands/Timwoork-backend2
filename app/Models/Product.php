@@ -145,4 +145,9 @@ class Product extends Model
     {
         return $this->hasMany(CartItem::class);
     }
+
+    public function ratings(): HasMany
+    {
+        return $this->hasMany(Rating::class);
+    }
 }
