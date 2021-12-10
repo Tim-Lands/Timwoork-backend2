@@ -129,7 +129,6 @@ Route::get('/get_categories/{id}', [FrontEndController::class, 'get_subcategorie
 Route::get('product/{slug}',                    [FrontEndController::class, 'show']);
 // عرض جميع الخدمات 
 Route::get('/get_products', [FrontEndController::class, 'getProducts']);
-
 Route::prefix('filter')->group(function () {
 
     Route::get('/', FilterController::class);

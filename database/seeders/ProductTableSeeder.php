@@ -3,6 +3,7 @@
 namespace Database\Seeders;
 
 use App\Models\Development;
+use App\Models\Galary;
 use App\Models\Product;
 use App\Models\Tag;
 use Illuminate\Database\Seeder;
@@ -22,6 +23,9 @@ class ProductTableSeeder extends Seeder
             })
             ->each(function ($product) {
                 $product->developments()->saveMany(Development::factory()->times(3)->make());
+            })
+            ->each(function ($product) {
+                $product->galaries()->saveMany(Galary::factory()->times(2)->make());
             });
     }
 }

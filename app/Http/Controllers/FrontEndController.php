@@ -83,12 +83,18 @@ class FrontEndController extends Controller
                 'ratings' => function ($q) {
                     $q->with('user.profile');
                 },
+                'galaries' => function ($q) {
+                    $q->select('id', 'path', 'url_video', 'product_id');
+                },
                 'profileSeller' => function ($q) {
                     $q->select('id', 'profile_id', 'number_of_sales', 'portfolio', 'profile_id', 'badge_id', 'level_id')
                         ->with(
                             'profile',
                             function ($q) {
-                                $q->select('id', 'first_name', 'last_name', 'avatar', 'precent_rating')
+                                $q->select('id', 'user_id', 'first_name', 'last_name', 'avatar', 'precent_rating')
+                                    ->with('user', function ($q) {
+                                        $q->select('id', 'username', 'email', 'phone', 'pm_last_four', 'trial_ends_at', 'pm_type');
+                                    })
                                     ->without('profile_seller');
                             }
                         );

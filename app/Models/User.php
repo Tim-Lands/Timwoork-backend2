@@ -40,7 +40,6 @@ class User extends Authenticatable
     /**
      * The attributes that should be appends.
      */
-
     // ===========================Contants =============================
     // code
     // ================== Acssesor & mutators ==========================
