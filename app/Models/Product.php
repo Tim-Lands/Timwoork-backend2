@@ -27,12 +27,14 @@ class Product extends Model
         'seller_name',
         'tags',
         'price',
-        'title'
+        'title',
+        'subCat',
+        'category'
     ];
 
     public function seller_name($query, $value)
     {
-        $query->whereHas('profileSeller', function ($query) use ($value) {
+        return $query->whereHas('profileSeller', function ($query) use ($value) {
             $query->whereHas('profile', function ($query) use ($value) {
                 $query->where(DB::raw(
                     // REPLACE will remove the double white space with single (As defined)
@@ -57,7 +59,22 @@ class Product extends Model
         });
     }
 
+    public function category($query, $value)
+    {
+        return $query->whereHas('subcategory', function ($query) use ($value) {
+            $query->where('parent_id', $value);
+        });
+    }
 
+    public function subCat($query, $value)
+    {
+        return $query->whereRelation(
+            'subcategory',
+            'id',
+            '=',
+            $value
+        );
+    }
     // ===========================Contants =============================
     // code
     // حالة الخدمة مرفوضة

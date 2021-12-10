@@ -20,7 +20,14 @@ class FilterController extends Controller
                     $q->with('profile')
                         ->without('languages', 'skills', 'professions');
                 },
-                'ratings'
+                'ratings',
+                'subcategory' => function ($q) {
+                    $q->select('id', 'parent_id', 'name_ar',)
+                        ->with('category', function ($q) {
+                            $q->select('id', 'name_ar')
+                                ->without('subcategories');
+                        })->withCount('products');
+                },
             ])->withAvg('ratings', 'rating')
             ->withCount('ratings')
             ->paginate($paginate);

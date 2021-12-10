@@ -41,7 +41,8 @@ class ProductFactory extends Factory
             'buyer_instruct'        => $this->faker->paragraph(1),
             'profile_seller_id'     => $this->faker->numberBetween(1, 3),
             // اختر اي تصنيف فرعي او ضع اعداد عشوائية للتصنيفات المتواجدة
-            'category_id'           => rand(10, 180) // $this->faker->numberBetween(n,m);
+            'category_id'           => rand(10, 180), // $this->faker->numberBetween(n,m);
+            'count_ratings'         => rand(10, 50)
         ];
     }
 }
