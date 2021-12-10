@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
+use Illuminate\Support\Facades\DB;
 use Mehradsadeghi\FilterQueryString\FilterQueryString;
 
 class Product extends Model
@@ -22,8 +23,41 @@ class Product extends Model
         'less_or_equal',
         'between',
         'not_between',
-        'like'
+        'like',
+        'seller_name',
+        'tags',
+        'price',
+        'title'
     ];
+
+    public function seller_name($query, $value)
+    {
+        $query->whereHas('profileSeller', function ($query) use ($value) {
+            $query->whereHas('profile', function ($query) use ($value) {
+                $query->where(DB::raw(
+                    // REPLACE will remove the double white space with single (As defined)
+                    "REPLACE(
+                        /* CONCAT will concat the columns with defined separator */
+                        CONCAT(
+                            /* COALESCE operator will handle NUll values as defined value. */
+                            COALESCE(first_name,''),' ',
+                            COALESCE(last_name,'')
+                        ),
+                    '  ',' ')"
+                ), 'like', '%' . $value . '%');
+            });
+        });
+    }
+
+    public function tags($query, $value)
+    {
+        $tag_ids = explode(',', $value);
+        return $query->whereHas('product_tag', function ($q) use ($tag_ids) {
+            $q->whereIn('tag_id', $tag_ids);
+        });
+    }
+
+
     // ===========================Contants =============================
     // code
     // حالة الخدمة مرفوضة
