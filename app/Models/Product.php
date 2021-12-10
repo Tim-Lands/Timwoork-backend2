@@ -61,19 +61,18 @@ class Product extends Model
 
     public function category($query, $value)
     {
-        return $query->whereHas('subcategory', function ($query) use ($value) {
-            $query->where('parent_id', $value);
+        $cat_ids = explode(',', $value);
+        return $query->whereHas('subcategory', function ($query) use ($cat_ids) {
+            $query->whereIn('parent_id', $cat_ids);
         });
     }
 
     public function subCat($query, $value)
     {
-        return $query->whereRelation(
-            'subcategory',
-            'id',
-            '=',
-            $value
-        );
+        $cat_ids = explode(',', $value);
+        return $query->whereHas('subcategory', function ($query) use ($cat_ids) {
+            $query->whereIn('id', $cat_ids);
+        });
     }
     // ===========================Contants =============================
     // code
