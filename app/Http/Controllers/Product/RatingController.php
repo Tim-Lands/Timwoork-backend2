@@ -14,6 +14,10 @@ use Illuminate\Support\Facades\DB;
 
 class RatingController extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware('auth:sanctum');
+    }
     public function rate($id, RatingStoreRequest $request)
     {
         //id  جلب العنصر بواسطة
