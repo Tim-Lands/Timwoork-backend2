@@ -12,7 +12,8 @@ use App\Http\Controllers\{
     Product\SellerController,
     ProfileController,
     SalesProcces\CartController,
-    SalesProcces\OrderController
+    SalesProcces\OrderController,
+    SearchController
 };
 use App\Http\Controllers\Product\RatingController;
 use Illuminate\Support\Facades\Route;
@@ -129,11 +130,19 @@ Route::get('/get_categories/{id}', [FrontEndController::class, 'get_subcategorie
 Route::get('product/{slug}',                    [FrontEndController::class, 'show']);
 // عرض جميع الخدمات 
 Route::get('/get_products', [FrontEndController::class, 'getProducts']);
+
+// ================ مسار عملية الفلترة ====================================== //
 Route::prefix('filter')->group(function () {
 
     Route::get('/', FilterController::class);
 });
 
+// ================ مسار عملية البحث السريع ====================================//
+
+Route::prefix('search')->group(function () {
+
+    Route::get('/', SearchController::class);
+});
 // ============================= مسارات تقييم الخدمة بعد نجاح عملية البيع ==============================//
 
 Route::prefix('rating')->group(function () {

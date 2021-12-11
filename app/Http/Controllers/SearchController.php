@@ -4,14 +4,18 @@ namespace App\Http\Controllers;
 
 use App\Models\Product;
 use Illuminate\Http\Request;
-use Illuminate\Database\Eloquent\Builder;
 
-class FilterController extends Controller
+class SearchController extends Controller
 {
-
+    /**
+     * Handle the incoming request.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\Response
+     */
     public function __invoke(Request $request)
     {
-        $paginate = $request->query('paginate') ? $request->query('paginate') : 12;
+        $limit = $request->query('limit') ? $request->query('limit') : 5;
         $res = Product::filter()->productActive()
             ->with([
                 'profileSeller' => function ($q) {
@@ -28,7 +32,7 @@ class FilterController extends Controller
                 },
             ])->withAvg('ratings', 'rating')
             ->withCount('ratings')
-            ->paginate($paginate);
+            ->take($limit);
         return response()->success('found', $res);
     }
 }

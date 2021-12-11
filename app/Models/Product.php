@@ -26,11 +26,13 @@ class Product extends Model
         'like',
         'seller_name',
         'tags',
+        'popular',
         'price',
         'title',
         'subCat',
         'category'
     ];
+
 
     public function seller_name($query, $value)
     {
@@ -73,6 +75,12 @@ class Product extends Model
         return $query->whereHas('subcategory', function ($query) use ($cat_ids) {
             $query->whereIn('id', $cat_ids);
         });
+    }
+
+    public function popular($query, $value)
+    {
+        return $query->orderBy('ratings_avg', 'desc')
+            ->orderBy('ratings_count', 'desc');
     }
     // ===========================Contants =============================
     // code
