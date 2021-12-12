@@ -19,6 +19,7 @@ use App\Traits\LoginUser;
 use Exception;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Http;
 
 class RegisterController extends Controller
 {
@@ -39,16 +40,20 @@ class RegisterController extends Controller
 
             $this->store_code_bin($user);
             // إرسال رمز التفعيل إلى البريد الإلكتروني
-            event(new VerifyEmail($user));
-            // إنهاء العملية
-            DB::commit();
+            //event(new VerifyEmail($user));
+
+            // تسجيل المستخدم الجديد في chatEngine
+
+            $this->createChatEngineUser($user);
             // تسجيل الدخول للمستخدم الجديد  
             Auth::login($user);
+            // إنهاء العملية
+            DB::commit();
             // وإرسال التوكن عبر الكوكي
             return $this->login_with_token($user);
         } catch (Exception $ex) {
-            return $ex;
             DB::rollback();
+            return $ex;
             // رسالة خطأ
             return response()->error('هناك خطأ ما حدث في قاعدة بيانات , يرجى التأكد من ذلك', 403);
         }
@@ -64,5 +69,15 @@ class RegisterController extends Controller
     public function resend_verify_code(ResendVerifyRequest $request)
     {
         return $this->resend_code($request->email);
+    }
+
+    public function createChatEngineUser($user)
+    {
+        return Http::withHeaders([
+            'PRIVATE-KEY' => '2805db84-87b8-4fef-bb94-7e3c5fd22b37'
+        ])->asForm()->put('https://api.chatengine.io/users/', [
+            'username' => $user->email,
+            'secret' => $user->id,
+        ]);
     }
 }

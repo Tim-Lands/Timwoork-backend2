@@ -9,7 +9,7 @@ use App\Http\Controllers\{
     Product\InsertProductContoller,
     Product\DeleteProductController,
     Product\ShortenerController,
-    Product\SellerController,
+    SellerController,
     ProfileController,
     SalesProcces\CartController,
     SalesProcces\OrderController,
@@ -59,6 +59,7 @@ Route::prefix('profiles')->group(function () {
 
 Route::prefix('sellers')->group(function () {
     Route::middleware('auth:sanctum')->post('/store', [SellerController::class, 'store']);
+    Route::middleware('auth:sanctum')->post('/detailsStore', [SellerController::class, 'detailsStore']);
     Route::middleware('auth:sanctum')->post('/step_one', [SellerController::class, 'step_one']);
     Route::middleware('auth:sanctum')->post('/step_two', [SellerController::class, 'step_two']);
 });
