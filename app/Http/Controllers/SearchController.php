@@ -33,6 +33,11 @@ class SearchController extends Controller
             ])->withAvg('ratings', 'rating')
             ->withCount('ratings')
             ->take($limit);
-        return response()->success('found', $res);
+
+        if (!$res->isEmpty()) {
+            return response()->success('تمت عملية الفلترة بنجاح', $res);
+        } else {
+            return response()->success('لم يتم العثور على نتائج', [], 204);
+        }
     }
 }
