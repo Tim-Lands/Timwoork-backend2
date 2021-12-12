@@ -5,12 +5,15 @@ namespace App\Http\Controllers\Auth;
 use App\Http\Controllers\Controller;
 
 use App\Http\Requests\Dashboard\Auth\LoginRequest;
+use App\Http\Requests\SocialProviderRequest;
 use App\Models\User;
 use App\Traits\LoginUser;
+use Exception;
 use GuzzleHttp\Exception\ClientException;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Laravel\Socialite\Facades\Socialite;
 
@@ -44,14 +47,6 @@ class LoginController extends Controller
         ]);
 
         // make some columns hidden in response
-        $user->makeHidden('created_at', 'updated_at', 'stripe_id', 'pm_type', 'pm_last_four', 'trial_ends_at');
-        $user->profile->makeHidden(['steps', 'user_id', 'badge_id', 'level_id', 'country_id', 'created_at', 'updated_at']);
-        $user->profile->badge->makeHidden(['name_en', 'name_fr', 'created_at', 'updated_at']);
-        $user->profile->level->makeHidden(['name_en', 'name_fr', 'number_developments', 'price_developments', 'number_sales', 'created_at', 'updated_at']);
-        $user->profile->profile_seller->makeHidden(['steps', 'badge_id', 'level_id', 'profile_id', 'created_at', 'updated_at']);
-        $user->profile->profile_seller->skills->makeHidden(['name_en', 'name_fr', 'pivot', 'created_at', 'updated_at']);
-        $user->profile->profile_seller->badge->makeHidden(['name_en', 'name_fr', 'created_at', 'updated_at']);
-        $user->profile->profile_seller->level->makeHidden(['name_en', 'name_fr', 'value_bayer', 'created_at', 'updated_at']);
 
         $msg_count = $this->getUnreadMessagesCount($user);
         $data = [
@@ -82,29 +77,45 @@ class LoginController extends Controller
 
     /*************************Socialite Login *************************/
 
-    /**
-     * @var \Laravel\Socialite\Facades\Socialite
-     */
-    public function redirectToProvider($provider)
+    public function handleProviderCallback($provider, SocialProviderRequest $request)
     {
-        return Socialite::driver($provider)->stateless()->redirect();
-    }
+        // البحث عن مستخدم مسجّل سابقا بأحد مواقع التواصل الاجتماعي
+        //
+        $user = User::whereHas('providers', function ($q) use ($provider, $request) {
+            $q->where('provider_id', $request->provider_id)
+                ->where('provider', $provider);
+        })->first();
+        // في حالة وجود مستخدم سابق مسجل سيتم تسجيل دخوله مباشرة
+        if ($user) {
+            return $this->login_with_token($user);
+        } else {
+            // وإلا قم بإنشاء مستخدم جديد 
+            try {
+                DB::transaction();
+                $user = User::create([
+                    'email' => $request->email,
+                    'email_verified_at' => now(),
+                ]);
 
+                // وبروفايل جديد يحمل الاسم والصورة إن وجدت
+                $user->profile()->create([
+                    'first_name' => $request->first_name,
+                    'avatar' => $request->avatar
+                ]);
 
-    public function handleProviderCallback($provider)
-    {
-        try {
-            $s_user = Socialite::driver($provider)->stateless()->user();
-        } catch (ClientException $exception) {
-            return response()->error('المعلومات التي أدخلتها خاطئة', 401);
+                // تسجيل اسم المزوّد و المعرّف الخاص بالمستخدم في المزود الخاص به 
+                $user->providers()->create([
+                    'provider' => $provider,
+                    'provider_id' => $request->provider_id
+                ]);
+                DB::commit();
+                // عملية تسجيل الدخول بعد نجاح العملية
+                return $this->login_with_token($user);
+            } catch (Exception $ex) {
+                DB::rollBack();
+                return response()->error('هناك خطأ ما حدث في قاعدة بيانات , يرجى التأكد من ذلك', 403);
+            }
         }
-
-        $user = User::create();
-        $user->providers()->create([
-            'provider' => $provider,
-            'provider_id' => $s_user->getId()
-        ]);
-        return $this->login_with_token($user);
     }
     /**************************************************************** */
 }
