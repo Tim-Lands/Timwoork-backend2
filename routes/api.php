@@ -35,9 +35,7 @@ Route::middleware('auth:sanctum')->group(function () {
 
 Route::post('/login', [LoginController::class, 'login']);
 
-Route::get('/login/{provider}', [LoginController::class, 'redirectToProvider']);
-Route::get('/login/{provider}/callback', [LoginController::class, 'handleProviderCallback']);
-
+Route::post('/login/{provider}', [LoginController::class, 'handleProviderCallback']);
 Route::post('/register', [RegisterController::class, 'register']);
 Route::post('/email/verify', [RegisterController::class, 'verifyEmail']);
 Route::post('/email/resend', [RegisterController::class, 'resend_verify_code']);
