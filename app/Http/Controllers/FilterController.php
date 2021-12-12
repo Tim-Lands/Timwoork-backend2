@@ -20,15 +20,19 @@ class FilterController extends Controller
                 },
                 'ratings',
                 'subcategory' => function ($q) {
-                    $q->select('id', 'parent_id', 'name_ar',)
+                    $q->select('id', 'parent_id', 'name_ar')
                         ->with('category', function ($q) {
                             $q->select('id', 'name_ar')
                                 ->without('subcategories');
                         })->withCount('products');
                 },
             ])->withAvg('ratings', 'rating')
-            ->withCount('ratings')
+            ->withCount('ratings as rats_count')
             ->paginate($paginate);
-        return response()->success('found', $res);
+        if (!$res->isEmpty()) {
+            return response()->success('تمت عملية الفلترة بنجاح', $res);
+        } else {
+            return response()->success('لم يتم العثور على نتائج', [], 204);
+        }
     }
 }

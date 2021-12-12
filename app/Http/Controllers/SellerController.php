@@ -9,6 +9,7 @@ use App\Models\ProfileSeller;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 
 class SellerController extends Controller
 {
@@ -40,16 +41,23 @@ class SellerController extends Controller
     public function detailsStore(ProfileSellerStoreRequest $request)
     {
         try {
+            DB::beginTransaction();
             $seller = Auth::user()->profile->profile_seller;
-
             $seller->bio = $request->bio;
             $seller->portfolio = $request->portfolio;
             $seller->save();
             // تسجيل المهارات الخاصة للبائع
             $seller->skills()->syncWithoutDetaching($request->skills);
-            // إرسال رسالة نجاح المرحلة اﻷولى
+            // تغيير حالة البروفايل إلى بائع
+            $seller->profile->is_seller = true;
+
+            $seller->profile->save();
+            DB::commit();
+
+            // إرسال رسالة نجاح 
             return response()->success('تم تسجيل بروفايل البائع بنجاح', $seller);
         } catch (Exception $ex) {
+            DB::rollback();
             //return $ex;
             return response()->error('حدث خطأ غير متوقع');
         }

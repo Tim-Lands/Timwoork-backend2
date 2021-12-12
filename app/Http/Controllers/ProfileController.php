@@ -20,12 +20,26 @@ class ProfileController extends Controller
         // البحث في قاعدة البيانات عن اسم المستخدم
         $user = User::where('username', $username)
             ->orWhere('id', $username)
-            ->with('profile.profile_seller')
+            ->with([
+                'profile.profile_seller.badge',
+                'profile.profile_seller.level',
+                'profile.badge', 'profile.level'
+            ])
             ->first();
         if (!$user) {
             // في حالة عدم وجود اسم مستخدم يتم إرسال رسالة الخطأ
             return response()->error('عذرا لم نجد معلومات مطابقة لهذا الاسم');
         } else {
+            // make some columns hidden in response
+            $user->makeHidden('created_at', 'updated_at', 'stripe_id', 'pm_type', 'pm_last_four', 'trial_ends_at');
+            $user->profile->makeHidden(['steps', 'user_id', 'badge_id', 'level_id', 'country_id', 'created_at', 'updated_at']);
+            $user->profile->badge->makeHidden(['name_en', 'name_fr', 'created_at', 'updated_at']);
+            $user->profile->level->makeHidden(['name_en', 'name_fr', 'number_developments', 'price_developments', 'number_sales', 'created_at', 'updated_at']);
+            $user->profile->profile_seller->makeHidden(['steps', 'badge_id', 'level_id', 'profile_id', 'created_at', 'updated_at']);
+            $user->profile->profile_seller->skills->makeHidden(['name_en', 'name_fr', 'pivot', 'created_at', 'updated_at']);
+            $user->profile->profile_seller->badge->makeHidden(['name_en', 'name_fr', 'created_at', 'updated_at']);
+            $user->profile->profile_seller->level->makeHidden(['name_en', 'name_fr', 'value_bayer', 'created_at', 'updated_at']);
+
             // في حالة وجود اسم المستخدم يتم عرض معلوماته الشخصية
             return response()->success('لقد تمّ جلب معلومات الملف الشخصي', $user);
         }
