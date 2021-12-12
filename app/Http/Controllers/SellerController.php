@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\ProfileSellerStoreRequest;
 use App\Http\Requests\SellerStepOneRequest;
 use App\Http\Requests\SellerSteptwoRequest;
 use App\Models\ProfileSeller;
@@ -23,6 +24,31 @@ class SellerController extends Controller
             // إنشاء ملف شخصي للبائع 
             $seller = Auth::user()->profile->profile_seller()->create();
             return response()->success('تمّ إنشاء الملف الشخصي للبائع بنجاح', $seller);
+        } catch (Exception $ex) {
+            //return $ex;
+            return response()->error('حدث خطأ غير متوقع');
+        }
+    }
+
+
+    /**
+     * store => دالة إنشاء ملف شخصي فارغ للبائع
+     *
+     * @param  Request $request => انشاء هذا الكائن من اجل عملية التحقيق على المدخلات
+     * @return object
+     */
+    public function detailsStore(ProfileSellerStoreRequest $request)
+    {
+        try {
+            $seller = Auth::user()->profile->profile_seller;
+
+            $seller->bio = $request->bio;
+            $seller->portfolio = $request->portfolio;
+            $seller->save();
+            // تسجيل المهارات الخاصة للبائع
+            $seller->skills()->syncWithoutDetaching($request->skills);
+            // إرسال رسالة نجاح المرحلة اﻷولى
+            return response()->success('تم تسجيل بروفايل البائع بنجاح', $seller);
         } catch (Exception $ex) {
             //return $ex;
             return response()->error('حدث خطأ غير متوقع');

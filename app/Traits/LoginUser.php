@@ -10,6 +10,10 @@ trait LoginUser
     {
         $token = $user->createToken('token')->plainTextToken;
         //$cookie = cookie('timwoork_token', $token, $time);
-        return response()->success('لقد تم تسجيل الدخول بنجاح', $token);
+        return response()->success('لقد تم تسجيل الدخول بنجاح', [
+            'token' => $token,
+            'is_verified' => $user->email_verified_at ? true : false,
+            'step' => $user->profile->steps,
+        ]);
     }
 }
