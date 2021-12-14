@@ -5,6 +5,7 @@ namespace App\Http\Requests;
 use Illuminate\Validation\Rule;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Support\Facades\Auth;
 
 class ProfileStepOneRequest extends FormRequest
 {
@@ -28,7 +29,7 @@ class ProfileStepOneRequest extends FormRequest
         return [
             'first_name' => 'required',
             'last_name' => 'required',
-            'username' => ['required', Rule::unique('users', 'username')->ignore($this->profile->user), 'regex:/(^([a-zA-Z]+)(\d+)?$)/u'],
+            'username' => ['required', "unique:users,username," . Auth::id(), 'regex:/(^([a-zA-Z]+)(\d+)?$)/u'],
             'date_of_birth' => 'required|date_format:Y-m-d',
             'gender' => 'required',
             'country_id' => 'required',
