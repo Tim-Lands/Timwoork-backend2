@@ -14,7 +14,7 @@ class AddCountAndAvgCloumnToProductsTable extends Migration
     public function up()
     {
         Schema::table('products', function (Blueprint $table) {
-            $table->tinyInteger('ratings_avg')->default(0);
+            $table->float('ratings_avg')->default(0);
             $table->bigInteger('ratings_count');
         });
     }
