@@ -40,7 +40,7 @@ class RegisterController extends Controller
 
             $this->store_code_bin($user);
             // إرسال رمز التفعيل إلى البريد الإلكتروني
-            //event(new VerifyEmail($user));
+            event(new VerifyEmail($user));
 
             // تسجيل المستخدم الجديد في chatEngine
 
