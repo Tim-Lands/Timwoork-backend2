@@ -108,7 +108,10 @@ class Product extends Model
      */
     public function scopeSelection(mixed $query): ?object
     {
-        return $query->select('id', 'title', 'slug', 'content', 'price', 'duration', 'category_id', 'profile_seller_id', 'thumbnail', 'buyer_instruct', 'status', 'created_at');
+        return $query->select('id', 'title', 'slug', 'content', 'price', 'duration',
+                             'category_id', 'profile_seller_id','count_buying',
+                              'thumbnail', 'buyer_instruct',
+                              'status', 'created_at');
     }
 
     /**

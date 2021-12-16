@@ -18,17 +18,21 @@ class CartController extends Controller
     {
         $this->middleware('auth:sanctum');
     }
-
+    
+    /**
+     * index
+     *
+     * @return void
+     */
     public function index()
     {
-        // عرض السلة المستخدم
-
+        // عرض السلة المستخدم 
+    
         $cart = Cart::selection()->with(['cart_items' => function ($q) {
             $q->with('cartItem_developments')->get();
         }])->where('user_id', Auth::user()->id)->where('is_buying', 0)->get();
-
         // اظهار السلة مع عناصرها
-        return response()->success('عرض سلة المستخدم', $cart);
+        return response()->success('عرض سلة المستخدم', $cart);  
     }
     /**
      * store
@@ -38,13 +42,13 @@ class CartController extends Controller
      */
     public function store(CartRequest $request)
     {
-        try {
+        try {  
             // جلب سلة المستخدم
             $cart = Cart::where('user_id', Auth::user()->id);
-            // جلب سلة مستخدم في حالة تم بيعها
-            $cart_found =  Cart::where('user_id', 3)->where('is_buying', 1)->exists();
-            // عدد السالات
-            $cart_count = $cart->count();
+            // اذا كانت هناك سلة مباعة
+            $cart_found_buying =  Cart::where('user_id', Auth::id())->where('is_buying', 1)->exists();
+            // اذا كانت هناك سلة غير مباعة
+            $cart_found_not_buying =  Cart::where('user_id', Auth::id())->where('is_buying', 0)->exists();
             // وضع البيانات فالمصفوفة من اجل اضافة السلة
             $data_cart = [
                 'user_id' => Auth::user()->id,
@@ -56,67 +60,74 @@ class CartController extends Controller
             ];
             // شرط في حالة ما اذا قام المستخدم بارسال تطويرات
             if ($request->has('developments')) {
-                // جلب المعرفات التطويرات الخاصة بخدمة معينة من عند المستخدم
-                $request_developments = array_map(
-                    function ($value) {
-                        return (int)$value;
-                    },
-                    $request->developments
-                );
-                // جلب المعرفات التطويرات الخاصة بخدمة معينة من قواعد البيانات
-                $product_developments = Product::whereId($request->product_id)->with('developments')->first()['developments']->pluck('id')->toArray();
-                // فحص اذا كانت التطويرات المدخلة لا تطابق بالتطويرات الخدمة
-                if (!empty(array_diff($request_developments, $product_developments)))
-                    return response()->error('التطويرات التي تم ادخالها ليست مطابقة مع هذه الخدمة');
+                $this->check_found_developments($request->developments,$request->product);
             }
-            // ============= انشاء عنصر جديد فالسلة ================:
+
+            /* -------------------------------------------------------------------------- */
+            /*                           انشاء عنصر جديد فالسلة:                             */
+            /* -------------------------------------------------------------------------- */
             // بداية المعاملة مع البيانات المرسلة لقاعدة بيانات :
             DB::beginTransaction();
             // عملية اضافة سلة جديدة :
-            if ($cart_found || $cart_count == 0) {
-                // اضافة سلة جديدة
-                $cart = Cart::create($data_cart);
+            if($cart->count() == 0 || ($cart_found_buying && !$cart_found_not_buying)){
+                $new_cart = Cart::create($data_cart);
                 // وضع معرف السلة في مصفوفة العنصر
-                $data_cart_items['cart_id'] = $cart->first()->id;
+                $data_cart_items['cart_id'] = $new_cart->id;
                 // انشاء عنصر جديد
                 $cart_item = CartItem::create($data_cart_items);
                 // شرط في حالة ما كانت هناك تطويرات مضافة
                 if ($request->has('developments')) {
                     // عملية اضافة تطويرات فالسلة
-                    $cart_item->cartItem_developments()->syncWithoutDetaching(collect($request->developments));
-                    $cart_item->load('cartItem_developments');
+                   $this->add_developments($cart_item,collect($request->developments));
                 }
+                $new_cart = Cart::where('user_id', Auth::user()->id)->where('is_buying', 0);
                 // عمليات حساب السعر المتواجد في السلة 
-                $this->calculate_price($cart, $cart_item, $request->quantity);
-            } else {
-                $cart_item_found = CartItem::whereCartId($cart->first()->id)->where('product_id', $request->product_id)->first();
+                $this->calculate_price($new_cart, $cart_item, $request->quantity);
+            
+            }
+            else if(($cart_found_buying && $cart_found_not_buying) || (!$cart_found_buying && $cart_found_not_buying))
+            {
+                $cart_item_found = CartItem::whereCartId($cart->where('is_buying',0)->first()->id)
+                                    ->where('product_id', $request->product_id)
+                                    ->wherehas('cart',function($q)
+                                        {
+                                            $q->where('user_id',Auth::id());
+                                        })
+                                    ->first();                          
                 if ($cart_item_found)
                     // رسالة خطأ
-                    return response()->error('هذا العنصر موجود السلة , اضف عنصر آخر', 403);
+                    return response()->error('هذا العنصر موجود فالسلة , اضف عنصر آخر', 403);
+
+                // جلب السلة المستخدم الغير مباعة    
+                $new_cart =  Cart::where('user_id', Auth::id())->where('is_buying', 0);
                 // وضع معرف السلة في مصفوفة العنصر
-                $data_cart_items['cart_id'] = $cart->first()->id;
+                $data_cart_items['cart_id'] = $new_cart->first()->id;
                 // انشاء عنصر جديد
                 $cart_item = CartItem::create($data_cart_items);
                 // شرط في حالة ما كانت هناك تطويرات مضافة
                 if ($request->has('developments')) {
                     // عملية اضافة تطويرات فالسلة
-                    $cart_item->cartItem_developments()->syncWithoutDetaching(collect($request->developments));
-                    $cart_item->load('cartItem_developments');
+                    $this->add_developments($cart_item,collect($request->developments));
                 }
                 // عمليات حساب السعر المتواجد في السلة 
-                $this->calculate_price($cart->first(), $cart_item, $request->quantity);
-
-            }
-            // انهاء المعاملة بشكل جيد :
+                $this->calculate_price($new_cart, $cart_item, $request->quantity);
+                // سعر العنصر الموجود فالسلة
+                }
+                else
+                {
+                    return;
+                }
             DB::commit();
 
-            // =================================================
+            /* -------------------------------------------------------------------------- */
+            /*                                     end                                    */
+            /* -------------------------------------------------------------------------- */
             // رسالة نجاح عملية الاضافة:
             return response()->success('تم انشاء عنصر فالسلة', $cart);
         } catch (Exception $ex) {
             return $ex;
-            // لم تتم المعاملة بشكل نهائي و لن يتم ادخال اي بيانات لقاعدة البيانات
             //return $ex;
+            // لم تتم المعاملة بشكل نهائي و لن يتم ادخال اي بيانات لقاعدة البيانات
             DB::rollback();
             // رسالة خطأ
             return response()->error('هناك خطأ ما حدث في قاعدة بيانات , يرجى التأكد من ذلك', 403);
@@ -127,32 +138,24 @@ class CartController extends Controller
     {
         try {
             // جلب سلة المستخدم
-            $cart = Cart::where('user_id', Auth::user()->id)->first();
+            $cart = Cart::where('user_id', Auth::user()->id)->where('is_buying', 0)->first();
             // جلب سلة مستخدم في حالة تم بيعها
             $cart_found =  Cart::where('user_id', Auth::user()->id)->where('is_buying', 0)->exists();
             // جلب عنصر السلة
-            $cart_item_founded = CartItem::whereId($id)->whereCartId($cart->id)->where('product_id', $request->product_id);
+            $cart_item_founded = CartItem::whereId($id)
+                                        ->whereCartId($cart->id)
+                                        ->where('product_id', $request->product_id);
             if (!$cart_item_founded->first())
                 // رسالة خطأ
                 return response()->error('هذا العنصر غير موجود', 403);
+
             // شرط في حالة ما اذا قام المستخدم بارسال تطويرات
             if ($request->has('developments')) {
-                // جلب المعرفات التطويرات الخاصة بخدمة معينة من عند المستخدم
-                $request_developments = array_map(
-                    function ($value) {
-                        return (int)$value;
-                    },
-                    $request->developments
-                );
-                // جلب المعرفات التطويرات الخاصة بخدمة معينة من قواعد البيانات
-                $product_developments = Product::whereId($request->product_id)->with('developments')->first()['developments']->pluck('id')->toArray();
-                // فحص اذا كانت التطويرات المدخلة لا تطابق بالتطويرات الخدمة
-                if (!empty(array_diff($request_developments, $product_developments)))
-                    return response()->error('التطويرات التي تم ادخالها ليست مطابقة مع هذه الخدمة');
+                $this->check_found_developments($request->developments,$request->product);
             }
-
             //شرط اذا كانت هناك سلة غير مباعة
             if ($cart_found) {
+                // return 1;
                 // جلب عنصر السلة
                 $cart_item = $cart_item_founded->with(['product', 'cartItem_developments'])->first();
                 // حفظ الكمية
@@ -161,8 +164,7 @@ class CartController extends Controller
                 //شرط اذا كان هناك تطويرات
                 if ($request->has('developments')) {
                     // عملية اضافة تطويرات فالسلة
-                    $cart_item->cartItem_developments()->sync(collect($request->developments));
-                    $cart_item->load('cartItem_developments');
+                    $this->add_developments($cart_item,$request->developments);
                 }
                 // عمليات حساب السعر المتواجد في السلة 
                 $this->calculate_price($cart, $cart_item, $request->quantity);
@@ -176,7 +178,7 @@ class CartController extends Controller
             return response()->success('تم تحديث عنصر فالسلة', $cart_item);
         } catch (Exception $ex) {
             // لم تتم المعاملة بشكل نهائي و لن يتم ادخال اي بيانات لقاعدة البيانات
-            //return $ex;
+            return $ex;
             DB::rollback();
             // رسالة خطأ
             return response()->error('هناك خطأ ما حدث في قاعدة بيانات , يرجى التأكد من ذلك', 403);
@@ -240,23 +242,67 @@ class CartController extends Controller
      * @param  mixed $quantity
      * @return void
      */
-    private function calculate_price($cart, $cart_item, $quantity)
+
+    private function calculate_price($new_cart, $cart_item, $quantity)
     {
         // سعر العنصر الموجود فالسلة
         $price_cart_item_product = $cart_item['product']->price;
         // سعر تطويرات العنصر الموجود فالسلة
         $price_cart_item_developments = $cart_item['cartItem_developments']->sum('price');
-
         // تحديث السعر العنصر
         $cart_item->price_product = ($price_cart_item_product + $price_cart_item_developments) * $quantity;
         $cart_item->save();
-        // سعر الكلي 
-        $cart->total_price = $cart->with('cart_items')->first()['cart_items']->sum('price_product');
+        // return $new_cart->with('cart_items')->first()['cart_items']->sum('price_product');
+        // سعر الكلي  
+        $total_price = $new_cart->with('cart_items')->first()['cart_items']->sum('price_product');
         // سعر الكلي مع الرسوم 
-        $cart->price_with_tax = calculate_price_with_tax($cart->with('cart_items')->first()['cart_items']->sum('price_product'))['price_with_tax'];
+        $price_with_tax = calculate_price_with_tax($new_cart->with('cart_items')->first()['cart_items']->sum('price_product'))['price_with_tax'];
         // سعر الرسوم
-        $cart->tax = calculate_price_with_tax($cart->with('cart_items')->first()['cart_items']->sum('price_product'))['tax'];
+        $tax = calculate_price_with_tax($new_cart->with('cart_items')->first()['cart_items']->sum('price_product'))['tax'];
         // تحديث سعر السلة
-        $cart->save();
+        $new_cart->update(["total_price" => $total_price,"price_with_tax" => $price_with_tax,"tax" => $tax]);
     }
+
+     /**
+     * add_developments
+     *
+     * @param  object $cart_item
+     * @param  Request $developments
+     * @return void
+     */
+    private function add_developments($cart_item,$developments)
+    {
+        $cart_item->cartItem_developments()->sync(collect($developments));
+        $cart_item->load('cartItem_developments');
+    }
+    
+    /**
+     * check_found_developments
+     *
+     * @param  mixed $developments
+     * @param  mixed $product
+     * @return void
+     */
+    private function check_found_developments($developments,$product)
+    {
+        // جلب المعرفات التطويرات الخاصة بخدمة معينة من عند المستخدم
+        $request_developments = array_map(
+            function ($value) {
+                return (int)$value;
+            },
+            $developments
+        );
+        // جلب المعرفات التطويرات الخاصة بخدمة معينة من قواعد البيانات
+        $product_developments = Product::whereId($product)
+                                ->with('developments')
+                                ->first()['developments']
+                                ->pluck('id')
+                                ->toArray();
+        
+        // فحص اذا كانت التطويرات المدخلة لا تطابق بالتطويرات الخدمة
+        if (!empty(array_diff($request_developments, $product_developments)))
+            return response()->error('التطويرات التي تم ادخالها ليست مطابقة مع هذه الخدمة');
+    }
+
+
 }

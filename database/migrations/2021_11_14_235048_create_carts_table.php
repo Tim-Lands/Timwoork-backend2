@@ -25,7 +25,7 @@ class CreateCartsTable extends Migration
 
             $table->float('tax', 5, 2)->unsigned()->default(0);
 
-            $table->float('price_with_tax')->unsigned()->default(0);
+            $table->float('price_with_tax',5,2)->unsigned()->default(0);
 
             $table->boolean('is_buying')->default(0);
 
