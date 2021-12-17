@@ -49,7 +49,13 @@ class FrontEndController extends Controller
         if (!$catagory)
             return response()->error('هذا العنصر غير موجود', 403);
         // جلب التصنيفات الفرعية
-        $subcategorie = Category::select('id', 'name_ar', 'icon')->withCount('products')->where('parent_id', $id)->child()->get();
+        $subcategorie = Category::select('id', 'name_ar', 'icon')
+            ->withCount('products')
+            ->where('parent_id', $id)
+            ->child()
+            ->orderBy('products_count', 'desc')
+            ->take(Category::SUBCATEGORY_DISPLAY)
+            ->get();
 
         // اظهار العناصر
         return response()->success('عرض تصنيفات الفرعية', $subcategorie);

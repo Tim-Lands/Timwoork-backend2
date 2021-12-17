@@ -27,7 +27,9 @@ use Illuminate\Support\Facades\Route;
 Route::fallback(function () {
     return response()->json('هذا الرابط غير موجود ', 200);
 });
-/*****************Auth Routes ****************************/
+/* -------------------------------------------------------------------------- */
+/*                                 Auth Routes                                */
+/* -------------------------------------------------------------------------- */
 Route::middleware('auth:sanctum')->group(function () {
     Route::get('/me', [LoginController::class, 'me']);
     Route::post('/logout', [LoginController::class, 'logout']);
@@ -39,10 +41,11 @@ Route::post('/login/{provider}', [LoginController::class, 'handleProviderCallbac
 Route::post('/register', [RegisterController::class, 'register']);
 Route::post('/email/verify', [RegisterController::class, 'verifyEmail']);
 Route::post('/email/resend', [RegisterController::class, 'resend_verify_code']);
+/* -------------------------------------------------------------------------- */
 
-/****************** End Auth Routes ***********************/
-
-// =============================== مسارات الملف الشخصي ==================================
+/* -------------------------------------------------------------------------- */
+/*                             مسارات الملف الشخصي                            */
+/* -------------------------------------------------------------------------- */
 
 Route::prefix('profiles')->group(function () {
 
@@ -53,7 +56,9 @@ Route::prefix('profiles')->group(function () {
 });
 
 
-// ===============================   مسارات الملف الشخصي البائع==================================
+/* -------------------------------------------------------------------------- */
+/*                         مسارات الملف الشخصي البائع                         */
+/* -------------------------------------------------------------------------- */
 
 Route::prefix('sellers')->group(function () {
     Route::middleware('auth:sanctum')->post('/store', [SellerController::class, 'store']);
@@ -63,7 +68,9 @@ Route::prefix('sellers')->group(function () {
 });
 
 
-// =============================== مسارات انشاء خدمة جديدة ==================================
+/* -------------------------------------------------------------------------- */
+/*                           مسارات انشاء خدمة جديدة                          */
+/* -------------------------------------------------------------------------- */
 Route::prefix('product')->group(function () {
     // انشاء الخدمة
     Route::get('/store',                     [InsertProductContoller::class, 'store']);
@@ -84,11 +91,16 @@ Route::prefix('product')->group(function () {
 
     Route::post('/{id}/rating', [RatingController::class, 'rate']);
 });
-// ======================== مسار رابط المختصر للخدمة ==================================
+
+/* -------------------------------------------------------------------------- */
+/*                          مسار رابط المختصر للخدمة                          */
+/* -------------------------------------------------------------------------- */
 Route::get('/s/{code}', ShortenerController::class);
 
 
-// ===================== المحادثات والرسائل ============================================
+/* -------------------------------------------------------------------------- */
+/*                             المحادثات والرسائل                             */
+/* -------------------------------------------------------------------------- */
 
 Route::prefix('conversations')->middleware('auth:sanctum')->group(function () {
     Route::get('/', [ConversationController::class, 'index']);
@@ -96,7 +108,11 @@ Route::prefix('conversations')->middleware('auth:sanctum')->group(function () {
     Route::post('/store', [ConversationController::class, 'store']);
     Route::post('/{conversation}/sendMessage', [ConversationController::class, 'sendMessage']);
 });
-// =============================== مسارات انشاء عناصر جديدة فالسلة ==================================
+
+/* -------------------------------------------------------------------------- */
+/*                       مسارات انشاء عناصر جديدة فالسلة                      */
+/* -------------------------------------------------------------------------- */
+
 Route::prefix('cart')->group(function () {
     // عرض السلة
     Route::get('/',                             [CartController::class, 'index']);
@@ -108,7 +124,10 @@ Route::prefix('cart')->group(function () {
     Route::post('/cartitem/delete/{id}',                 [CartController::class, 'delete']);
 });
 
-// =============================== مسارات انشاء عناصر جديدة فالسلة ==================================
+/* -------------------------------------------------------------------------- */
+/*                            مسارات انشاء الطلبية                            */
+/* -------------------------------------------------------------------------- */
+
 Route::prefix('order')->group(function () {
     // عرض السلة
     Route::get('/',               [OrderController::class, 'index']);
@@ -118,6 +137,9 @@ Route::prefix('order')->group(function () {
     //Route::post('/{id}/delete',    [OrderController::class, 'delete']);
 });
 
+/* -------------------------------------------------------------------------- */
+/*                            مسارات واجهة المستخدم                           */
+/* -------------------------------------------------------------------------- */
 
 // عرض التصنيفات الرئيسية و الفرعية
 Route::get('/display_categories', [FrontEndController::class, 'get_categories_subcategories_porducts']);
@@ -130,20 +152,22 @@ Route::get('product/{slug}',                    [FrontEndController::class, 'sho
 // عرض جميع الخدمات 
 Route::get('/get_products', [FrontEndController::class, 'getProducts']);
 
-// ================ مسار عملية الفلترة ====================================== //
+// مسار عملية الفلترة
 Route::prefix('filter')->group(function () {
 
     Route::get('/', FilterController::class);
 });
 
-// ================ مسار عملية البحث السريع ====================================//
+// مسار عملية البحث السريع
 
 Route::prefix('search')->group(function () {
 
     Route::get('/', SearchController::class);
 });
-// ============================= مسارات تقييم الخدمة بعد نجاح عملية البيع ==============================//
+
+// مسارات تقييم الخدمة بعد نجاح عملية البيع
 
 Route::prefix('rating')->group(function () {
     Route::post('/{id}/reply', [RatingController::class, 'reply']);
 });
+/* -------------------------------------------------------------------------- */

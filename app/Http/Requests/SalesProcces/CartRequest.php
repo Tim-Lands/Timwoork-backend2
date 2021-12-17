@@ -24,10 +24,10 @@ class CartRequest extends FormRequest
     public function rules()
     {
         return [
-            'quantity'    => 'required|numeric',
+            'quantity'    => 'sometimes|numeric',
             'product_id'  => 'required',
             // 'user_id'     => 'required',
-            'developments.*' => 'sometimes||exists:tags,id',
+            'developments.*' => 'sometimes||exists:developments,id',
         ];
     }
 }

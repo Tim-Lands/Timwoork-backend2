@@ -37,12 +37,13 @@ class ProductFactory extends Factory
             'is_active'             => $this->faker->numberBetween(0, 1),
             'is_completed'          => $completed,
             'is_draft'              => $completed,
-            'thumbnail'             => $this->faker->image(storage_path('app/products/thumbnails'), 640, 480, null, false),
+            'thumbnail'             => $this->faker->image(storage_path('app/products/thumbnails'), 640, 480, null,null,null,'tarek', false),
             'buyer_instruct'        => $this->faker->paragraph(1),
             'profile_seller_id'     => $this->faker->numberBetween(1, 3),
             // اختر اي تصنيف فرعي او ضع اعداد عشوائية للتصنيفات المتواجدة
             'category_id'           => rand(10, 180), // $this->faker->numberBetween(n,m);
-            'count_ratings'         => rand(10, 50)
+            'ratings_avg'         => rand(0, 100),
+            'ratings_count'         => rand(0, 5)
         ];
     }
 }
