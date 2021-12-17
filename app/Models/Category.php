@@ -13,10 +13,10 @@ class Category extends Model
     protected $table = 'categories';
 
     // ===========================Contants =============================
-
-
+    // عدد التصنيفات التي يتم اظهارها في الهيدر
+    const SUBCATEGORY_DISPLAY = 12;
     // عدد الصفحات التي سيظهرهم
-    public const PAGINATE = 5;
+    const PAGINATE = 5;
 
 
     // ================== Acssesor & mutators ==========================

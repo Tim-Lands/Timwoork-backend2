@@ -11,11 +11,48 @@ class CartItem extends Model
 {
     use HasFactory;
 
+    /**
+     * table
+     *
+     * @var string
+     */
     protected $table = 'cart_items';
+
+    /**
+     * appends
+     *
+     * @var array
+     */
+    protected $appends = ['price_product_spicify', 'duration_product'];
+    /**
+     * The attributes that should be hidden for arrays.
+     *
+     * @var array
+     */
+    protected $hidden = ['product'];
     // ===========================Contants =============================
     // code
     // ================== Acssesor & mutators ==========================
-    // code
+
+    /**
+     * getPriceProductAttribute => جلب سعر الخدمة
+     *
+     * @return void
+     */
+    public function getPriceProductSpicifyAttribute()
+    {
+        return $this->product->price;
+    }
+
+    /**
+     * getDurationProductAttribute => جلب مدة الخدمة
+     *
+     * @return void
+     */
+    public function getDurationProductAttribute()
+    {
+        return $this->product->duration;
+    }
     // ============================ Scopes =============================
 
     /**
