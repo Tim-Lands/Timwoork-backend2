@@ -14,7 +14,19 @@ use Mehradsadeghi\FilterQueryString\FilterQueryString;
 class Product extends Model
 {
     use HasFactory, FilterQueryString;
+
+    /**
+     * table
+     *
+     * @var string
+     */
     protected $table = 'products';
+
+    /**
+     * filters
+     *
+     * @var array
+     */
     protected $filters = [
         'sort',
         'greater',
@@ -33,7 +45,14 @@ class Product extends Model
         'category'
     ];
 
-
+    /* -------------------------------- functions ------------------------------- */
+    /**
+     * seller_name
+     *
+     * @param  mixed $query
+     * @param  mixed $value
+     * @return Object
+     */
     public function seller_name($query, $value)
     {
         return $query->whereHas('profileSeller', function ($query) use ($value) {
@@ -53,6 +72,13 @@ class Product extends Model
         });
     }
 
+    /**
+     * tags
+     *
+     * @param  mixed $query
+     * @param  mixed $value
+     * @return Object
+     */
     public function tags($query, $value)
     {
         $tag_ids = explode(',', $value);
@@ -61,6 +87,13 @@ class Product extends Model
         });
     }
 
+    /**
+     * category
+     *
+     * @param  mixed $query
+     * @param  mixed $value
+     * @return Object
+     */
     public function category($query, $value)
     {
         $cat_ids = explode(',', $value);
@@ -69,6 +102,13 @@ class Product extends Model
         });
     }
 
+    /**
+     * subCat
+     *
+     * @param  mixed $query
+     * @param  mixed $value
+     * @return Object
+     */
     public function subCat($query, $value)
     {
         $cat_ids = explode(',', $value);
@@ -77,12 +117,19 @@ class Product extends Model
         });
     }
 
+    /**
+     * popular
+     *
+     * @param  mixed $query
+     * @param  mixed $value
+     * @return Object
+     */
     public function popular($query, $value)
     {
         return $query->orderBy('ratings_avg', 'desc')
             ->orderBy('ratings_count', 'desc');
     }
-    // ===========================Contants =============================
+    /* -------------------------------- Constants ------------------------------- */
     // code
     // حالة الخدمة مرفوضة
     const PRODUCT_REJECT = 0;
@@ -96,9 +143,10 @@ class Product extends Model
     const PRODUCT_STEP_FIVE   = 5;
     // اكتمال عملية انشاء الخدمة
     const PRODUCT_IS_COMPLETED = 1;
-    // ================== Accessor & Metators ==========================
+    /* --------------------------- Accessor & Metators -------------------------- */
     // code
-    // ============================ Scopes =============================
+
+    /* --------------------------------- Scopes --------------------------------- */
 
     /**
      * scopeSelection => دالة من اجل جلب البيانات
@@ -108,10 +156,21 @@ class Product extends Model
      */
     public function scopeSelection(mixed $query): ?object
     {
-        return $query->select('id', 'title', 'slug', 'content', 'price', 'duration',
-                             'category_id', 'profile_seller_id','count_buying',
-                              'thumbnail', 'buyer_instruct',
-                              'status', 'created_at');
+        return $query->select(
+            'id',
+            'title',
+            'slug',
+            'content',
+            'price',
+            'duration',
+            'category_id',
+            'profile_seller_id',
+            'count_buying',
+            'thumbnail',
+            'buyer_instruct',
+            'status',
+            'created_at'
+        );
     }
 
     /**
@@ -136,8 +195,7 @@ class Product extends Model
         return $query->whereStatus(Product::PRODUCT_REJECT);
     }
 
-    // ========================== Relations ============================
-
+    /* -------------------------------- Relations ------------------------------- */
 
     /**
      * category
@@ -202,13 +260,25 @@ class Product extends Model
     }
 
 
+    /**
+     * cart_items
+     *
+     * @return HasMany
+     */
     public function cart_items(): HasMany
     {
         return $this->hasMany(CartItem::class);
     }
 
+    /**
+     * ratings
+     *
+     * @return HasMany
+     */
     public function ratings(): HasMany
     {
         return $this->hasMany(Rating::class);
     }
+
+    /* -------------------------------------------------------------------------- */
 }

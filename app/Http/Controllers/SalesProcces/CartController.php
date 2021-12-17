@@ -18,31 +18,36 @@ class CartController extends Controller
     {
         $this->middleware('auth:sanctum');
     }
-    
+
     /**
-     * index
+     * index => دالة عرض السلة
      *
      * @return void
      */
     public function index()
     {
         // عرض السلة المستخدم 
-    
-        $cart = Cart::selection()->with(['cart_items' => function ($q) {
-            $q->with('cartItem_developments')->get();
-        }])->where('user_id', Auth::user()->id)->where('is_buying', 0)->get();
+        $cart = Cart::selection()
+            ->with(['cart_items' => function ($q) {
+                $q->with('cartItem_developments')->get();
+            }])
+            ->where('user_id', Auth::user()->id)
+            ->where('is_buying', 0)
+            ->get();
         // اظهار السلة مع عناصرها
-        return response()->success('عرض سلة المستخدم', $cart);  
+        return response()->success('عرض سلة المستخدم', $cart);
     }
+
     /**
-     * store
+     * store => دالة انشاء عنصر جديد في السلة
      *
-     * @param  mixed $id
      * @param  CartRequest $request
+     * @return Response
      */
     public function store(CartRequest $request)
     {
-        try {  
+        try {
+
             // جلب سلة المستخدم
             $cart = Cart::where('user_id', Auth::user()->id);
             // اذا كانت هناك سلة مباعة
@@ -55,21 +60,24 @@ class CartController extends Controller
             ];
             // وضع البيانات فالمصفوفة من اجل اضافة عناصر فالسلة السلة
             $data_cart_items = [
-                'product_id'    => $request->product_id,
-                'quantity'      => $request->quantity,
+                'product_id'    => $request->product_id
             ];
+            // شرط في حالة وجود الكمية
+            if ($request->has('quantity'))
+                $data_cart_items['quantity'] = (int)$request->quantity <= 0  ? 1 : (int)$request->quantity;
+            else
+                $data_cart_items['quantity'] = 1;
+
             // شرط في حالة ما اذا قام المستخدم بارسال تطويرات
             if ($request->has('developments')) {
-                $this->check_found_developments($request->developments,$request->product);
+                $this->check_found_developments($request->developments, $request->product_id);
             }
 
-            /* -------------------------------------------------------------------------- */
-            /*                           انشاء عنصر جديد فالسلة:                             */
-            /* -------------------------------------------------------------------------- */
+            /* ---------------------------- انشاء عنصر فالسلة --------------------------- */
             // بداية المعاملة مع البيانات المرسلة لقاعدة بيانات :
             DB::beginTransaction();
-            // عملية اضافة سلة جديدة :
-            if($cart->count() == 0 || ($cart_found_buying && !$cart_found_not_buying)){
+            // شرط اذا لم توجد اي سلة او توجد سلل مباعة و لا توجد سلة غير مباعة :
+            if ($cart->count() == 0 || ($cart_found_buying && !$cart_found_not_buying)) {
                 $new_cart = Cart::create($data_cart);
                 // وضع معرف السلة في مصفوفة العنصر
                 $data_cart_items['cart_id'] = $new_cart->id;
@@ -78,26 +86,26 @@ class CartController extends Controller
                 // شرط في حالة ما كانت هناك تطويرات مضافة
                 if ($request->has('developments')) {
                     // عملية اضافة تطويرات فالسلة
-                   $this->add_developments($cart_item,collect($request->developments));
+                    $this->add_developments($cart_item, collect($request->developments));
                 }
+                // جلب العنصر المضاف حديثا
                 $new_cart = Cart::where('user_id', Auth::user()->id)->where('is_buying', 0);
                 // عمليات حساب السعر المتواجد في السلة 
                 $this->calculate_price($new_cart, $cart_item, $request->quantity);
-            
             }
-            else if(($cart_found_buying && $cart_found_not_buying) || (!$cart_found_buying && $cart_found_not_buying))
-            {
-                $cart_item_found = CartItem::whereCartId($cart->where('is_buying',0)->first()->id)
-                                    ->where('product_id', $request->product_id)
-                                    ->wherehas('cart',function($q)
-                                        {
-                                            $q->where('user_id',Auth::id());
-                                        })
-                                    ->first();                          
+            // شرط اذا توجد سلة مباعة و سلة غير مباعة او توجد سلة غير مباعة و لا توجد سلة مباعة :
+            else if (($cart_found_buying && $cart_found_not_buying) || (!$cart_found_buying && $cart_found_not_buying)) {
+                // جلب العنصر 
+                $cart_item_found = CartItem::whereCartId($cart->where('is_buying', 0)->first()->id)
+                    ->where('product_id', $request->product_id)
+                    ->wherehas('cart', function ($q) {
+                        $q->where('user_id', Auth::id());
+                    })
+                    ->first();
+                // شرط اذا كان العنصر موجود    
                 if ($cart_item_found)
                     // رسالة خطأ
                     return response()->error('هذا العنصر موجود فالسلة , اضف عنصر آخر', 403);
-
                 // جلب السلة المستخدم الغير مباعة    
                 $new_cart =  Cart::where('user_id', Auth::id())->where('is_buying', 0);
                 // وضع معرف السلة في مصفوفة العنصر
@@ -107,26 +115,23 @@ class CartController extends Controller
                 // شرط في حالة ما كانت هناك تطويرات مضافة
                 if ($request->has('developments')) {
                     // عملية اضافة تطويرات فالسلة
-                    $this->add_developments($cart_item,collect($request->developments));
+                    $this->add_developments($cart_item, collect($request->developments));
                 }
                 // عمليات حساب السعر المتواجد في السلة 
                 $this->calculate_price($new_cart, $cart_item, $request->quantity);
                 // سعر العنصر الموجود فالسلة
-                }
-                else
-                {
-                    return;
-                }
+            } else {
+                // ارجاع فراغ 
+                return;
+            }
+            // انهاء المعاملة بشكل جيد :
             DB::commit();
 
-            /* -------------------------------------------------------------------------- */
-            /*                                     end                                    */
             /* -------------------------------------------------------------------------- */
             // رسالة نجاح عملية الاضافة:
             return response()->success('تم انشاء عنصر فالسلة', $cart);
         } catch (Exception $ex) {
             return $ex;
-            //return $ex;
             // لم تتم المعاملة بشكل نهائي و لن يتم ادخال اي بيانات لقاعدة البيانات
             DB::rollback();
             // رسالة خطأ
@@ -134,51 +139,69 @@ class CartController extends Controller
         }
     }
 
+    /**
+     * update => دالة تعديل على عنصر في السلة
+     *
+     * @param  mixed $id
+     * @param  CartRequest $request
+     * @return Response
+     */
     public function update($id, CartRequest $request)
     {
         try {
             // جلب سلة المستخدم
             $cart = Cart::where('user_id', Auth::user()->id)->where('is_buying', 0)->first();
+            // فحص ان كانت هناك سلة
+            if (!$cart)
+                // رسالة خطأ
+                return response()->error('السلة غير موجودة', 403);
             // جلب سلة مستخدم في حالة تم بيعها
             $cart_found =  Cart::where('user_id', Auth::user()->id)->where('is_buying', 0)->exists();
             // جلب عنصر السلة
             $cart_item_founded = CartItem::whereId($id)
-                                        ->whereCartId($cart->id)
-                                        ->where('product_id', $request->product_id);
+                ->whereCartId($cart->id)
+                ->where('product_id', $request->product_id);
             if (!$cart_item_founded->first())
                 // رسالة خطأ
                 return response()->error('هذا العنصر غير موجود', 403);
 
             // شرط في حالة ما اذا قام المستخدم بارسال تطويرات
             if ($request->has('developments')) {
-                $this->check_found_developments($request->developments,$request->product);
+                $this->check_found_developments($request->developments, $request->product);
             }
+            /* ----------------------- التعديل على العنصر من السلة ---------------------- */
+            // بداية المعاملة مع البيانات المرسلة لقاعدة بيانات :
+            DB::beginTransaction();
             //شرط اذا كانت هناك سلة غير مباعة
             if ($cart_found) {
-                // return 1;
                 // جلب عنصر السلة
                 $cart_item = $cart_item_founded->with(['product', 'cartItem_developments'])->first();
+                // جلب الكمية من المستخدم                
+                if ($request->has('quantity'))
+                    $cart_item->quantity = (int)$request->quantity <= 0  ? 1 : (int)$request->quantity;
+                else
+                    $cart_item->quantity = 1;
                 // حفظ الكمية
-                $cart_item->quantity = $request->quantity;
                 $cart_item->save();
                 //شرط اذا كان هناك تطويرات
                 if ($request->has('developments')) {
                     // عملية اضافة تطويرات فالسلة
-                    $this->add_developments($cart_item,$request->developments);
+                    $this->add_developments($cart_item, $request->developments);
                 }
+                $cart = Cart::where('user_id', Auth::user()->id)->where('is_buying', 0);
                 // عمليات حساب السعر المتواجد في السلة 
                 $this->calculate_price($cart, $cart_item, $request->quantity);
             } else {
+                // رسالة خطأ
                 return response()->error('لا توجد سلة غير مباعة , اضف سلة جديدة من فضلك');
             }
             // انهاء المعاملة بشكل جيد :
             DB::commit();
-            // =================================================
+            /* -------------------------------------------------------------------------- */
             // رسالة نجاح عملية الاضافة:
             return response()->success('تم تحديث عنصر فالسلة', $cart_item);
         } catch (Exception $ex) {
             // لم تتم المعاملة بشكل نهائي و لن يتم ادخال اي بيانات لقاعدة البيانات
-            return $ex;
             DB::rollback();
             // رسالة خطأ
             return response()->error('هناك خطأ ما حدث في قاعدة بيانات , يرجى التأكد من ذلك', 403);
@@ -186,56 +209,41 @@ class CartController extends Controller
     }
 
     /**
-     * delete
+     * delete => حذف عنصر من السلة
      *
      * @param  mixed $id
-     * @return JsonResponse
+     * @return Response
      */
     public function delete(mixed $id)
     {
         try {
+            // جلب السلة 
+            $cart = Cart::where('user_id', Auth::user()->id)
+                ->where('is_buying', 0);
 
             //id  جلب العنصر بواسطة
-            $cart_item = CartItem::find($id);
+            $cart_item = CartItem::whereId($id)
+                ->where('cart_id', $cart->first()->id)->first();
             // شرط اذا كان العنصر موجود
             if (!$cart_item || !is_numeric($id))
                 // رسالة خطأ
                 return response()->error('هذا العنصر غير موجود فالسلة', 403);
-            // ============= حذف عنصر من السلة  ================:
-            // بداية المعاملة مع البيانات المرسلة لقاعدة بيانات :
-            DB::beginTransaction();
-            // ============= عملية حذف العنصر من السلة ====================:
-            $cart = Cart::whereId($cart_item->cart_id)->withCount('cart_items')->first();
-            if ($cart['cart_items_count'] == 1) {
-                // عمليات حساب السعر المتواجد في السلة 
-                $this->calculate_price($cart, $cart_item, 0);
-                // حذف العنصر من السلة
-                $cart_item->delete();
-                $cart->delete();
-            } else {
-                // عمليات حساب السعر المتواجد في السلة 
-                $this->calculate_price($cart, $cart_item, 0);
-                // حذف العنصر من السلة
-                $cart_item->delete();
-            }
-
-
-            // انهاء المعاملة بشكل جيد :
-            DB::commit();
-            // =================================================
+            // جلب العنصر من السلة
+            /* ---------------------------- حذف عنصر من السلة --------------------------- */
+            $this->calculate_price($cart, $cart_item, 0);
+            // حذف العنصر من السلة
+            $cart_item->delete();
+            /* -------------------------------------------------------------------------- */
             // رسالة نجاح عملية الحذف:
             return response()->success('تم حذف عنصر من السلة بنجاح', $cart_item);
         } catch (Exception $ex) {
-            return $ex;
-            // لم تتم المعاملة بشكل نهائي و لن يتم ادخال اي بيانات لقاعدة البيانات
-            DB::rollback();
             // رسالة خطأ
             return response()->error('هناك خطأ ما حدث في قاعدة بيانات , يرجى التأكد من ذلك', 403);
         }
     }
 
     /**
-     * calculate_price
+     * calculate_price => دالة تقوم بعملية حساب الاجمالي للسلة مع الرسوم
      *
      * @param  mixed $cart
      * @param  mixed $cart_item
@@ -260,30 +268,30 @@ class CartController extends Controller
         // سعر الرسوم
         $tax = calculate_price_with_tax($new_cart->with('cart_items')->first()['cart_items']->sum('price_product'))['tax'];
         // تحديث سعر السلة
-        $new_cart->update(["total_price" => $total_price,"price_with_tax" => $price_with_tax,"tax" => $tax]);
+        $new_cart->update(["total_price" => $total_price, "price_with_tax" => $price_with_tax, "tax" => $tax]);
     }
 
-     /**
-     * add_developments
+    /**
+     * add_developments => دالة اضافة تطويرات العنصر المتواجد فالسلة
      *
      * @param  object $cart_item
      * @param  Request $developments
      * @return void
      */
-    private function add_developments($cart_item,$developments)
+    private function add_developments($cart_item, $developments)
     {
         $cart_item->cartItem_developments()->sync(collect($developments));
         $cart_item->load('cartItem_developments');
     }
-    
+
     /**
-     * check_found_developments
+     * check_found_developments => دالة تقوم بفحص التطويرات المدخلة من قبل المستخدم
      *
      * @param  mixed $developments
      * @param  mixed $product
      * @return void
      */
-    private function check_found_developments($developments,$product)
+    private function check_found_developments($developments, $product)
     {
         // جلب المعرفات التطويرات الخاصة بخدمة معينة من عند المستخدم
         $request_developments = array_map(
@@ -294,15 +302,13 @@ class CartController extends Controller
         );
         // جلب المعرفات التطويرات الخاصة بخدمة معينة من قواعد البيانات
         $product_developments = Product::whereId($product)
-                                ->with('developments')
-                                ->first()['developments']
-                                ->pluck('id')
-                                ->toArray();
-        
+            ->with('developments')
+            ->first()['developments']
+            ->pluck('id')
+            ->toArray();
+
         // فحص اذا كانت التطويرات المدخلة لا تطابق بالتطويرات الخدمة
         if (!empty(array_diff($request_developments, $product_developments)))
             return response()->error('التطويرات التي تم ادخالها ليست مطابقة مع هذه الخدمة');
     }
-
-
 }

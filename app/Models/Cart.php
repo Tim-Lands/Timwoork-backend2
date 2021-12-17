@@ -12,13 +12,23 @@ class Cart extends Model
 {
     use HasFactory;
 
+    /**
+     * table
+     *
+     * @var string
+     */
     protected $table = 'carts';
-    // ===========================Contants =============================
+    /**
+     * with
+     *
+     * @var string
+     */
+    protected $with = 'cart_items';
+    /* -------------------------------- Contants -------------------------------- */
     // code
-    // ================== Acssesor & mutators ==========================
+    /* --------------------------- Acssesor & mutators -------------------------- */
     // code
-    // ============================ Scopes =============================
-
+    /* --------------------------------- Scopes --------------------------------- */
     /**
      * scopeSelection => دالة من اجل جلب البيانات
      *
@@ -29,7 +39,7 @@ class Cart extends Model
     {
         return $query->select('id', 'user_id', 'is_buying', 'total_price');
     }
-    // ========================== Relations ============================
+    /* -------------------------------- Relations ------------------------------- */
     // code
 
     /**
