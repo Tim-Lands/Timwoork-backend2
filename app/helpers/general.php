@@ -1,33 +1,15 @@
 <?php
 
-use Intervention\Image\Facades\Image;
-use Illuminate\Support\Facades\Storage;
-
-// دالة رفع الملفات
-if (!function_exists('UploadImage')) {
-    function UploadImage($file, $image, $folder, $size, $defaut = '')
-    {
-        if ($image != $defaut && $image != null) {
-            Storage::disk('public_images')->delete('/' . $folder . '/' . $image);
-        }
-
-        Image::make($file)->resize($size, null, function ($constrait) {
-            $constrait->aspectRatio();
-        })->save(public_path('images/' . $folder . '/' . $file->hashName()));
-    }
-}
-// دالة حذف الملفات
-if (!function_exists('DeleteImage')) {
-    function DeleteImage($image, $folder, $defaut = "")
-    {
-        if ($image != $defaut) {
-            Storage::disk('public_images')->delete('/' . $folder . '/' . $image);
-        }
-    }
-}
+use App\Models\Product;
 
 // حساب السعر الكامل للسلة
 if (!function_exists('calculate_price_with_tax')) {
+    /**
+     * calculate_price_with_tax => دالة تقوم بحساب السعر الاجمالي للسلة مع الرسوم
+     *
+     * @param  mixed $price
+     * @return array
+     */
     function calculate_price_with_tax($price)
     {
         $calculate = [];
@@ -59,4 +41,7 @@ if (!function_exists('calculate_price_with_tax')) {
         }
         return $calculate;
     }
+}
+// فحص التطويرات المدخلة من قبل المستخدم
+if (!function_exists('check_found_developments')) {
 }

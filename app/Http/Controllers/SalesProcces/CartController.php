@@ -29,7 +29,10 @@ class CartController extends Controller
         // عرض السلة المستخدم 
         $cart = Cart::selection()
             ->with(['cart_items' => function ($q) {
-                $q->with('cartItem_developments')->get();
+                $q->select('id', 'cart_id', 'price_product', 'product_id', 'quantity')
+                    ->with(['cartItem_developments' => function ($q) {
+                        $q->select('development_id', 'title', 'duration', 'price')->get();
+                    }, 'product' => fn ($q) => $q->select('id', 'price', 'duration')]);
             }])
             ->where('user_id', Auth::user()->id)
             ->where('is_buying', 0)
@@ -70,8 +73,10 @@ class CartController extends Controller
 
             // شرط في حالة ما اذا قام المستخدم بارسال تطويرات
             if ($request->has('developments')) {
-                $this->check_found_developments($request->developments, $request->product_id);
+                if ($this->check_found_developments($request->developments, $request->product_id) == 0)
+                    return response()->error('التطويرات التي تم ادخالها ليست مطابقة مع هذه الخدمة');
             }
+            return;
 
             /* ---------------------------- انشاء عنصر فالسلة --------------------------- */
             // بداية المعاملة مع البيانات المرسلة لقاعدة بيانات :
@@ -118,7 +123,7 @@ class CartController extends Controller
                     $this->add_developments($cart_item, collect($request->developments));
                 }
                 // عمليات حساب السعر المتواجد في السلة 
-                $this->calculate_price($new_cart, $cart_item, $request->quantity);
+                $this->calculate_price($new_cart, $cart_item, $data_cart_items['quantity']);
                 // سعر العنصر الموجود فالسلة
             } else {
                 // ارجاع فراغ 
@@ -167,7 +172,8 @@ class CartController extends Controller
 
             // شرط في حالة ما اذا قام المستخدم بارسال تطويرات
             if ($request->has('developments')) {
-                $this->check_found_developments($request->developments, $request->product);
+                if ($this->check_found_developments($request->developments, $request->product_id) == 0)
+                    return response()->error('التطويرات التي تم ادخالها ليست مطابقة مع هذه الخدمة');
             }
             /* ----------------------- التعديل على العنصر من السلة ---------------------- */
             // بداية المعاملة مع البيانات المرسلة لقاعدة بيانات :
@@ -300,6 +306,7 @@ class CartController extends Controller
             },
             $developments
         );
+
         // جلب المعرفات التطويرات الخاصة بخدمة معينة من قواعد البيانات
         $product_developments = Product::whereId($product)
             ->with('developments')
@@ -309,6 +316,7 @@ class CartController extends Controller
 
         // فحص اذا كانت التطويرات المدخلة لا تطابق بالتطويرات الخدمة
         if (!empty(array_diff($request_developments, $product_developments)))
-            return response()->error('التطويرات التي تم ادخالها ليست مطابقة مع هذه الخدمة');
+            return 0;
+        return 1;
     }
 }
