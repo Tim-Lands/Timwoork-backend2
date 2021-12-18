@@ -1,6 +1,6 @@
 <?php
 
-use App\Http\Controllers\Auth\{LoginController, RegisterController};
+use App\Http\Controllers\Auth\{LoginController, RegisterController, UserStatusController};
 use App\Http\Controllers\{
     ChatController,
     ConversationController,
@@ -16,6 +16,7 @@ use App\Http\Controllers\{
     SearchController
 };
 use App\Http\Controllers\Product\RatingController;
+use Illuminate\Support\Facades\Broadcast;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -23,6 +24,8 @@ use Illuminate\Support\Facades\Route;
 | API Routes
 |--------------------------------------------------------------------------
 */
+
+Broadcast::routes(['middleware' => ['auth:sanctum']]);
 
 Route::fallback(function () {
     return response()->json('هذا الرابط غير موجود ', 200);
@@ -33,6 +36,8 @@ Route::fallback(function () {
 Route::middleware('auth:sanctum')->group(function () {
     Route::get('/me', [LoginController::class, 'me']);
     Route::post('/logout', [LoginController::class, 'logout']);
+    Route::post('/{user}/online', [UserStatusController::class, 'online']);
+    Route::post('/{user}/offline', [UserStatusController::class, 'offline']);
 });
 
 Route::post('/login', [LoginController::class, 'login']);
@@ -154,7 +159,6 @@ Route::get('/get_products', [FrontEndController::class, 'getProducts']);
 
 // مسار عملية الفلترة
 Route::prefix('filter')->group(function () {
-
     Route::get('/', FilterController::class);
 });
 
