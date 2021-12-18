@@ -134,12 +134,8 @@ Route::prefix('cart')->group(function () {
 /* -------------------------------------------------------------------------- */
 
 Route::prefix('order')->group(function () {
-    // عرض السلة
-    Route::get('/',               [OrderController::class, 'index']);
     // انشاء عنصر فالسلة
     Route::post('/store',         [OrderController::class, 'createOrderWithItems']);
-    //حذف عنصر من السلة
-    //Route::post('/{id}/delete',    [OrderController::class, 'delete']);
 });
 
 /* -------------------------------------------------------------------------- */
