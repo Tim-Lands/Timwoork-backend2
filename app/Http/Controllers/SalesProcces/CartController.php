@@ -76,8 +76,6 @@ class CartController extends Controller
                 if ($this->check_found_developments($request->developments, $request->product_id) == 0)
                     return response()->error('التطويرات التي تم ادخالها ليست مطابقة مع هذه الخدمة');
             }
-            return;
-
             /* ---------------------------- انشاء عنصر فالسلة --------------------------- */
             // بداية المعاملة مع البيانات المرسلة لقاعدة بيانات :
             DB::beginTransaction();

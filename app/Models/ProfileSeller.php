@@ -89,4 +89,14 @@ class ProfileSeller extends Model
     {
         return $this->belongsToMany(Skill::class);
     }
+
+    /**
+     * item
+     *
+     * @return BelongsTo
+     */
+    public function items(): HasMany
+    {
+        return $this->hasMany(Item::class);
+    }
 }

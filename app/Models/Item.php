@@ -32,12 +32,20 @@ class Item extends Model
      */
     public function scopeSelection(mixed $query): ?object
     {
-        return $query->select('id', 'order_id', 'status', 'duration', 'instruction',  'created_at');
+        return $query->select('id', 'order_id', 'status', 'number_product', 'duration', 'price_product', 'profile_seller_id',  'created_at');
     }
 
     // ========================== Relations ============================
     // code
-
+    /**
+     * profileSeller
+     *
+     * @return BelongsTo
+     */
+    public function profileSeller(): BelongsTo
+    {
+        return $this->belongsTo(ProfileSeller::class, 'profile_seller_id');
+    }
     /**
      * order
      *
