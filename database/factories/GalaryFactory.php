@@ -21,8 +21,7 @@ class GalaryFactory extends Factory
 
     public function definition()
     {
-        $image = $this->faker->image(storage_path('app/products/galaries-images'), 640, 480, null, false);
-        // $file =  \Illuminate\Http\UploadedFile::fake()->create('test.pdf')->store('products/galaries-file');
+        $image = $this->faker->image(storage_path('app/products/galaries-images'), 640, 480, null, null, null, 'tarek', false);
         return [
             'path' => $image,
             'full_path' => $image,

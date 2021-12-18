@@ -32,7 +32,7 @@ class Cart extends Model
      */
     public function scopeSelection(mixed $query): ?object
     {
-        return $query->select('id', 'user_id', 'is_buying', 'total_price');
+        return $query->select('id', 'user_id', 'is_buying', 'total_price', 'price_with_tax', 'tax');
     }
     /* -------------------------------- Relations ------------------------------- */
     // code
