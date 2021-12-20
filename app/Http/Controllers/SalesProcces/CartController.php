@@ -36,7 +36,7 @@ class CartController extends Controller
             }])
             ->where('user_id', Auth::user()->id)
             ->where('is_buying', 0)
-            ->get();
+            ->first();
         // اظهار السلة مع عناصرها
         return response()->success('عرض سلة المستخدم', $cart);
     }
