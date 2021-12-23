@@ -92,7 +92,7 @@ class LoginController extends Controller
         } else {
             // وإلا قم بإنشاء مستخدم جديد 
             try {
-                DB::transaction();
+                DB::beginTransaction();
                 $user = User::create([
                     'email' => $request->email,
                     'email_verified_at' => now(),
