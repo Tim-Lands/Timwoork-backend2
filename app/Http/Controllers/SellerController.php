@@ -47,7 +47,11 @@ class SellerController extends Controller
             $seller->portfolio = $request->portfolio;
             $seller->save();
             // تسجيل المهارات الخاصة للبائع
-            $seller->skills()->syncWithoutDetaching($request->skills);
+            $skills = [];
+            // تهيئة المهارات بوضعها في مصفوفة
+            for ($i = 0; $i < count($request->skills); $i++)
+                $skills[$request->skills[$i]["id"]]  = ["level" => $request->skills[$i]["level"]];
+            $seller->skills()->syncWithoutDetaching($skills);
             // تغيير حالة البروفايل إلى بائع
             $seller->profile->is_seller = true;
 
