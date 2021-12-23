@@ -27,7 +27,7 @@ class SocialProviderRequest extends FormRequest
             'provider' => 'required',
             'provider_id' => 'required',
             'email' => 'required',
-            'name' => 'required'
+            'full_name' => 'required'
         ];
     }
 }

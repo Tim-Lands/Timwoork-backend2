@@ -100,6 +100,8 @@ class LoginController extends Controller
                 // وبروفايل جديد يحمل الاسم والصورة إن وجدت
                 $user->profile()->create([
                     'first_name' => $request->first_name,
+                    'last_name' => $request->last_name,
+                    'full_name' => $request->full_name,
                     'avatar' => $request->avatar
                 ]);
 
