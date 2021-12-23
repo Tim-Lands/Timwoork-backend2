@@ -87,6 +87,7 @@ class LoginController extends Controller
         })->first();
         // في حالة وجود مستخدم سابق مسجل سيتم تسجيل دخوله مباشرة
         if ($user) {
+            Auth::login($user);
             return $this->login_with_token($user);
         } else {
             // وإلا قم بإنشاء مستخدم جديد 
@@ -112,6 +113,7 @@ class LoginController extends Controller
                 ]);
                 DB::commit();
                 // عملية تسجيل الدخول بعد نجاح العملية
+                Auth::login($user);
                 return $this->login_with_token($user);
             } catch (Exception $ex) {
                 DB::rollBack();
