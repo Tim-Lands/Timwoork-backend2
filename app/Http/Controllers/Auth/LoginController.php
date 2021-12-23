@@ -90,34 +90,40 @@ class LoginController extends Controller
             Auth::login($user);
             return $this->login_with_token($user);
         } else {
-            // وإلا قم بإنشاء مستخدم جديد 
-            try {
-                DB::beginTransaction();
-                $user = User::create([
-                    'email' => $request->email,
-                    'email_verified_at' => now(),
-                ]);
+            $email_exists = User::select('email')->where('email', $request->email)->first();
+            if ($email_exists) {
+                return response()->error('هذا البريد الالكتروني موجود من قبل', 422);
+            } else {
 
-                // وبروفايل جديد يحمل الاسم والصورة إن وجدت
-                $user->profile()->create([
-                    'first_name' => $request->first_name,
-                    'last_name' => $request->last_name,
-                    'full_name' => $request->full_name,
-                    'avatar' => $request->avatar
-                ]);
+                // وإلا قم بإنشاء مستخدم جديد 
+                try {
+                    DB::beginTransaction();
+                    $user = User::create([
+                        'email' => $request->email,
+                        'email_verified_at' => now(),
+                    ]);
 
-                // تسجيل اسم المزوّد و المعرّف الخاص بالمستخدم في المزود الخاص به 
-                $user->providers()->create([
-                    'provider' => $provider,
-                    'provider_id' => $request->provider_id
-                ]);
-                DB::commit();
-                // عملية تسجيل الدخول بعد نجاح العملية
-                Auth::login($user);
-                return $this->login_with_token($user);
-            } catch (Exception $ex) {
-                DB::rollBack();
-                return response()->error('هناك خطأ ما حدث في قاعدة بيانات , يرجى التأكد من ذلك', 403);
+                    // وبروفايل جديد يحمل الاسم والصورة إن وجدت
+                    $user->profile()->create([
+                        'first_name' => $request->first_name,
+                        'last_name' => $request->last_name,
+                        'full_name' => $request->full_name,
+                        'avatar' => $request->avatar
+                    ]);
+
+                    // تسجيل اسم المزوّد و المعرّف الخاص بالمستخدم في المزود الخاص به 
+                    $user->providers()->create([
+                        'provider' => $provider,
+                        'provider_id' => $request->provider_id
+                    ]);
+                    DB::commit();
+                    // عملية تسجيل الدخول بعد نجاح العملية
+                    Auth::login($user);
+                    return $this->login_with_token($user);
+                } catch (Exception $ex) {
+                    DB::rollBack();
+                    return response()->error('هناك خطأ ما حدث في قاعدة بيانات , يرجى التأكد من ذلك', 403);
+                }
             }
         }
     }

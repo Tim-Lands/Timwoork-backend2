@@ -25,7 +25,7 @@ class SocialProviderRequest extends FormRequest
     {
         return [
             'provider_id' => 'required',
-            'email' => 'required|unique:users,email',
+            'email' => 'required',
             'full_name' => 'required'
         ];
     }
