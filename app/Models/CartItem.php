@@ -23,7 +23,7 @@ class CartItem extends Model
      *
      * @var array
      */
-    protected $appends = ['price_product_spicify', 'duration_product'];
+    protected $appends = ['price_product_spicify', 'duration_product','title_product'];
     /**
      * The attributes that should be hidden for arrays.
      *
@@ -52,6 +52,16 @@ class CartItem extends Model
     public function getDurationProductAttribute()
     {
         return $this->product->duration;
+    }
+
+    /**
+     * getDurationProductAttribute => جلب مدة الخدمة
+     *
+     * @return void
+     */
+    public function getTitleProductAttribute()
+    {
+        return $this->product->title;
     }
     // ============================ Scopes =============================
 

@@ -18,7 +18,6 @@ class Cart extends Model
      * @var string
      */
     protected $table = 'carts';
-
     /* -------------------------------- Contants -------------------------------- */
     // code
     /* --------------------------- Acssesor & mutators -------------------------- */
