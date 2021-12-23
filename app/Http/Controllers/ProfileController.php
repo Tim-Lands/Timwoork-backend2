@@ -54,6 +54,7 @@ class ProfileController extends Controller
             // تغيير المعلومات الشخصية 
             $user->profile->first_name = $request->first_name;
             $user->profile->last_name = $request->last_name;
+            $user->profile->full_name = $request->first_name . ' ' . $request->last_name;
             $user->profile->gender = $request->gender;
             $user->profile->date_of_birth = $request->date_of_birth;
             $user->profile->country_id = $request->country_id;

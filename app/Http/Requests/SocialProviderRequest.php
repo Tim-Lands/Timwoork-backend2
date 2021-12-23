@@ -24,10 +24,9 @@ class SocialProviderRequest extends FormRequest
     public function rules()
     {
         return [
-            'provider' => 'required',
             'provider_id' => 'required',
             'email' => 'required',
-            'name' => 'required'
+            'full_name' => 'required'
         ];
     }
 }
