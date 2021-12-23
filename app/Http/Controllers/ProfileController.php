@@ -86,11 +86,12 @@ class ProfileController extends Controller
             // تخزين اسم الصورة في قاعدة البيانات
             $user = Auth::user();
             // تغيير اسم المستخدم 
-            $user->profile->avatar = $avatarName;
+            $avatarUrl = Storage::disk('avatars')->url($avatarName);
+            $user->profile->avatar = $avatarUrl;
             $user->profile->steps = Profile::COMPLETED_SETP_TWO;
             $user->profile->save();
             // إرسال رسالة نجاح المرحلة الثانية مع إرسال رابط الصورة كاملا
-            return response()->success('نجاح المرحلة اﻷولى', Storage::disk('avatars')->url($avatarName));
+            return response()->success('نجاح المرحلة اﻷولى', $avatarUrl);
         } catch (Exception $ex) {
             //return $ex;
             return response()->error('حدث خطأ غير متوقع');
