@@ -24,7 +24,7 @@ class CreateCartItemsTable extends Migration
                 ->onDelete('CASCADE')
                 ->onUpdate('CASCADE');
 
-            $table->float('price_product', 5, 2)->unsigned()->default(0);
+            $table->float('price_product', 8, 2)->unsigned()->default(0);
             $table->integer('quantity')->default(1);
             $table->timestamps();
         });

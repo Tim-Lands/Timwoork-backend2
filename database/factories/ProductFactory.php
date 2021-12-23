@@ -25,6 +25,8 @@ class ProductFactory extends Factory
         $current_step = $this->faker->numberBetween(0, 5);
         $completed = $current_step == 5 ? 1 : 0;
         $title = $this->faker->text(30);
+        $name_images = [1 => "Tarek",2 => "Abdallah",3 => "Roqia",4 => "Hamid"];
+        $key = array_rand($name_images);
         return [
             'title'                 => $title,
             'slug'                  => Str::slug($title),
@@ -37,7 +39,7 @@ class ProductFactory extends Factory
             'is_active'             => $this->faker->numberBetween(0, 1),
             'is_completed'          => $completed,
             'is_draft'              => $completed,
-            'thumbnail'             => $this->faker->image(storage_path('app/products/thumbnails'), 640, 480, null,null,null,'tarek', false),
+            'thumbnail'             => $this->faker->image(storage_path('app/products/thumbnails'), 640, 480, null, null, null, $name_images[$key], false),
             'buyer_instruct'        => $this->faker->paragraph(1),
             'profile_seller_id'     => $this->faker->numberBetween(1, 3),
             // اختر اي تصنيف فرعي او ضع اعداد عشوائية للتصنيفات المتواجدة

@@ -21,11 +21,11 @@ class CreateCartsTable extends Migration
                 ->onDelete('CASCADE')
                 ->onUpdate('CASCADE');
 
-            $table->float('total_price', 5, 2)->unsigned()->default(0);
+            $table->float('total_price', 8, 2)->unsigned()->default(0);
 
-            $table->float('tax', 5, 2)->unsigned()->default(0);
+            $table->float('tax', 8, 2)->unsigned()->default(0);
 
-            $table->float('price_with_tax',5,2)->unsigned()->default(0);
+            $table->float('price_with_tax', 8, 2)->unsigned()->default(0);
 
             $table->boolean('is_buying')->default(0);
 
