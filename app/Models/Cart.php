@@ -33,6 +33,16 @@ class Cart extends Model
     {
         return $query->select('id', 'user_id', 'is_buying', 'total_price', 'price_with_tax', 'tax');
     }
+    /*
+    * scopeSelection => دالة من اجل جلب البيانات
+    *
+    * @param  mixed $query
+    * @return object
+    */
+    public function scopeActiveCart(mixed $query): ?object
+    {
+        return $query->where('is_buying', 0);
+    }
     /* -------------------------------- Relations ------------------------------- */
     // code
 

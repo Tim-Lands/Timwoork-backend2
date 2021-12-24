@@ -50,9 +50,11 @@ class LoginController extends Controller
         // make some columns hidden in response
 
         $msg_count = $this->getUnreadMessagesCount($user);
+        $cart_items_count = $this->getUnreadMessagesCount($user);
         $data = [
             'user_details' => $user,
-            'msg_unread_count' => $msg_count
+            'msg_unread_count' => $msg_count,
+            'cart_items_count' => $cart_items_count
         ];
         return response()->json($data, 200);
     }
@@ -76,6 +78,13 @@ class LoginController extends Controller
         return $count;
     }
 
+    /**
+     * Get user cart items count
+     */
+    public function getCartItemsCount($user)
+    {
+        return  $user->carts()->activeCart()->first()->cart_items()->get()->count();
+    }
     /*************************Socialite Login *************************/
 
     public function handleProviderCallback($provider, SocialProviderRequest $request)
