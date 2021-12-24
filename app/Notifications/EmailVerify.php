@@ -41,7 +41,7 @@ class EmailVerify extends Notification
     public function toMail($notifiable)
     {
         return (new MailMessage)
-            ->from('noreply@timwoork.com')
+            ->from('support@timlands.com')
             ->subject('تفعيل حسابك على تيم وورك')
             ->view('emails.verify_email', ['user' => $this->user]);
     }

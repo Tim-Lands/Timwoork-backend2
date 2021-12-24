@@ -87,7 +87,7 @@ class ProfileSeller extends Model
      */
     public function skills(): BelongsToMany
     {
-        return $this->belongsToMany(Skill::class);
+        return $this->belongsToMany(Skill::class)->withPivot('level');
     }
 
     /**

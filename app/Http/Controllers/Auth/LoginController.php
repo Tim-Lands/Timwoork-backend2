@@ -42,6 +42,7 @@ class LoginController extends Controller
         $user =  $request->user()->load([
             'profile.profile_seller.badge',
             'profile.profile_seller.level',
+            'profile.profile_seller.skills',
             'profile.badge',
             'profile.level'
         ]);
