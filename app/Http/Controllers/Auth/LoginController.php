@@ -83,7 +83,11 @@ class LoginController extends Controller
      */
     public function getCartItemsCount($user)
     {
-        return  $user->carts()->activeCart()->first()->cart_items()->get()->count();
+        if ($user->carts()->activeCart()->first()) {
+            return  $user->carts()->activeCart()->first()->cart_items()->get()->count();
+        } else {
+            return 0;
+        }
     }
     /*************************Socialite Login *************************/
 
