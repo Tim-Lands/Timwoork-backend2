@@ -62,6 +62,17 @@ class User extends Authenticatable
     }
 
     /**
+
+     * verify email token 
+     *
+     * @return HasOne
+     */
+    public function forgetPasswordToken(): HasOne
+    {
+        return $this->hasOne(ForgetPasswordToken::class);
+    }
+
+    /**
      * providers
      *
      * @return HasMany
