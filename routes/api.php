@@ -38,8 +38,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/logout', [LoginController::class, 'logout']);
     Route::post('/{user}/online', [UserStatusController::class, 'online']);
     Route::post('/{user}/offline', [UserStatusController::class, 'offline']);
-    Route::post('/mode/light', [DarkModeController::class, 'lightMode']);
-    Route::post('/mode/dark', [DarkModeController::class, 'darkMode']);
+    Route::post('/mode', DarkModeController::class);
     Route::post('/password/change', ChangePasswordController::class);
 });
 Route::post('/password/forget/sendResetLink', [ForgetPasswordController::class, 'send_token']);

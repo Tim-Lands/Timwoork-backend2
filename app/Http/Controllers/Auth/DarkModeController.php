@@ -9,19 +9,24 @@ use Illuminate\Support\Facades\Auth;
 
 class DarkModeController extends Controller
 {
-    public function lightMode()
+    /**
+     * Handle the incoming request.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\Response
+     */
+    public function __invoke()
     {
         $user = Auth::user();
-        $user->profile->dark_mode = false;
-        $user->profile->save();
-        return response()->success('لقد تم تغيير الوضع إلى وضع نهاري');
-    }
-
-    public function darkMode()
-    {
-        $user = Auth::user();
-        $user->profile->dark_mode = true;
-        $user->profile->save();
-        return response()->success('لقد تم تغيير الوضع إلى وضع ليلي');
+        $mode =  $user->profile->dark_mode;
+        if ($mode) {
+            $user->profile->dark_mode = false;
+            $user->profile->save();
+            return response()->success('لقد تم تغيير الوضع إلى وضع نهاري');
+        } else {
+            $user->profile->dark_mode = true;
+            $user->profile->save();
+            return response()->success('لقد تم تغيير الوضع إلى وضع ليلي');
+        }
     }
 }
