@@ -1,6 +1,6 @@
 <?php
 
-use App\Http\Controllers\Auth\{ChangePasswordController, ForgetPasswordController, LoginController, RegisterController, UserStatusController};
+use App\Http\Controllers\Auth\{ChangePasswordController, DarkModeController, ForgetPasswordController, LoginController, RegisterController, UserStatusController};
 use App\Http\Controllers\{
     ChatController,
     ConversationController,
@@ -38,6 +38,8 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/logout', [LoginController::class, 'logout']);
     Route::post('/{user}/online', [UserStatusController::class, 'online']);
     Route::post('/{user}/offline', [UserStatusController::class, 'offline']);
+    Route::post('/{user}/lightMode', [DarkModeController::class, 'lightMode']);
+    Route::post('/{user}/darkMode', [DarkModeController::class, 'darkMode']);
     Route::post('/password/change', ChangePasswordController::class);
 });
 Route::post('/password/forget/sendResetLink', [ForgetPasswordController::class, 'send_token']);
