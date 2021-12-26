@@ -2,7 +2,9 @@
 
 namespace App\Providers;
 
+use App\Events\ForgetPassword;
 use App\Events\VerifyEmail;
+use App\Listeners\ForgetPasswordListener;
 use App\Listeners\VerifyEmailListener;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Auth\Listeners\SendEmailVerificationNotification;
@@ -20,6 +22,10 @@ class EventServiceProvider extends ServiceProvider
         VerifyEmail::class => [
             VerifyEmailListener::class,
         ],
+        ForgetPassword::class => [
+            ForgetPasswordListener::class,
+        ],
+
     ];
 
     /**
