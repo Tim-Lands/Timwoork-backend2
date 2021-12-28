@@ -1,6 +1,6 @@
 <?php
 
-use App\Http\Controllers\Auth\{ChangePasswordController, DarkModeController, ForgetPasswordController, LoginController, RegisterController, UserStatusController};
+use App\Http\Controllers\Auth\{ChangePasswordController, DarkModeController, ForgetPasswordController, LoginController, MyProductController, RegisterController, UserStatusController};
 use App\Http\Controllers\{
     ChatController,
     ConversationController,
@@ -40,6 +40,15 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/{user}/offline', [UserStatusController::class, 'offline']);
     Route::post('/mode', DarkModeController::class);
     Route::post('/password/change', ChangePasswordController::class);
+});
+
+Route::prefix('my_products')->middleware('auth:sanctum')->group(function () {
+    Route::get('/', [MyProductController::class, 'index']);
+    Route::get('/published', [MyProductController::class, 'published']);
+    Route::get('/paused', [MyProductController::class, 'paused']);
+    Route::get('/pending', [MyProductController::class, 'pending']);
+    Route::get('/rejected', [MyProductController::class, 'rejected']);
+    Route::get('/drafts', [MyProductController::class, 'drafts']);
 });
 Route::post('/password/forget/sendResetLink', [ForgetPasswordController::class, 'send_token']);
 Route::post('/password/forget/verify', [ForgetPasswordController::class, 'verify_token']);
