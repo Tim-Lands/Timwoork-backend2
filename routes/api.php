@@ -1,20 +1,24 @@
 <?php
 
-use App\Http\Controllers\Auth\{ChangePasswordController, DarkModeController, ForgetPasswordController, LoginController, MyProductController, RegisterController, UserStatusController};
-use App\Http\Controllers\{
-    ChatController,
-    ConversationController,
-    FilterController,
-    FrontEndController,
-    Product\InsertProductContoller,
-    Product\DeleteProductController,
-    Product\ShortenerController,
-    SellerController,
-    ProfileController,
-    SalesProcces\CartController,
-    SalesProcces\OrderController,
-    SearchController
-};
+use App\Http\Controllers\Auth\ChangePasswordController;
+use App\Http\Controllers\Auth\DarkModeController;
+use App\Http\Controllers\Auth\ForgetPasswordController;
+use App\Http\Controllers\Auth\LoginController;
+use App\Http\Controllers\Auth\MyProductController;
+use App\Http\Controllers\Auth\RegisterController;
+use App\Http\Controllers\Auth\UserStatusController;
+use App\Http\Controllers\ChatController;
+use App\Http\Controllers\ConversationController;
+use App\Http\Controllers\FilterController;
+use App\Http\Controllers\FrontEndController;
+use App\Http\Controllers\Product\InsertProductContoller;
+use App\Http\Controllers\Product\DeleteProductController;
+use App\Http\Controllers\Product\ShortenerController;
+use App\Http\Controllers\SellerController;
+use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\SalesProcces\CartController;
+use App\Http\Controllers\SalesProcces\OrderController;
+use App\Http\Controllers\SearchController;
 use App\Http\Controllers\Product\RatingController;
 use App\Models\Product;
 use Illuminate\Support\Facades\Broadcast;
