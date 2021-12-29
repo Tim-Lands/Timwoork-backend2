@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Product;
 use App\Http\Controllers\Controller;
 use App\Models\Product;
 use Exception;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\DB;
 
@@ -16,35 +17,37 @@ class DeleteProductController extends Controller
             //id  جلب العنصر بواسطة
             $product = Product::find($id);
             // شرط اذا كان العنصر موجود
-            if (!$product || !is_numeric($id))
+            if (!$product || !is_numeric($id)) {
                 // رسالة خطأ
                 return response()->error('هذا العنصر غير موجود', 403);
+            }
             // ============================== حذف الصور و المفات ==================================
             // حذف الصورة من مجلد
-            if ($product->thumbnail)
+            if ($product->thumbnail) {
                 Storage::has("products/thumbnails/{$product->thumbnail}") ? Storage::delete("products/thumbnails/{$product->thumbnail}") : '';
+            }
+            
             // جلب الصور مع الخدمة
             $get_galaries_images =  $product->whereId($id)->with(['galaries' => function ($q) {
                 $q->select('id', 'path', 'product_id', 'type_file')->where('type_file', 'image')->get();
-            }])->first();
+            }])->first()->galaries;
             // جلب الملف مع الخدمة
             $get_file_pdf = $product->whereId($id)->with(['galaries' => function ($q) {
                 $q->select('id', 'path', 'product_id', 'type_file')->where('type_file', 'file')->get();
-            }])->first();
-            // وضع الصور في متغير
-            $images_galaries = $get_galaries_images['galaries'];
-            // وضع الملف في متغير
-            $file_galaries   = $get_file_pdf['galaries'][0];
-
+            }])->first()->galaries;
+            
             // حذف الصور اذا وجدت فالمجلد
-            if ($images_galaries)
-                foreach ($images_galaries as $image) {
+            if ($get_galaries_images) {
+                foreach ($get_galaries_images as $key => $image) {
                     Storage::has("products/galaries-images/{$image['path']}") ? Storage::delete("products/galaries-images/{$image['path']}") : '';
                 }
+            }
+            
             // حذف الملف اذا وجدت فالمجلد
-            if ($file_galaries)
-                Storage::has("products/galaries-file/{$file_galaries['path']}") ? Storage::delete("products/galaries-file/{$file_galaries['path']}") : '';
-            // ====================================================================================    
+            if (!$get_file_pdf->count() == 0) {
+                Storage::has("products/galaries-file/{$get_file_pdf[0]['path']}") ? Storage::delete("products/galaries-file/{$get_file_pdf[0]['path']}") : '';
+            }
+            // ====================================================================================
             // ============================== حذف الخدمة ====================================:
             // بداية المعاملة مع البيانات المرسلة لقاعدة بيانات :
             DB::beginTransaction();

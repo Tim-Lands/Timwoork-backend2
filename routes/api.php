@@ -16,6 +16,7 @@ use App\Http\Controllers\{
     SearchController
 };
 use App\Http\Controllers\Product\RatingController;
+use App\Models\Product;
 use Illuminate\Support\Facades\Broadcast;
 use Illuminate\Support\Facades\Route;
 
@@ -67,7 +68,6 @@ Route::post('/email/resend', [RegisterController::class, 'resend_verify_code']);
 /* -------------------------------------------------------------------------- */
 
 Route::prefix('profiles')->group(function () {
-
     Route::middleware('auth:sanctum')->post('/step_one', [ProfileController::class, 'step_one']);
     Route::middleware('auth:sanctum')->post('/step_two', [ProfileController::class, 'step_two']);
     Route::middleware('auth:sanctum')->post('/step_three', [ProfileController::class, 'step_three']);
@@ -90,21 +90,21 @@ Route::prefix('sellers')->group(function () {
 /* -------------------------------------------------------------------------- */
 /*                           مسارات انشاء خدمة جديدة                          */
 /* -------------------------------------------------------------------------- */
-Route::prefix('product')->group(function () {
+Route::prefix('product')->middleware('auth:sanctum')->group(function () {
     // انشاء الخدمة
-    Route::get('/store',                     [InsertProductContoller::class, 'store']);
+    Route::get('/store', [InsertProductContoller::class, 'store']);
     // المحلة الاولى
-    Route::post('{id}/product-step-one',     [InsertProductContoller::class, 'storeStepOne']);
+    Route::post('{id}/product-step-one', [InsertProductContoller::class, 'storeStepOne']);
     // المحلة الثانية
-    Route::post('/{id}/product-step-two',    [InsertProductContoller::class, 'storeStepTwo']);
+    Route::post('/{id}/product-step-two', [InsertProductContoller::class, 'storeStepTwo']);
     // المحلة الثالثة
-    Route::post('/{id}/product-step-three',  [InsertProductContoller::class, 'storeStepThree']);
+    Route::post('/{id}/product-step-three', [InsertProductContoller::class, 'storeStepThree']);
     // المحلة الرابعة
-    Route::post('/{id}/product-step-four',   [InsertProductContoller::class, 'storeStepFour']);
+    Route::post('/{id}/product-step-four', [InsertProductContoller::class, 'storeStepFour']);
     // المحلة الخامسة
-    Route::post('/{id}/product-step-five',   [InsertProductContoller::class, 'storeStepFive']);
+    Route::post('/{id}/product-step-five', [InsertProductContoller::class, 'storeStepFive']);
     // حذف الخدمة
-    Route::post('/{id}/deleteProduct',       DeleteProductController::class);
+    Route::post('/{id}/deleteProduct', DeleteProductController::class);
 
     // تقييم الخدمة
 
@@ -134,13 +134,13 @@ Route::prefix('conversations')->middleware('auth:sanctum')->group(function () {
 
 Route::prefix('cart')->group(function () {
     // عرض السلة
-    Route::get('/',                             [CartController::class, 'index']);
+    Route::get('/', [CartController::class, 'index']);
     // انشاء عنصر فالسلة
-    Route::post('/store',                       [CartController::class, 'store']);
+    Route::post('/store', [CartController::class, 'store']);
     // تحديث عنصر فالسلة
-    Route::post('/cartitem/update/{id}',         [CartController::class, 'update']);
+    Route::post('/cartitem/update/{id}', [CartController::class, 'update']);
     //حذف عنصر من السلة
-    Route::post('/cartitem/delete/{id}',                 [CartController::class, 'delete']);
+    Route::post('/cartitem/delete/{id}', [CartController::class, 'delete']);
 });
 
 /* -------------------------------------------------------------------------- */
@@ -149,7 +149,7 @@ Route::prefix('cart')->group(function () {
 
 Route::prefix('order')->group(function () {
     // انشاء عنصر فالسلة
-    Route::post('/store',         [OrderController::class, 'createOrderWithItems']);
+    Route::post('/store', [OrderController::class, 'createOrderWithItems']);
 });
 
 /* -------------------------------------------------------------------------- */
@@ -163,8 +163,8 @@ Route::get('/get_categories', [FrontEndController::class, 'get_categories']);
 // عرض التصنيفات الفرعية
 Route::get('/get_categories/{id}', [FrontEndController::class, 'get_subcategories']);
 // عرض الخدمة الواحدة
-Route::get('product/{slug}',                    [FrontEndController::class, 'show']);
-// عرض جميع الخدمات 
+Route::get('product/{slug}', [FrontEndController::class, 'show']);
+// عرض جميع الخدمات
 Route::get('/get_products', [FrontEndController::class, 'getProducts']);
 
 // مسار عملية الفلترة
@@ -175,7 +175,6 @@ Route::prefix('filter')->group(function () {
 // مسار عملية البحث السريع
 
 Route::prefix('search')->group(function () {
-
     Route::get('/', SearchController::class);
 });
 

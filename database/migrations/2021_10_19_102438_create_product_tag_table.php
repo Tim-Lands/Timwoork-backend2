@@ -15,9 +15,11 @@ class CreateProductTagTable extends Migration
     {
         Schema::create('product_tag', function (Blueprint $table) {
             $table->id();
-            // relation model of Profile
-            $table->foreignId('product_id')->constrained();
-            // relation model of Country
+            // relation model of Product
+            $table->foreignId('product_id')->constrained()
+            ->onDelete('CASCADE')
+            ->onUpdate('CASCADE');
+            // relation model of Tag
             $table->foreignId('tag_id')->constrained()
                 ->onDelete('CASCADE')
                 ->onUpdate('CASCADE');

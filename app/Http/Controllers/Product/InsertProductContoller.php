@@ -3,13 +3,13 @@
 namespace App\Http\Controllers\Product;
 
 use App\Http\Controllers\Controller;
-use App\Http\Requests\Products\{
-    ProductStepFourRequest,
-    ProductStepOneRequest,
-    ProductStepThreeRequest,
-    ProductStepTwoRequest
-};
-use App\Models\{Category, Product, Shortener, Tag};
+use App\Http\Requests\Products\ProductStepFourRequest;
+use App\Http\Requests\Products\ProductStepOneRequest;
+use App\Http\Requests\Products\ProductStepThreeRequest;
+use App\Http\Requests\Products\ProductStepTwoRequest;
+use App\Models\Category;
+use App\Models\Product;
+use App\Models\Shortener;
 use Exception;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Auth;
@@ -19,27 +19,19 @@ use Illuminate\Support\Facades\Storage;
 
 class InsertProductContoller extends Controller
 {
-    public function __construct()
-    {
-        $this->middleware('auth:sanctum')->except(['show']);
-    }
-  
-  
     /**
      * create => دالة جلب البيانات و انشاء معرف جديد
      *
      * @return void
      */
-    public function store(): JsonResponse
+    public function store()
     {
         try {
             // ============= انشاء المعرف للخدمة ================:
-
             // بداية المعاملة مع البيانات المرسلة لقاعدة بيانات :
             DB::beginTransaction();
             // عملية انشاء معرف جديد للخدمة
-            $product = Product::create(['profile_seller_id' => Auth::user()->id]);
-            $data['id'] = $product->id;
+            $product = Product::create(['profile_seller_id' => Auth::user()->profile->profile_seller->id]);
             // انهاء المعاملة بشكل جيد :
             DB::commit();
             // اظهار العناصر
@@ -65,23 +57,26 @@ class InsertProductContoller extends Controller
             //id  جلب العنصر بواسطة
             $product = Product::find($id);
             // شرط اذا كان العنصر موجود
-            if (!$product || !is_numeric($id))
+            if (!$product || !is_numeric($id)) {
                 // رسالة خطأ
                 return response()->error('هذا العنصر غير موجود', 403);
+            }
 
             // جلب التصنيف الفرعي
             $subcategory = Category::child()->where('id', $request->subcategory)->exists();
             // التحقق اذا كان موجود ام لا
-            if (!$subcategory)
+            if (!$subcategory) {
                 return response()->error('التصنيف الفرعي لا يوجد', 403);
+            }
             // انشاء مصفوفة و وضع فيها بيانات المرحلة الاولى
             $data = [
                 'title'             => $request->title,
                 'slug'              => Str::slug($request->title),
                 'category_id'       =>  (int)$request->subcategory,
-                'profile_seller_id' => /*Auth::user()->profile->profile_seller->id*/ 2,
-                'current_step'      => Product::PRODUCT_STEP_ONE
             ];
+            // دراسة حالة المرحلة
+            $this->change_septs($product, $data, Product::PRODUCT_STEP_ONE);
+
             // ============= انشاء المرحلة الاولى في الخدمة ================:
             // بداية المعاملة مع البيانات المرسلة لقاعدة بيانات :
             DB::beginTransaction();
@@ -115,15 +110,18 @@ class InsertProductContoller extends Controller
             //id  جلب العنصر بواسطة
             $product = Product::find($id);
             // شرط اذا كان العنصر موجود
-            if (!$product || !is_numeric($id))
+            if (!$product || !is_numeric($id)) {
                 // رسالة خطأ
                 return response()->error('هذا العنصر غير موجود', 403);
+            }
             // وضع البيانات في مصفوفة من اجل اضافة فالمرحلة الثانية
             $data = [
                 'price'           => $request->price,
-                'duration'        => (int)$request->duration,
-                'current_step'    => Product::PRODUCT_STEP_TWO,
+                'duration'        => (int)$request->duration
             ];
+            // دراسة حالة المرحلة
+            $this->change_septs($product, $data, Product::PRODUCT_STEP_TWO);
+
             // انشاء مصفوفة جديدة من اجل عملية اضافة تطويرات
             (object)$developments = [];
             // شرط اذا كانت هناك توجد تطورات
@@ -140,11 +138,12 @@ class InsertProductContoller extends Controller
             // عملية انشاء المرحلة الثانية
             $product->update($data);
             // شرط اذا كانت هناط تطويرات من قبل
-            if ($product->develpments)
+            if ($product->develpments) {
                 // حدف كل التطويرات
                 $product->developments()->delete();
+            }
 
-            // اضافة تطويرات جديدة 
+            // اضافة تطويرات جديدة
             $product->developments()->createMany($developments);
             // انهاء المعاملة بشكل جيد :
             DB::commit();
@@ -172,15 +171,17 @@ class InsertProductContoller extends Controller
             //id  جلب العنصر بواسطة
             $product = Product::find($id);
             // شرط اذا كان العنصر موجود
-            if (!$product || !is_numeric($id))
+            if (!$product || !is_numeric($id)) {
                 // رسالة خطأ
                 return response()->error('هذا العنصر غير موجود', 403);
+            }
             // وضع البيانات في مصفوفة من اجل اضافة فالمرحلة الثالثة
             $data = [
                 'buyer_instruct'  => $request->buyer_instruct,
                 'content'         => $request->content,
-                'current_step'    => Product::PRODUCT_STEP_THREE,
             ];
+            // دراسة حالة المرحلة
+            $this->change_septs($product, $data, Product::PRODUCT_STEP_THREE);
             // ============= انشاء المرحلة الثالثة في الخدمة ================:
             // بداية المعاملة مع البيانات المرسلة لقاعدة بيانات :
             DB::beginTransaction();
@@ -212,13 +213,17 @@ class InsertProductContoller extends Controller
             //id  جلب العنصر بواسطة
             $product = Product::find($id);
             // شرط اذا كان العنصر موجود
-            if (!$product || !is_numeric($id))
+            if (!$product || !is_numeric($id)) {
                 // رسالة خطأ
                 return response()->error('هذا العنصر غير موجود', 403);
+            }
             // ============================ معالجة الصورة الامامية ==========================================
             $time = time();
             // وضع معلومات في مصفوفة من اجل عملية الانشاء
-            $data_product = ['current_step'  => Product::PRODUCT_STEP_FOUR];
+            $data_product = [];
+            // دراسة حالة المرحلة
+            $this->change_septs($product, $data_product, Product::PRODUCT_STEP_FOUR);
+            
             // شرط في حالة ما اذا كانت الصورة مرسلة من المستخدم
             if ($product->thumbnail) {
                 // شرط اذا قام المستخدم بأرسال صورة الامامية
@@ -264,7 +269,7 @@ class InsertProductContoller extends Controller
             }])->first()['galaries'];
             // ==========================================================================================
             // ========================== معالجة الصور و الملفات و روابط الفيديوهات ===============================
-            // مصفوفة من اجل وضع فيها المعلومات الصور    
+            // مصفوفة من اجل وضع فيها المعلومات الصور
             $galaries_images = [];
             // شرط اذا كانت هناك صورة مرسلة من قبل المستخدم
             if (count($get_galaries_images) != 0) {
@@ -293,8 +298,9 @@ class InsertProductContoller extends Controller
                 }
             } else {
                 // شرط اذا لم يجد الصور التي يرسلهم المستخدم في حالة الانشاء لاول مرة
-                if (!$request->has('images'))
+                if (!$request->has('images')) {
                     return response()->error('يجب ان يكون عدد الصور المرفوعة لا تزيد عن  5 و لا تقل عن 1', 403);
+                }
                 // عدد الصور التي تم رفعها
                 foreach ($request->file('images') as $key => $value) {
                     $imagelName = "tw-galary-image-{$product->slug}-{$key}-{$time}.{$value->getClientOriginalExtension()}";
@@ -308,9 +314,9 @@ class InsertProductContoller extends Controller
                     ];
                 }
                 // شرط اذا كان عدد صور يزيد عند 5 و يقل عن 1
-                if (count($galaries_images) > 5 || count($galaries_images) == 0)
+                if (count($galaries_images) > 5 || count($galaries_images) == 0) {
                     return response()->error('يجب ان يكون عدد الصور المرفوعة لا تزيد عن  5 و لا تقل عن 1', 403);
-                else {
+                } else {
                     // عملية رفع المفات
                     foreach ($galaries_images as $image) {
                         // رفع الصور
@@ -320,7 +326,7 @@ class InsertProductContoller extends Controller
             }
 
 
-            // pdf مصفوفة من اجل وضع فيها المعلومات الملف    
+            // pdf مصفوفة من اجل وضع فيها المعلومات الملف
             $galary_file = [];
             // شرط في حالة ما تم ارسال ملف جديد
             if ($request->has('file')) {
@@ -411,7 +417,6 @@ class InsertProductContoller extends Controller
             // رسالة نجاح عملية الاضافة:
             return response()->success('تم انشاء المرحلة الرابعة بنجاح', $product);
             // ========================================================
-
         } catch (Exception $ex) {
             // لم تتم المعاملة بشكل نهائي و لن يتم ادخال اي بيانات لقاعدة البيانات
             DB::rollback();
@@ -459,8 +464,9 @@ class InsertProductContoller extends Controller
             // عملية انشاء المرحلة الثالثة
             $product->update($data);
             // شرط هل يوجد رابط مختصر من قبل
-            if (!$shorterner)
+            if (!$shorterner) {
                 $product->shortener()->create($data_shortener);
+            }
             // انهاء المعاملة بشكل جيد :
             DB::commit();
             // ================================================================
@@ -472,6 +478,23 @@ class InsertProductContoller extends Controller
             DB::rollback();
             // رسالة خطأ
             return response()->error('هناك خطأ ما حدث في قاعدة بيانات , يرجى التأكد من ذلك', 403);
+        }
+    }
+    
+    /**
+     * change_septs
+     *
+     * @param  mixed $product
+     * @param  mixed $data
+     * @param  mixed $step
+     * @return void
+     */
+    private function change_septs($product, $data, $step)
+    {
+        if ($product->is_completed == 1 || $product->current_step > $step) {
+            $data['current_step'] = $product->current_step;
+        } else {
+            $data['current_step'] = $step;
         }
     }
 }
