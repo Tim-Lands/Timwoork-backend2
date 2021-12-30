@@ -16,10 +16,10 @@ class Item extends Model
 
     // ===========================Contants =============================
     // code
-    const STATUS_NEW_REQUEST       = 0;
-    const STATUS_PENDING_REQUEST   = 1;
-    const STATUS_CLOSED_REQUEST    = 2;
-    const STATUS_FULFILLED_REQUEST = 3;
+    const STATUS_PENDING_REQUEST       = 0;
+    const STATUS_ACCEPT_REQUEST        = 1;
+    const STATUS_REJECTED_REQUEST      = 2;
+    const STATUS_FULFILLED_REQUEST     = 3;
     // ================== Acssesor & mutators ==========================
     // code
     // ============================ Scopes =============================
@@ -32,7 +32,7 @@ class Item extends Model
      */
     public function scopeSelection(mixed $query): ?object
     {
-        return $query->select('id', 'order_id', 'status', 'number_product', 'duration', 'price_product', 'profile_seller_id',  'created_at');
+        return $query->select('id', 'order_id', 'status', 'number_product', 'duration', 'price_product', 'profile_seller_id', 'created_at');
     }
 
     // ========================== Relations ============================
