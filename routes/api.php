@@ -159,6 +159,8 @@ Route::prefix('order')->group(function () {
     Route::prefix('items')->group(function () {
         // قبول الطلبية من قبل البائع
         Route::post('/{id}/accept_item', [ItemController::class, 'item_accepted_by_seller']);
+        // رفض الطلبية من قبل البائع
+        Route::post('/{id}/reject_item', [ItemController::class, 'item_rejected_by_seller']);
     });
 });
 

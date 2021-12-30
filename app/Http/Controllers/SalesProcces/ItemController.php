@@ -56,9 +56,32 @@ class ItemController extends Controller
      *
      * @return void
      */
-    public function item_rejected_by_seller()
+    public function item_rejected_by_seller($id)
     {
-        # code...
+        try {
+            // جلب عنصر الطلبية من اجل قبولها
+            $item = Item::whereId($id)->first();
+            // شرط اذا كانت متواجدة
+            if (!$item) {
+                // رسالة خطأ
+                return response()->error('هذا العنصر غير موجود', 403);
+            }
+            /* --------------------------- تغيير حالة الطلبية --------------------------- */
+            // شرط اذا كانت الحالة الطلبية في حالة الانتظار
+            if ($item->status == Item::STATUS_PENDING_REQUEST) {
+                // تحويل الطلبية من حالة الابتدائية الى حالة الرفض
+                $item->status = Item::STATUS_REJECTED_REQUEST;
+                $item->save();
+            } else {
+                return response()->error('لا يمكن تغير هذه الحالة , تفقد بياناتك', 403);
+            }
+            // رسالة نجاح
+            return response()
+            ->success("{$item->profileSeller->profile->user->username} تم رفض الطلب من قبل البائع");
+        } catch (Exception $ex) {
+            // رسالة خطأ
+            return response()->error('هناك خطأ ما حدث في قاعدة بيانات , يرجى التأكد من ذلك', 403);
+        }
     }
     
     /**
