@@ -42,7 +42,8 @@ class Product extends Model
         'price',
         'title',
         'subCat',
-        'category'
+        'category',
+        'count_buying'
     ];
 
     /* -------------------------------- functions ------------------------------- */
