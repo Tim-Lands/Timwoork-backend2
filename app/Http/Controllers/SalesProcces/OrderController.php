@@ -8,7 +8,6 @@ use App\Models\Item;
 use App\Models\Order;
 use App\Models\Product;
 use Exception;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
@@ -30,7 +29,7 @@ class OrderController extends Controller
      *
      * @return void
      */
-    public function createOrderWithItems()
+    public function create_order_with_items()
     {
         try {
             //سلة المشتري
@@ -41,17 +40,19 @@ class OrderController extends Controller
                 ->where('user_id', Auth::user()->id)
                 ->where('is_buying', 0)
                 ->first();
+                
             // جلب المعرفات الخدمات المتواجدة في عناصر السلة
             $cart_items = $cart['cart_items']->pluck('product_id');
-            if ($cart_items->count() == 0)
+            if ($cart_items->count() == 0 || !$cart) {
                 return response()->error('لا توجد عناصر فالسلة , الرجاء اعادة عملية الشراء');
+            }
             // وضع البيانات فالمصفوفة من اجل اضافة طلبيىة
             $data_order = [
                 'uuid' => Str::uuid(),
                 'cart_id' => $cart->id,
                 'payment_id' => 1,
             ];
-            // مصفوفة من اجل وضع فيها عناصر الطلبية 
+            // مصفوفة من اجل وضع فيها عناصر الطلبية
             $data_items = [];
             /* ---------------------------- انشاء طلبية جديدة --------------------------- */
             // بداية المعاملة مع البيانات المرسلة لقاعدة بيانات :
@@ -75,7 +76,7 @@ class OrderController extends Controller
                 $quantity = $cart['cart_items'][$key]->quantity;
                 // المدة الزمنية للتطويرات
                 $duration_developments = $cart['cart_items'][$key]['cartItem_developments']->sum('duration');
-                // حساب مدة الخدمة مع تطويراتها 
+                // حساب مدة الخدمة مع تطويراتها
                 $duration_total = ($duration_product + $duration_developments) * $quantity;
                 // وضع البيانات العناصر السلة في مصفوفة العناصر الطلبية
                 $data_items[] = [
@@ -85,7 +86,7 @@ class OrderController extends Controller
                     'number_product' => $value,
                     'price_product' => $cart['cart_items'][$key]->price_product,
                     'duration' => $duration_total,
-                    'status' => Item::STATUS_NEW_REQUEST,
+                    'status' => Item::STATUS_PENDING_REQUEST,
                 ];
             }
             // اضافة عناصر الطلبية
@@ -96,6 +97,7 @@ class OrderController extends Controller
             return response()->success('تم انشاء الطلبية', $order);
         } catch (Exception $ex) {
             DB::rollBack();
+            return $ex;
             // رسالة خطأ
             return response()->error('هناك خطأ ما حدث في قاعدة بيانات , يرجى التأكد من ذلك', 403);
         }

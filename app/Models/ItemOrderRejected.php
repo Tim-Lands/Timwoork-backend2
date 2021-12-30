@@ -13,9 +13,11 @@ class ItemOrderRejected extends Model
 
 
     /* -------------------------------- Contants -------------------------------- */
+    const REJECTED_SELLER_OR_BUYING = 0;
+    const REJECTED_BOTH_SELLER_BUYING = 1;
     /* --------------------------- Acssesor & mutators -------------------------- */
     /* --------------------------------- Scopes --------------------------------- */
-
+    
     /* -------------------------------- Relations ------------------------------- */
     
     /**

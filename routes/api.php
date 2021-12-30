@@ -18,9 +18,9 @@ use App\Http\Controllers\SellerController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\SalesProcces\CartController;
 use App\Http\Controllers\SalesProcces\OrderController;
+use App\Http\Controllers\SalesProcces\ItemController;
 use App\Http\Controllers\SearchController;
 use App\Http\Controllers\Product\RatingController;
-use App\Models\Product;
 use Illuminate\Support\Facades\Broadcast;
 use Illuminate\Support\Facades\Route;
 
@@ -35,6 +35,7 @@ Broadcast::routes(['middleware' => ['auth:sanctum']]);
 Route::fallback(function () {
     return response()->json('هذا الرابط غير موجود ', 200);
 });
+Route::post('/login', [LoginController::class, 'login']);
 /* -------------------------------------------------------------------------- */
 /*                                 Auth Routes                                */
 /* -------------------------------------------------------------------------- */
@@ -59,7 +60,7 @@ Route::post('/password/forget/sendResetLink', [ForgetPasswordController::class, 
 Route::post('/password/forget/verify', [ForgetPasswordController::class, 'verify_token']);
 Route::post('/password/forget/reset', [ForgetPasswordController::class, 'reset_password']);
 
-Route::post('/login', [LoginController::class, 'login']);
+
 
 Route::post('/login/{provider}', [LoginController::class, 'handleProviderCallback']);
 Route::post('/register', [RegisterController::class, 'register']);
@@ -152,8 +153,13 @@ Route::prefix('cart')->group(function () {
 /* -------------------------------------------------------------------------- */
 
 Route::prefix('order')->group(function () {
-    // انشاء عنصر فالسلة
-    Route::post('/store', [OrderController::class, 'createOrderWithItems']);
+    // انشاء الطلبية و ارسال الطلبيات للبائعين
+    Route::post('/store', [OrderController::class, 'create_order_with_items']);
+    /* ------------------ مسارات المعاملة بين البائع و المشتري ------------------ */
+    Route::prefix('items')->group(function () {
+        // قبول الطلبية من قبل البائع
+        Route::post('/{id}/accept_item', [ItemController::class, 'item_accepted_by_seller']);
+    });
 });
 
 /* -------------------------------------------------------------------------- */
