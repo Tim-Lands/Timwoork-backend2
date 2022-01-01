@@ -56,6 +56,13 @@ return [
             'visibility' => 'public',
         ],
 
+        'resources_files' => [
+            'driver' => 'local',
+            'root' => storage_path('app/resources_files'),
+            'url' => env('APP_URL') . '/resources_files',
+            'visibility' => 'public',
+        ],
+
 
         's3' => [
             'driver' => 's3',
@@ -85,6 +92,7 @@ return [
         //public_path('storage') => storage_path('app/public'),
         public_path('avatars') => storage_path('app/avatars'),
         public_path('products') => storage_path('app/products'),
+        public_path('resources_files') => storage_path('app/resources_files'),
     ],
 
 ];
