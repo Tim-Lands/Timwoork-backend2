@@ -46,8 +46,9 @@ class FrontEndController extends Controller
     {
         // جلب التصنيف الرئيسي من اجل التحقق
         $catagory = Category::find($id);
-        if (!$catagory)
+        if (!$catagory) {
             return response()->error('هذا العنصر غير موجود', 403);
+        }
         // جلب التصنيفات الفرعية
         $subcategorie = Category::select('id', 'name_ar', 'icon')
             ->withCount('products')
@@ -63,20 +64,20 @@ class FrontEndController extends Controller
 
 
     /**
-     * show => slug او  id  عرض الخدمة الواحدة بواسطة 
+     * show => slug او  id  عرض الخدمة الواحدة بواسطة
      *
      * @param  mixed $slug
      * @return JsonResponse
      */
     public function show(mixed $slug): JsonResponse
     {
-        // id او slug جلب الخدمة بواسطة 
+        // id او slug جلب الخدمة بواسطة
         $product = Product::selection()
             ->whereSlug($slug)
             ->orWhere('id', $slug)
-            ->with([
+            ->withOnly([
                 'subcategory' => function ($q) {
-                    $q->select('id', 'parent_id', 'name_ar',)
+                    $q->select('id', 'parent_id', 'name_ar', )
                         ->with('category', function ($q) {
                             $q->select('id', 'name_ar')
                                 ->without('subcategories');
@@ -90,7 +91,13 @@ class FrontEndController extends Controller
                     $q->with('user.profile');
                 },
                 'galaries' => function ($q) {
-                    $q->select('id', 'path', 'url_video', 'product_id');
+                    $q->select('id', 'path', 'product_id');
+                },
+                'file' => function ($q) {
+                    $q->select('id', 'path', 'product_id');
+                },
+                'video' => function ($q) {
+                    $q->select('id', 'product_id', 'url_video');
                 },
                 'profileSeller' => function ($q) {
                     $q->select('id', 'profile_id', 'number_of_sales', 'portfolio', 'profile_id', 'badge_id', 'level_id')
@@ -107,13 +114,15 @@ class FrontEndController extends Controller
                             'badge'
                         ]);
                 }
-            ])->withAvg('ratings', 'rating')
+            ])
+            ->withAvg('ratings', 'rating')
             ->withCount('ratings')
             ->first();
         // فحص اذا كان يوجد هذا العنصر
-        if (!$product)
+        if (!$product) {
             // رسالة خطأ
             return response()->error('هذا العنصر غير موجود', 403);
+        }
         // اظهار العناصر
         return response()->success('عرض خدمة', $product);
     }

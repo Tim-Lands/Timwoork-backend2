@@ -21,7 +21,6 @@ class Product extends Model
      * @var string
      */
     protected $table = 'products';
-
     /**
      * filters
      *
@@ -146,6 +145,16 @@ class Product extends Model
     const PRODUCT_IS_COMPLETED = 1;
     /* --------------------------- Accessor & Metators -------------------------- */
     // code
+        
+    /**
+     * getUrlVideoAttribute => جلب رابط الفيديو
+     *
+     * @return void
+     */
+    public function getVideoUrlAttribute()
+    {
+        return $this->video->url_video;
+    }
 
     /* --------------------------------- Scopes --------------------------------- */
 
@@ -237,6 +246,27 @@ class Product extends Model
     public function galaries(): HasMany
     {
         return $this->hasMany(Galary::class, 'product_id');
+    }
+    
+        
+    /**
+     * file
+     *
+     * @return HasOne
+     */
+    public function file():HasOne
+    {
+        return $this->hasOne(File::class, 'product_id');
+    }
+
+    /**
+     * video
+     *
+     * @return HasOne
+     */
+    public function video():HasOne
+    {
+        return $this->hasOne(Video::class, 'product_id');
     }
 
     /**

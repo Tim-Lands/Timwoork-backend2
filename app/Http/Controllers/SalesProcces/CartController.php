@@ -62,9 +62,12 @@ class CartController extends Controller
             $data_cart = [
                 'user_id' => Auth::user()->id,
             ];
+            // جلب عنوان الخدمة
+            $product_title = Product::where('id', $request->product_id)->first()->title;
             // وضع البيانات فالمصفوفة من اجل اضافة عناصر فالسلة السلة
             $data_cart_items = [
-                'product_id'    => $request->product_id
+                'product_id'    => $request->product_id,
+                'product_title' => $product_title
             ];
             // شرط في حالة وجود الكمية
             if ($request->has('quantity')) {

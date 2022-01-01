@@ -6,15 +6,12 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
-class ItemOrderResource extends Model
+class Video extends Model
 {
     use HasFactory;
-    protected $table = "item_order_resources";
 
-    /* -------------------------------- Contants -------------------------------- */
-    const RESOURCE_DELIVERY         = 0;
-    const RESOURCE_ACCEPTED         = 1;
-    const RESOURCE_REJECTED         = 2;
+    protected $table = "videos";
+
     /* --------------------------- Acssesor & mutators -------------------------- */
     /* --------------------------------- Scopes --------------------------------- */
 
@@ -25,8 +22,8 @@ class ItemOrderResource extends Model
      *
      * @return BelongsTo
      */
-    public function Item(): BelongsTo
+    public function Product(): BelongsTo
     {
-        return $this->belongsTo(Item::class);
+        return $this->belongsTo(Product::class);
     }
 }

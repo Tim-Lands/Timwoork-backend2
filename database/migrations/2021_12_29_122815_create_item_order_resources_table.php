@@ -19,12 +19,16 @@ class CreateItemOrderResourcesTable extends Migration
             $table->foreignId('item_id')->constrained()
             ->onDelete('CASCADE')
             ->onUpdate('CASCADE');
-            // path project:
+            // path resource:
             $table->string('path');
+            // full path resource:
+            $table->string('full_path');
+            // size file:
+            $table->string('size');
             // type file:
             $table->string('mime_type');
-            // status : 0 => pending 1 => accepted 2 => modification
-            $table->tinyInteger('status');
+            // status : 0 => delivery 1 => accepted 2 => rejected
+            $table->tinyInteger('status')->nullable();
             // added duration in case request:
             $table->integer('duration')->default(0);
             $table->timestamps();
