@@ -12,9 +12,9 @@ class ItemOrderResource extends Model
     protected $table = "item_order_resources";
 
     /* -------------------------------- Contants -------------------------------- */
-    const RESOURCE_DELIVERY         = 0;
-    const RESOURCE_ACCEPTED         = 1;
-    const RESOURCE_REJECTED         = 2;
+    const RESOURCE_DELIVERY         = 1;
+    const RESOURCE_ACCEPTED         = 2;
+    const RESOURCE_REJECTED         = 3;
     /* --------------------------- Acssesor & mutators -------------------------- */
     /* --------------------------------- Scopes --------------------------------- */
 

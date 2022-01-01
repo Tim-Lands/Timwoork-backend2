@@ -106,20 +106,23 @@ class ItemController extends Controller
             // شرط اذا كان المشؤروع موجود
             if (!$item_resource) {
                 // رسالة خطأ
-                return response()->error('هذا العنصر غير موجود', 403);
+                return response()->error('يجب عليك رفع المشروع قبل التسليم', 403);
             }
+
             // جلب حالة الطلبية
             $status_item = $item_resource->item->status;
             // شرط اذا كانت حالة الطلبية في قيد التنفيذ
             if ($status_item == Item::STATUS_ACCEPT_REQUEST) {
-                if ($item_resource->status == null) {
+                if ($item_resource->status == 0) {
                     // وضع المشروع في حالة التسليم
                     $item_resource->status = ItemOrderResource::RESOURCE_DELIVERY;
                     $item_resource->save();
+                } else {
+                    // رسالة خطأ
+                    return response()->error('لقد تم تسليم المشروع مسبقا, تفقد بياناتك', 403);
                 }
             } else {
-                // رسالة خطأ
-                return response()->error('لقد تم تسليم المشروع مسبقا, تفقد بياناتك', 403);
+                return response()->error('لا يمكن تغير هذه الحالة , تفقد بياناتك', 403);
             }
             // رسالة نجاح عملية تسليم المشروع:
             return response()->success('تم تسليم المشروع من قبل البائع');
@@ -147,6 +150,11 @@ class ItemController extends Controller
                 // رسالة خطأ
                 return response()->error('هذا العنصر غير موجود', 403);
             }
+            $item_rousource = ItemOrderResource::where('item_id', $item->id)->first();
+            if ($item_rousource) {
+                // رسالة خطأ
+                return response()->error('لقد تم رفع الملف من قبل , الان يجب عليك تسليم', 403);
+            }
             // انشاء مصفوفة من اجل رفع المشروع
             $data_resource = [];
             // شرط اذا كانت الحالة قيد التنفيذ
@@ -157,7 +165,7 @@ class ItemController extends Controller
                 // وضع اسم جديد للمشروع
                 $file_resource_name = "tw-resource-{$item->uuid}-{$time}.{$file_resource->getClientOriginalExtension()}";
                 // رفع المشروع
-                Storage::putFileAs('resources', $request->file('file'), $file_resource_name);
+                Storage::putFileAs('resources_files', $request->file('file_resource'), $file_resource_name);
                 // وضع المشروع في المصفوفة
                 $data_resource = [
                     'item_id'    => $item->id,
