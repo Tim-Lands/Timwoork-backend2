@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 
 class Item extends Model
 {
@@ -19,7 +20,7 @@ class Item extends Model
     const STATUS_PENDING_REQUEST       = 0;
     const STATUS_ACCEPT_REQUEST        = 1;
     const STATUS_REJECTED_REQUEST      = 2;
-    const STATUS_FULFILLED_REQUEST     = 3;
+    const STATUS_FINISHED              = 3;
     // ================== Acssesor & mutators ==========================
     // code
     // ============================ Scopes =============================
@@ -75,5 +76,15 @@ class Item extends Model
     public function attachments(): HasMany
     {
         return $this->hasMany(Attachment::class);
+    }
+    
+    /**
+     * Resource
+     *
+     * @return HasOne
+     */
+    public function Resource():HasOne
+    {
+        return $this->hasOne(ItemOrderResource::class);
     }
 }
