@@ -29,7 +29,7 @@ class CartController extends Controller
         // عرض السلة المستخدم
         $cart = Cart::selection()
             ->with(['cart_items' => function ($q) {
-                $q->select('id', 'cart_id', 'price_product', 'product_id', 'quantity')
+                $q->select('id', 'cart_id', 'product_title', 'price_product', 'product_id', 'quantity')
                     ->with(['cartItem_developments' => function ($q) {
                         $q->select('development_id', 'title', 'duration', 'price')->get();
                     }, 'product' => fn ($q) => $q->select('id', 'title', 'price', 'duration')]);
