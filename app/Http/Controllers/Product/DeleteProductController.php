@@ -29,12 +29,12 @@ class DeleteProductController extends Controller
             
             // جلب الصور مع الخدمة
             $get_galaries_images =  $product->whereId($id)->with(['galaries' => function ($q) {
-                $q->select('id', 'path', 'product_id', 'type_file')->where('type_file', 'image')->get();
+                $q->select('id', 'path', 'product_id')->get();
             }])->first()->galaries;
             // جلب الملف مع الخدمة
-            $get_file_pdf = $product->whereId($id)->with(['galaries' => function ($q) {
-                $q->select('id', 'path', 'product_id', 'type_file')->where('type_file', 'file')->get();
-            }])->first()->galaries;
+            $get_file_pdf = $product->whereId($id)->with(['file' => function ($q) {
+                $q->select('id', 'path', 'product_id')->get();
+            }])->first()->file;
             
             // حذف الصور اذا وجدت فالمجلد
             if ($get_galaries_images) {
@@ -44,7 +44,7 @@ class DeleteProductController extends Controller
             }
             
             // حذف الملف اذا وجدت فالمجلد
-            if (!$get_file_pdf->count() == 0) {
+            if ($get_file_pdf) {
                 Storage::has("products/galaries-file/{$get_file_pdf[0]['path']}") ? Storage::delete("products/galaries-file/{$get_file_pdf[0]['path']}") : '';
             }
             // ====================================================================================
