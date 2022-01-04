@@ -33,7 +33,7 @@ class CartController extends Controller
         // عرض السلة المستخدم
         $cart = Cart::selection()
             ->with(['cart_items' => function ($q) {
-                $q->select('id', 'cart_id', 'price_product', 'product_id', 'quantity')
+                $q->select('id', 'cart_id', 'product_title', 'price_product', 'product_id', 'quantity')
                     ->with(['cartItem_developments' => function ($q) {
                         $q->select('development_id', 'title', 'duration', 'price')->get();
                     }, 'product' => fn ($q) => $q->select('id', 'title', 'price', 'duration')]);
@@ -66,9 +66,14 @@ class CartController extends Controller
             $data_cart = [
                 'user_id' => Auth::user()->id,
             ];
+            // جلب عنوان الخدمة
+            $product_title = Product::where('id', $request->product_id)->first()->title;
             // وضع البيانات فالمصفوفة من اجل اضافة عناصر فالسلة السلة
             $data_cart_items = [
                 'product_id'    => $request->product_id,
+
+                'product_title' => $product_title
+
             ];
             // شرط في حالة وجود الكمية
             if ($request->has('quantity')) {

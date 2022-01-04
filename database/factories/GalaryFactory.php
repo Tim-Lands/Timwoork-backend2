@@ -28,8 +28,6 @@ class GalaryFactory extends Factory
             'path' => $image,
             'full_path' => $image,
             'size' => $this->faker->randomFloat($nbMaxDecimals = null, $min = 0.1, $max = 2) . ' mb',
-            'url_video' => 'https://www.youtube.com/watch?v=B17oiTBZCvc',
-            'type_file' => 'image',
             'mime_type' => 'png'
         ];
     }

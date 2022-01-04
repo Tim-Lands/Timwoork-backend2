@@ -23,7 +23,7 @@ class CreateCartItemsTable extends Migration
             $table->foreignId('product_id')->constrained()
                 ->onDelete('CASCADE')
                 ->onUpdate('CASCADE');
-
+            $table->string('product_title');
             $table->float('price_product', 8, 2)->unsigned()->default(0);
             $table->integer('quantity')->default(1);
             $table->timestamps();

@@ -165,7 +165,13 @@ Route::prefix('order')->group(function () {
     /* ------------------ مسارات المعاملة بين البائع و المشتري ------------------ */
     Route::prefix('items')->group(function () {
         // قبول الطلبية من قبل البائع
-        Route::post('/{id}/accept_item', [ItemController::class, 'item_accepted_by_seller']);
+        Route::post('/{id}/accept_item_seller', [ItemController::class, 'item_accepted_by_seller']);
+        // رفض الطلبية من قبل البائع
+        Route::post('/{id}/reject_item_anyone', [ItemController::class, 'item_rejected_anyone']);
+        // رفض المشروع
+        Route::post('/{id}/upload_resources', [ItemController::class, 'upload_resource_by_seller']);
+        // تسليم المشروع من قبل البائع
+        Route::post('/{id}/dilevery_resources', [ItemController::class, 'delivery_resource_by_seller']);
     });
 });
 
