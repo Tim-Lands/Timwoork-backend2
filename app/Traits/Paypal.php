@@ -10,8 +10,8 @@ use PayPalHttp\HttpException;
 trait Paypal
 {
 
-    public $return_url = 'http://127.0.0.1:8000/api/order/paypal/purchase';
-    public $cancel_url = 'http://127.0.0.1:8000/api/cancel';
+    public $return_url = 'http://localhost:3000/purchase/paypal?return=1';
+    public $cancel_url = 'http://localhost:3000/purchase/paypal?return=0';
 
     public function approve($cart)
     {
@@ -78,7 +78,7 @@ trait Paypal
 
         foreach ($cart->cart_items as $key => $value) {
 
-            $request_body['purchase_units'][0]['items'][$key]['name'] = $value->id;
+            $request_body['purchase_units'][0]['items'][$key]['name'] = $value->product_title;
             $request_body['purchase_units'][0]['items'][$key]['unit_amount']['currency_code'] = 'USD';
             $request_body['purchase_units'][0]['items'][$key]['unit_amount']['value'] = $value->price_product;
             $request_body['purchase_units'][0]['items'][$key]['quantity'] = $value->quantity;
@@ -120,14 +120,18 @@ trait Paypal
             if ($response->statusCode == 201 && $response->result->status == 'COMPLETED') {
                 // حفظ البيانات القادمة من 
                 DB::beginTransaction();
-                $cart->payments()->create([
+                $payment = $cart->payments()->create([
                     'payment_type' => 'paypal',
                     'payload' => json_encode($response->result, JSON_PRETTY_PRINT)
                 ]);
                 DB::commit();
-                /*                 // وضع السلة مباعة
+                // وضع السلة مباعة
                 $cart->is_buying = 1;
-                $cart->save(); */
+                $cart->save();
+                return response()->success('لقد تمت عملية الدفع بواسطة بايبال بنجاح', [
+                    'cart' => $cart,
+                    'payment' => $payment
+                ]);
             }
         } catch (HttpException $ex) {
             DB::rollBack();
