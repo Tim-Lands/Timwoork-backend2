@@ -56,6 +56,16 @@ class CartItem extends Model
         return $this->product->duration;
     }
 
+    /**
+     * getDurationProductAttribute => جلب  عنوان الخدمة
+     *
+     * @return void
+     */
+    public function getTitleProductAttribute()
+    {
+        return $this->product->title;
+    }
+
     // ============================ Scopes =============================
 
     /**
