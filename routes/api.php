@@ -21,8 +21,15 @@ use App\Http\Controllers\SalesProcces\OrderController;
 use App\Http\Controllers\SalesProcces\ItemController;
 use App\Http\Controllers\SearchController;
 use App\Http\Controllers\Product\RatingController;
+use App\Models\Payment;
+use App\Models\User;
 use Illuminate\Support\Facades\Broadcast;
 use Illuminate\Support\Facades\Route;
+use PayPalCheckoutSdk\Orders\OrdersCaptureRequest;
+use PayPalCheckoutSdk\Orders\OrdersCreateRequest;
+use PayPalHttp\HttpException;
+use App\Traits\Paypal;
+use Illuminate\Support\Facades\Auth;
 
 /*
 |--------------------------------------------------------------------------
@@ -194,3 +201,29 @@ Route::prefix('rating')->group(function () {
     Route::post('/{id}/reply', [RatingController::class, 'reply']);
 });
 /* -------------------------------------------------------------------------- */
+
+Route::prefix('/purchase')->group(function () {
+    Route::post('/paypal/approve', [CartController::class, 'cart_approve']);
+    Route::post('/paypal/charge', [CartController::class, 'paypal_charge']);
+    Route::post('/stripe/charge', [CartController::class, 'stripe_charge'])->name('billing');
+});
+
+Route::middleware('auth:sanctum')->get('us', function () {
+    $p = Payment::find(11);
+
+
+    $user = User::find(Auth::user()->id);
+    $url = $user->billingPortalUrl(route('billing'));
+    return response()->json($url);
+});
+Route::middleware('auth:sanctum')->post('/user/subscribe', function () {
+
+    $user = User::find(Auth::user()->id);
+
+
+    /*  $user->invoicePrice('price_1KDy6TE0GSoKvEJxPvyMqaO3', 5);
+    $user->invoicePrice('price_1JsFmUE0GSoKvEJx7ywn5cVC', 6); */
+    $user->invoiceFor('One Time Fee', 50000);
+
+    return $user;
+});
