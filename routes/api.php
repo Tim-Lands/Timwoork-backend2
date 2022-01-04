@@ -213,23 +213,3 @@ Route::prefix('/purchase')->group(function () {
     Route::post('/paypal/charge', [CartController::class, 'paypal_charge']);
     Route::post('/stripe/charge', [CartController::class, 'stripe_charge'])->name('billing');
 });
-
-Route::middleware('auth:sanctum')->get('us', function () {
-    $p = Payment::find(11);
-
-
-    $user = User::find(Auth::user()->id);
-    $url = $user->billingPortalUrl(route('billing'));
-    return response()->json($url);
-});
-Route::middleware('auth:sanctum')->post('/user/subscribe', function () {
-
-    $user = User::find(Auth::user()->id);
-
-
-    /*  $user->invoicePrice('price_1KDy6TE0GSoKvEJxPvyMqaO3', 5);
-    $user->invoicePrice('price_1JsFmUE0GSoKvEJx7ywn5cVC', 6); */
-    $user->invoiceFor('One Time Fee', 50000);
-
-    return $user;
-});
