@@ -125,9 +125,7 @@ trait Paypal
                     'payment_type' => 'paypal',
                     'payload' => json_encode($response->result, JSON_PRETTY_PRINT)
                 ]);
-                // وضع السلة مباعة
-                $cart->is_buying = 1;
-                $cart->save();
+
                 DB::commit();
                 return response()->success('لقد تمت عملية الدفع بواسطة بايبال بنجاح', [
                     'cart' => $cart,

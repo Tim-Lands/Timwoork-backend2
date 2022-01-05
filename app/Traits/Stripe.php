@@ -28,9 +28,6 @@ trait Stripe
                 $user->refund($stripe_payment->id);
                 return response()->error('لقد حدث خطأ في عملية تخزين معلومات الدفع، سيتم إرجاع المبلغ اليك');
             }
-            // وضع السلة مباعة
-            $cart->is_buying = 1;
-            $cart->save();
             DB::commit();
             return response()->success('نجحت عملية الدفع بواسطة البطاقة البنكية', [
                 'cart' => $cart,
