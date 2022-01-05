@@ -19,10 +19,9 @@ class CreateItemOrderRejectedsTable extends Migration
             $table->foreignId('item_id')->constrained()
             ->onDelete('CASCADE')
             ->onUpdate('CASCADE');
-            // cause:
-            $table->text('cause_reject')->nullable();
-            // is_rejected => 0 send seller or buying;1 send both seller and buying
-            $table->tinyInteger('is_rejected');
+            
+            $table->boolean('rejected_seller')->default(0);
+            $table->boolean('rejected_buyer')->default(0);
             $table->timestamps();
         });
     }

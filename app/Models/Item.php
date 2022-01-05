@@ -87,4 +87,14 @@ class Item extends Model
     {
         return $this->hasOne(ItemOrderResource::class);
     }
+    
+    /**
+     * item_rejected
+     *
+     * @return void
+     */
+    public function item_rejected():HasOne
+    {
+        return $this->hasOne(ItemOrderRejected::class);
+    }
 }

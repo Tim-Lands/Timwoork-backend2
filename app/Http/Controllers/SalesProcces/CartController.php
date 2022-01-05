@@ -149,8 +149,9 @@ class CartController extends Controller
             return response()->success(
                 'تم انشاء عنصر فالسلة',
                 $cart->with('cart_items')
-                    ->withCount('cart_items')
-                    ->first()
+                     ->withCount('cart_items')
+                     ->where('is_buying', 0)
+                     ->first()
             );
         } catch (Exception $ex) {
             return $ex;

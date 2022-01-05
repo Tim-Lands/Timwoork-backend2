@@ -115,6 +115,7 @@ class FrontEndController extends Controller
                         ]);
                 }
             ])
+            ->where('is_completed',1)
             ->withAvg('ratings', 'rating')
             ->withCount('ratings')
             ->first();

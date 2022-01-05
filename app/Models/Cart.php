@@ -18,6 +18,17 @@ class Cart extends Model
      * @var string
      */
     protected $table = 'carts';
+    
+    /**
+     * casts
+     *
+     * @var array
+     */
+    protected $casts = [
+        "total_price"    => 'decimal:2',
+        "price_with_tax" => 'decimal:2',
+        "tax"            => 'decimal:2',
+    ];
     /* -------------------------------- Contants -------------------------------- */
     // code
     /* --------------------------- Acssesor & mutators -------------------------- */

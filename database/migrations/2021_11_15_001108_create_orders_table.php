@@ -20,12 +20,6 @@ class CreateOrdersTable extends Migration
             $table->foreignId('cart_id')->constrained()
                 ->onDelete('CASCADE')
                 ->onUpdate('CASCADE');
-
-            // relation model of PaymentMethod
-            // $table->foreignId('payment_method_id')->constrained('payment_methods')
-            //     ->onDelete('CASCADE')
-            //     ->onUpdate('CASCADE');
-            $table->integer('payment_id')->unsigned();
             $table->timestamps();
         });
     }

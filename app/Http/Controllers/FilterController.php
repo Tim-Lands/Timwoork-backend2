@@ -28,6 +28,7 @@ class FilterController extends Controller
                 },
             ])->withAvg('ratings', 'rating')
             ->withCount('ratings as rats_count')
+            ->where('is_completed',1)
             ->paginate($paginate);
         if (!$res->isEmpty()) {
             return response()->success('تمت عملية الفلترة بنجاح', $res);

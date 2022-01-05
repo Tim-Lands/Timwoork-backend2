@@ -41,16 +41,18 @@ class OrderController extends Controller
                 ->where('is_buying', 0)
                 ->first();
                 
+            if (!$cart) {
+                return response()->error('لا توجد سلة , الرجاء اعادة عملية الشراء', 422);
+            }
             // جلب المعرفات الخدمات المتواجدة في عناصر السلة
             $cart_items = $cart['cart_items']->pluck('product_id');
-            if ($cart_items->count() == 0 || !$cart) {
-                return response()->error('لا توجد عناصر فالسلة , الرجاء اعادة عملية الشراء');
+            if ($cart_items->count() == 0) {
+                return response()->error('لا توجد عناصر فالسلة , الرجاء اعادة عملية الشراء', 422);
             }
             // وضع البيانات فالمصفوفة من اجل اضافة طلبيىة
             $data_order = [
                 'uuid' => Str::uuid(),
                 'cart_id' => $cart->id,
-                'payment_id' => 1,
             ];
             // مصفوفة من اجل وضع فيها عناصر الطلبية
             $data_items = [];
@@ -99,7 +101,7 @@ class OrderController extends Controller
             DB::rollBack();
             return $ex;
             // رسالة خطأ
-            return response()->error('هناك خطأ ما حدث في قاعدة بيانات , يرجى التأكد من ذلك', 403);
+            return response()->error('هناك خطأ ما حدث في قاعدة بيانات , يرجى التأكد من ذلك', 422);
         }
     }
 }
