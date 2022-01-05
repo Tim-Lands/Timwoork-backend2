@@ -21,8 +21,15 @@ use App\Http\Controllers\SalesProcces\OrderController;
 use App\Http\Controllers\SalesProcces\ItemController;
 use App\Http\Controllers\SearchController;
 use App\Http\Controllers\Product\RatingController;
+use App\Models\Payment;
+use App\Models\User;
 use Illuminate\Support\Facades\Broadcast;
 use Illuminate\Support\Facades\Route;
+use PayPalCheckoutSdk\Orders\OrdersCaptureRequest;
+use PayPalCheckoutSdk\Orders\OrdersCreateRequest;
+use PayPalHttp\HttpException;
+use App\Traits\Paypal;
+use Illuminate\Support\Facades\Auth;
 
 /*
 |--------------------------------------------------------------------------
@@ -218,3 +225,9 @@ Route::prefix('rating')->group(function () {
     Route::post('/{id}/reply', [RatingController::class, 'reply']);
 });
 /* -------------------------------------------------------------------------- */
+
+Route::prefix('/purchase')->group(function () {
+    Route::post('/paypal/approve', [CartController::class, 'cart_approve']);
+    Route::post('/paypal/charge', [CartController::class, 'paypal_charge']);
+    Route::post('/stripe/charge', [CartController::class, 'stripe_charge'])->name('billing');
+});

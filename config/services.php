@@ -42,5 +42,11 @@ return [
         'redirect' => env('GOOGLE_REDIRECT_URI'),
     ],
 
+    'paypal' => [
+        'mode' => env('PAYPAL_MODE'),
+        'client_id' => env('PAYPAL_SANDBOX_CLIENT_ID'),
+        'client_secret' => env('PAYPAL_SANDBOX_CLIENT_SECRET'),
+    ],
+
 
 ];

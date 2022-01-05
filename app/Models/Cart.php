@@ -87,4 +87,14 @@ class Cart extends Model
     {
         return $this->hasMany(CartItem::class);
     }
+
+    /**
+     * subcarts
+     *
+     * @return hasMany
+     */
+    public function payments(): HasMany
+    {
+        return $this->hasMany(Payment::class);
+    }
 }
