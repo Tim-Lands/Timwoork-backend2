@@ -127,10 +127,7 @@ trait Paypal
                 ]);
 
                 DB::commit();
-                return response()->success('لقد تمت عملية الدفع بواسطة بايبال بنجاح', [
-                    'cart' => $cart,
-                    'payment' => $payment
-                ]);
+                return true;
             }
         } catch (HttpException $ex) {
             DB::rollBack();

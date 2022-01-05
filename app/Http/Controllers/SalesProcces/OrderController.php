@@ -7,13 +7,18 @@ use App\Models\Cart;
 use App\Models\Item;
 use App\Models\Order;
 use App\Models\Product;
+use App\Traits\Paypal;
+use App\Traits\Stripe;
 use Exception;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
+use Illuminate\Http\Request;
 
 class OrderController extends Controller
 {
+    use Paypal, Stripe;
+
     /**
      * __construct
      *
@@ -40,7 +45,7 @@ class OrderController extends Controller
                 ->where('user_id', Auth::user()->id)
                 ->where('is_buying', 0)
                 ->first();
-                
+
             if (!$cart) {
                 return response()->error('لا توجد سلة , الرجاء اعادة عملية الشراء', 422);
             }
@@ -102,6 +107,48 @@ class OrderController extends Controller
             return $ex;
             // رسالة خطأ
             return response()->error('هناك خطأ ما حدث في قاعدة بيانات , يرجى التأكد من ذلك', 422);
+        }
+    }
+
+    public function cart_approve()
+    {
+        $cart = Cart::selection()
+            ->with(['cart_items' => function ($q) {
+                $q->with('cartItem_developments', 'product:title')->get();
+            }])
+            ->where('user_id', Auth::user()->id)
+            ->where('is_buying', 0)
+            ->first();
+        return $this->approve($cart);
+    }
+
+    public function paypal_charge(Request $request)
+    {
+        $cart = Cart::selection()
+            ->with(['cart_items' => function ($q) {
+                $q->with('cartItem_developments')->get();
+            }])
+            ->where('user_id', Auth::user()->id)
+            ->where('is_buying', 0)
+            ->first();
+        $pay =  $this->paypal_purchase($request->token, $cart);
+        if ($pay) {
+            return $this->create_order_with_items();
+        }
+    }
+
+    public function stripe_charge(Request $request)
+    {
+        $cart = Cart::selection()
+            ->with(['cart_items' => function ($q) {
+                $q->with('cartItem_developments')->get();
+            }])
+            ->where('user_id', Auth::user()->id)
+            ->where('is_buying', 0)
+            ->first();
+        $pay = $this->stripe_purchase($request, $cart);
+        if ($pay) {
+            return $this->create_order_with_items();
         }
     }
 }
