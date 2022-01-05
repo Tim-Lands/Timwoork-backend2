@@ -9,7 +9,6 @@ use PayPalHttp\HttpException;
 
 trait Paypal
 {
-    use CreateOrder;
 
     public $return_url = 'http://localhost:3000/purchase/paypal?return=1';
     public $cancel_url = 'http://localhost:3000/purchase/paypal?return=0';
@@ -130,7 +129,6 @@ trait Paypal
                 $cart->is_buying = 1;
                 $cart->save();
                 DB::commit();
-                return $this->create_order_with_items();
                 return response()->success('لقد تمت عملية الدفع بواسطة بايبال بنجاح', [
                     'cart' => $cart,
                     'payment' => $payment

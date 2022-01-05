@@ -11,7 +11,6 @@ use Illuminate\Support\Facades\Auth;
 
 trait Stripe
 {
-    use CreateOrder;
 
     public function stripe_purchase(Request $request, $cart)
     {
@@ -33,11 +32,10 @@ trait Stripe
             $cart->is_buying = 1;
             $cart->save();
             DB::commit();
-            return $this->create_order_with_items();
-            /*             return response()->success('نجحت عملية الدفع بواسطة البطاقة البنكية', [
+            return response()->success('نجحت عملية الدفع بواسطة البطاقة البنكية', [
                 'cart' => $cart,
                 'payment' => $payment
-            ]); */
+            ]);
         } catch (Exception $ex) {
             DB::rollback();
             // return $ex;
