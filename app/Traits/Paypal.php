@@ -9,6 +9,7 @@ use PayPalHttp\HttpException;
 
 trait Paypal
 {
+    use CreateOrder;
 
     public $return_url = 'http://localhost:3000/purchase/paypal?return=1';
     public $cancel_url = 'http://localhost:3000/purchase/paypal?return=0';
@@ -102,7 +103,8 @@ trait Paypal
                 }
             }
         } catch (HttpException $ex) {
-            return response()->json($ex);
+            return response()->error('حدث خطأ أثناء التحضير لعملية الدفع بواسطة بايبال');
+            //return response()->json($ex);
         }
     }
 
@@ -124,10 +126,11 @@ trait Paypal
                     'payment_type' => 'paypal',
                     'payload' => json_encode($response->result, JSON_PRETTY_PRINT)
                 ]);
-                DB::commit();
                 // وضع السلة مباعة
                 $cart->is_buying = 1;
                 $cart->save();
+                DB::commit();
+                return $this->create_order_with_items();
                 return response()->success('لقد تمت عملية الدفع بواسطة بايبال بنجاح', [
                     'cart' => $cart,
                     'payment' => $payment
