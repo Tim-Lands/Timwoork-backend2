@@ -13,8 +13,8 @@ class ItemOrderRejected extends Model
 
 
     /* -------------------------------- Contants -------------------------------- */
-    const REJECTED_SELLER_OR_BUYING = 0;
-    const REJECTED_BOTH_SELLER_BUYING = 1;
+    const REJECTED_BY_BUYER    = 1;
+    const REJECTED_BY_SELLER   = 1;
     /* --------------------------- Acssesor & mutators -------------------------- */
     /* --------------------------------- Scopes --------------------------------- */
     
@@ -25,7 +25,7 @@ class ItemOrderRejected extends Model
      *
      * @return BelongsTo
      */
-    public function Item(): BelongsTo
+    public function item(): BelongsTo
     {
         return $this->belongsTo(Item::class);
     }

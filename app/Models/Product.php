@@ -45,6 +45,16 @@ class Product extends Model
         'count_buying'
     ];
 
+    
+    /**
+     * casts
+     *
+     * @var array
+     */
+    protected $casts = [
+        'price' => 'decimal:2'
+    ];
+
     /* -------------------------------- functions ------------------------------- */
     /**
      * seller_name
@@ -131,7 +141,7 @@ class Product extends Model
     }
     /* -------------------------------- Constants ------------------------------- */
     // code
-    // حالة الخدمة مرفوضة
+    //حالة الخدمة مرفوضة او معطلة
     const PRODUCT_REJECT = 0;
     // حالة الخدمة نشطة
     const PRODUCT_ACTIVE = 1;

@@ -30,6 +30,15 @@ class CartItem extends Model
      * @var array
      */
     protected $hidden = ['product'];
+
+    /**
+     * casts
+     *
+     * @var array
+     */
+    protected $casts = [
+        "price_product"    => 'decimal:2',
+    ];
     // ===========================Contants =============================
     // code
     // ================== Acssesor & mutators ==========================

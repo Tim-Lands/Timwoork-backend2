@@ -55,6 +55,10 @@ Route::prefix('my_products')->middleware('auth:sanctum')->group(function () {
     Route::get('/pending', [MyProductController::class, 'pending']);
     Route::get('/rejected', [MyProductController::class, 'rejected']);
     Route::get('/drafts', [MyProductController::class, 'drafts']);
+    // تنشيط الخدمة
+    Route::post('{id}/active_product', [MyProductController::class, 'active_product_by_seller']);
+    // تعطيل الخدمة
+    Route::post('{id}/disactive_product', [MyProductController::class, 'disactive_product_by_seller']);
 });
 Route::post('/password/forget/sendResetLink', [ForgetPasswordController::class, 'send_token']);
 Route::post('/password/forget/verify', [ForgetPasswordController::class, 'verify_token']);
@@ -165,6 +169,24 @@ Route::prefix('order')->group(function () {
         Route::post('/{id}/upload_resources', [ItemController::class, 'upload_resource_by_seller']);
         // تسليم المشروع من قبل البائع
         Route::post('/{id}/dilevery_resources', [ItemController::class, 'delivery_resource_by_seller']);
+        // استلام المشروع من قبل المشتري و قبوله
+        Route::post('/{id}/accepted_dilevery_resources', [ItemController::class, 'accepted_delivery_resource_by_buyer']);
+        // رفض المشروع من قبل المشتري
+        Route::post('/{id}/rejected_dilevery_resources', [ItemController::class, 'rejected_delivery_resource_by_buyer']);
+        // عرض الالغاء طلب الخدمة
+        Route::get('/{id}/display_item_rejected', [ItemController::class, 'display_item_rejected']);
+        // طلب الالغاء الخدمة من قبل البائع
+        Route::post('/{id}/request_cancel_item_by_seller', [ItemController::class, 'request_cancel_item_by_seller']);
+        // طلب الالغاء الخدمة من قبل المشتري
+        Route::post('/{id}/request_cancel_item_by_buyer', [ItemController::class, 'request_cancel_item_by_buyer']);
+        //  قبول طلب الالغاء الخدمة من قبل البائع
+        Route::post('/{id}/accept_cancel_request_by_seller', [ItemController::class, 'accept_cancel_request_by_seller']);
+        //  قبول طلب الالغاء الخدمة من قبل المشتري
+        Route::post('/{id}/accept_cancel_request_by_buyer', [ItemController::class, 'accept_cancel_request_by_buyer']);
+        //  رفض طلب الالغاء الخدمة من قبل البائع
+        Route::post('/{id}/reject_cancel_request_by_seller', [ItemController::class, 'reject_cancel_request_by_seller']);
+        //  رفض طلب الالغاء الخدمة من قبل المشتري
+        Route::post('/{id}/reject_cancel_request_by_buyer', [ItemController::class, 'reject_cancel_request_by_buyer']);
     });
 });
 
@@ -172,16 +194,12 @@ Route::prefix('order')->group(function () {
 /*                            مسارات واجهة المستخدم                           */
 /* -------------------------------------------------------------------------- */
 
-// عرض التصنيفات الرئيسية و الفرعية
-Route::get('/display_categories', [FrontEndController::class, 'get_categories_subcategories_porducts']);
 // عرض التصنيفات الرئيسية
 Route::get('/get_categories', [FrontEndController::class, 'get_categories']);
 // عرض التصنيفات الفرعية
 Route::get('/get_categories/{id}', [FrontEndController::class, 'get_subcategories']);
 // عرض الخدمة الواحدة
 Route::get('product/{slug}', [FrontEndController::class, 'show']);
-// عرض جميع الخدمات
-Route::get('/get_products', [FrontEndController::class, 'getProducts']);
 
 // مسار عملية الفلترة
 Route::prefix('filter')->group(function () {
