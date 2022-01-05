@@ -7,13 +7,17 @@ use App\Http\Requests\SalesProcces\CartRequest;
 use App\Models\Cart;
 use App\Models\Product;
 use App\Models\CartItem;
+use App\Traits\Paypal;
+use App\Traits\Stripe;
 use Exception;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Http\Request;
 
 class CartController extends Controller
 {
+    use Paypal, Stripe;
     public function __construct()
     {
         $this->middleware('auth:sanctum');
@@ -67,7 +71,9 @@ class CartController extends Controller
             // وضع البيانات فالمصفوفة من اجل اضافة عناصر فالسلة السلة
             $data_cart_items = [
                 'product_id'    => $request->product_id,
+
                 'product_title' => $product_title
+
             ];
             // شرط في حالة وجود الكمية
             if ($request->has('quantity')) {
@@ -82,7 +88,7 @@ class CartController extends Controller
                     return response()->error('التطويرات التي تم ادخالها ليست مطابقة مع هذه الخدمة');
                 }
             }
-          
+
             /* ---------------------------- انشاء عنصر فالسلة --------------------------- */
             // بداية المعاملة مع البيانات المرسلة لقاعدة بيانات :
             DB::beginTransaction();
@@ -336,5 +342,41 @@ class CartController extends Controller
             return 0;
         }
         return 1;
+    }
+
+    public function cart_approve()
+    {
+        $cart = Cart::selection()
+            ->with(['cart_items' => function ($q) {
+                $q->with('cartItem_developments', 'product:title')->get();
+            }])
+            ->where('user_id', Auth::user()->id)
+            ->where('is_buying', 0)
+            ->first();
+        return $this->approve($cart);
+    }
+
+    public function paypal_charge(Request $request)
+    {
+        $cart = Cart::selection()
+            ->with(['cart_items' => function ($q) {
+                $q->with('cartItem_developments')->get();
+            }])
+            ->where('user_id', Auth::user()->id)
+            ->where('is_buying', 0)
+            ->first();
+        return $this->paypal_purchase($request->token, $cart);
+    }
+
+    public function stripe_charge(Request $request)
+    {
+        $cart = Cart::selection()
+            ->with(['cart_items' => function ($q) {
+                $q->with('cartItem_developments')->get();
+            }])
+            ->where('user_id', Auth::user()->id)
+            ->where('is_buying', 0)
+            ->first();
+        return $this->stripe_purchase($request, $cart);
     }
 }
