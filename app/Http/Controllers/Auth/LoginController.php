@@ -16,6 +16,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Laravel\Socialite\Facades\Socialite;
+use Illuminate\Support\Facades\Http;
 
 class LoginController extends Controller
 {
@@ -130,6 +131,8 @@ class LoginController extends Controller
                         'provider' => $provider,
                         'provider_id' => $request->provider_id
                     ]);
+                    $this->createChatEngineUser($user);
+
                     DB::commit();
                     // عملية تسجيل الدخول بعد نجاح العملية
                     Auth::login($user);
@@ -142,4 +145,14 @@ class LoginController extends Controller
         }
     }
     /**************************************************************** */
+
+    public function createChatEngineUser($user)
+    {
+        return Http::withHeaders([
+            'PRIVATE-KEY' => '2805db84-87b8-4fef-bb94-7e3c5fd22b37'
+        ])->asForm()->put('https://api.chatengine.io/users/', [
+            'username' => $user->email,
+            'secret' => $user->email,
+        ]);
+    }
 }
