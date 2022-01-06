@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Auth\BuyerOrderController;
 use App\Http\Controllers\Auth\ChangePasswordController;
 use App\Http\Controllers\Auth\DarkModeController;
 use App\Http\Controllers\Auth\ForgetPasswordController;
@@ -77,6 +78,8 @@ Route::prefix('my_products')->middleware('auth:sanctum')->group(function () {
     // عرض الخدمة
     Route::get('/product/{id}', [MyProductController::class, 'product']);
 });
+
+Route::post('/my_purchases', BuyerOrderController::class);
 
 Route::post('/password/forget/sendResetLink', [ForgetPasswordController::class, 'send_token']);
 Route::post('/password/forget/verify', [ForgetPasswordController::class, 'verify_token']);

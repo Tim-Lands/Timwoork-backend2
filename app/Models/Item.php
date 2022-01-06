@@ -58,13 +58,13 @@ class Item extends Model
     }
 
     /**
-     * amounts
+     * amount
      *
      * @return HasMany
      */
-    public function amounts(): HasMany
+    public function amount(): HasOne
     {
-        return $this->hasMany(Amount::class);
+        return $this->hasOne(Amount::class);
     }
 
 
@@ -77,23 +77,23 @@ class Item extends Model
     {
         return $this->hasMany(Attachment::class);
     }
-    
+
     /**
      * Resource
      *
      * @return HasOne
      */
-    public function Resource():HasOne
+    public function Resource(): HasOne
     {
         return $this->hasOne(ItemOrderResource::class);
     }
-    
+
     /**
      * item_rejected
      *
      * @return void
      */
-    public function item_rejected():HasOne
+    public function item_rejected(): HasOne
     {
         return $this->hasOne(ItemOrderRejected::class);
     }
