@@ -101,7 +101,10 @@ class OrderController extends Controller
             // انهاء المعاملة بشكل جيد :
             DB::commit();
             /* -------------------------------------------------------------------------- */
-            return response()->success('تم انشاء الطلبية', $order);
+            return response()->success('تم انشاء الطلبية', [
+                'order' => $order,
+                'cart' => $cart
+            ]);
         } catch (Exception $ex) {
             DB::rollBack();
             return $ex;
