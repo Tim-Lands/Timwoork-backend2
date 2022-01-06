@@ -17,7 +17,7 @@ class CreateItemsTable extends Migration
             $table->id();
             $table->string('uuid')->unique();
             $table->bigInteger('number_product');
-            $table->float('price_product', 5, 2)->nullable();
+            $table->float('price_product', 8, 2)->nullable();
             // relation model of Order
             $table->foreignId('order_id')->constrained()
                 ->onDelete('CASCADE')

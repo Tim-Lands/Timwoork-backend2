@@ -68,11 +68,12 @@ class CartController extends Controller
             ];
             // جلب عنوان الخدمة
             $product_title = Product::where('id', $request->product_id)->first()->title;
+            $product_price = Product::where('id', $request->product_id)->first()->price;
             // وضع البيانات فالمصفوفة من اجل اضافة عناصر فالسلة السلة
             $data_cart_items = [
                 'product_id'    => $request->product_id,
-
-                'product_title' => $product_title
+                'product_title' => $product_title,
+                'price_unit' => $product_price
 
             ];
             // شرط في حالة وجود الكمية
@@ -136,7 +137,7 @@ class CartController extends Controller
                 }
                 // عمليات حساب السعر المتواجد في السلة
                 $this->calculate_price($new_cart, $cart_item, $data_cart_items['quantity']);
-            // سعر العنصر الموجود فالسلة
+                // سعر العنصر الموجود فالسلة
             } else {
                 // ارجاع فراغ
                 return;
@@ -149,9 +150,9 @@ class CartController extends Controller
             return response()->success(
                 'تم انشاء عنصر فالسلة',
                 $cart->with('cart_items')
-                     ->withCount('cart_items')
-                     ->where('is_buying', 0)
-                     ->first()
+                    ->withCount('cart_items')
+                    ->where('is_buying', 0)
+                    ->first()
             );
         } catch (Exception $ex) {
             return $ex;

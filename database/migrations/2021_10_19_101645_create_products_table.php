@@ -18,7 +18,7 @@ class CreateProductsTable extends Migration
             $table->string('title')->nullable();
             $table->string('slug')->nullable();
             $table->text('content')->nullable();
-            $table->float('price', 5, 2)->nullable();
+            $table->float('price', 8, 2)->nullable();
             $table->tinyInteger('duration')->nullable();
             $table->integer('count_buying')->default(0);
             // nullable sometime
