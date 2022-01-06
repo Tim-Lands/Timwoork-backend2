@@ -80,7 +80,7 @@ trait Paypal
 
             $request_body['purchase_units'][0]['items'][$key]['name'] = $value->product_title;
             $request_body['purchase_units'][0]['items'][$key]['unit_amount']['currency_code'] = 'USD';
-            $request_body['purchase_units'][0]['items'][$key]['unit_amount']['value'] = $value->price_product;
+            $request_body['purchase_units'][0]['items'][$key]['unit_amount']['value'] = $value->price_unit;
             $request_body['purchase_units'][0]['items'][$key]['quantity'] = $value->quantity;
         }
 
