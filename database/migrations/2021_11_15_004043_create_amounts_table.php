@@ -21,9 +21,9 @@ class CreateAmountsTable extends Migration
                 ->onDelete('CASCADE')
                 ->onUpdate('CASCADE');
 
-            $table->float('amount', 5, 2)->default(0);
-            $table->float('amount_pending', 5, 2)->default(0);
-            $table->tinyInteger('duration_pending');
+            $table->float('amount', 8, 2)->default(0);
+            $table->float('amount_pending', 8, 2)->default(0);
+            $table->tinyInteger('status');
 
             $table->timestamps();
         });

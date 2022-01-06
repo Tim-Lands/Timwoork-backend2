@@ -21,8 +21,8 @@ class CreateWalletsTable extends Migration
                 ->onDelete('CASCADE')
                 ->onUpdate('CASCADE');
 
-            $table->float('amounts_total', 5, 2)->default(0);
-            $table->float('amounts_pending', 5, 2)->default(0);
+            $table->float('amounts_total', 8, 2)->default(0);
+            $table->float('amounts_pending', 8, 2)->default(0);
 
             $table->timestamps();
         });
