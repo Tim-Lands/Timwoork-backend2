@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class AddItemIdToAmountsTable extends Migration
+class AddProductTitleToItemsTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,9 +13,8 @@ class AddItemIdToAmountsTable extends Migration
      */
     public function up()
     {
-        Schema::table('amounts', function (Blueprint $table) {
-            // relation with items
-            $table->foreignId('item_id')->constrained();
+        Schema::table('items', function (Blueprint $table) {
+            $table->string('title', 100)->nullable();
         });
     }
 
@@ -26,7 +25,7 @@ class AddItemIdToAmountsTable extends Migration
      */
     public function down()
     {
-        Schema::table('amounts', function (Blueprint $table) {
+        Schema::table('items', function (Blueprint $table) {
             //
         });
     }

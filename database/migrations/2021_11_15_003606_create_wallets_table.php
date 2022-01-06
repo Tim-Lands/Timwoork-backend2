@@ -20,7 +20,6 @@ class CreateWalletsTable extends Migration
             $table->foreignId('profile_id')->constrained()
                 ->onDelete('CASCADE')
                 ->onUpdate('CASCADE');
-
             $table->float('amounts_total', 8, 2)->default(0);
             $table->float('amounts_pending', 8, 2)->default(0);
 
