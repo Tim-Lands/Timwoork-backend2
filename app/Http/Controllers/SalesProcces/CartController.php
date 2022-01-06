@@ -136,7 +136,7 @@ class CartController extends Controller
                 }
                 // عمليات حساب السعر المتواجد في السلة
                 $this->calculate_price($new_cart, $cart_item, $data_cart_items['quantity']);
-                // سعر العنصر الموجود فالسلة
+            // سعر العنصر الموجود فالسلة
             } else {
                 // ارجاع فراغ
                 return;
