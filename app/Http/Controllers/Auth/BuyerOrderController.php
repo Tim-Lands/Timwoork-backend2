@@ -22,7 +22,7 @@ class BuyerOrderController extends Controller
         $items = Item::with(['order' => function ($q) use ($buyer) {
             $q->with(['cart' => function ($q) use ($buyer) {
                 $q->where('user_id', $buyer)
-                    ->with('user.profile');
+                    ->with(['user.profile', 'cart_items']);
             }]);
         }])->paginate($paginate);
         return response()->success('لقد تم جلب مشترياتك بنجاح', $items);
