@@ -25,6 +25,6 @@ class BuyerOrderController extends Controller
                     ->with('user.profile');
             }]);
         }])->paginate($paginate);
-        return response()->success('لقد تم جلب مشترياتك بنجاح', $paginate);
+        return response()->success('لقد تم جلب مشترياتك بنجاح', $items);
     }
 }
