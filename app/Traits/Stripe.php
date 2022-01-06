@@ -11,7 +11,6 @@ use Illuminate\Support\Facades\Auth;
 
 trait Stripe
 {
-
     public function stripe_purchase(Request $request, $cart)
     {
         try {

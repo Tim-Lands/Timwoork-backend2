@@ -169,4 +169,23 @@ class MyProductController extends Controller
             return response()->error('هناك خطأ ما حدث في قاعدة بيانات , يرجى التأكد من ذلك', 403);
         }
     }
+    
+    /**
+     * product => عرض الخدمة الواحدة للبائع
+     *
+     * @param  mixed $id
+     * @return void
+     */
+    public function product($id)
+    {
+        $product = Product::whereId($id)
+                            ->where('profile_seller_id', Auth::user()->profile->profile_seller->id)
+                            ->first();
+        
+        if (!$product) {
+            return response()->error('لا يوجد هذا العنصر', 422);
+        }
+        // رسالة نجاح
+        return response()->success('عرض الخدمة', $product);
+    }
 }
