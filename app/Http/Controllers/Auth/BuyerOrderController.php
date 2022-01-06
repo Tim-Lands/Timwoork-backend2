@@ -18,12 +18,9 @@ class BuyerOrderController extends Controller
     public function __invoke(Request $request)
     {
         $paginate = $request->query('paginate') ? $request->query('paginate') : 10;
-        $buyer = Auth::user()->id;
-        $items = Item::with(['order' => function ($q) use ($buyer) {
-            $q->with(['cart' => function ($q) use ($buyer) {
-                $q->where('user_id', $buyer)
-                    ->with(['user.profile', 'cart_items']);
-            }]);
+        $buyer = Auth::user()->profile->profile_seller->id;
+        $items = Item::with(['profileSeller' => function ($q) use ($buyer) {
+            $q->where('profile_seller_id', $buyer)->with(['profile.user']);
         }])->paginate($paginate);
         return response()->success('لقد تم جلب مشترياتك بنجاح', $items);
     }
