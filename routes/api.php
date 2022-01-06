@@ -79,7 +79,10 @@ Route::prefix('my_products')->middleware('auth:sanctum')->group(function () {
     Route::get('/product/{id}', [MyProductController::class, 'product']);
 });
 
-Route::post('/my_purchases', BuyerOrderController::class);
+/** 
+ *  مسار لعرض مشترياتي
+ */
+Route::middleware('auth:sanctum')->get('/my_purchases', BuyerOrderController::class);
 
 Route::post('/password/forget/sendResetLink', [ForgetPasswordController::class, 'send_token']);
 Route::post('/password/forget/verify', [ForgetPasswordController::class, 'verify_token']);
