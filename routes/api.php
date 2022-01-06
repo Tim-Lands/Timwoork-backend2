@@ -54,19 +54,30 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/mode', DarkModeController::class);
     Route::post('/password/change', ChangePasswordController::class);
 });
-
+/* -------------------------------------------------------------------------- */
+/*                             مسارات خدمات البائع                            */
+/* -------------------------------------------------------------------------- */
 Route::prefix('my_products')->middleware('auth:sanctum')->group(function () {
+    // عرض كل الخدمات
     Route::get('/', [MyProductController::class, 'index']);
+    // عرض الخدمات التي تم تنشيطها
     Route::get('/published', [MyProductController::class, 'published']);
+    // عرض الخدمات المعطلة
     Route::get('/paused', [MyProductController::class, 'paused']);
+    // عرض الخدمات قيد الانتظار
     Route::get('/pending', [MyProductController::class, 'pending']);
+    // عرض الخدمات المرفوضة
     Route::get('/rejected', [MyProductController::class, 'rejected']);
+    // عرض الخدمات الغير المكتملة
     Route::get('/drafts', [MyProductController::class, 'drafts']);
     // تنشيط الخدمة
     Route::post('{id}/active_product', [MyProductController::class, 'active_product_by_seller']);
     // تعطيل الخدمة
     Route::post('{id}/disactive_product', [MyProductController::class, 'disactive_product_by_seller']);
+    // عرض الخدمة
+    Route::get('/product/{id}', [MyProductController::class, 'product']);
 });
+
 Route::post('/password/forget/sendResetLink', [ForgetPasswordController::class, 'send_token']);
 Route::post('/password/forget/verify', [ForgetPasswordController::class, 'verify_token']);
 Route::post('/password/forget/reset', [ForgetPasswordController::class, 'reset_password']);

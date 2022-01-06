@@ -45,7 +45,7 @@ class OrderController extends Controller
                 ->where('user_id', Auth::user()->id)
                 ->where('is_buying', 0)
                 ->first();
-
+          
             if (!$cart) {
                 return response()->error('لا توجد سلة , الرجاء اعادة عملية الشراء', 422);
             }
@@ -148,7 +148,7 @@ class OrderController extends Controller
             ->first();
         $pay = $this->stripe_purchase($request, $cart);
         if ($pay) {
-            return $this->create_order_with_items();
+            return $this->create_order_with_items()
         }
     }
 }
