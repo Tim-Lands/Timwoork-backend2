@@ -169,7 +169,6 @@ class MyProductController extends Controller
             return response()->error('هناك خطأ ما حدث في قاعدة بيانات , يرجى التأكد من ذلك', 403);
         }
     }
-    
     /**
      * product => عرض الخدمة الواحدة للبائع
      *

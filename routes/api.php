@@ -238,7 +238,7 @@ Route::prefix('rating')->group(function () {
 /* -------------------------------------------------------------------------- */
 
 Route::prefix('/purchase')->group(function () {
-    Route::post('/paypal/approve', [CartController::class, 'cart_approve']);
-    Route::post('/paypal/charge', [CartController::class, 'paypal_charge']);
-    Route::post('/stripe/charge', [CartController::class, 'stripe_charge'])->name('billing');
+    Route::post('/paypal/approve', [OrderController::class, 'cart_approve']);
+    Route::post('/paypal/charge', [OrderController::class, 'paypal_charge']);
+    Route::post('/stripe/charge', [OrderController::class, 'stripe_charge'])->name('billing');
 });
