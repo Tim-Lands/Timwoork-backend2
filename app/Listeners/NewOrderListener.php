@@ -28,6 +28,6 @@ class NewOrderListener
      */
     public function handle(NewOrder $event)
     {
-        $event->user->notify(new NotificationsNewOrder($event->user));
+        $event->user->notify(new NotificationsNewOrder($event->user, $event->item));
     }
 }

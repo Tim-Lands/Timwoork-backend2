@@ -9,7 +9,9 @@
 </head>
 
 <body>
-    <h1>Your code Token is</h1>
+    <h1>{{ $type }}</h1>
+    <h6>{{ $title }}</h6>
+    <a href = "https://forum-wazzefny-com/order/{{ $item->id }}">{{ $item->title }}</a>
 </body>
 
 </html>

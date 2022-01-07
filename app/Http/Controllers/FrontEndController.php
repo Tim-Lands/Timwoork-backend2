@@ -77,7 +77,7 @@ class FrontEndController extends Controller
             ->orWhere('id', $slug)
             ->withOnly([
                 'subcategory' => function ($q) {
-                    $q->select('id', 'parent_id', 'name_ar', )
+                    $q->select('id', 'parent_id', 'name_ar',)
                         ->with('category', function ($q) {
                             $q->select('id', 'name_ar')
                                 ->without('subcategories');
@@ -100,13 +100,13 @@ class FrontEndController extends Controller
                     $q->select('id', 'product_id', 'url_video');
                 },
                 'profileSeller' => function ($q) {
-                    $q->select('id', 'profile_id', 'number_of_sales', 'portfolio', 'profile_id', 'badge_id', 'level_id')
+                    $q->select('id', 'profile_id', 'number_of_sales', 'portfolio', 'profile_id', 'seller_badge_id', 'seller_level_id')
                         ->with([
                             'profile' =>
                             function ($q) {
                                 $q->select('id', 'user_id', 'first_name', 'last_name', 'avatar', 'precent_rating')
                                     ->with(['user' => function ($q) {
-                                        $q->select('id', 'username', 'email', 'phone', 'pm_last_four', 'trial_ends_at', 'pm_type');
+                                        $q->select('id', 'username', 'email', 'phone');
                                     }, 'badge', 'level', 'country'])
                                     ->without('profile_seller');
                             },
@@ -115,7 +115,7 @@ class FrontEndController extends Controller
                         ]);
                 }
             ])
-            ->where('is_completed',1)
+            ->where('is_completed', 1)
             ->withAvg('ratings', 'rating')
             ->withCount('ratings')
             ->first();
