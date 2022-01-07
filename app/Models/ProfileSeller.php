@@ -35,7 +35,7 @@ class ProfileSeller extends Model
      */
     public function badge(): BelongsTo
     {
-        return $this->belongsTo(Badge::class, 'badge_id');
+        return $this->belongsTo(SellerBadge::class, 'seller_badge_id');
     }
 
     /**
@@ -45,7 +45,7 @@ class ProfileSeller extends Model
      */
     public function level(): BelongsTo
     {
-        return $this->belongsTo(Level::class, 'level_id');
+        return $this->belongsTo(SellerLevel::class, 'seller_level_id');
     }
 
     /**

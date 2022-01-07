@@ -21,12 +21,12 @@ class CreateProfileSellersTable extends Migration
             $table->text('bio')->nullable();
 
             // =======================================================
-            // relation model of Country
+            // relation model of profile
             $table->foreignId('profile_id')->constrained();
             // relation model of Badge
-            $table->foreignId('badge_id')->nullable()->constrained();
+            $table->foreignId('seller_badge_id')->nullable()->constrained();
             // relation model of Country
-            $table->foreignId('level_id')->nullable()->constrained();
+            $table->foreignId('seller_level_id')->nullable()->constrained();
             $table->timestamps();
         });
     }

@@ -23,7 +23,10 @@ class SellerController extends Controller
     {
         try {
             // إنشاء ملف شخصي للبائع 
-            $seller = Auth::user()->profile->profile_seller()->create();
+            $seller = Auth::user()->profile->profile_seller()->create([
+                'seller_badge_id' => 1,
+                'seller_level_id' => 1,
+            ]);
             return response()->success('تمّ إنشاء الملف الشخصي للبائع بنجاح', $seller);
         } catch (Exception $ex) {
             //return $ex;

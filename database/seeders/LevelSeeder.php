@@ -2,9 +2,8 @@
 
 namespace Database\Seeders;
 
-use App\Models\Level;
-use Illuminate\Database\Eloquent\Factories\Sequence;
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\DB;
 
 class LevelSeeder extends Seeder
 {
@@ -15,9 +14,30 @@ class LevelSeeder extends Seeder
      */
     public function run()
     {
-        Level::factory()->count(4)->state(new Sequence(
-            ['type' => 0],
-            ['type' => 1],
-        ))->create();
+        DB::table('levels')->insert([
+            'name_ar' => 'مشتري جديد',
+            'name_en' => 'new buyer',
+            'name_fr' => 'nouvel acheteur',
+            'value_bayer_min' => 1,
+            'value_bayer_max' => 99
+        ]);
+        DB::table('levels')->insert([
+            'name_ar' => 'مشتري جاد',
+            'name_en' => 'serious buyer',
+            'name_fr' => 'acheteur sérieux',
+            'value_bayer_min' => 100,
+            'value_bayer_max' => 299
+        ]);
+        DB::table('levels')->insert([
+            'name_ar' => 'مشتري مميز',
+            'name_en' => 'special buyer',
+            'name_fr' => 'acheteur spécial',
+            'value_bayer_min' => 300,
+        ]);
+        DB::table('levels')->insert([
+            'name_ar' => 'مشتري VIP',
+            'name_en' => 'VIP buyer',
+            'name_fr' => 'acheteur VIP',
+        ]);
     }
 }

@@ -2,6 +2,7 @@
 
 namespace Database\Seeders;
 
+
 use Illuminate\Database\Seeder;
 
 class DatabaseSeeder extends Seeder
@@ -16,6 +17,8 @@ class DatabaseSeeder extends Seeder
         $this->call([
             LevelSeeder::class,
             BadgeSeeder::class,
+            SellerBadgeSeeder::class,
+            SellerLevelSeeder::class,
             SkillTableSeeder::class,
             LanguageTableSeeder::class,
             CategoryTableSeeder::class,
