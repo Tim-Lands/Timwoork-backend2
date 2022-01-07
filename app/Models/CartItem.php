@@ -24,7 +24,7 @@ class CartItem extends Model
      * @var array
      */
 
-    protected $appends = ['price_product_spicify', 'duration_product', 'title_product'];
+    protected $appends = ['duration_product'];
 
     /**
      * The attributes that should be hidden for arrays.

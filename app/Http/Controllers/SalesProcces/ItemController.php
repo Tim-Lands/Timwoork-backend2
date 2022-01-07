@@ -8,6 +8,7 @@ use App\Models\Item;
 use App\Models\ItemOrderRejected;
 use App\Models\ItemOrderResource;
 use Exception;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 
@@ -21,6 +22,23 @@ class ItemController extends Controller
     public function __construct()
     {
         $this->middleware('auth:sanctum');
+    }
+
+    public function show($id)
+    {
+        // جلب الطلبية
+        $item = Item::whereId($id)
+                    ->with(['order.cart.user','profileSeller'])
+                    ->whereHas('order.cart', function ($q) {
+                        $q->where('user_id', Auth::id());
+                    })
+                    ->first();
+        if (!$item) {
+            // رسالة خطأ
+            return response()->error('هذا العنصر غير موجود', 422);
+        }
+        // رسالة نجاح
+        return response()->success("عرض الطلبية", $item);
     }
 
     public function display_item_rejected($id)
@@ -83,7 +101,7 @@ class ItemController extends Controller
             // شرط اذا كانت متواجدة
             if (!$item) {
                 // رسالة خطأ
-                return response()->error('هذا العنصر غير موجود', 403);
+                return response()->error('هذا العنصر غير موجود', 422);
             }
             /* --------------------------- تغيير حالة الطلبية --------------------------- */
             // شرط اذا كانت الحالة الطلبية في حالة الانتظار
@@ -577,16 +595,16 @@ class ItemController extends Controller
                 // شرط اذا كان هناك طلب الغاء و ايضا ارسال عملية طلب من طرف البائع
                 if ($item_rejected && $item_rejected->rejected_seller == ItemOrderRejected::REJECTED_BY_SELLER) {
                     if ($item_rejected->rejected_buyer == ItemOrderRejected::REJECTED_BY_BUYER) {
-                        return response()->error(422,'لقد ارسلت الطلب الغاء, تفقد بياناتك');
+                        return response()->error(422, 'لقد ارسلت الطلب الغاء, تفقد بياناتك');
                     }
                     // عملية رفض طلب الغاء الطلبية
                     $item_rejected->update(['rejected_seller' => 0]);
                 } else {
-                    return response()->error(422,'لم يتم ارسال طلب, تفقد بياناتك');
+                    return response()->error(422, 'لم يتم ارسال طلب, تفقد بياناتك');
                 }
             } else {
                 // رسالة خطأ
-                return response()->error(422,'لا يمكنك اجراء هذه العملية, تفقد بياناتك');
+                return response()->error(422, 'لا يمكنك اجراء هذه العملية, تفقد بياناتك');
             }
             // رسالة نجاح
             return response()->success("تم رفض طلب الغاء من قبل المشتري , سيتم مراسلة الادارة");
