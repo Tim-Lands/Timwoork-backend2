@@ -8,6 +8,7 @@ use App\Http\Controllers\Auth\ForgetPasswordController;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\MyProductController;
 use App\Http\Controllers\Auth\RegisterController;
+use App\Http\Controllers\Auth\SellerOrderController;
 use App\Http\Controllers\Auth\UserStatusController;
 use App\Http\Controllers\ChatController;
 use App\Http\Controllers\ConversationController;
@@ -86,6 +87,13 @@ Route::prefix('my_products')->middleware('auth:sanctum')->group(function () {
  */
 Route::middleware('auth:sanctum')->get('/my_purchases', BuyerOrderController::class);
 
+/********************************************************************** */
+/**
+ *  مسار لعرض مشترياتي
+ */
+Route::middleware('auth:sanctum')->get('/my_sales', SellerOrderController::class);
+
+/******************************************************************** */
 Route::post('/password/forget/sendResetLink', [ForgetPasswordController::class, 'send_token']);
 Route::post('/password/forget/verify', [ForgetPasswordController::class, 'verify_token']);
 Route::post('/password/forget/reset', [ForgetPasswordController::class, 'reset_password']);
