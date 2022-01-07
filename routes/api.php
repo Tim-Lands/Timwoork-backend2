@@ -252,8 +252,3 @@ Route::prefix('/purchase')->group(function () {
     Route::post('/paypal/charge', [OrderController::class, 'paypal_charge']);
     Route::post('/stripe/charge', [OrderController::class, 'stripe_charge'])->name('billing');
 });
-
-Route::middleware('auth:sanctum')->get('test', function () {
-    $user = Auth::user();
-    event(new NewOrder($user));
-});

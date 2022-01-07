@@ -35,7 +35,11 @@ class RegisterController extends Controller
                 'password' => bcrypt($request->password)
             ]);
 
-            $user->profile()->create(['avatar' => url('avatars/avatar.png')]);
+            $user->profile()->create([
+                'avatar' => url('avatars/avatar.png'),
+                'badge_id' => 1,
+                'level_id' => 1,
+            ]);
             // إنشاء رمز تفعيل البريد اﻹلكتروني 
 
             $this->store_code_bin($user);

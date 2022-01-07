@@ -123,7 +123,9 @@ class LoginController extends Controller
                         'first_name' => $request->first_name,
                         'last_name' => $request->last_name,
                         'full_name' => $request->full_name,
-                        'avatar' => $request->avatar
+                        'avatar' => $request->avatar,
+                        'badge_id' => 1,
+                        'level_id' => 1,
                     ]);
 
                     // تسجيل اسم المزوّد و المعرّف الخاص بالمستخدم في المزود الخاص به 

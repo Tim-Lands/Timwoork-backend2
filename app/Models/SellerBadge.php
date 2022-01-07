@@ -4,12 +4,13 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 
-class Badge extends Model
+class SellerBadge extends Model
 {
     use HasFactory;
-    protected $table = 'badges';
+    protected $table = 'seller_badges';
 
     // ===========================Contants =============================
     // code
@@ -25,17 +26,17 @@ class Badge extends Model
      */
     public function scopeSelection(mixed $query): ?object
     {
-        return $query->select('id', 'name_ar', 'name_en', 'name_fr', 'created_at');
+        return $query->select('id', 'name_ar', 'name_en', 'name_fr', 'precent_deducation', 'created_at');
     }
     // ========================== Relations ============================
 
     /**
-     * profile
+     * profileSeller
      *
-     * @return HasOne
+     * @return HasMany
      */
-    public function profile(): HasOne
+    public function profileSeller(): HasMany
     {
-        return $this->hasOne(Profile::class, 'badge_id');
+        return $this->hasMany(ProfileSeller::class, 'seller_badge_id');
     }
 }
