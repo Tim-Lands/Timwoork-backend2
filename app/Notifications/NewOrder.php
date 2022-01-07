@@ -6,19 +6,22 @@ use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
+use Illuminate\Support\Facades\Auth;
 
 class NewOrder extends Notification implements ShouldQueue
 {
     use Queueable;
     public $user;
+    public $item;
     /**
      * Create a new notification instance.
      *
      * @return void
      */
-    public function __construct($user)
+    public function __construct($user, $item)
     {
         $this->user = $user;
+        $this->item = $item;
     }
 
     /**
@@ -43,7 +46,12 @@ class NewOrder extends Notification implements ShouldQueue
         return (new MailMessage)
             ->from('support@timlands.com')
             ->subject('طلبية جديدة')
-            ->view('emails.orders.new_order', ['user' => 'dfdfd']);
+            ->view('emails.orders.new_order', [
+                'user' => Auth::user(),
+                'item' => $this->item,
+                'title' => ' قام ' . Auth::user()->profile->full_name . ' بطلب خدمة جديدة ',
+                'type' => "new_order"
+            ]);
     }
 
     /**
@@ -55,7 +63,10 @@ class NewOrder extends Notification implements ShouldQueue
     public function toArray($notifiable)
     {
         return [
-            'user' => 'fgfg'
+            'user' => Auth::user(),
+            'item' => $this->item,
+            'title' => 'قام ' . Auth::user()->profile->full_name . 'بطلب خدمة جديدة',
+            'type' => "new_order"
         ];
     }
 }
