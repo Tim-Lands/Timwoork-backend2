@@ -79,7 +79,7 @@ Route::prefix('my_products')->middleware('auth:sanctum')->group(function () {
     Route::get('/product/{id}', [MyProductController::class, 'product']);
 });
 
-/** 
+/**
  *  مسار لعرض مشترياتي
  */
 Route::middleware('auth:sanctum')->get('/my_purchases', BuyerOrderController::class);
@@ -185,6 +185,8 @@ Route::prefix('order')->group(function () {
     Route::post('/store', [OrderController::class, 'create_order_with_items']);
     /* ------------------ مسارات المعاملة بين البائع و المشتري ------------------ */
     Route::prefix('items')->group(function () {
+        // اظهار الطلبية الواحدة
+        Route::get('/{id}/show_item', [ItemController::class, 'show']);
         // قبول الطلبية من قبل البائع
         Route::post('/{id}/accept_item_seller', [ItemController::class, 'item_accepted_by_seller']);
         // رفض الطلبية من قبل البائع
