@@ -7,6 +7,7 @@ use App\Http\Requests\SalesProcces\CartRequest;
 use App\Models\Cart;
 use App\Models\Product;
 use App\Models\CartItem;
+use App\Models\Order;
 use App\Traits\Paypal;
 use App\Traits\Stripe;
 use Exception;
@@ -55,7 +56,6 @@ class CartController extends Controller
     public function store(CartRequest $request)
     {
         try {
-
             // جلب سلة المستخدم
             $cart = Cart::where('user_id', Auth::user()->id);
             // اذا كانت هناك سلة مباعة
@@ -66,15 +66,13 @@ class CartController extends Controller
             $data_cart = [
                 'user_id' => Auth::user()->id,
             ];
+            // الخدمة المضافة في السلة
+            $product = Product::whereId($request->product_id)->first();
             // جلب عنوان الخدمة
-            $product_title = Product::where('id', $request->product_id)->first()->title;
-            $product_price = Product::where('id', $request->product_id)->first()->price;
             // وضع البيانات فالمصفوفة من اجل اضافة عناصر فالسلة السلة
             $data_cart_items = [
                 'product_id'    => $request->product_id,
-                'product_title' => $product_title,
-                'price_unit' => $product_price
-
+                'product_title' => $product->title,
             ];
             // شرط في حالة وجود الكمية
             if ($request->has('quantity')) {
@@ -88,6 +86,17 @@ class CartController extends Controller
                 if ($this->check_found_developments($request->developments, $request->product_id) == 0) {
                     return response()->error('التطويرات التي تم ادخالها ليست مطابقة مع هذه الخدمة');
                 }
+                // سعر التطويرات المدخلة
+                $price_developments = Product::whereId($request->product_id)
+                                ->with('developments', function ($q) use ($request) {
+                                    $q->whereIn('id', $request->developments);
+                                })->first()['developments']->sum('price');
+                $product_unit = $product->price + $price_developments;
+                // وضع السعر
+                $data_cart_items['price_unit'] = $product_unit;
+            } else {
+                // وضع السعر
+                $data_cart_items['price_unit'] = $product->price;
             }
 
             /* ---------------------------- انشاء عنصر فالسلة --------------------------- */
@@ -137,7 +146,7 @@ class CartController extends Controller
                 }
                 // عمليات حساب السعر المتواجد في السلة
                 $this->calculate_price($new_cart, $cart_item, $data_cart_items['quantity']);
-                // سعر العنصر الموجود فالسلة
+            // سعر العنصر الموجود فالسلة
             } else {
                 // ارجاع فراغ
                 return;

@@ -45,15 +45,6 @@ class CartItem extends Model
     // code
     // ================== Acssesor & mutators ==========================
 
-    /**
-     * getPriceProductAttribute => جلب سعر الخدمة
-     *
-     * @return void
-     */
-    public function getPriceProductSpicifyAttribute()
-    {
-        return $this->product->price;
-    }
 
     /**
      * getDurationProductAttribute => جلب مدة الخدمة
@@ -63,16 +54,6 @@ class CartItem extends Model
     public function getDurationProductAttribute()
     {
         return $this->product->duration;
-    }
-
-    /**
-     * getDurationProductAttribute => جلب  عنوان الخدمة
-     *
-     * @return void
-     */
-    public function getTitleProductAttribute()
-    {
-        return $this->product->title;
     }
 
     // ============================ Scopes =============================
@@ -100,8 +81,6 @@ class CartItem extends Model
     {
         return $this->belongsTo(Cart::class);
     }
-
-
 
     /**
      * product

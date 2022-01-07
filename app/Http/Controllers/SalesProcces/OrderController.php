@@ -104,7 +104,7 @@ class OrderController extends Controller
             DB::commit();
             /* -------------------------------------------------------------------------- */
             return response()->success('تم انشاء الطلبية', [
-                'order' => $order,
+                'order' => $order->with('items')->first(),
                 'cart' => $cart
             ]);
         } catch (Exception $ex) {

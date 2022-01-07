@@ -12,9 +12,8 @@ use Illuminate\Database\Eloquent\Relations\HasOne;
 class Item extends Model
 {
     use HasFactory;
-
+    protected $appends = ['user_id'];
     protected $table = 'items';
-
     // ===========================Contants =============================
     // code
     const STATUS_PENDING_REQUEST       = 0;
@@ -23,6 +22,10 @@ class Item extends Model
     const STATUS_FINISHED              = 3;
     // ================== Acssesor & mutators ==========================
     // code
+    public function getUserIdAttribute()
+    {
+        return $this->profileSeller->profile->user->id;
+    }
     // ============================ Scopes =============================
 
     /**
