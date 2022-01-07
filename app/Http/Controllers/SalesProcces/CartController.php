@@ -68,6 +68,10 @@ class CartController extends Controller
             ];
             // الخدمة المضافة في السلة
             $product = Product::whereId($request->product_id)->first();
+            // شرط اذا كانت الخدمة للمستخدم المشتري
+            if ($product->profile_seller_id == Auth::user()->profile->profile_seller->id) {
+                return response()->error('لا يمكنك شراء هذه الخدمة, تفقد بياناتك', 422);
+            }
             // جلب عنوان الخدمة
             // وضع البيانات فالمصفوفة من اجل اضافة عناصر فالسلة السلة
             $data_cart_items = [

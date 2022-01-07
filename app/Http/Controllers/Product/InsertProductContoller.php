@@ -29,6 +29,15 @@ class InsertProductContoller extends Controller
     public function store()
     {
         try {
+            //جلب عدد خدمات
+            $count_products_seller =  Auth::user()->profile->profile_seller->products->count();
+            // جلب عدد المطلبوب من انشاء الخدمة من المستوى
+            $number_of_products_seller = Auth::user()->profile->profile_seller->level->products_number_max;
+            // شرط اضافة خدمة
+            if ($count_products_seller >= $number_of_products_seller) {
+                return response()->error('لا يمكن اضافة خدمة فوق عدد الاقصى المحدد لك', 422);
+            }
+             
             // ============= انشاء المعرف للخدمة ================:
             // بداية المعاملة مع البيانات المرسلة لقاعدة بيانات :
             DB::beginTransaction();
@@ -62,9 +71,8 @@ class InsertProductContoller extends Controller
             // شرط اذا كان العنصر موجود
             if (!$product || !is_numeric($id)) {
                 // رسالة خطأ
-                return response()->error('هذا العنصر غير موجود', 403);
+                return response()->error('هذا العنصر غير موجود', 422);
             }
-
             // جلب التصنيف الفرعي
             $subcategory = Category::child()->where('id', $request->subcategory)->exists();
             // التحقق اذا كان موجود ام لا
@@ -116,6 +124,10 @@ class InsertProductContoller extends Controller
         try {
             //id  جلب العنصر بواسطة
             $product = Product::find($id);
+            // جلب عدد المطلبوب من انشاء التطويرات من المستوى
+            $number_developments_max = Auth::user()->profile->profile_seller->level->number_developments_max;
+            // جلب عدد المطلبوب من السعر التطويرات من المستوى
+            $price_development_max = Auth::user()->profile->profile_seller->level->price_development_max;
             // شرط اذا كان العنصر موجود
             if (!$product || !is_numeric($id)) {
                 // رسالة خطأ
@@ -136,11 +148,17 @@ class InsertProductContoller extends Controller
             (object)$developments = [];
             // شرط اذا كانت هناك توجد تطورات
             if ($request->only('developments') != null) {
-                // جلب المرسلات من العميل و وضعهم فالمصفوفة الجديدة
-                foreach ($request->only('developments') as $key => $value) {
-                    $developments[] = $value;
+                if (count($request->developments) >= $number_developments_max) {
+                    return response()->error('لا يمكن اضافة تطوير فوق عدد الاقصى المحدد لك', 422);
                 }
-                $developments = $developments[0];
+                // جلب المرسلات من العميل و وضعهم فالمصفوفة الجديدة
+                foreach ($request->only('developments')['developments'] as $key => $value) {
+                    $developments[] = $value;
+                    // اذا كان السعر اكبر
+                    if ($value['price'] >= $price_development_max) {
+                        return response()->error('لا يمكن اضافة سعر فوق عدد الاقصى المحدد لك', 422);
+                    }
+                }
             }
             // =============== انشاء المرحلة الثانية في الخدمة ================:
             // بداية المعاملة مع البيانات المرسلة لقاعدة بيانات :
