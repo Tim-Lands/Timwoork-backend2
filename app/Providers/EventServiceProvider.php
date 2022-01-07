@@ -8,6 +8,8 @@ use App\Events\VerifyEmail;
 use App\Listeners\ForgetPasswordListener;
 use App\Listeners\NewOrderListener;
 use App\Listeners\VerifyEmailListener;
+use App\Models\Item;
+use App\Observers\ItemObserver;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Auth\Listeners\SendEmailVerificationNotification;
 use Illuminate\Foundation\Support\Providers\EventServiceProvider as ServiceProvider;
@@ -40,5 +42,6 @@ class EventServiceProvider extends ServiceProvider
      */
     public function boot()
     {
+        Item::observe(ItemObserver::class);
     }
 }
