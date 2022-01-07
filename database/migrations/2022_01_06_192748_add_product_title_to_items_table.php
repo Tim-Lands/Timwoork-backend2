@@ -15,6 +15,7 @@ class AddProductTitleToItemsTable extends Migration
     {
         Schema::table('items', function (Blueprint $table) {
             $table->string('title', 100)->nullable();
+            $table->string('product_price', 100)->nullable();
         });
     }
 

@@ -1,5 +1,6 @@
 <?php
 
+use App\Events\NewOrder;
 use App\Http\Controllers\Auth\BuyerOrderController;
 use App\Http\Controllers\Auth\ChangePasswordController;
 use App\Http\Controllers\Auth\DarkModeController;
@@ -22,6 +23,7 @@ use App\Http\Controllers\SalesProcces\OrderController;
 use App\Http\Controllers\SalesProcces\ItemController;
 use App\Http\Controllers\SearchController;
 use App\Http\Controllers\Product\RatingController;
+use App\Models\Order;
 use App\Models\Payment;
 use App\Models\User;
 use Illuminate\Support\Facades\Broadcast;
@@ -247,4 +249,9 @@ Route::prefix('/purchase')->group(function () {
     Route::post('/paypal/approve', [OrderController::class, 'cart_approve']);
     Route::post('/paypal/charge', [OrderController::class, 'paypal_charge']);
     Route::post('/stripe/charge', [OrderController::class, 'stripe_charge'])->name('billing');
+});
+
+Route::middleware('auth:sanctum')->get('test', function () {
+    $user = Auth::user();
+    event(new NewOrder($user));
 });

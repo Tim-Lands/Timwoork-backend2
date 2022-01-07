@@ -3,8 +3,10 @@
 namespace App\Providers;
 
 use App\Events\ForgetPassword;
+use App\Events\NewOrder;
 use App\Events\VerifyEmail;
 use App\Listeners\ForgetPasswordListener;
+use App\Listeners\NewOrderListener;
 use App\Listeners\VerifyEmailListener;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Auth\Listeners\SendEmailVerificationNotification;
@@ -24,6 +26,9 @@ class EventServiceProvider extends ServiceProvider
         ],
         ForgetPassword::class => [
             ForgetPasswordListener::class,
+        ],
+        NewOrder::class => [
+            NewOrderListener::class,
         ],
 
     ];
