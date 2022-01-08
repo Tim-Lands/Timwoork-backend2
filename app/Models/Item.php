@@ -18,8 +18,10 @@ class Item extends Model
     // code
     const STATUS_PENDING_REQUEST       = 0;
     const STATUS_ACCEPT_REQUEST        = 1;
-    const STATUS_REJECTED_REQUEST      = 2;
-    const STATUS_FINISHED              = 3;
+    const STATUS_REJECTED_BY_SELLER    = 2;
+    const STATUS_REJECTED_BY_BUYER     = 3;
+    const STATUS_REJECTED_REQUEST      = 4;
+    const STATUS_FINISHED              = 5;
     // ================== Acssesor & mutators ==========================
     // code
     public function getUserIdAttribute()
