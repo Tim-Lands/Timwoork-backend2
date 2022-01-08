@@ -3,14 +3,20 @@
 namespace App\Providers;
 
 use App\Events\AcceptOrder;
+use App\Events\AcceptRequestRejectOrder;
 use App\Events\ForgetPassword;
 use App\Events\NewOrder;
 use App\Events\RejectOrder;
+use App\Events\RejectRequestRejectOrder;
+use App\Events\RequestRejectOrder;
 use App\Events\VerifyEmail;
 use App\Listeners\AcceptOrderListener;
+use App\Listeners\AcceptRequestRejectOrderListener;
 use App\Listeners\ForgetPasswordListener;
 use App\Listeners\NewOrderListener;
 use App\Listeners\RejectOrderListener;
+use App\Listeners\RejectRequestRejectOrderListener;
+use App\Listeners\RequestRejectOrderListener;
 use App\Listeners\VerifyEmailListener;
 use App\Models\Item;
 use App\Observers\ItemObserver;
@@ -41,6 +47,15 @@ class EventServiceProvider extends ServiceProvider
         ],
         RejectOrder::class => [
             RejectOrderListener::class,
+        ],
+        RequestRejectOrder::class => [
+            RequestRejectOrderListener::class,
+        ],
+        AcceptRequestRejectOrder::class => [
+            AcceptRequestRejectOrderListener::class,
+        ],
+        RejectRequestRejectOrder::class => [
+            RejectRequestRejectOrderListener::class,
         ],
 
     ];

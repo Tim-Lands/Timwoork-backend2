@@ -8,7 +8,7 @@ use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
 use Illuminate\Support\Facades\Auth;
 
-class RejectOrder extends Notification
+class AcceptRequestRejectOrder extends Notification
 {
     use Queueable;
     public $user;
@@ -45,10 +45,10 @@ class RejectOrder extends Notification
     {
         return (new MailMessage)
             ->from('support@timwoork.com')
-            ->subject('رفض الطلبية')
-            ->view('emails.orders.reject_order', [
-                'type' => "accept_order",
-                'title' =>  " قام " . Auth::user()->profile->full_name . " برفض الطلبية   ",
+            ->subject('قبول إلغاء الطلبية')
+            ->view('emails.orders.accept_request_reject_order', [
+                'type' => "reject_request_reject_order",
+                'title' =>  " قبل " . Auth::user()->profile->full_name . " بطلب رفض الطلبية   ",
                 'user_sender' => Auth::user()->profile,
                 'content' => [
                     'item_id' => $this->item->id,
@@ -66,8 +66,8 @@ class RejectOrder extends Notification
     public function toArray($notifiable)
     {
         return [
-            'type' => "accept_order",
-            'title' =>  " قام " . Auth::user()->profile->full_name . " برفض الطلبية ",
+            'type' => "accept_request_reject_order",
+            'title' =>  " قبل " . Auth::user()->profile->full_name . " بطلب رفض الطلبية ",
             'user_sender' => Auth::user()->profile,
             'content' => [
                 'item_id' => $this->item->id,
