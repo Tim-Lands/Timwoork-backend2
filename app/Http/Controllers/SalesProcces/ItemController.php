@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\SalesProcces;
 
 use App\Events\AcceptOrder;
+use App\Events\RejectOrder;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\SalesProcces\ResourceRequest;
 use App\Models\Item;
@@ -64,6 +65,7 @@ class ItemController extends Controller
         try {
             // جلب عنصر الطلبية من اجل قبولها
             $item = Item::whereId($id)->first();
+            // جلب مشتري الطلبية
             $user = $item->order->cart->user;
             // شرط اذا كانت متواجدة
             if (!$item) {
@@ -101,6 +103,8 @@ class ItemController extends Controller
         try {
             // جلب عنصر الطلبية من اجل رفضها
             $item = Item::whereId($id)->first();
+            // جلب مشتري الطلبية
+            $user = $item->order->cart->user;
             // شرط اذا كانت متواجدة
             if (!$item) {
                 // رسالة خطأ
@@ -112,6 +116,7 @@ class ItemController extends Controller
                 // تحويل الطلبية من حالة الابتدائية الى حالة الرفض
                 $item->status = Item::STATUS_REJECTED_REQUEST;
                 $item->save();
+                event(new RejectOrder($user, $item));
             } else {
                 // رسالة خطأ
                 return response()->error('لا يمكنك اجراء هذه العملية, تفقد بياناتك', 403);

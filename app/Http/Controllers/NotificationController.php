@@ -18,7 +18,13 @@ class NotificationController extends Controller
     }
 
 
-    public function index(){
-        $notifications = Auth::user()->notifications
+    public function index()
+    {
+        $notifications = Auth::user()->notifications()->orderBy('created_at')->paginate(2)->groupBy(function ($data) {
+            /*         $da = Carbon::parse($data->created_at)->locale('ar');
+            return  $da->isoFormat('Do MMMM', 'MMMM YYYY');; */
+            return $data->created_at->diffForHumans();
+        });
+        return response()->success('لقد تم جلب الاشعارات بنجاح', $notifications);
     }
 }
