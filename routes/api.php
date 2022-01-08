@@ -24,6 +24,7 @@ use App\Http\Controllers\SalesProcces\OrderController;
 use App\Http\Controllers\SalesProcces\ItemController;
 use App\Http\Controllers\SearchController;
 use App\Http\Controllers\Product\RatingController;
+use App\Models\Item;
 use App\Models\Order;
 use App\Models\Payment;
 use App\Models\User;
@@ -34,6 +35,7 @@ use PayPalCheckoutSdk\Orders\OrdersCreateRequest;
 use PayPalHttp\HttpException;
 use App\Traits\Paypal;
 use Illuminate\Support\Facades\Auth;
+use Carbon\Carbon;
 
 /*
 |--------------------------------------------------------------------------
@@ -259,4 +261,16 @@ Route::prefix('/purchase')->group(function () {
     Route::post('/paypal/approve', [OrderController::class, 'cart_approve']);
     Route::post('/paypal/charge', [OrderController::class, 'paypal_charge']);
     Route::post('/stripe/charge', [OrderController::class, 'stripe_charge']);
+});
+Route::middleware('auth:sanctum')->get('users/s', function () {
+    $item = Item::first();
+    return $item->order->cart->user;
+    Carbon::setLocale('ar');
+
+    $seller = Auth::user()->notifications()->orderBy('created_at')->paginate(2)->groupBy(function ($data) {
+        /*         $da = Carbon::parse($data->created_at)->locale('ar');
+        return  $da->isoFormat('Do MMMM', 'MMMM YYYY');; */
+        return $data->created_at->diffForHumans();
+    });
+    return response()->json($seller);
 });
