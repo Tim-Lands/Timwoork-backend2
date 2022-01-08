@@ -9,6 +9,7 @@ use App\Http\Requests\SalesProcces\ResourceRequest;
 use App\Models\Item;
 use App\Models\ItemOrderRejected;
 use App\Models\ItemOrderResource;
+use App\Models\User;
 use Exception;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -140,6 +141,9 @@ class ItemController extends Controller
         try {
             // جلب عنصر الطلبية من اجل رفضها
             $item = Item::whereId($id)->first();
+
+            // جلب بيانات البائع
+            $user = User::find($item->user_id);
             // شرط اذا كانت متواجدة
             if (!$item) {
                 // رسالة خطأ
@@ -151,6 +155,7 @@ class ItemController extends Controller
                 // تحويل الطلبية من حالة الابتدائية الى حالة الرفض
                 $item->status = Item::STATUS_REJECTED_REQUEST;
                 $item->save();
+                event(new RejectOrder($user, $item));
             } else {
                 // رسالة خطأ
                 return response()->error('لا يمكنك اجراء هذه العملية, تفقد بياناتك', 403);
