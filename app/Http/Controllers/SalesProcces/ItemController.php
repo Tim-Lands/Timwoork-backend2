@@ -88,12 +88,12 @@ class ItemController extends Controller
     
        
     /**
-     * item_rejected_anyone  => الغاء الطلبية من قبل احد الطرفين
+     * item_rejected_seller  => الغاء الطلبية من قبل البائع
      *
      * @param  mixed $id
      * @return void
      */
-    public function item_rejected_anyone($id)
+    public function item_rejected_seller($id)
     {
         try {
             // جلب عنصر الطلبية من اجل رفضها
@@ -114,7 +114,41 @@ class ItemController extends Controller
                 return response()->error('لا يمكنك اجراء هذه العملية, تفقد بياناتك', 403);
             }
             // رسالة نجاح
-            return response()->success(" تم رفض الطلب من قبل احد الطرفين");
+            return response()->success("تم رفض الطلب من قبل البائع");
+        } catch (Exception $ex) {
+            // رسالة خطأ
+            return response()->error('هناك خطأ ما حدث في قاعدة بيانات , يرجى التأكد من ذلك', 403);
+        }
+    }
+
+    /**
+     * item_rejected_buyer  => الغاء الطلبية من قبل المشتري
+     *
+     * @param  mixed $id
+     * @return void
+     */
+    public function item_rejected_buyer($id)
+    {
+        try {
+            // جلب عنصر الطلبية من اجل رفضها
+            $item = Item::whereId($id)->first();
+            // شرط اذا كانت متواجدة
+            if (!$item) {
+                // رسالة خطأ
+                return response()->error('هذا العنصر غير موجود', 422);
+            }
+            /* --------------------------- تغيير حالة الطلبية --------------------------- */
+            // شرط اذا كانت الحالة الطلبية في حالة الانتظار
+            if ($item->status == Item::STATUS_PENDING_REQUEST) {
+                // تحويل الطلبية من حالة الابتدائية الى حالة الرفض
+                $item->status = Item::STATUS_REJECTED_REQUEST;
+                $item->save();
+            } else {
+                // رسالة خطأ
+                return response()->error('لا يمكنك اجراء هذه العملية, تفقد بياناتك', 403);
+            }
+            // رسالة نجاح
+            return response()->success("تم رفض الطلب من قبل المشتري");
         } catch (Exception $ex) {
             // رسالة خطأ
             return response()->error('هناك خطأ ما حدث في قاعدة بيانات , يرجى التأكد من ذلك', 403);

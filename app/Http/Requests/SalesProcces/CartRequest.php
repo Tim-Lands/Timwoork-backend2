@@ -26,8 +26,21 @@ class CartRequest extends FormRequest
         return [
             'quantity'    => 'sometimes|numeric',
             'product_id'  => 'required',
-            // 'user_id'     => 'required',
-            'developments.*' => 'sometimes||exists:developments,id',
+            'developments.*' => 'sometimes|exists:developments,id',
+        ];
+    }
+
+    /**
+     * messages
+     *
+     * @return void
+     */
+    public function messages()
+    {
+        return [
+            'quantity.numeric' => ' اسم المستوى مطلوب',
+            'product_id.required' => 'هذا الحقل موجود من قبل',
+            'developments.exists' => 'هذا الحقل موجود من قبل',
         ];
     }
 }

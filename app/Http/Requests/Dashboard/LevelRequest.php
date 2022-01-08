@@ -6,7 +6,6 @@ use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Http\Exceptions\HttpResponseException;
 
-
 class LevelRequest extends FormRequest
 {
     /**
@@ -22,7 +21,7 @@ class LevelRequest extends FormRequest
 
     /**
      * Get the validation rules that apply to the request.
-     * قواعد التحقق التي تنطبق على الطلب 
+     * قواعد التحقق التي تنطبق على الطلب
 
      * @return array
      */
@@ -54,7 +53,7 @@ class LevelRequest extends FormRequest
     }
 
     /**
-     * failedValidation =>  دالة طباعة رسالة الخطأ 
+     * failedValidation =>  دالة طباعة رسالة الخطأ
      *
      * @param  Validator $validator
      * @return void
@@ -62,7 +61,6 @@ class LevelRequest extends FormRequest
 
     public function failedValidation(Validator $validator)
     {
-
         throw new HttpResponseException(response()->json($validator->errors(), 422));
     }
 }

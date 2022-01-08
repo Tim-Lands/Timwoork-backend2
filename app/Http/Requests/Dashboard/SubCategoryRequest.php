@@ -21,7 +21,7 @@ class SubCategoryRequest extends FormRequest
 
     /**
      * Get the validation rules that apply to the request.
-     * قواعد التحقق التي تنطبق على الطلب 
+     * قواعد التحقق التي تنطبق على الطلب
 
      * @return array
      */
@@ -38,9 +38,27 @@ class SubCategoryRequest extends FormRequest
             'parent_id'         => 'required'
         ];
     }
-
     /**
-     * failedValidation =>  دالة طباعة رسالة الخطأ 
+    * messages
+    *
+    * @return void
+    */
+    public function messages()
+    {
+        return [
+            'name_ar.required' => ' اسم المستوى مطلوب',
+            'name_ar.unique' => 'هذا الحقل موجود من قبل',
+            'name_en.unique' => 'هذا الحقل موجود من قبل',
+            'name_fr.unique' => 'هذا الحقل موجود من قبل',
+            'description_ar.min' => 'هذا الحقل موجود من قبل',
+            'description_en.min' => 'هذا الحقل موجود من قبل',
+            'description_fr.min' => 'هذا الحقل موجود من قبل',
+            'icon.required' => 'نسبة الاقتطاع مطلوبة',
+            'parent_id' => 'هذا الحقل مطلوب'
+        ];
+    }
+    /**
+     * failedValidation =>  دالة طباعة رسالة الخطأ
      *
      * @param  Validator $validator
      * @return void
@@ -48,7 +66,6 @@ class SubCategoryRequest extends FormRequest
 
     public function failedValidation(Validator $validator)
     {
-
         throw new HttpResponseException(response()->json($validator->errors(), 422));
     }
 }

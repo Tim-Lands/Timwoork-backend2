@@ -30,4 +30,20 @@ class CountryRequest extends FormRequest
             'code_phone' => 'sometimes|nullable|unique:countries,code_phone,' . $this->id,
         ];
     }
+
+    /**
+     * messages
+     *
+     * @return void
+     */
+    public function messages()
+    {
+        return [
+            'name_ar.required' => ' اسم المستوى مطلوب',
+            'name_ar.unique' => 'هذا الحقل موجود من قبل',
+            'name_en.unique' => 'هذا الحقل موجود من قبل',
+            'name_fr.unique' => 'هذا الحقل موجود من قبل',
+            'code_phone.unique' => 'هذا الحقل موجود من قبل',
+        ];
+    }
 }

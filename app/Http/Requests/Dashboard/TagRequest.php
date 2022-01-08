@@ -31,9 +31,22 @@ class TagRequest extends FormRequest
             'name_fr'            => 'sometimes|nullable|unique:tags,name_fr,' . $this->id,
         ];
     }
-
     /**
-     * failedValidation =>  دالة طباعة رسالة الخطأ 
+    * messages
+    *
+    * @return void
+    */
+    public function messages()
+    {
+        return [
+            'name_ar.required' => ' اسم المستوى مطلوب',
+            'name_ar.unique' => 'هذا الحقل موجود من قبل',
+            'name_en.unique' => 'هذا الحقل موجود من قبل',
+            'name_fr.unique' => 'هذا الحقل موجود من قبل',
+        ];
+    }
+    /**
+     * failedValidation =>  دالة طباعة رسالة الخطأ
      *
      * @param  Validator $validator
      * @return void
@@ -41,7 +54,6 @@ class TagRequest extends FormRequest
 
     public function failedValidation(Validator $validator)
     {
-
         throw new HttpResponseException(response()->json($validator->errors(), 422));
     }
 }

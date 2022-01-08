@@ -27,4 +27,18 @@ class ResourceRequest extends FormRequest
             'file_resource' => 'required|file|mimes:zip'
         ];
     }
+
+    /**
+    * messages
+    *
+    * @return void
+    */
+    public function messages()
+    {
+        return [
+            'file_resource.required' => 'هذا الحقل موجود من قبل',
+            'file_resource.file' => 'هذا الحقل موجود من قبل',
+            'file_resource.mimes' => 'هذا الحقل موجود من قبل',
+        ];
+    }
 }
