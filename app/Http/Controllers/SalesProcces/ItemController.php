@@ -2,11 +2,14 @@
 
 namespace App\Http\Controllers\SalesProcces;
 
+use App\Events\AcceptOrder;
+use App\Events\RejectOrder;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\SalesProcces\ResourceRequest;
 use App\Models\Item;
 use App\Models\ItemOrderRejected;
 use App\Models\ItemOrderResource;
+use App\Models\User;
 use Exception;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -28,11 +31,11 @@ class ItemController extends Controller
     {
         // جلب الطلبية
         $item = Item::whereId($id)
-                    ->with(['order.cart.user','profileSeller'])
-                    ->whereHas('order.cart', function ($q) {
-                        $q->where('user_id', Auth::id());
-                    })
-                    ->first();
+            ->with(['order.cart.user', 'profileSeller'])
+            ->whereHas('order.cart', function ($q) {
+                $q->where('user_id', Auth::id());
+            })
+            ->first();
         if (!$item) {
             // رسالة خطأ
             return response()->error('هذا العنصر غير موجود', 422);
@@ -51,7 +54,7 @@ class ItemController extends Controller
             return response()->success("لا يوجد الطلب الغاء الطلبية");
         }
     }
-        
+
     /**
      * item_accepted_by_seller => قبول الطلبية من قبل البائع
      *
@@ -63,6 +66,8 @@ class ItemController extends Controller
         try {
             // جلب عنصر الطلبية من اجل قبولها
             $item = Item::whereId($id)->first();
+            // جلب مشتري الطلبية
+            $user = $item->order->cart->user;
             // شرط اذا كانت متواجدة
             if (!$item) {
                 // رسالة خطأ
@@ -74,19 +79,20 @@ class ItemController extends Controller
                 // تحويل الطلبية من حالة الابتدائية الى حالة القبول
                 $item->status = Item::STATUS_ACCEPT_REQUEST;
                 $item->save();
+                event(new AcceptOrder($user, $item));
             } else {
                 return response()->error('لا يمكنك اجراء هذه العملية, تفقد بياناتك', 403);
             }
             // رسالة نجاح
             return response()
-            ->success("{$item->profileSeller->profile->user->username} تم قبول الطلب من قبل البائع");
+                ->success("{$item->profileSeller->profile->user->username} تم قبول الطلب من قبل البائع");
         } catch (Exception $ex) {
             // رسالة خطأ
             return response()->error('هناك خطأ ما حدث في قاعدة بيانات , يرجى التأكد من ذلك', 403);
         }
     }
-    
-       
+
+
     /**
      * item_rejected_seller  => الغاء الطلبية من قبل البائع
      *
@@ -98,6 +104,8 @@ class ItemController extends Controller
         try {
             // جلب عنصر الطلبية من اجل رفضها
             $item = Item::whereId($id)->first();
+            // جلب مشتري الطلبية
+            $user = $item->order->cart->user;
             // شرط اذا كانت متواجدة
             if (!$item) {
                 // رسالة خطأ
@@ -109,6 +117,7 @@ class ItemController extends Controller
                 // تحويل الطلبية من حالة الابتدائية الى حالة الرفض
                 $item->status = Item::STATUS_REJECTED_BY_SELLER;
                 $item->save();
+                event(new RejectOrder($user, $item));
             } else {
                 // رسالة خطأ
                 return response()->error('لا يمكنك اجراء هذه العملية, تفقد بياناتك', 403);
@@ -132,6 +141,9 @@ class ItemController extends Controller
         try {
             // جلب عنصر الطلبية من اجل رفضها
             $item = Item::whereId($id)->first();
+
+            // جلب بيانات البائع
+            $user = User::find($item->user_id);
             // شرط اذا كانت متواجدة
             if (!$item) {
                 // رسالة خطأ
@@ -143,6 +155,7 @@ class ItemController extends Controller
                 // تحويل الطلبية من حالة الابتدائية الى حالة الرفض
                 $item->status = Item::STATUS_REJECTED_BY_BUYER;
                 $item->save();
+                event(new RejectOrder($user, $item));
             } else {
                 // رسالة خطأ
                 return response()->error('لا يمكنك اجراء هذه العملية, تفقد بياناتك', 403);
@@ -194,8 +207,8 @@ class ItemController extends Controller
             return response()->error('هناك خطأ ما حدث في قاعدة بيانات , يرجى التأكد من ذلك', 403);
         }
     }
-    
-       
+
+
     /**
      * upload_resource_by_seller => رفع المشروع من قبل البائع
      *
@@ -258,7 +271,7 @@ class ItemController extends Controller
             return response()->error('هناك خطأ ما حدث في قاعدة بيانات , يرجى التأكد من ذلك', 403);
         }
     }
-    
+
     /**
      * accepted_delivery_resource_by_seller => قبول التسليم المشروع من قبل المشتري
      *
@@ -303,7 +316,7 @@ class ItemController extends Controller
             return response()->error('هناك خطأ ما حدث في قاعدة بيانات , يرجى التأكد من ذلك', 403);
         }
     }
-    
+
     /**
      * rejected_delivery_resource_by_buyer => رفض الاستلام المشروع من قبل المشتري
      *
@@ -348,9 +361,9 @@ class ItemController extends Controller
             return response()->error('هناك خطأ ما حدث في قاعدة بيانات , يرجى التأكد من ذلك', 403);
         }
     }
-    
+
     /* -------------------- طلب الغاء الطلبية من قبل الطرفين -------------------- */
-    
+
     /**
      * request_cancel_item_by_seller => طلب الغاء من قبل البائع
      *
@@ -360,17 +373,17 @@ class ItemController extends Controller
     {
         try {
 
-           // جلب عنصر الطلبية من اجل طلب الغاء
+            // جلب عنصر الطلبية من اجل طلب الغاء
             $item = Item::whereId($id)->first();
             // شرط اذا كانت متواجدة
             if (!$item) {
                 // رسالة خطأ
                 return response()->error('هذا العنصر غير موجود', 403);
             }
-            
+
             // جلب طلب الغاء الخدمة
             $item_rejected = ItemOrderRejected::where('item_id', $item->id)->first();
-            
+
             $data_request_rejected_by_seller = [
                 'rejected_seller' => ItemOrderRejected::REJECTED_BY_SELLER,
                 'item_id'         => $item->id
@@ -405,7 +418,7 @@ class ItemController extends Controller
             return response()->error('هناك خطأ ما حدث في قاعدة بيانات , يرجى التأكد من ذلك', 403);
         }
     }
-    
+
     /**
      * request_cancel_item_by_buyer => طلب الغاء من قبل المشتري
      *
@@ -415,7 +428,7 @@ class ItemController extends Controller
     {
         try {
 
-           // جلب عنصر الطلبية من اجل طلب الغائها
+            // جلب عنصر الطلبية من اجل طلب الغائها
             $item = Item::whereId($id)->first();
             // شرط اذا كانت متواجدة
             if (!$item) {
@@ -460,7 +473,7 @@ class ItemController extends Controller
         }
     }
     /* ----------------------- قبول الطلبية من قبل الطرفين ---------------------- */
-   
+
     /**
      * accept_cancel_request_by_seller => قبول الغاء الطلبية من قبل البائع
      *
@@ -480,10 +493,10 @@ class ItemController extends Controller
             $item_rejected = ItemOrderRejected::where('item_id', $item->id)->first();
             // وضع معلومات قبول الالغاء الطلبية في مصفوفة
             $data_accept_request_by_seller = [
-                 'rejected_seller' => ItemOrderRejected::REJECTED_BY_SELLER,
-                 'item_id'         => $item->id
-             ];
- 
+                'rejected_seller' => ItemOrderRejected::REJECTED_BY_SELLER,
+                'item_id'         => $item->id
+            ];
+
             /* --------------------------- تغيير حالة الطلبية --------------------------- */
             // شرط اذا كانت الحالة الطلبية في حالة قيد التنفيذ
             if ($item->status == Item::STATUS_ACCEPT_REQUEST) {
@@ -511,7 +524,7 @@ class ItemController extends Controller
             return response()->error('هناك خطأ ما حدث في قاعدة بيانات , يرجى التأكد من ذلك', 403);
         }
     }
-    
+
     /**
      * accept_rejected_by_buyer => قبول الغاء الطلبية من قبل المشتري
      *
@@ -531,10 +544,10 @@ class ItemController extends Controller
             $item_rejected = ItemOrderRejected::where('item_id', $item->id)->first();
             // وضع معلومات قبول الالغاء الطلبية في مصفوفة
             $data_accept_request_by_buyer = [
-                 'rejected_buyer' => ItemOrderRejected::REJECTED_BY_BUYER,
-                 'item_id'         => $item->id
-             ];
- 
+                'rejected_buyer' => ItemOrderRejected::REJECTED_BY_BUYER,
+                'item_id'         => $item->id
+            ];
+
             /* --------------------------- تغيير حالة الطلبية --------------------------- */
             if ($item->status == Item::STATUS_ACCEPT_REQUEST) {
                 // شرط اذا كان هناك طلب الغاء و ايضا ارسال عملية طلب من طرف البائع
@@ -563,7 +576,7 @@ class ItemController extends Controller
     }
 
     /* ----------------------- رفض الطلبية من قبل الطرفين ----------------------- */
-    
+
     /**
      * reject_request_by_seller => رفض الغاء الطلبية من قبل البائع
      *
@@ -581,7 +594,7 @@ class ItemController extends Controller
             }
             // جلب عنصر الطلب
             $item_rejected = ItemOrderRejected::where('item_id', $item->id)->first();
- 
+
             /* --------------------------- تغيير حالة الطلبية --------------------------- */
             if ($item->status == Item::STATUS_ACCEPT_REQUEST) {
                 // شرط اذا كان هناك طلب الغاء و ايضا ارسال عملية طلب من طرف البائع
@@ -605,7 +618,7 @@ class ItemController extends Controller
             return response()->error('هناك خطأ ما حدث في قاعدة بيانات , يرجى التأكد من ذلك', 403);
         }
     }
-    
+
     /**
      * reject_request_by_buyer => رفض الغاء الطلبية من قبل المشتري
      *
@@ -623,7 +636,7 @@ class ItemController extends Controller
             }
             // جلب عنصر الطلب
             $item_rejected = ItemOrderRejected::where('item_id', $item->id)->first();
- 
+
             /* ---------------------------  حالة الطلبية --------------------------- */
             if ($item->status == Item::STATUS_ACCEPT_REQUEST) {
                 // شرط اذا كان هناك طلب الغاء و ايضا ارسال عملية طلب من طرف البائع

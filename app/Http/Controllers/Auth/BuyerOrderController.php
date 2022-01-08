@@ -23,7 +23,7 @@ class BuyerOrderController extends Controller
             $q->with(['cart' => function ($q) use ($buyer) {
                 $q->where('user_id', $buyer);
             }]);
-        }])->paginate($paginate);
+        }])->withCount('item_rejected')->paginate($paginate);
         return response()->success('لقد تم جلب مشترياتك بنجاح', $items);
     }
 }
