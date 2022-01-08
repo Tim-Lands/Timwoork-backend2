@@ -107,7 +107,7 @@ class ItemController extends Controller
             // شرط اذا كانت الحالة الطلبية في حالة الانتظار
             if ($item->status == Item::STATUS_PENDING_REQUEST) {
                 // تحويل الطلبية من حالة الابتدائية الى حالة الرفض
-                $item->status = Item::STATUS_REJECTED_REQUEST;
+                $item->status = Item::STATUS_REJECTED_BY_SELLER;
                 $item->save();
             } else {
                 // رسالة خطأ
@@ -141,7 +141,7 @@ class ItemController extends Controller
             // شرط اذا كانت الحالة الطلبية في حالة الانتظار
             if ($item->status == Item::STATUS_PENDING_REQUEST) {
                 // تحويل الطلبية من حالة الابتدائية الى حالة الرفض
-                $item->status = Item::STATUS_REJECTED_REQUEST;
+                $item->status = Item::STATUS_REJECTED_BY_BUYER;
                 $item->save();
             } else {
                 // رسالة خطأ

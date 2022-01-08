@@ -68,11 +68,13 @@ class CartController extends Controller
             ];
             // الخدمة المضافة في السلة
             $product = Product::whereId($request->product_id)->first();
+            
             // شرط اذا كانت الخدمة للمستخدم المشتري
-            if ($product->profile_seller_id == Auth::user()->profile->profile_seller->id) {
-                return response()->error('لا يمكنك شراء هذه الخدمة, تفقد بياناتك', 422);
+            if (Auth::user()->profile->profile_seller->exists()) {
+                if ($product->profile_seller_id == Auth::user()->profile->profile_seller->id) {
+                    return response()->error('لا يمكنك شراء هذه الخدمة, تفقد بياناتك', 422);
+                }
             }
-            // جلب عنوان الخدمة
             // وضع البيانات فالمصفوفة من اجل اضافة عناصر فالسلة السلة
             $data_cart_items = [
                 'product_id'    => $request->product_id,
@@ -102,7 +104,6 @@ class CartController extends Controller
                 // وضع السعر
                 $data_cart_items['price_unit'] = $product->price;
             }
-
             /* ---------------------------- انشاء عنصر فالسلة --------------------------- */
             // بداية المعاملة مع البيانات المرسلة لقاعدة بيانات :
             DB::beginTransaction();
@@ -121,7 +122,7 @@ class CartController extends Controller
                 // جلب العنصر المضاف حديثا
                 $new_cart = Cart::where('user_id', Auth::user()->id)->where('is_buying', 0);
                 // عمليات حساب السعر المتواجد في السلة
-                $this->calculate_price($new_cart, $cart_item, $request->quantity);
+                $this->calculate_price($new_cart, $cart_item, $data_cart_items['quantity']);
             }
             // شرط اذا توجد سلة مباعة و سلة غير مباعة او توجد سلة غير مباعة و لا توجد سلة مباعة :
             elseif (($cart_found_buying && $cart_found_not_buying) || (!$cart_found_buying && $cart_found_not_buying)) {
