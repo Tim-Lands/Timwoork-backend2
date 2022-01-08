@@ -20,7 +20,7 @@ class SellerOrderController extends Controller
         $paginate = $request->query('paginate') ? $request->query('paginate') : 10;
         $seller = Auth::user()->profile->profile_seller->id;
         $items = Item::where('profile_seller_id', $seller)->with(['order.cart.user.profile'])
-            ->paginate($paginate);
+            ->withCount('item_rejected')->paginate($paginate);
         return response()->success('لقد تم جلب مشترياتك بنجاح', $items);
     }
 }
