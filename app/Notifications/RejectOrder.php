@@ -44,7 +44,7 @@ class RejectOrder extends Notification
     public function toMail($notifiable)
     {
         return (new MailMessage)
-            ->from('support@timwoork.com')
+            ->from('support@timlands.com')
             ->subject('رفض الطلبية')
             ->view('emails.orders.reject_order', [
                 'type' => "accept_order",
