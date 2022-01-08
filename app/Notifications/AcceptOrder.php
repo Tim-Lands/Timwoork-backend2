@@ -8,7 +8,7 @@ use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
 use Illuminate\Support\Facades\Auth;
 
-class NewOrder extends Notification implements ShouldQueue
+class AcceptOrder extends Notification
 {
     use Queueable;
     public $user;
@@ -45,12 +45,15 @@ class NewOrder extends Notification implements ShouldQueue
     {
         return (new MailMessage)
             ->from('support@timwoork.com')
-            ->subject('طلبية جديدة')
-            ->view('emails.orders.new_order', [
-                'user' => Auth::user(),
-                'item' => $this->item,
-                'title' => ' قام ' . Auth::user()->profile->full_name . ' بطلب خدمة جديدة ',
-                'type' => "new_order"
+            ->subject('قبول الطلبية')
+            ->view('emails.orders.accept_order', [
+                'type' => "accept_order",
+                'title' =>  " قام " . Auth::user()->profile->full_name . " بقبول الطلبية التي اشتريتها ",
+                'user_sender' => Auth::user()->profile,
+                'content' => [
+                    'item_id' => $this->item->id,
+                    'title' => $this->item->title,
+                ],
             ]);
     }
 
@@ -63,10 +66,13 @@ class NewOrder extends Notification implements ShouldQueue
     public function toArray($notifiable)
     {
         return [
-            'user' => Auth::user(),
-            'item' => $this->item,
-            'title' => 'قام ' . Auth::user()->profile->full_name . 'بطلب خدمة جديدة',
-            'type' => "new_order"
+            'type' => "accept_order",
+            'title' =>  " قام " . Auth::user()->profile->full_name . " بقبول الطلبية التي اشتريتها ",
+            'user_sender' => Auth::user()->profile,
+            'content' => [
+                'item_id' => $this->item->id,
+                'title' => $this->item->title,
+            ],
         ];
     }
 }

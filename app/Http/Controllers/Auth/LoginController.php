@@ -49,12 +49,13 @@ class LoginController extends Controller
         ]);
 
         // make some columns hidden in response
-
+        $notifications_count = $user->unreadNotifications->count();
         $msg_count = $this->getUnreadMessagesCount($user);
         $cart_items_count = $this->getCartItemsCount($user);
         $data = [
             'user_details' => $user,
-            'msg_unread_count' => $msg_count,
+            'unread_messages_count' => $msg_count,
+            'unread_notifications_count' => $notifications_count,
             'cart_items_count' => $cart_items_count
         ];
         return response()->json($data, 200);

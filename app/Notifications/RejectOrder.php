@@ -8,20 +8,18 @@ use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
 use Illuminate\Support\Facades\Auth;
 
-class NewOrder extends Notification implements ShouldQueue
+class RejectOrder extends Notification
 {
     use Queueable;
-    public $user;
-    public $item;
+
     /**
      * Create a new notification instance.
      *
      * @return void
      */
-    public function __construct($user, $item)
+    public function __construct()
     {
-        $this->user = $user;
-        $this->item = $item;
+        //
     }
 
     /**
@@ -32,7 +30,7 @@ class NewOrder extends Notification implements ShouldQueue
      */
     public function via($notifiable)
     {
-        return ['mail', 'database'];
+        return ['mail'];
     }
 
     /**
@@ -45,12 +43,15 @@ class NewOrder extends Notification implements ShouldQueue
     {
         return (new MailMessage)
             ->from('support@timwoork.com')
-            ->subject('طلبية جديدة')
-            ->view('emails.orders.new_order', [
-                'user' => Auth::user(),
-                'item' => $this->item,
-                'title' => ' قام ' . Auth::user()->profile->full_name . ' بطلب خدمة جديدة ',
-                'type' => "new_order"
+            ->subject('قبول الطلبية')
+            ->view('emails.orders.reject_order', [
+                'type' => "accept_order",
+                'title' =>  " قام " . Auth::user()->profile->full_name . " برفض الطلبية   ",
+                'user_sender' => Auth::user()->profile,
+                'content' => [
+                    'item_id' => $this->item->id,
+                    'title' => $this->item->title,
+                ],
             ]);
     }
 
@@ -63,10 +64,13 @@ class NewOrder extends Notification implements ShouldQueue
     public function toArray($notifiable)
     {
         return [
-            'user' => Auth::user(),
-            'item' => $this->item,
-            'title' => 'قام ' . Auth::user()->profile->full_name . 'بطلب خدمة جديدة',
-            'type' => "new_order"
+            'type' => "accept_order",
+            'title' =>  " قام " . Auth::user()->profile->full_name . " برفض الطلبية ",
+            'user_sender' => Auth::user()->profile,
+            'content' => [
+                'item_id' => $this->item->id,
+                'title' => $this->item->title,
+            ],
         ];
     }
 }
