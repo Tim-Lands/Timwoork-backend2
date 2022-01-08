@@ -17,14 +17,45 @@ class NotificationController extends Controller
         $this->middleware('auth:sanctum');
     }
 
-
-    public function index()
+    /**
+     * عرض جميع الاشعارات الخاصة بالمستخدم
+     */
+    public function index(Request $request)
     {
-        $notifications = Auth::user()->notifications()->orderBy('created_at')->paginate(2)->groupBy(function ($data) {
-            /*         $da = Carbon::parse($data->created_at)->locale('ar');
-            return  $da->isoFormat('Do MMMM', 'MMMM YYYY');; */
-            return $data->created_at->diffForHumans();
-        });
+        $paginate = $request->query('paginate') ? $request->query('paginate') : 10;
+
+        $notifications = Auth::user()->notifications()->orderBy('created_at')
+            ->paginate($paginate)->groupBy(function ($data) {
+                return $data->created_at->diffForHumans();
+            });
         return response()->success('لقد تم جلب الاشعارات بنجاح', $notifications);
+    }
+
+    /**
+     *  عرض الاشعار الواحد
+     */
+    public function show($id)
+    {
+        $notification = Auth::user()->notifications()->where('id', $id)->first();
+        return response()->success('لقد تم جلب الاشعارات بنجاح', $notification);
+    }
+
+    /**
+     *  تحديد كل الاشعارات كمقروءة
+     */
+    public function markAllAsRead()
+    {
+        $user = Auth::user();
+        $user->unreadNotifications->markAsRead();
+        return response()->success('لقد تم تحديد جميع الاشعارات كمقروءة');
+    }
+    /**
+     *  تحديد  الاشعار الواحد كمقروء
+     */
+    public function markAsRead($id)
+    {
+        $notification = Auth::user()->notifications()->where('id', $id)->first();
+        $notification->markAsRead();
+        return response()->success('لقد تم تحديد الاشعار كمقروء');
     }
 }

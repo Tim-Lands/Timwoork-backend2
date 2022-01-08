@@ -13,6 +13,7 @@ use App\Http\Controllers\ChatController;
 use App\Http\Controllers\ConversationController;
 use App\Http\Controllers\FilterController;
 use App\Http\Controllers\FrontEndController;
+use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\Product\InsertProductContoller;
 use App\Http\Controllers\Product\DeleteProductController;
 use App\Http\Controllers\Product\ShortenerController;
@@ -85,10 +86,22 @@ Route::middleware('auth:sanctum')->get('/my_purchases', BuyerOrderController::cl
 Route::middleware('auth:sanctum')->get('/my_sales', SellerOrderController::class);
 
 /******************************************************************** */
+
+/***********************مسارات استعادة كلمة المرور ******************** */
 Route::post('/password/forget/sendResetLink', [ForgetPasswordController::class, 'send_token']);
 Route::post('/password/forget/verify', [ForgetPasswordController::class, 'verify_token']);
 Route::post('/password/forget/reset', [ForgetPasswordController::class, 'reset_password']);
 
+/* -------------------------------------------------------------------------- */
+/*                             مسارات  الاشعارات                            */
+/* -------------------------------------------------------------------------- */
+
+Route::prefix('notifications')->group(function () {
+    Route::get('/', [NotificationController::class, 'index']);
+    Route::get('/{id}', [NotificationController::class, 'show']);
+    Route::post('/markAllAsRead', [NotificationController::class, 'markAllAsRead']);
+    Route::post('/{id}/markAsRead', [NotificationController::class, 'markAsRead']);
+});
 
 
 Route::post('/login/{provider}', [LoginController::class, 'handleProviderCallback']);
