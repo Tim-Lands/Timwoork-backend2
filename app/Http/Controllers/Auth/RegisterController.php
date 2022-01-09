@@ -36,7 +36,6 @@ class RegisterController extends Controller
             $user->profile()->create([
                 'avatar' => url('avatars/avatar.png'),
                 'lang' => 'ar',
-                'credit' => 0,
                 'badge_id' => 1,
                 'level_id' => 1,
             ]);
