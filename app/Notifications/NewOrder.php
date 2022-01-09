@@ -44,7 +44,7 @@ class NewOrder extends Notification implements ShouldQueue
     public function toMail($notifiable)
     {
         return (new MailMessage)
-            ->from('support@timwoork.com')
+            ->from('support@timlands.com')
             ->subject('طلبية جديدة')
             ->view('emails.orders.new_order', [
                 'user' => Auth::user(),

@@ -44,7 +44,7 @@ class AcceptOrder extends Notification
     public function toMail($notifiable)
     {
         return (new MailMessage)
-            ->from('support@timwoork.com')
+            ->from('support@timlands.com')
             ->subject('قبول الطلبية')
             ->view('emails.orders.accept_order', [
                 'type' => "accept_order",
