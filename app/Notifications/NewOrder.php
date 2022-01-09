@@ -47,10 +47,13 @@ class NewOrder extends Notification implements ShouldQueue
             ->from('support@timlands.com')
             ->subject('طلبية جديدة')
             ->view('emails.orders.new_order', [
-                'user' => Auth::user(),
-                'item' => $this->item,
-                'title' => ' قام ' . Auth::user()->profile->full_name . ' بطلب خدمة جديدة ',
-                'type' => "new_order"
+                'type' => "new_order",
+                'title' =>  " قام " . Auth::user()->profile->full_name . " بشراء خدمة من خدماتك ",
+                'user_sender' => Auth::user()->profile,
+                'content' => [
+                    'item_id' => $this->item->id,
+                    'title' => $this->item->title,
+                ],
             ]);
     }
 
@@ -63,10 +66,13 @@ class NewOrder extends Notification implements ShouldQueue
     public function toArray($notifiable)
     {
         return [
-            'user' => Auth::user(),
-            'item' => $this->item,
-            'title' => 'قام ' . Auth::user()->profile->full_name . 'بطلب خدمة جديدة',
-            'type' => "new_order"
+            'type' => "new_order",
+            'title' =>  " قام " . Auth::user()->profile->full_name . " برفض الطلبية ",
+            'user_sender' => Auth::user()->profile,
+            'content' => [
+                'item_id' => $this->item->id,
+                'title' => $this->item->title,
+            ],
         ];
     }
 }

@@ -11,7 +11,7 @@
 <body>
     <h1>{{ $type }}</h1>
     <h6>{{ $title }}</h6>
-    <a href = "https://forum-wazzefny-com/order/{{ $item->id }}">{{ $item->title }}</a>
+    <a href="https://forum-wazzefny-com/order/{{ $content['item_id'] }}">{{ $content['title'] }}</a>
 </body>
 
 </html>
