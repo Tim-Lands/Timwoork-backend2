@@ -3,7 +3,10 @@
 namespace App\Http\Controllers\SalesProcces;
 
 use App\Events\AcceptOrder;
+use App\Events\AcceptRequestRejectOrder;
 use App\Events\RejectOrder;
+use App\Events\RejectRequestRejectOrder;
+use App\Events\RequestRejectOrder;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\SalesProcces\ResourceRequest;
 use App\Models\Item;
@@ -375,6 +378,8 @@ class ItemController extends Controller
 
             // جلب عنصر الطلبية من اجل طلب الغاء
             $item = Item::whereId($id)->first();
+            // جلب المشتري
+            $user = $item->order->cart->user;
             // شرط اذا كانت متواجدة
             if (!$item) {
                 // رسالة خطأ
@@ -405,6 +410,9 @@ class ItemController extends Controller
                     } else {
                         // عملية طلب الغاء الطلبية
                         ItemOrderRejected::create($data_request_rejected_by_seller);
+
+                        // ارسال الاشعار 
+                        event(new RejectRequestRejectOrder($user, $item));
                     }
                 }
             } else {
@@ -430,6 +438,9 @@ class ItemController extends Controller
 
             // جلب عنصر الطلبية من اجل طلب الغائها
             $item = Item::whereId($id)->first();
+
+            // جلب  البائع    
+            $user = User::find($item->user_id);
             // شرط اذا كانت متواجدة
             if (!$item) {
                 // رسالة خطأ
@@ -458,6 +469,9 @@ class ItemController extends Controller
                     } else {
                         // عملية طلب الغاء الطلبية
                         ItemOrderRejected::create($data_request_rejected_by_buyer);
+
+                        // ارسال الاشعار
+                        event(new RequestRejectOrder($user, $item));
                     }
                 }
             } else {
@@ -484,6 +498,10 @@ class ItemController extends Controller
         try {
             // جلب عنصر الطلبية من اجل طلب الغائها
             $item = Item::whereId($id)->first();
+
+            // جلب المشتري
+
+            $user = $item->order->cart->user;
             // شرط اذا كانت متواجدة
             if (!$item) {
                 // رسالة خطأ
@@ -510,6 +528,9 @@ class ItemController extends Controller
                     // رفض الطلبية
                     $item->status = Item::STATUS_REJECTED_REQUEST;
                     $item->save();
+
+                    // إرسال الاشعار
+                    event(new AcceptRequestRejectOrder($user, $item));
                 } else {
                     return response()->error(__('messages.item.request_not_found'), 403);
                 }
@@ -535,6 +556,9 @@ class ItemController extends Controller
         try {
             // جلب عنصر الطلبية من اجل طلب الغائها
             $item = Item::whereId($id)->first();
+
+            // جلب البائع
+            $user = User::find($item->user_id);
             // شرط اذا كانت متواجدة
             if (!$item) {
                 // رسالة خطأ
@@ -560,6 +584,8 @@ class ItemController extends Controller
                     // رفض الطلبية
                     $item->status = Item::STATUS_REJECTED_REQUEST;
                     $item->save();
+                    // ارسال الاشعار
+                    event(new AcceptRequestRejectOrder($user, $item));
                 } else {
                     return response()->error(__("messages.item.request_not_found"), 403);
                 }
@@ -587,6 +613,8 @@ class ItemController extends Controller
         try {
             // جلب عنصر الطلبية من اجل طلب الغائها
             $item = Item::whereId($id)->first();
+            // جلب البائع 
+            $user = $item->order->cart->user;
             // شرط اذا كانت متواجدة
             if (!$item) {
                 // رسالة خطأ
@@ -604,6 +632,9 @@ class ItemController extends Controller
                     }
                     // عملية رفض طلب الغاء الطلبية
                     $item_rejected->update(['rejected_buyer' => 0]);
+
+                    // ارسال الاشعار
+                    event(new RejectRequestRejectOrder($user, $item));
                 } else {
                     return response()->error(__("messages.item.request_not_found"), 403);
                 }
@@ -629,6 +660,8 @@ class ItemController extends Controller
         try {
             // جلب عنصر الطلبية من اجل طلب الغائها
             $item = Item::whereId($id)->first();
+            // جلب البائع
+            $user = User::find($item->user_id);
             // شرط اذا كانت متواجدة
             if (!$item) {
                 // رسالة خطأ
@@ -646,6 +679,8 @@ class ItemController extends Controller
                     }
                     // عملية رفض طلب الغاء الطلبية
                     $item_rejected->update(['rejected_seller' => 0]);
+                    // ارسال الاشعار 
+                    event(new RejectRequestRejectOrder($user, $item));
                 } else {
                     return response()->error(422, __("messages.item.request_not_found"));
                 }
