@@ -126,7 +126,6 @@ class LoginController extends Controller
                         'badge_id' => 1,
                         'level_id' => 1,
                         'lang' => 'ar',
-                        'credit' => 0,
                     ]);
 
                     // تسجيل اسم المزوّد و المعرّف الخاص بالمستخدم في المزود الخاص به

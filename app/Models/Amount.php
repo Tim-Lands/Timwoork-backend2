@@ -14,6 +14,9 @@ class Amount extends Model
 
     // ===========================Contants =============================
     // code
+
+    const PENDING_AMOUNT        = 0;
+    const WITHDRAWABLE_AMOUNT   = 1;
     // ================== Acssesor & mutators ==========================
     // code
     // ============================ Scopes =============================

@@ -1,5 +1,11 @@
 <?php
 
+use App\Events\AcceptOrder;
+use App\Events\AcceptRequestRejectOrder;
+use App\Events\NewOrder;
+use App\Events\RejectOrder;
+use App\Events\RejectRequestRejectOrder;
+use App\Events\RequestRejectOrder;
 use App\Http\Controllers\Auth\BuyerOrderController;
 use App\Http\Controllers\Auth\ChangePasswordController;
 use App\Http\Controllers\Auth\DarkModeController;
@@ -24,6 +30,8 @@ use App\Http\Controllers\SalesProcces\OrderController;
 use App\Http\Controllers\SalesProcces\ItemController;
 use App\Http\Controllers\SearchController;
 use App\Http\Controllers\Product\RatingController;
+use App\Models\Item;
+use App\Models\User;
 use Illuminate\Support\Facades\Broadcast;
 use Illuminate\Support\Facades\Route;
 
@@ -266,3 +274,10 @@ Route::prefix('/purchase')->group(function () {
     Route::post('/paypal/charge', [OrderController::class, 'paypal_charge']);
     Route::post('/stripe/charge', [OrderController::class, 'stripe_charge']);
 });
+
+Route::get('users', function () {
+    $user = User::with('profile')->first();
+    //return $user;
+    $item = Item::first();
+    event(new NewOrder($user, $item));
+})->middleware('auth:sanctum');
