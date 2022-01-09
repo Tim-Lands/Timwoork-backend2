@@ -5,7 +5,6 @@ namespace App\Http\Controllers\Product;
 use App\Http\Controllers\Controller;
 use App\Models\Product;
 use Exception;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\DB;
 
@@ -19,7 +18,7 @@ class DeleteProductController extends Controller
             // شرط اذا كان العنصر موجود
             if (!$product || !is_numeric($id)) {
                 // رسالة خطأ
-                return response()->error('هذا العنصر غير موجود', 403);
+                return response()->error(__("messages.errors.element_not_found"), 403);
             }
             // ============================== حذف الصور و المفات ==================================
             // حذف الصورة من مجلد
@@ -57,13 +56,13 @@ class DeleteProductController extends Controller
             DB::commit();
             // ==============================================================================
             // رسالة نجاح عملية الاضافة:
-            return response()->success('تم حذف الخدمة بنجاح', $product);
+            return response()->success(__("messages.oprations.delete_success"), $product);
         } catch (Exception $ex) {
             return $ex;
             // لم تتم المعاملة بشكل نهائي و لن يتم ادخال اي بيانات لقاعدة البيانات
             DB::rollback();
             // رسالة خطأ
-            return response()->error('هناك خطأ ما حدث في قاعدة بيانات , يرجى التأكد من ذلك', 403);
+            return response()->error(__("messages.errors.error_database"), 403);
         }
     }
 }

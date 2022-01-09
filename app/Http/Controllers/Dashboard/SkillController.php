@@ -22,7 +22,7 @@ class SkillController extends Controller
         // جلب جميع المهارات عن طريق التصفح
         $skills = Skill::Selection()->get();
         // اظهار العناصر
-        return response()->success('تم العثور على قائمة المهارات', $skills);
+        return response()->success(__("messages.oprations.get_all_data"), $skills);
     }
 
     /**
@@ -49,18 +49,18 @@ class SkillController extends Controller
             DB::commit();
             // =================================================
             // رسالة نجاح عملية الاضافة:
-            return response()->success('تم انشاء مهارة جديدة بنجاح', $skill);
+            return response()->success(__("messages.oprations.add_success"), $skill);
         } catch (Exception $ex) {
             // لم تتم المعاملة بشكل نهائي و لن يتم ادخال اي بيانات لقاعدة البيانات
             DB::rollback();
-            return response()->error('هناك خطأ ما حدث في قاعدة بيانات , يرجى التأكد من ذلك', 403);
+            return response()->error(__("messages.errors.error_database"), 403);
         }
     }
 
     /**
      * show => id  دالة جلب مهارة معينة بواسطة المعرف
      *
-     *s @param  string $id => id متغير المعرف 
+     *s @param  string $id => id متغير المعرف
      * @return JsonResponse
      */
     public function show(mixed $id): JsonResponse
@@ -68,11 +68,12 @@ class SkillController extends Controller
         //id  جلب العنصر بواسطة
         $skill = Skill::Selection()->whereId($id)->first();
         // شرط اذا كان العنصر موجود
-        if (!$skill)
+        if (!$skill) {
             // رسالة خطأ
-            return response()->error('هذا العنصر غير موجود', 403);
+            return response()->error(__("messages.errors.element_not_found"), 403);
+        }
         // اظهار العنصر
-        return response()->success('تم جلب العنصر بنجاح', $skill);
+        return response()->success(__("messages.oprations.get_data"), $skill);
     }
 
 
@@ -86,24 +87,27 @@ class SkillController extends Controller
     public function update(SkillRequest $request, mixed $id): ?object
     {
         try {
-            //من اجل التعديل  id  جلب العنصر بواسطة المعرف 
+            //من اجل التعديل  id  جلب العنصر بواسطة المعرف
             $skill = Skill::find($id);
 
             // شرط اذا كان العنصر موجود او المعرف اذا كان رقم غير صحيح
-            if (!$skill || !is_numeric($id))
+            if (!$skill || !is_numeric($id)) {
                 // رسالة خطأ
-                return response()->error('هذا العنصر غير موجود', 403);
+                return response()->error(__("messages.errors.element_not_found"), 403);
+            }
 
             // جلب البيانات و وضعها في مصفوفة:
             $data = [
                 'name_ar' => $request->name_ar,
             ];
-            //  في حالة ما اذا وجد الاسم بالانجليزية , اضفها الى مصفوفة التعديل: 
-            if ($request->name_en)
+            //  في حالة ما اذا وجد الاسم بالانجليزية , اضفها الى مصفوفة التعديل:
+            if ($request->name_en) {
                 $data['name_en'] = $request->name_en;
-            //  في حالة ما اذا وجد الاسم بالفرنيسة , اضفها الى مصفوفة التعديل: 
-            if ($request->name_fr)
+            }
+            //  في حالة ما اذا وجد الاسم بالفرنيسة , اضفها الى مصفوفة التعديل:
+            if ($request->name_fr) {
                 $data['name_fr'] = $request->name_fr;
+            }
             // ============= التعديل على المهارة  ================:
             // بداية المعاملة مع البيانات المرسلة لقاعدة بيانات :
             DB::beginTransaction();
@@ -114,12 +118,12 @@ class SkillController extends Controller
             // =================================================
 
             // رسالة نجاح عملية التعديل:
-            return response()->success('تم التعديل على المهارة بنجاح', $skill);
+            return response()->success(__("messages.oprations.update_success"), $skill);
         } catch (Exception $ex) {
             // لم تتم المعاملة بشكل نهائي و لن يتم ادخال اي بيانات لقاعدة البيانات
             DB::rollback();
             // رسالة خطأ :
-            return response()->error('هناك خطأ ما حدث في قاعدة بيانات , يرجى التأكد من ذلك', 403);
+            return response()->error(__("messages.errors.error_database"), 403);
         }
     }
 
@@ -132,12 +136,13 @@ class SkillController extends Controller
     public function delete(mixed $id): ?object
     {
         try {
-            //من اجل الحذف  id  جلب العنصر بواسطة المعرف 
+            //من اجل الحذف  id  جلب العنصر بواسطة المعرف
             $skill = Skill::find($id);
             // شرط اذا كان العنصر موجود او المعرف اذا كان رقم غير صحيح
-            if (!$skill || !is_numeric($id))
+            if (!$skill || !is_numeric($id)) {
                 // رسالة خطأ
-                return response()->error('هذا العنصر غير موجود', 403);
+                return response()->error(__("messages.errors.element_not_found"), 403);
+            }
 
             // ============= حذف المهارة  ================:
             // بداية المعاملة مع البيانات المرسلة لقاعدة بيانات :
@@ -149,12 +154,12 @@ class SkillController extends Controller
             // =================================================
 
             // رسالة نجاح عملية الحذف:
-            return response()->success('تم حذف المهارة بنجاح', $skill);
+            return response()->success(__("messages.oprations.delete_success"), $skill);
         } catch (Exception $ex) {
             // لم تتم المعاملة بشكل نهائي و لن يتم ادخال اي بيانات لقاعدة البيانات
             DB::rollback();
             // return $ex;
-            return response()->error('هناك خطأ ما حدث في قاعدة بيانات , يرجى التأكد من ذلك', 403);
+            return response()->error(__("messages.errors.error_database"), 403);
         }
     }
 }

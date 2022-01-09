@@ -22,11 +22,11 @@ class BadgeController extends Controller
         // جلب جميع الاصناف عن طريق التصفح
         $badges = Badge::Selection()->get();
         // اظهار العناصر
-        return response()->success('تم العثور على قائمة الشارات', $badges);
+        return response()->success(__('messages.oprations.get_all_data'), $badges);
     }
 
     /**
-     * store => دالة اضافة شارة جديدة 
+     * store => دالة اضافة شارة جديدة
      *
      * @param  BadgeRequest $request => انشاء هذا الكائن من اجل عملية التحقيق على المدخلات
      * @return object
@@ -50,19 +50,19 @@ class BadgeController extends Controller
             DB::commit();
             // =================================================
             // رسالة نجاح عملية الاضافة:
-            return response()->success('تم انشاء شارة جديدة بنجاح', $badge);
+            return response()->success(__('messages.oprations.add_success'), $badge);
         } catch (Exception $ex) {
             // لم تتم المعاملة بشكل نهائي و لن يتم ادخال اي بيانات لقاعدة البيانات
             DB::rollback();
             // رسالة خطأ
-            return response()->error('هناك خطأ ما حدث في قاعدة بيانات , يرجى التأكد من ذلك', 403);
+            return response()->error(__("messages.errors.error_database"), 403);
         }
     }
 
     /**
      * show => id  دالة جلب الشارة معين بواسطة المعرف
      *
-     *s @param  string $id => id متغير المعرف 
+     *s @param  string $id => id متغير المعرف
      * @return JsonResponse
      */
     public function show($id): JsonResponse
@@ -70,12 +70,13 @@ class BadgeController extends Controller
         //slug  جلب العنصر بواسطة
         $badge = Badge::Selection()->whereId($id)->first();
         // شرط اذا كان العنصر موجود
-        if (!$badge)
+        if (!$badge) {
             // رسالة خطأ
-            return response()->error('هذا العنصر غير موجود', 403);
+            return response()->error(__("messages.errors.element_not_found"), 403);
+        }
 
         // اظهار العنصر
-        return response()->success('تم جلب العنصر بنجاح', $badge);
+        return response()->success(__("messages.oprations.update_success"), $badge);
     }
 
 
@@ -89,25 +90,28 @@ class BadgeController extends Controller
     public function update(BadgeRequest $request, mixed $id): ?object
     {
         try {
-            //من اجل التعديل  id  جلب العنصر بواسطة المعرف 
+            //من اجل التعديل  id  جلب العنصر بواسطة المعرف
             $badge = Badge::find($id);
 
             // شرط اذا كان العنصر موجود او المعرف اذا كان رقم غير صحيح
-            if (!$badge || !is_numeric($id))
+            if (!$badge || !is_numeric($id)) {
                 // رسالة خطأ
-                return response()->error('هذا العنصر غير موجود', 403);
+                return response()->error(__("messages.errors.element_not_found"), 403);
+            }
 
             // جلب البيانات و وضعها في مصفوفة:
             $data = [
                 'name_ar'            => $request->name_ar,
                 'precent_deducation' => $request->precent_deducation
             ];
-            //  في حالة ما اذا وجد الاسم بالانجليزية , اضفها الى مصفوفة التعديل: 
-            if ($request->name_en)
+            //  في حالة ما اذا وجد الاسم بالانجليزية , اضفها الى مصفوفة التعديل:
+            if ($request->name_en) {
                 $data['name_en'] = $request->name_en;
-            //  في حالة ما اذا وجد الاسم بالفرنيسة , اضفها الى مصفوفة التعديل: 
-            if ($request->name_fr)
+            }
+            //  في حالة ما اذا وجد الاسم بالفرنيسة , اضفها الى مصفوفة التعديل:
+            if ($request->name_fr) {
                 $data['name_fr'] = $request->name_fr;
+            }
             // ============= التعديل على التصنيف  ================:
             // بداية المعاملة مع البيانات المرسلة لقاعدة بيانات :
             DB::beginTransaction();
@@ -118,12 +122,12 @@ class BadgeController extends Controller
             // =================================================
 
             // رسالة نجاح عملية التعديل:
-            return response()->success('تم التعديل على الشارة بنجاح', $badge);
+            return response()->success(__("messages.oprations.update_success"), $badge);
         } catch (Exception $ex) {
             // لم تتم المعاملة بشكل نهائي و لن يتم ادخال اي بيانات لقاعدة البيانات
             DB::rollback();
             // رسالة خطأ :
-            return response()->error('هناك خطأ ما حدث في قاعدة بيانات , يرجى التأكد من ذلك', 403);
+            return response()->error(__("messages.errors.error_database"), 403);
         }
     }
 
@@ -136,12 +140,13 @@ class BadgeController extends Controller
     public function delete(mixed $id): ?object
     {
         try {
-            //من اجل الحذف  id  جلب العنصر بواسطة المعرف 
+            //من اجل الحذف  id  جلب العنصر بواسطة المعرف
             $badge = Badge::find($id);
             // شرط اذا كان العنصر موجود او المعرف اذا كان رقم غير صحيح
-            if (!$badge || !is_numeric($id))
+            if (!$badge || !is_numeric($id)) {
                 // رسالة خطأ
-                return response()->error('هذا العنصر غير موجود', 403);
+                return response()->error(__("messages.errors.element_not_found"), 403);
+            }
 
             // ============= حذف الشارة  ================:
             // بداية المعاملة مع البيانات المرسلة لقاعدة بيانات :
@@ -153,12 +158,12 @@ class BadgeController extends Controller
             // =================================================
 
             // رسالة نجاح عملية الحذف:
-            return response()->success('تم حذف الشارة بنجاح', $badge);
+            return response()->success(__("messages.oprations.delete_success"), $badge);
         } catch (Exception $ex) {
             // لم تتم المعاملة بشكل نهائي و لن يتم ادخال اي بيانات لقاعدة البيانات
             DB::rollback();
             // رسالة الخطأ
-            return response()->error('هناك خطأ ما حدث في قاعدة بيانات , يرجى التأكد من ذلك', 403);
+            return response()->error(__("messages.errors.error_database"), 403);
         }
     }
 }

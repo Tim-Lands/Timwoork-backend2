@@ -21,7 +21,7 @@ class TagController extends Controller
         // جلب جميع الوسم عن طريق التصفح
         $tags = Tag::Selection()->get();
         // اظهار العناصر
-        return response()->success('تم العثور على قائمة الوسوم', $tags);
+        return response()->success(__("messages.oprations.get_all_data"), $tags);
     }
 
     /**
@@ -48,18 +48,18 @@ class TagController extends Controller
             DB::commit();
             // =================================================
             // رسالة نجاح عملية الاضافة:
-            return response()->success('تم انشاء وسم جديد بنجاح', $tag);
+            return response()->success(__("messages.oprations.add_success"), $tag);
         } catch (Exception $ex) {
             // لم تتم المعاملة بشكل نهائي و لن يتم ادخال اي بيانات لقاعدة البيانات
             DB::rollback();
-            return response()->error('هناك خطأ ما حدث في قاعدة بيانات , يرجى التأكد من ذلك', 403);
+            return response()->error(__("messages.errors.error_database"), 403);
         }
     }
 
     /**
      * show => id  دالة جلب وسم معين بواسطة المعرف
      *
-     *s @param  string $id => id متغير المعرف 
+     *s @param  string $id => id متغير المعرف
      * @return JsonResponse
      */
     public function show(mixed $id): JsonResponse
@@ -67,11 +67,12 @@ class TagController extends Controller
         //id  جلب العنصر بواسطة
         $tag = Tag::Selection()->whereId($id)->first();
         // شرط اذا كان العنصر موجود
-        if (!$tag)
+        if (!$tag) {
             // رسالة خطأ
-            return response()->error('هذا العنصر غير موجود', 403);
+            return response()->error(__("messages.errors.element_not_found"), 403);
+        }
         // اظهار العنصر
-        return response()->success('تم جلب العنصر بنجاح', $tag);
+        return response()->success(__("messages.oprations.get_data"), $tag);
     }
 
 
@@ -85,24 +86,27 @@ class TagController extends Controller
     public function update(TagRequest $request, mixed $id): ?object
     {
         try {
-            //من اجل التعديل  id  جلب العنصر بواسطة المعرف 
+            //من اجل التعديل  id  جلب العنصر بواسطة المعرف
             $tag = Tag::find($id);
 
             // شرط اذا كان العنصر موجود او المعرف اذا كان رقم غير صحيح
-            if (!$tag || !is_numeric($id))
+            if (!$tag || !is_numeric($id)) {
                 // رسالة خطأ
-                return response()->error('هذا العنصر غير موجود', 403);
+                return response()->error(__("messages.errors.element_not_found"), 403);
+            }
 
             // جلب البيانات و وضعها في مصفوفة:
             $data = [
                 'name_ar' => $request->name_ar,
             ];
-            //  في حالة ما اذا وجد الاسم بالانجليزية , اضفها الى مصفوفة التعديل: 
-            if ($request->name_en)
+            //  في حالة ما اذا وجد الاسم بالانجليزية , اضفها الى مصفوفة التعديل:
+            if ($request->name_en) {
                 $data['name_en'] = $request->name_en;
-            //  في حالة ما اذا وجد الاسم بالفرنيسة , اضفها الى مصفوفة التعديل: 
-            if ($request->name_fr)
+            }
+            //  في حالة ما اذا وجد الاسم بالفرنيسة , اضفها الى مصفوفة التعديل:
+            if ($request->name_fr) {
                 $data['name_fr'] = $request->name_fr;
+            }
             // ============= التعديل على الوسم  ================:
             // بداية المعاملة مع البيانات المرسلة لقاعدة بيانات :
             DB::beginTransaction();
@@ -113,12 +117,12 @@ class TagController extends Controller
             // =================================================
 
             // رسالة نجاح عملية التعديل:
-            return response()->success('تم التعديل على الوسم بنجاح', $tag);
+            return response()->success(__("messages.oprations.update_success"), $tag);
         } catch (Exception $ex) {
             // لم تتم المعاملة بشكل نهائي و لن يتم ادخال اي بيانات لقاعدة البيانات
             DB::rollback();
             // رسالة خطأ :
-            return response()->error('هناك خطأ ما حدث في قاعدة بيانات , يرجى التأكد من ذلك', 403);
+            return response()->error(__("messages.errors.error_database"), 403);
         }
     }
 
@@ -131,12 +135,13 @@ class TagController extends Controller
     public function delete(mixed $id): ?object
     {
         try {
-            //من اجل الحذف  id  جلب العنصر بواسطة المعرف 
+            //من اجل الحذف  id  جلب العنصر بواسطة المعرف
             $tag = Tag::find($id);
             // شرط اذا كان العنصر موجود او المعرف اذا كان رقم غير صحيح
-            if (!$tag || !is_numeric($id))
+            if (!$tag || !is_numeric($id)) {
                 // رسالة خطأ
-                return response()->error('هذا العنصر غير موجود', 403);
+                return response()->error(__("messages.errors.element_not_found"), 403);
+            }
 
             // ============= حذف الوسم  ================:
             // بداية المعاملة مع البيانات المرسلة لقاعدة بيانات :
@@ -148,12 +153,12 @@ class TagController extends Controller
             // =================================================
 
             // رسالة نجاح عملية الحذف:
-            return response()->success('تم حذف الوسم بنجاح', $tag);
+            return response()->success(__("messages.oprations.delete_success"), $tag);
         } catch (Exception $ex) {
             // لم تتم المعاملة بشكل نهائي و لن يتم ادخال اي بيانات لقاعدة البيانات
             DB::rollback();
             // return $ex;
-            return response()->error('هناك خطأ ما حدث في قاعدة بيانات , يرجى التأكد من ذلك', 403);
+            return response()->error(__("messages.errors.error_database"), 403);
         }
     }
 }

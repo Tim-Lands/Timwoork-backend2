@@ -11,10 +11,8 @@ use App\Http\Requests\ResendVerifyRequest;
 use App\Http\Requests\VerifyEmailRequest;
 
 use App\Models\User;
-use App\Models\VerifyEmailCode;
 
 use App\Events\VerifyEmail;
-use App\Models\Profile;
 use App\Traits\LoginUser;
 use Exception;
 use Illuminate\Support\Facades\Auth;
@@ -27,7 +25,7 @@ class RegisterController extends Controller
 
     public function register(RegisterRequest $request)
     {
-        // تسجيل مستخدم جديد 
+        // تسجيل مستخدم جديد
         try {
             DB::beginTransaction();
             $user = User::create([
@@ -42,7 +40,7 @@ class RegisterController extends Controller
                 'badge_id' => 1,
                 'level_id' => 1,
             ]);
-            // إنشاء رمز تفعيل البريد اﻹلكتروني 
+            // إنشاء رمز تفعيل البريد اﻹلكتروني
 
             $this->store_code_bin($user);
             // إرسال رمز التفعيل إلى البريد الإلكتروني
@@ -51,7 +49,7 @@ class RegisterController extends Controller
             // تسجيل المستخدم الجديد في chatEngine
 
             $this->createChatEngineUser($user);
-            // تسجيل الدخول للمستخدم الجديد  
+            // تسجيل الدخول للمستخدم الجديد
             Auth::login($user);
             // إنهاء العملية
             DB::commit();
@@ -61,13 +59,12 @@ class RegisterController extends Controller
             DB::rollback();
             return $ex;
             // رسالة خطأ
-            return response()->error('هناك خطأ ما حدث في قاعدة بيانات , يرجى التأكد من ذلك', 403);
+            return response()->error(__('messages.errors.error_database'), 403);
         }
     }
 
     public function verifyEmail(VerifyEmailRequest $request)
     {
-
         return $this->verify_email($request->email, $request->code);
     }
 

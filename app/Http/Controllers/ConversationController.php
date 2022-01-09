@@ -31,7 +31,7 @@ class ConversationController extends Controller
     /**
      * show => id  دالة جلب محادثة معينة بواسطة المعرف
      *
-     *s @param  string $id => id متغير المعرف 
+     *s @param  string $id => id متغير المعرف
      * @return JsonResponse
      */
     public function show(mixed $id): JsonResponse
@@ -41,17 +41,18 @@ class ConversationController extends Controller
             $q->latest()->paginate(10);
         }])->first();
         // شرط اذا كان العنصر موجود
-        if (!$conversation)
+        if (!$conversation) {
             // رسالة خطأ
             return response()->error('هذا العنصر غير موجود', 403);
+        }
         // اظهار العنصر
-        return response()->success('تم جلب العنصر بنجاح', $conversation);
+        return response()->success(__("messages.oprations.get_data"), $conversation);
     }
 
 
     public function store(ConversationStoreRequest $request)
     {
-        //   إضافة محادثة جديدة 
+        //   إضافة محادثة جديدة
 
         $user_id = Auth::user()->id;
         //return Auth::user()->id;
@@ -74,13 +75,13 @@ class ConversationController extends Controller
             return $ex;
             DB::rollback();
             // رسالة خطأ
-            return response()->error('هناك خطأ ما حدث في قاعدة بيانات , يرجى التأكد من ذلك', 403);
+            return response()->error(__("messages.errors.error_database"), 403);
         }
     }
     // send Message
-    public function sendMessage(Conversation $conversation,  MessageStoreRequest $request)
+    public function sendMessage(Conversation $conversation, MessageStoreRequest $request)
     {
-        //   إرسال رسالة جديدة   
+        //   إرسال رسالة جديدة
 
         $user_id = Auth::user()->id;
         $conversation_id = $conversation->id;
@@ -99,7 +100,7 @@ class ConversationController extends Controller
             return $ex;
             DB::rollback();
             // رسالة خطأ
-            return response()->error('هناك خطأ ما حدث في قاعدة بيانات , يرجى التأكد من ذلك', 403);
+            return response()->error(__("messages.errors.error_database"), 403);
         }
     }
 }

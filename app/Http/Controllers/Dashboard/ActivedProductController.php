@@ -20,9 +20,10 @@ class ActivedProductController extends Controller
     {
         try {
             $product = Product::find($id);
-            if (!$product)
+            if (!$product) {
                 // رسالة خطأ
-                return response()->error('هذا العنصر غير موجود', 403);
+                return response()->error(__('messages.errors.element_not_found'), 403);
+            }
 
             // ============= تنشيط الخدمة  ================:
             // بداية المعاملة مع البيانات المرسلة لقاعدة بيانات :
@@ -33,14 +34,13 @@ class ActivedProductController extends Controller
             // انهاء المعاملة بشكل جيد :
             DB::commit();
             // رسالة نجاح عملية التنشيط:
-            return response()->success('تم تنشيط الخدمة بنجاح', $product);
+            return response()->success(__('messages.dashboard.active_status_product'), $product);
             // =================================================
-
         } catch (Exception $ex) {
             // لم تتم المعاملة بشكل نهائي و لن يتم ادخال اي بيانات لقاعدة البيانات
             DB::rollback();
             // رسالة خطأ :
-            return response()->error('هناك خطأ ما حدث في قاعدة بيانات , يرجى التأكد من ذلك', 403);
+            return response()->error(__('messages.errors.error_database'), 403);
         }
     }
     /**
@@ -53,9 +53,10 @@ class ActivedProductController extends Controller
     {
         try {
             $product = Product::find($id);
-            if (!$product)
+            if (!$product) {
                 // رسالة خطأ
-                return response()->error('هذا العنصر غير موجود', 403);
+                return response()->error(__('messages.errors.element_not_found'), 403);
+            }
 
             // ============= رفض الخدمة  ================:
             // بداية المعاملة مع البيانات المرسلة لقاعدة بيانات :
@@ -66,14 +67,13 @@ class ActivedProductController extends Controller
             // انهاء المعاملة بشكل جيد :
             DB::commit();
             // رسالة نجاح عملية الرفض:
-            return response()->success('تم رفض الخدمة بنجاح', $product);
+            return response()->success(__('messages.dashboard.reject_status_product'), $product);
             // =================================================
-
         } catch (Exception $ex) {
             // لم تتم المعاملة بشكل نهائي و لن يتم ادخال اي بيانات لقاعدة البيانات
             DB::rollback();
             // رسالة خطأ :
-            return response()->error('هناك خطأ ما حدث في قاعدة بيانات , يرجى التأكد من ذلك', 403);
+            return response()->error(__('messages.errors.error_database'), 403);
         }
     }
 }

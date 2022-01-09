@@ -21,7 +21,7 @@ class CountryController extends Controller
         // جلب جميع الدول عن طريق التصفح
         $countries = Country::Selection()->get();
         // اظهار العناصر
-        return response()->success('تم العثور على قائمة الدول', $countries);
+        return response()->success(__("messages.oprations.get_all_data"), $countries);
     }
 
     /**
@@ -50,18 +50,18 @@ class CountryController extends Controller
             DB::commit();
             // =================================================
             // رسالة نجاح عملية الاضافة:
-            return response()->success('تم انشاء دولة جديد بنجاح', $country);
+            return response()->success(__("messages.oprations.add_success"), $country);
         } catch (Exception $ex) {
             // لم تتم المعاملة بشكل نهائي و لن يتم ادخال اي بيانات لقاعدة البيانات
             DB::rollback();
-            return response()->error('هناك خطأ ما حدث في قاعدة بيانات , يرجى التأكد من ذلك', 403);
+            return response()->error(__("messages.errors.error_database"), 403);
         }
     }
 
     /**
      * show => id  دالة جلب دولة معين بواسطة المعرف
      *
-     *s @param  string $id => id متغير المعرف 
+     *s @param  string $id => id متغير المعرف
      * @return JsonResponse
      */
     public function show(mixed $id): JsonResponse
@@ -69,11 +69,12 @@ class CountryController extends Controller
         //id  جلب العنصر بواسطة
         $country = Country::Selection()->whereId($id)->first();
         // شرط اذا كان العنصر موجود
-        if (!$country)
+        if (!$country) {
             // رسالة خطأ
-            return response()->error('هذا العنصر غير موجود', 403);
+            return response()->error(__("messages.errors.element_not_found"), 403);
+        }
         // اظهار العنصر
-        return response()->success('تم جلب العنصر بنجاح', $country);
+        return response()->success(__("messages.oprations.get_data"), $country);
     }
 
 
@@ -87,25 +88,28 @@ class CountryController extends Controller
     public function update(CountryRequest $request, mixed $id): ?object
     {
         try {
-            //من اجل التعديل  id  جلب العنصر بواسطة المعرف 
+            //من اجل التعديل  id  جلب العنصر بواسطة المعرف
             $country = Country::find($id);
 
             // شرط اذا كان العنصر موجود او المعرف اذا كان رقم غير صحيح
-            if (!$country || !is_numeric($id))
+            if (!$country || !is_numeric($id)) {
                 // رسالة خطأ
-                return response()->error('هذا العنصر غير موجود', 403);
+                return response()->error(__("messages.errors.element_not_found"), 403);
+            }
 
             // جلب البيانات و وضعها في مصفوفة:
             $data = [
                 'name_ar'    => $request->name_ar,
                 'code_phone' => $request->code_phone
             ];
-            //  في حالة ما اذا وجد الاسم بالانجليزية , اضفها الى مصفوفة التعديل: 
-            if ($request->name_en)
+            //  في حالة ما اذا وجد الاسم بالانجليزية , اضفها الى مصفوفة التعديل:
+            if ($request->name_en) {
                 $data['name_en'] = $request->name_en;
-            //  في حالة ما اذا وجد الاسم بالفرنيسة , اضفها الى مصفوفة التعديل: 
-            if ($request->name_fr)
+            }
+            //  في حالة ما اذا وجد الاسم بالفرنيسة , اضفها الى مصفوفة التعديل:
+            if ($request->name_fr) {
                 $data['name_fr'] = $request->name_fr;
+            }
             // ============= التعديل على الدولة  ================:
             // بداية المعاملة مع البيانات المرسلة لقاعدة بيانات :
             DB::beginTransaction();
@@ -116,12 +120,12 @@ class CountryController extends Controller
             // =================================================
 
             // رسالة نجاح عملية التعديل:
-            return response()->success('تم التعديل على الدولة بنجاح', $country);
+            return response()->success(__("messages.oprations.update_success"), $country);
         } catch (Exception $ex) {
             // لم تتم المعاملة بشكل نهائي و لن يتم ادخال اي بيانات لقاعدة البيانات
             DB::rollback();
             // رسالة خطأ :
-            return response()->error('هناك خطأ ما حدث في قاعدة بيانات , يرجى التأكد من ذلك', 403);
+            return response()->error(__("messages.errors.error_database"), 403);
         }
     }
 
@@ -134,12 +138,13 @@ class CountryController extends Controller
     public function delete(mixed $id): ?object
     {
         try {
-            //من اجل الحذف  id  جلب العنصر بواسطة المعرف 
+            //من اجل الحذف  id  جلب العنصر بواسطة المعرف
             $country = Country::find($id);
             // شرط اذا كان العنصر موجود او المعرف اذا كان رقم غير صحيح
-            if (!$country || !is_numeric($id))
+            if (!$country || !is_numeric($id)) {
                 // رسالة خطأ
-                return response()->error('هذا العنصر غير موجود', 403);
+                return response()->error(__("messages.errors.element_not_found"), 403);
+            }
 
             // ============= حذف الدولة  ================:
             // بداية المعاملة مع البيانات المرسلة لقاعدة بيانات :
@@ -151,12 +156,12 @@ class CountryController extends Controller
             // =================================================
 
             // رسالة نجاح عملية الحذف:
-            return response()->success('تم حذف الدولة بنجاح', $country);
+            return response()->success(__("messages.oprations.delete_success"), $country);
         } catch (Exception $ex) {
             // لم تتم المعاملة بشكل نهائي و لن يتم ادخال اي بيانات لقاعدة البيانات
             DB::rollback();
             // return $ex;
-            return response()->error('هناك خطأ ما حدث في قاعدة بيانات , يرجى التأكد من ذلك', 403);
+            return response()->error(__("messages.errors.error_database"), 403);
         }
     }
 }

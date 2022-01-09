@@ -23,12 +23,12 @@ class SubCategoryController extends Controller
         // جلب التصنيفات الرئيسية
         $categories = Category::selection()->parent()->pluck('name_ar', 'id');
         // اظهار العناصر
-        return response()->success('عرض كل تصنيفات الرئيسية ', $categories);
+        return response()->success(__("messages.oprations.get_all_data"), $categories);
     }
     /**
      * show => id  دالة جلب تصنيف فرعي معين بواسطة المعرف
      *
-     *s @param  mixed $id => id متغير المعرف 
+     *s @param  mixed $id => id متغير المعرف
      * @return JsonResponse
      */
     public function show(mixed $id): JsonResponse
@@ -37,11 +37,12 @@ class SubCategoryController extends Controller
         //id  جلب العنصر بواسطة
         $subcategory = Category::selection()->whereId($id)->child()->first();
         // شرط اذا كان العنصر موجود ام لا
-        if (!$subcategory)
+        if (!$subcategory) {
             // رسالة خطأ
-            return response()->error('هذا العنصر غير موجود', 403);
+            return response()->error(__("messages.errors.element_not_found"), 403);
+        }
         // اظهار العنصر
-        return response()->success('تم جلب العنصر بنجاح', $subcategory);
+        return response()->success(__("messages.oprations.get_data"), $subcategory);
     }
 
     /**
@@ -75,12 +76,12 @@ class SubCategoryController extends Controller
             // =================================================
 
             // رسالة نجاح عملية الاضافة:
-            return response()->success('تم انشاء تصنيف فرعي جديد بنجاح', $subcategory);
+            return response()->success(__("messages.oprations.add_success"), $subcategory);
         } catch (Exception $ex) {
             // لم تتم المعاملة بشكل نهائي و لن يتم ادخال اي بيانات لقاعدة البيانات
             DB::rollback();
             // رسالة خطأ
-            return response()->error('هناك خطأ ما حدث في قاعدة بيانات , يرجى التأكد من ذلك', 403);
+            return response()->error(__("messages.errors.error_database"), 403);
         }
     }
 
@@ -94,12 +95,13 @@ class SubCategoryController extends Controller
     public function update(mixed $id, SubCategoryRequest $request): ?object
     {
         try {
-            //من اجل التعديل  id  جلب العنصر بواسطة المعرف 
+            //من اجل التعديل  id  جلب العنصر بواسطة المعرف
             $subcategory = Category::selection()->whereId($id)->child()->first();
             // شرط اذا كان العنصر موجود او المعرف اذا كان رقم غير صحيح
-            if (!$subcategory || !is_numeric($id))
+            if (!$subcategory || !is_numeric($id)) {
                 // رسالة خطأ
-                return response()->error('هذا العنصر غير موجود', 403);
+                return response()->error(__("messages.errors.element_not_found"), 403);
+            }
 
             // جلب البيانات و وضعها في مصفوفة:
             $data = [
@@ -109,18 +111,22 @@ class SubCategoryController extends Controller
                 'icon'           => $request->icon,
                 'parent_id'      => $request->parent_id
             ];
-            //  في حالة ما اذا وجد الاسم بالفرنيسة , اضفها الى مصفوفة التعديل: 
-            if ($request->name_fr)
+            //  في حالة ما اذا وجد الاسم بالفرنيسة , اضفها الى مصفوفة التعديل:
+            if ($request->name_fr) {
                 $data['name_fr'] = $request->name_fr;
-            //  في حالة ما اذا وجد الوصف بالعربية , اضفها الى مصفوفة التعديل: 
-            if ($request->description_ar)
+            }
+            //  في حالة ما اذا وجد الوصف بالعربية , اضفها الى مصفوفة التعديل:
+            if ($request->description_ar) {
                 $data['description_ar'] = $request->description_ar;
-            //  في حالة ما اذا وجد الوصف بالانجليزية , اضفها الى مصفوفة التعديل: 
-            if ($request->description_en)
+            }
+            //  في حالة ما اذا وجد الوصف بالانجليزية , اضفها الى مصفوفة التعديل:
+            if ($request->description_en) {
                 $data['description_en'] = $request->description_en;
-            //  في حالة ما اذا وجد الاسم بالفرنسية , اضفها الى مصفوفة التعديل: 
-            if ($request->description_fr)
+            }
+            //  في حالة ما اذا وجد الاسم بالفرنسية , اضفها الى مصفوفة التعديل:
+            if ($request->description_fr) {
                 $data['description_fr'] = $request->description_fr;
+            }
 
             // ============= التعديل على التصنيف  ================:
             // بداية المعاملة مع البيانات المرسلة لقاعدة بيانات :
@@ -132,12 +138,12 @@ class SubCategoryController extends Controller
             // =================================================
 
             // رسالة نجاح عملية التعديل:
-            return response()->success('تم التعديل على تصنيف الفرعي بنجاح', $subcategory);
+            return response()->success(__("messages.oprations.update_success"), $subcategory);
         } catch (Exception $ex) {
             // لم تتم المعاملة بشكل نهائي و لن يتم ادخال اي بيانات لقاعدة البيانات
             DB::rollback();
             // رسالة خطأ :
-            return response()->error('هناك خطأ ما حدث في قاعدة بيانات , يرجى التأكد من ذلك', 403);
+            return response()->error(__("messages.errors.error_database"), 403);
         }
     }
 
@@ -150,12 +156,13 @@ class SubCategoryController extends Controller
     public function delete(mixed $id): ?object
     {
         try {
-            //من اجل الحذف  id  جلب العنصر بواسطة المعرف 
+            //من اجل الحذف  id  جلب العنصر بواسطة المعرف
             $subcategory = Category::selection()->whereId($id)->child()->first();
             // شرط اذا كان العنصر موجود او المعرف اذا كان رقم غير صحيح
-            if (!$subcategory || !is_numeric($id))
+            if (!$subcategory || !is_numeric($id)) {
                 // رسالة خطأ
-                return response()->error('هذا العنصر غير موجود', 403);
+                return response()->error(__("messages.errors.element_not_found"), 403);
+            }
 
             // ============= حذف التصنيف الفرعي  ================:
             // بداية المعاملة مع البيانات المرسلة لقاعدة بيانات :
@@ -167,12 +174,12 @@ class SubCategoryController extends Controller
             // =================================================
 
             // رسالة نجاح عملية التعديل:
-            return response()->success('تم حذف تصنيف الفرعي بنجاح', $subcategory);
+            return response()->success(__("messages.oprations.delete_success"), $subcategory);
         } catch (Exception $ex) {
             // لم تتم المعاملة بشكل نهائي و لن يتم ادخال اي بيانات لقاعدة البيانات
             DB::rollback();
             // رسالة خطأ
-            return response()->error('هناك خطأ ما حدث في قاعدة بيانات , يرجى التأكد من ذلك', 403);
+            return response()->error(__("messages.errors.error_database"), 403);
         }
     }
 }

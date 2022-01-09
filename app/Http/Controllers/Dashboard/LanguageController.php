@@ -7,7 +7,6 @@ use App\Http\Requests\Dashboard\LanguageRequest;
 use App\Models\Language;
 use Exception;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
 class LanguageController extends Controller
@@ -22,7 +21,7 @@ class LanguageController extends Controller
         // جلب جميع اللغة عن طريق التصفح
         $languages = Language::Selection()->get();
         // اظهار العناصر
-        return response()->success('تم العثور على قائمة اللغات', $languages);
+        return response()->success(__("messages.oprations.get_all_data"), $languages);
     }
 
     /**
@@ -49,18 +48,18 @@ class LanguageController extends Controller
             DB::commit();
             // =================================================
             // رسالة نجاح عملية الاضافة:
-            return response()->success('تم انشاء لغة جديدة بنجاح', $language);
+            return response()->success(__("messages.oprations.add_success"), $language);
         } catch (Exception $ex) {
             // لم تتم المعاملة بشكل نهائي و لن يتم ادخال اي بيانات لقاعدة البيانات
             DB::rollback();
-            return response()->error('هناك خطأ ما حدث في قاعدة بيانات , يرجى التأكد من ذلك', 403);
+            return response()->error(__("messages.errors.error_database"), 403);
         }
     }
 
     /**
      * show => id  دالة جلب لغة معين بواسطة المعرف
      *
-     *s @param  string $id => id متغير المعرف 
+     *s @param  string $id => id متغير المعرف
      * @return JsonResponse
      */
     public function show(mixed $id): JsonResponse
@@ -68,11 +67,12 @@ class LanguageController extends Controller
         //id  جلب العنصر بواسطة
         $language = Language::Selection()->whereId($id)->first();
         // شرط اذا كان العنصر موجود
-        if (!$language)
+        if (!$language) {
             // رسالة خطأ
-            return response()->error('هذا العنصر غير موجود', 403);
+            return response()->error(__("messages.errors.element_not_found"), 403);
+        }
         // اظهار العنصر
-        return response()->success('تم جلب العنصر بنجاح', $language);
+        return response()->success(__("messages.oprations.get_data"), $language);
     }
 
 
@@ -86,24 +86,27 @@ class LanguageController extends Controller
     public function update(LanguageRequest $request, mixed $id): ?object
     {
         try {
-            //من اجل التعديل  id  جلب العنصر بواسطة المعرف 
+            //من اجل التعديل  id  جلب العنصر بواسطة المعرف
             $language = Language::find($id);
 
             // شرط اذا كان العنصر موجود او المعرف اذا كان رقم غير صحيح
-            if (!$language || !is_numeric($id))
+            if (!$language || !is_numeric($id)) {
                 // رسالة خطأ
-                return response()->error('هذا العنصر غير موجود', 403);
+                return response()->error(__("messages.errors.element_not_found"), 403);
+            }
 
             // جلب البيانات و وضعها في مصفوفة:
             $data = [
                 'name_ar' => $request->name_ar,
             ];
-            //  في حالة ما اذا وجد الاسم بالانجليزية , اضفها الى مصفوفة التعديل: 
-            if ($request->name_en)
+            //  في حالة ما اذا وجد الاسم بالانجليزية , اضفها الى مصفوفة التعديل:
+            if ($request->name_en) {
                 $data['name_en'] = $request->name_en;
-            //  في حالة ما اذا وجد الاسم بالفرنيسة , اضفها الى مصفوفة التعديل: 
-            if ($request->name_fr)
+            }
+            //  في حالة ما اذا وجد الاسم بالفرنيسة , اضفها الى مصفوفة التعديل:
+            if ($request->name_fr) {
                 $data['name_fr'] = $request->name_fr;
+            }
             // ============= التعديل على اللغة  ================:
             // بداية المعاملة مع البيانات المرسلة لقاعدة بيانات :
             DB::beginTransaction();
@@ -114,12 +117,12 @@ class LanguageController extends Controller
             // =================================================
 
             // رسالة نجاح عملية التعديل:
-            return response()->success('تم التعديل على اللغة بنجاح', $language);
+            return response()->success(__("messages.oprations.update_success"), $language);
         } catch (Exception $ex) {
             // لم تتم المعاملة بشكل نهائي و لن يتم ادخال اي بيانات لقاعدة البيانات
             DB::rollback();
             // رسالة خطأ :
-            return response()->error('هناك خطأ ما حدث في قاعدة بيانات , يرجى التأكد من ذلك', 403);
+            return response()->error(__("messages.errors.error_database"), 403);
         }
     }
 
@@ -132,12 +135,13 @@ class LanguageController extends Controller
     public function delete(mixed $id): ?object
     {
         try {
-            //من اجل الحذف  id  جلب العنصر بواسطة المعرف 
+            //من اجل الحذف  id  جلب العنصر بواسطة المعرف
             $language = Language::find($id);
             // شرط اذا كان العنصر موجود او المعرف اذا كان رقم غير صحيح
-            if (!$language || !is_numeric($id))
+            if (!$language || !is_numeric($id)) {
                 // رسالة خطأ
-                return response()->error('هذا العنصر غير موجود', 403);
+                return response()->error(__("messages.errors.element_not_found"), 403);
+            }
 
             // ============= حذف اللغة  ================:
             // بداية المعاملة مع البيانات المرسلة لقاعدة بيانات :
@@ -149,12 +153,12 @@ class LanguageController extends Controller
             // =================================================
 
             // رسالة نجاح عملية الحذف:
-            return response()->success('تم حذف اللغة بنجاح', $language);
+            return response()->success(__("messages.oprations.delete_success"), $language);
         } catch (Exception $ex) {
             // لم تتم المعاملة بشكل نهائي و لن يتم ادخال اي بيانات لقاعدة البيانات
             DB::rollback();
             // return $ex;
-            return response()->error('هناك خطأ ما حدث في قاعدة بيانات , يرجى التأكد من ذلك', 403);
+            return response()->error(__("messages.errors.error_database"), 403);
         }
     }
 }

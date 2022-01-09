@@ -20,6 +20,6 @@ class ChangePasswordController extends Controller
         $user = Auth::user();
         $user->password = bcrypt($request->password);
         $user->save();
-        return response()->success('لقد تمّ تعديل كلمة المرور بنجاح');
+        return response()->success(__("messages.user.success_reset_password"));
     }
 }

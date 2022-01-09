@@ -18,7 +18,7 @@ class ProductController extends Controller
         // جلب جميع الخدمات
         $products = Product::selection()->with(['subcategory', 'profileSeller'])->get();
         // اظهار العناصر
-        return response()->success('تم العثور على قائمة الخدمات', $products);
+        return response()->success(__("messages.oprations.get_all_data"), $products);
     }
 
     /**
@@ -32,12 +32,13 @@ class ProductController extends Controller
         //slug  جلب العنصر بواسطة
         $product = Product::Selection()->whereId($id)->with(['category', 'profileSeller'])->first();
         // شرط اذا كان العنصر موجود
-        if (!$product)
+        if (!$product) {
             // رسالة خطأ
-            return response()->error('هذا العنصر غير موجود', 403);
+            return response()->error(__("messages.errors.element_not_found"), 403);
+        }
 
         // اظهار العنصر
-        return response()->success('تم جلب العنصر بنجاح', $product);
+        return response()->success(__("messages.oprations.get_data"), $product);
     }
 
     /**
@@ -50,7 +51,7 @@ class ProductController extends Controller
         // جلب جميع الخدمات التي تم تنشيطها
         $products_actived = Product::selection()->productActive()->with(['category', 'profileSeller'])->get();
         // اظهار العناصر
-        return response()->success('تم العثور على قائمة الخدمات التي تم تنشيطها', $products_actived);
+        return response()->success(__("messages.dashboard.get_product_actived"), $products_actived);
     }
 
     /**
@@ -63,6 +64,6 @@ class ProductController extends Controller
         // جلب جميع الخدمات التي تم رفضها
         $products_rejected = Product::selection()->productReject()->with(['category', 'profileSeller'])->get();
         // اظهار العناصر
-        return response()->success('تم العثور على قائمة الخدمات التي تم رفضها', $products_rejected);
+        return response()->success(__("messages.dashboard.get_product_rejected"), $products_rejected);
     }
 }

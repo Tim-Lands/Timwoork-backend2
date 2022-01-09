@@ -11,7 +11,6 @@ use App\Models\Order;
 use App\Traits\Paypal;
 use App\Traits\Stripe;
 use Exception;
-use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Request;
@@ -44,7 +43,7 @@ class CartController extends Controller
             ->where('is_buying', 0)
             ->first();
         // اظهار السلة مع عناصرها
-        return response()->success('عرض سلة المستخدم', $cart);
+        return response()->success(__('messages.oprations.get_data'), $cart);
     }
 
     /**
@@ -70,9 +69,9 @@ class CartController extends Controller
             $product = Product::whereId($request->product_id)->first();
             
             // شرط اذا كانت الخدمة للمستخدم المشتري
-            if (Auth::user()->profile->profile_seller->exists()) {
+            if (Auth::user()->profile->profile_seller) {
                 if ($product->profile_seller_id == Auth::user()->profile->profile_seller->id) {
-                    return response()->error('لا يمكنك شراء هذه الخدمة, تفقد بياناتك', 422);
+                    return response()->error(__('messages.cart.product_not_buying'), 400);
                 }
             }
             // وضع البيانات فالمصفوفة من اجل اضافة عناصر فالسلة السلة
@@ -90,7 +89,7 @@ class CartController extends Controller
             // شرط في حالة ما اذا قام المستخدم بارسال تطويرات
             if ($request->has('developments')) {
                 if ($this->check_found_developments($request->developments, $request->product_id) == 0) {
-                    return response()->error('التطويرات التي تم ادخالها ليست مطابقة مع هذه الخدمة');
+                    return response()->error(__('messages.cart.same_developments'), 422);
                 }
                 // سعر التطويرات المدخلة
                 $price_developments = Product::whereId($request->product_id)
@@ -136,7 +135,7 @@ class CartController extends Controller
                 // شرط اذا كان العنصر موجود
                 if ($cart_item_found) {
                     // رسالة خطأ
-                    return response()->error('هذا العنصر موجود فالسلة , اضف عنصر آخر', 403);
+                    return response()->error(__('messages.cart.cartitem_found'), 422);
                 }
                 // جلب السلة المستخدم الغير مباعة
                 $new_cart =  Cart::where('user_id', Auth::id())->where('is_buying', 0);
@@ -162,7 +161,7 @@ class CartController extends Controller
             /* -------------------------------------------------------------------------- */
             // رسالة نجاح عملية الاضافة:
             return response()->success(
-                'تم انشاء عنصر فالسلة',
+                __("messages.oprations.add_success"),
                 $cart->with('cart_items')
                     ->withCount('cart_items')
                     ->where('is_buying', 0)
@@ -173,7 +172,7 @@ class CartController extends Controller
             // لم تتم المعاملة بشكل نهائي و لن يتم ادخال اي بيانات لقاعدة البيانات
             DB::rollback();
             // رسالة خطأ
-            return response()->error('هناك خطأ ما حدث في قاعدة بيانات , يرجى التأكد من ذلك', 403);
+            return response()->error(__('messages.errors.error_database'), 403);
         }
     }
 
@@ -202,13 +201,13 @@ class CartController extends Controller
                 ->where('product_id', $request->product_id);
             if (!$cart_item_founded->first()) {
                 // رسالة خطأ
-                return response()->error('هذا العنصر غير موجود', 403);
+                return response()->error(__("messages.errors.element_not_found"), 422);
             }
 
             // شرط في حالة ما اذا قام المستخدم بارسال تطويرات
             if ($request->has('developments')) {
                 if ($this->check_found_developments($request->developments, $request->product_id) == 0) {
-                    return response()->error('التطويرات التي تم ادخالها ليست مطابقة مع هذه الخدمة');
+                    return response()->error(__('messages.cart.same_developments'), 422);
                 }
             }
             /* ----------------------- التعديل على العنصر من السلة ---------------------- */
@@ -236,18 +235,18 @@ class CartController extends Controller
                 $this->calculate_price($cart, $cart_item, $request->quantity);
             } else {
                 // رسالة خطأ
-                return response()->error('لا توجد سلة غير مباعة , اضف سلة جديدة من فضلك');
+                return response()->error(__('messages.cart.not_found_cartitem'));
             }
             // انهاء المعاملة بشكل جيد :
             DB::commit();
             /* -------------------------------------------------------------------------- */
             // رسالة نجاح عملية الاضافة:
-            return response()->success('تم تحديث عنصر فالسلة', $cart_item);
+            return response()->success(__("messages.oprations.update_success"), $cart_item);
         } catch (Exception $ex) {
             // لم تتم المعاملة بشكل نهائي و لن يتم ادخال اي بيانات لقاعدة البيانات
             DB::rollback();
             // رسالة خطأ
-            return response()->error('هناك خطأ ما حدث في قاعدة بيانات , يرجى التأكد من ذلك', 403);
+            return response()->error(__('messages.errors.error_database'), 403);
         }
     }
 
@@ -270,7 +269,7 @@ class CartController extends Controller
             // شرط اذا كان العنصر موجود
             if (!$cart_item || !is_numeric($id)) {
                 // رسالة خطأ
-                return response()->error('هذا العنصر غير موجود فالسلة', 403);
+                return response()->error(__("messages.errors.element_not_found"), 403);
             }
             // جلب العنصر من السلة
             /* ---------------------------- حذف عنصر من السلة --------------------------- */
@@ -279,10 +278,10 @@ class CartController extends Controller
             $cart_item->delete();
             /* -------------------------------------------------------------------------- */
             // رسالة نجاح عملية الحذف:
-            return response()->success('تم حذف عنصر من السلة بنجاح', $cart_item);
+            return response()->success(__("messages.oprations.delete_success"), $cart_item);
         } catch (Exception $ex) {
             // رسالة خطأ
-            return response()->error('هناك خطأ ما حدث في قاعدة بيانات , يرجى التأكد من ذلك', 403);
+            return response()->error(__('messages.errors.error_database'), 403);
         }
     }
 
@@ -358,7 +357,12 @@ class CartController extends Controller
         }
         return 1;
     }
-
+    
+    /**
+     * cart_approve
+     *
+     * @return void
+     */
     public function cart_approve()
     {
         $cart = Cart::selection()
@@ -370,7 +374,13 @@ class CartController extends Controller
             ->first();
         return $this->approve($cart);
     }
-
+    
+    /**
+     * paypal_charge
+     *
+     * @param  mixed $request
+     * @return void
+     */
     public function paypal_charge(Request $request)
     {
         $cart = Cart::selection()
@@ -382,7 +392,13 @@ class CartController extends Controller
             ->first();
         return $this->paypal_purchase($request->token, $cart);
     }
-
+    
+    /**
+     * stripe_charge
+     *
+     * @param  mixed $request
+     * @return void
+     */
     public function stripe_charge(Request $request)
     {
         $cart = Cart::selection()

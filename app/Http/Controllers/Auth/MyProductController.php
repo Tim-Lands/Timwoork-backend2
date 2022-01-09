@@ -21,7 +21,7 @@ class MyProductController extends Controller
             ->makeHidden([
                 'buyer_instruct', 'content', 'profile_seller_id', 'category_id', 'duration'
             ]);
-        return response()->success('لقد تم العثور على خدماتك', $products);
+        return response()->success(__("messages.oprations.get_all_data"), $products);
     }
 
     /**
@@ -36,7 +36,7 @@ class MyProductController extends Controller
             ->makeHidden([
                 'buyer_instruct', 'content', 'profile_seller_id', 'category_id', 'duration'
             ]);
-        return response()->success('لقد تم العثور على خدماتك', $products);
+        return response()->success(__("messages.oprations.get_all_data"), $products);
     }
 
     /**
@@ -50,7 +50,7 @@ class MyProductController extends Controller
             ->makeHidden([
                 'buyer_instruct', 'content', 'profile_seller_id', 'category_id', 'duration'
             ]);
-        return response()->success('لقد تم العثور على خدماتك', $products);
+        return response()->success(__("messages.oprations.get_all_data"), $products);
     }
 
     /**
@@ -64,7 +64,7 @@ class MyProductController extends Controller
             ->makeHidden([
                 'buyer_instruct', 'content', 'profile_seller_id', 'category_id', 'duration'
             ]);
-        return response()->success('لقد تم العثور على خدماتك', $products);
+        return response()->success(__("messages.oprations.get_all_data"), $products);
     }
 
     /**
@@ -78,7 +78,7 @@ class MyProductController extends Controller
             ->makeHidden([
                 'buyer_instruct', 'content', 'profile_seller_id', 'category_id', 'duration'
             ]);
-        return response()->success('لقد تم العثور على خدماتك', $products);
+        return response()->success(__("messages.oprations.get_all_data"), $products);
     }
 
     /**
@@ -92,7 +92,7 @@ class MyProductController extends Controller
             ->makeHidden([
                 'buyer_instruct', 'content', 'profile_seller_id', 'category_id', 'duration'
             ]);
-        return response()->success('لقد تم العثور على خدماتك', $products);
+        return response()->success(__("messages.oprations.get_all_data"), $products);
     }
     
     /**
@@ -116,20 +116,20 @@ class MyProductController extends Controller
             ;
             // شرط اذا وجد هذه الخدمة
             if (!$product) {
-                return response()->error('لا يوجد هذا العنصر', 422);
+                return response()->error(__("messages.errors.element_not_found"), 422);
             }
             if ($product->is_active == Product::PRODUCT_ACTIVE) {
-                return response()->error('تم تنشيط الخدمة من قبل', 422);
+                return response()->error(__("messages.seller.actived_product"), 422);
             }
             /* -------------------- عملية تنشيط الخدمة من طرف البائع -------------------- */
             $product->update(['is_active' => Product::PRODUCT_ACTIVE]);
             /* -------------------------------------------------------------------------- */
             // رسالة نجاح
-            return response()->success('تم تنشيط الخدمة', $product);
+            return response()->success(__("messages.seller.active_product"), $product);
         } catch (Exception $ex) {
             return $ex;
             // رسالة خطأ
-            return response()->error('هناك خطأ ما حدث في قاعدة بيانات , يرجى التأكد من ذلك', 403);
+            return response()->error(__("messages.errors.error_database"), 403);
         }
     }
 
@@ -154,19 +154,19 @@ class MyProductController extends Controller
             ;
             // شرط اذا وجد هذه الخدمة
             if (!$product) {
-                return response()->error('لا يوجد هذا العنصر', 422);
+                return response()->error(__("messages.errors.element_not_found"), 422);
             }
             if ($product->is_active == 0) {
-                return response()->error('الخدمة معطلة', 422);
+                return response()->error(__("messages.seller.disactived_product"), 422);
             }
-            /* -------------------- عملية تنشيط الخدمة من طرف البائع -------------------- */
+            /* -------------------- عملية تعطيل الخدمة من طرف البائع -------------------- */
             $product->update(['is_active' => Product::PRODUCT_REJECT]);
             /* -------------------------------------------------------------------------- */
             // رسالة نجاح
-            return response()->success('تم تعطيل الخدمة', $product);
+            return response()->success(__("messages.seller.disactive_product"), $product);
         } catch (Exception $ex) {
             // رسالة خطأ
-            return response()->error('هناك خطأ ما حدث في قاعدة بيانات , يرجى التأكد من ذلك', 403);
+            return response()->error(__("messages.errors.error_database"), 403);
         }
     }
     /**
@@ -179,12 +179,13 @@ class MyProductController extends Controller
     {
         $product = Product::whereId($id)
                             ->where('profile_seller_id', Auth::user()->profile->profile_seller->id)
+                            ->with(['subcategory.category','ratings'])
                             ->first();
         
         if (!$product) {
-            return response()->error('لا يوجد هذا العنصر', 422);
+            return response()->error(__("messages.errors.element_not_found"), 422);
         }
         // رسالة نجاح
-        return response()->success('عرض الخدمة', $product);
+        return response()->success(__("messages.oprations.get_data"), $product);
     }
 }

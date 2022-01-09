@@ -22,15 +22,15 @@ class SellerController extends Controller
     public function store(Request $request)
     {
         try {
-            // إنشاء ملف شخصي للبائع 
+            // إنشاء ملف شخصي للبائع
             $seller = Auth::user()->profile->profile_seller()->create([
                 'seller_badge_id' => 1,
                 'seller_level_id' => 1,
             ]);
-            return response()->success('تمّ إنشاء الملف الشخصي للبائع بنجاح', $seller);
+            return response()->success(__("messages.oprations.add_success"), $seller);
         } catch (Exception $ex) {
             //return $ex;
-            return response()->error('حدث خطأ غير متوقع');
+            return response()->error(__("messages.errors.error_database"));
         }
     }
 
@@ -52,8 +52,9 @@ class SellerController extends Controller
             // تسجيل المهارات الخاصة للبائع
             $skills = [];
             // تهيئة المهارات بوضعها في مصفوفة
-            for ($i = 0; $i < count($request->skills); $i++)
+            for ($i = 0; $i < count($request->skills); $i++) {
                 $skills[$request->skills[$i]["id"]]  = ["level" => $request->skills[$i]["level"]];
+            }
             $seller->skills()->syncWithoutDetaching($skills);
             // تغيير حالة البروفايل إلى بائع
             $seller->profile->is_seller = true;
@@ -61,12 +62,12 @@ class SellerController extends Controller
             $seller->profile->save();
             DB::commit();
 
-            // إرسال رسالة نجاح 
+            // إرسال رسالة نجاح
             return response()->success('تم تسجيل بروفايل البائع بنجاح', $seller);
         } catch (Exception $ex) {
             DB::rollback();
             //return $ex;
-            return response()->error('حدث خطأ غير متوقع');
+            return response()->error(__("messages.errors.error_database"));
         }
     }
 
@@ -87,10 +88,10 @@ class SellerController extends Controller
             $seller->steps = ProfileSeller::COMPLETED_SETP_ONE;
             $seller->save();
             // إرسال رسالة نجاح المرحلة اﻷولى
-            return response()->success('نجاح المرحلة اﻷولى', $seller);
+            return response()->success(__("messages.product.success_step_one"), $seller);
         } catch (Exception $ex) {
             //return $ex;
-            return response()->error('حدث خطأ غير متوقع');
+            return response()->error(__("messages.errors.error_database"));
         }
     }
 
@@ -111,10 +112,10 @@ class SellerController extends Controller
             $seller->steps = ProfileSeller::COMPLETED_SETP_TWO;
             $seller->save();
             // إرسال رسالة نجاح المرحلة اﻷولى
-            return response()->success('نجاح المرحلة الثانية', $seller);
+            return response()->success(__("messages.product.success_step_two"), $seller);
         } catch (Exception $ex) {
             return $ex;
-            return response()->error('حدث خطأ غير متوقع');
+            return response()->error(__("messages.errors.error_database"));
         }
     }
 }

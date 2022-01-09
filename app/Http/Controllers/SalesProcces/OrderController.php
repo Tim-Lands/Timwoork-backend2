@@ -47,12 +47,12 @@ class OrderController extends Controller
                 ->first();
 
             if (!$cart) {
-                return response()->error('لا توجد سلة , الرجاء اعادة عملية الشراء', 422);
+                return response()->error(__("messages.cart.cart_not_found"), 422);
             }
             // جلب المعرفات الخدمات المتواجدة في عناصر السلة
             $cart_items = $cart['cart_items']->pluck('product_id');
             if ($cart_items->count() == 0) {
-                return response()->error('لا توجد عناصر فالسلة , الرجاء اعادة عملية الشراء', 422);
+                return response()->error(__('messages.cart.cartitem_found'), 422);
             }
             // وضع البيانات فالمصفوفة من اجل اضافة طلبيىة
             $data_order = [
@@ -111,10 +111,15 @@ class OrderController extends Controller
             DB::rollBack();
             return $ex;
             // رسالة خطأ
-            return response()->error('هناك خطأ ما حدث في قاعدة بيانات , يرجى التأكد من ذلك', 422);
+            return response()->error(__("messages.errors.error_database"), 422);
         }
     }
-
+    
+    /**
+     * cart_approve
+     *
+     * @return void
+     */
     public function cart_approve()
     {
         $cart = Cart::selection()
@@ -126,7 +131,13 @@ class OrderController extends Controller
             ->first();
         return $this->approve($cart);
     }
-
+    
+    /**
+     * paypal_charge
+     *
+     * @param  mixed $request
+     * @return void
+     */
     public function paypal_charge(Request $request)
     {
         $cart = Cart::selection()
@@ -141,7 +152,13 @@ class OrderController extends Controller
             return $this->create_order_with_items();
         }
     }
-
+    
+    /**
+     * stripe_charge
+     *
+     * @param  mixed $request
+     * @return void
+     */
     public function stripe_charge(Request $request)
     {
         $cart = Cart::selection()

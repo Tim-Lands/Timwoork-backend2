@@ -9,7 +9,6 @@ use Illuminate\Http\Response;
 
 class AuthController extends Controller
 {
-
     public function login(Request $request)
     {
         $this->validate($request, [
@@ -18,11 +17,11 @@ class AuthController extends Controller
         ]);
 
         if (!auth('admin')->attempt($request->only('email', 'password'))) {
-            return response()->error('المعلومات التي أدخلتها خاطئة');
+            return response()->error(__('messages.user.error_login'));
         }
         $user = auth('admin')->user();
         $token = $user->createToken('token')->plainTextToken;
-        return response()->success('تم تسجيل الدخول بنجاح', $token);
+        return response()->success(__('messages.dashboard.get_login'), $token);
     }
 
     public function me(Request $request)
@@ -31,6 +30,6 @@ class AuthController extends Controller
     }
     public function logout()
     {
-        return response()->success('تم تسجيل الخروج بنجاح');
+        return response()->success(__('messages.dashboard.get_logout'));
     }
 }

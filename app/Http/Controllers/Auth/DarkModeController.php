@@ -22,11 +22,11 @@ class DarkModeController extends Controller
         if ($mode) {
             $user->profile->dark_mode = false;
             $user->profile->save();
-            return response()->success('لقد تم تغيير الوضع إلى وضع نهاري');
+            return response()->success(__("messages.mode.active_dark_mode"));
         } else {
             $user->profile->dark_mode = true;
             $user->profile->save();
-            return response()->success('لقد تم تغيير الوضع إلى وضع ليلي');
+            return response()->success(__("messages.mode.disactive_dark_mode"));
         }
     }
 }

@@ -22,6 +22,6 @@ class StatisticContoller extends Controller
             'products_rejected'               => DB::table('products')->where('status', 0)->count(),
         ];
 
-        return response()->success('احصائيات لوحة التحكم', $data);
+        return response()->success(__("messages.dashboard.statistic_dashboard"), $data);
     }
 }

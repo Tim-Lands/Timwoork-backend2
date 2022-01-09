@@ -38,10 +38,10 @@ class ItemController extends Controller
             ->first();
         if (!$item) {
             // رسالة خطأ
-            return response()->error('هذا العنصر غير موجود', 422);
+            return response()->error(__("messages.errors.element_not_found"), 422);
         }
         // رسالة نجاح
-        return response()->success("عرض الطلبية", $item);
+        return response()->success(__("messages.oprations.get_data"), $item);
     }
 
     public function display_item_rejected($id)
@@ -49,9 +49,9 @@ class ItemController extends Controller
         $display = ItemOrderRejected::where('item_id', $id)->first();
         if ($display) {
             // رسالة نجاح
-            return response()->success("عرض الطلب الغاء الطلبية", $display);
+            return response()->success(__("messages.item.not_may_this_operation"), $display);
         } else {
-            return response()->success("لا يوجد الطلب الغاء الطلبية");
+            return response()->success(__('messages.item.not_found_item_reject'));
         }
     }
 
@@ -71,7 +71,7 @@ class ItemController extends Controller
             // شرط اذا كانت متواجدة
             if (!$item) {
                 // رسالة خطأ
-                return response()->error('هذا العنصر غير موجود', 403);
+                return response()->error(__("messages.errors.element_not_found"), 403);
             }
             /* --------------------------- تغيير حالة الطلبية --------------------------- */
             // شرط اذا كانت الحالة الطلبية في حالة الانتظار
@@ -81,14 +81,14 @@ class ItemController extends Controller
                 $item->save();
                 event(new AcceptOrder($user, $item));
             } else {
-                return response()->error('لا يمكنك اجراء هذه العملية, تفقد بياناتك', 403);
+                return response()->error(__("messages.item.not_may_this_operation"), 403);
             }
             // رسالة نجاح
             return response()
-                ->success("{$item->profileSeller->profile->user->username} تم قبول الطلب من قبل البائع");
+                ->success(__("messages.item.accept_item_by_seller"));
         } catch (Exception $ex) {
             // رسالة خطأ
-            return response()->error('هناك خطأ ما حدث في قاعدة بيانات , يرجى التأكد من ذلك', 403);
+            return response()->error(__("messages.errors.error_database"), 403);
         }
     }
 
@@ -109,7 +109,7 @@ class ItemController extends Controller
             // شرط اذا كانت متواجدة
             if (!$item) {
                 // رسالة خطأ
-                return response()->error('هذا العنصر غير موجود', 422);
+                return response()->error(__("messages.errors.element_not_found"), 422);
             }
             /* --------------------------- تغيير حالة الطلبية --------------------------- */
             // شرط اذا كانت الحالة الطلبية في حالة الانتظار
@@ -120,13 +120,13 @@ class ItemController extends Controller
                 event(new RejectOrder($user, $item));
             } else {
                 // رسالة خطأ
-                return response()->error('لا يمكنك اجراء هذه العملية, تفقد بياناتك', 403);
+                return response()->error(__("messages.item.not_may_this_operation"), 403);
             }
             // رسالة نجاح
-            return response()->success("تم رفض الطلب من قبل البائع");
+            return response()->success(__("messages.item.reject_item_by_seller"));
         } catch (Exception $ex) {
             // رسالة خطأ
-            return response()->error('هناك خطأ ما حدث في قاعدة بيانات , يرجى التأكد من ذلك', 403);
+            return response()->error(__("messages.errors.error_database"), 403);
         }
     }
 
@@ -147,7 +147,7 @@ class ItemController extends Controller
             // شرط اذا كانت متواجدة
             if (!$item) {
                 // رسالة خطأ
-                return response()->error('هذا العنصر غير موجود', 422);
+                return response()->error(__("messages.errors.element_not_found"), 422);
             }
             /* --------------------------- تغيير حالة الطلبية --------------------------- */
             // شرط اذا كانت الحالة الطلبية في حالة الانتظار
@@ -158,13 +158,13 @@ class ItemController extends Controller
                 event(new RejectOrder($user, $item));
             } else {
                 // رسالة خطأ
-                return response()->error('لا يمكنك اجراء هذه العملية, تفقد بياناتك', 403);
+                return response()->error(__("messages.item.not_may_this_operation"), 403);
             }
             // رسالة نجاح
-            return response()->success("تم رفض الطلب من قبل المشتري");
+            return response()->success(__("messages.item.reject_item_by_buyer"));
         } catch (Exception $ex) {
             // رسالة خطأ
-            return response()->error('هناك خطأ ما حدث في قاعدة بيانات , يرجى التأكد من ذلك', 403);
+            return response()->error(__("messages.errors.error_database"), 403);
         }
     }
 
@@ -182,7 +182,7 @@ class ItemController extends Controller
             // شرط اذا كان المشؤروع موجود
             if (!$item_resource) {
                 // رسالة خطأ
-                return response()->error('يجب عليك رفع المشروع قبل التسليم', 403);
+                return response()->error(__("messages.item.must_be_dilevery_resources"), 422);
             }
 
             // جلب حالة الطلبية
@@ -195,16 +195,16 @@ class ItemController extends Controller
                     $item_resource->save();
                 } else {
                     // رسالة خطأ
-                    return response()->error('لقد تم تسليم المشروع مسبقا, تفقد بياناتك', 403);
+                    return response()->error(__("messages.item.dilevery_resources_founded"), 422);
                 }
             } else {
-                return response()->error('لا يمكنك اجراء هذه العملية, تفقد بياناتك', 403);
+                return response()->error(__("messages.item.not_may_this_operation"), 403);
             }
             // رسالة نجاح عملية تسليم المشروع:
-            return response()->success('تم تسليم المشروع من قبل البائع');
+            return response()->success(__("messages.item.dilevery_resources_success"));
         } catch (Exception $ex) {
             // رسالة خطأ
-            return response()->error('هناك خطأ ما حدث في قاعدة بيانات , يرجى التأكد من ذلك', 403);
+            return response()->error(__("messages.errors.error_database"), 403);
         }
     }
 
@@ -224,12 +224,12 @@ class ItemController extends Controller
             // شرط اذا كانت متواجدة
             if (!$item) {
                 // رسالة خطأ
-                return response()->error('هذا العنصر غير موجود', 403);
+                return response()->error(__("messages.errors.element_not_found"), 403);
             }
             $item_rousource = ItemOrderResource::where('item_id', $item->id)->first();
             if ($item_rousource) {
                 // رسالة خطأ
-                return response()->error('لقد تم رفع الملف من قبل , الان يجب عليك تسليم', 403);
+                return response()->error(__('messages.item.resource_uploaded'), 403);
             }
             // انشاء مصفوفة من اجل رفع المشروع
             $data_resource = [];
@@ -252,7 +252,7 @@ class ItemController extends Controller
                 ];
             } else {
                 // رسالة خطأ
-                return response()->error('لا يمكن رفع المشروع الا اذا كانت الطلبية في حالة التنفيذ , تفقد بياناتك', 403);
+                return response()->error(__("messages.item.not_may_this_operation"), 422);
             }
             /* ---------------------- وضع المشروع في قواعد البيانات --------------------- */
             // بداية المعاملة مع قواعد البيانات
@@ -262,13 +262,13 @@ class ItemController extends Controller
             // انهاء المعاملة
             DB::commit();
             // رسالة نجاح عملية رفع المشروع:
-            return response()->success('تم رفع المشروع و تهيئة تسليمه للمشتري', $item_order_reource);
+            return response()->success(__("resource_upload"), $item_order_reource);
             /* -------------------------------------------------------------------------- */
         } catch (Exception $ex) {
             // لم تتم المعاملة بشكل نهائي و لن يتم ادخال اي بيانات لقاعدة البيانات
             DB::rollback();
             // رسالة خطأ
-            return response()->error('هناك خطأ ما حدث في قاعدة بيانات , يرجى التأكد من ذلك', 403);
+            return response()->error(__("messages.errors.error_database"), 403);
         }
     }
 
@@ -285,7 +285,7 @@ class ItemController extends Controller
             // شرط اذا كان المشؤروع موجود
             if (!$item_resource) {
                 // رسالة خطأ
-                return response()->error('المشروع لا يوجد', 403);
+                return response()->error(__("messages.item.resource_not_found"), 422);
             }
 
             // جلب حالة الطلبية
@@ -301,19 +301,19 @@ class ItemController extends Controller
                     $item_resource->item->save();
                 } elseif ($item_resource->status == ItemOrderResource::RESOURCE_REJECTED) {
                     // رسالة خطأ
-                    return response()->error('حالة مشروع مرفوضة , تفقد بياناتك', 403);
+                    return response()->error(__("messages.item.resource_rejected"), 422);
                 } else {
                     // رسالة خطأ
-                    return response()->error('لم يتم تسليم المشروع , تفقد بياناتك', 403);
+                    return response()->error(__("messages.item.resource_not_dilevery"), 422);
                 }
             } else {
-                return response()->error('لا يمكنك اجراء هذه العملية, تفقد بياناتك', 403);
+                return response()->error(__("messages.item.not_may_this_operation"), 422);
             }
             // رسالة نجاح عملية تسليم المشروع:
-            return response()->success('تم استلام المشروع من قبل المشتري و انهاء المعاملة');
+            return response()->success(__('messages.item.resource_dilevered'));
         } catch (Exception $ex) {
             // رسالة خطأ
-            return response()->error('هناك خطأ ما حدث في قاعدة بيانات , يرجى التأكد من ذلك', 403);
+            return response()->error(__("messages.errors.error_database"), 403);
         }
     }
 
@@ -330,7 +330,7 @@ class ItemController extends Controller
             // شرط اذا كان المشروع موجود
             if (!$item_resource) {
                 // رسالة خطأ
-                return response()->error('المشروع لا يوجد', 403);
+                return response()->error(__('messages.item.resource_not_found'), 422);
             }
 
             // جلب حالة الطلبية
@@ -346,19 +346,19 @@ class ItemController extends Controller
                     $item_resource->item->save();
                 } elseif ($item_resource->status == ItemOrderResource::RESOURCE_ACCEPTED) {
                     // رسالة خطأ
-                    return response()->error('حالة مشروع مقبول , تفقد بياناتك', 403);
+                    return response()->error(__("messages.item.resource_accepted"), 403);
                 } else {
                     // رسالة خطأ
-                    return response()->error('لم يتم تسليم المشروع او عدم رفعه , تفقد بياناتك', 403);
+                    return response()->error(__("messages.item.resource_uploaded"), 403);
                 }
             } else {
-                return response()->error('الحالة الطلبية قيد التنفيد, تفقد بياناتك', 403);
+                return response()->error(__("messages.item.not_may_this_operation"), 403);
             }
             // رسالة نجاح عملية تسليم المشروع:
-            return response()->success('تم رفض المشروع من قبل المشتري و رفض الطلبية');
+            return response()->success(__("messages.item.resource_not_dilevered"));
         } catch (Exception $ex) {
             // رسالة خطأ
-            return response()->error('هناك خطأ ما حدث في قاعدة بيانات , يرجى التأكد من ذلك', 403);
+            return response()->error(__("messages.errors.error_database"), 403);
         }
     }
 
@@ -378,7 +378,7 @@ class ItemController extends Controller
             // شرط اذا كانت متواجدة
             if (!$item) {
                 // رسالة خطأ
-                return response()->error('هذا العنصر غير موجود', 403);
+                return response()->error(__("messages.errors.element_not_found"), 403);
             }
 
             // جلب طلب الغاء الخدمة
@@ -393,12 +393,12 @@ class ItemController extends Controller
             if ($item->status == Item::STATUS_ACCEPT_REQUEST) {
                 // شرط اذا كان تم ارسال الطلب من قبل المشتري
                 if ($item_rejected && $item_rejected->rejected_buyer == ItemOrderRejected::REJECTED_BY_BUYER) {
-                    return response()->error('لقد تم ارسال طلب الغاء من قبل المشتري, قم بقبول الغاء الطلب او ارفضه', 403);
+                    return response()->error(__("messages.item.request_buyer_sended"), 422);
                 }
 
                 if ($item_rejected->rejected_seller == ItemOrderRejected::REJECTED_BY_SELLER) {
                     // عملية طلب الغاء الطلبية
-                    return response()->error('لقد تم ارسال طلب الغاء, انتظر حتى يتم القبول او الرفض', 403);
+                    return response()->error(__("messages.item.request_sended"), 422);
                 } else {
                     if ($item_rejected) {
                         $item_rejected->update($data_request_rejected_by_seller);
@@ -409,13 +409,13 @@ class ItemController extends Controller
                 }
             } else {
                 // رسالة خطأ
-                return response()->error('لا يمكنك اجراء هذه العملية, تفقد بياناتك', 403);
+                return response()->error(__("messages.item.not_may_this_operation"), 403);
             }
             // رسالة نجاح
-            return response()->success("تم ارسال طلب الغاء من قبل البائع");
+            return response()->success(__('messages.item.request_seller_success'));
         } catch (Exception $ex) {
             // رسالة خطأ
-            return response()->error('هناك خطأ ما حدث في قاعدة بيانات , يرجى التأكد من ذلك', 403);
+            return response()->error(__("messages.errors.error_database"), 403);
         }
     }
 
@@ -433,7 +433,7 @@ class ItemController extends Controller
             // شرط اذا كانت متواجدة
             if (!$item) {
                 // رسالة خطأ
-                return response()->error('هذا العنصر غير موجود', 403);
+                return response()->error(__("messages.errors.element_not_found"), 403);
             }
             // جلب طلب الغاء الخدمة
             $item_rejected = ItemOrderRejected::where('item_id', $item->id)->first();
@@ -447,11 +447,11 @@ class ItemController extends Controller
             // شرط اذا كانت الحالة الطلبية في حالة قيد التنفيذ
             if ($item->status == Item::STATUS_ACCEPT_REQUEST) {
                 if ($item_rejected && $item_rejected->rejected_seller == ItemOrderRejected::REJECTED_BY_SELLER) {
-                    return response()->error('لقد تم ارسال طلب الغاء من قبل البائع, قم بقبول الغاء الطلب او ارفضه', 403);
+                    return response()->error(__("messages.item.request_seller_sended"), 422);
                 }
                 if ($item_rejected->rejected_seller == ItemOrderRejected::REJECTED_BY_BUYER) {
                     // عملية طلب الغاء الطلبية
-                    return response()->error('لقد تم ارسال طلب الغاء, انتظر حتى يتم القبول او الرفض', 403);
+                    return response()->error(__("messages.item.request_sended"), 422);
                 } else {
                     if ($item_rejected) {
                         $item_rejected->update($data_request_rejected_by_buyer);
@@ -462,14 +462,14 @@ class ItemController extends Controller
                 }
             } else {
                 // رسالة خطأ
-                return response()->error('لا يمكنك اجراء هذه العملية, تفقد بياناتك', 403);
+                return response()->error(__("messages.item.not_may_this_operation"), 422);
             }
 
             // رسالة نجاح
-            return response()->success("تم ارسال طلب الغاء من قبل المشتري");
+            return response()->success(__("messages.item.request_buyer_success"));
         } catch (Exception $ex) {
             // رسالة خطأ
-            return response()->error('هناك خطأ ما حدث في قاعدة بيانات , يرجى التأكد من ذلك', 403);
+            return response()->error(__("messages.errors.error_database"), 403);
         }
     }
     /* ----------------------- قبول الطلبية من قبل الطرفين ---------------------- */
@@ -487,7 +487,7 @@ class ItemController extends Controller
             // شرط اذا كانت متواجدة
             if (!$item) {
                 // رسالة خطأ
-                return response()->error('هذا العنصر غير موجود', 403);
+                return response()->error(__("messages.errors.element_not_found"), 403);
             }
             // جلب طلب الغاء الخدمة
             $item_rejected = ItemOrderRejected::where('item_id', $item->id)->first();
@@ -503,7 +503,7 @@ class ItemController extends Controller
                 // شرط اذا كان هناك طلب الغاء و ايضا ارسال عملية طلب من طرف المشتري
                 if ($item_rejected && $item_rejected->rejected_buyer == ItemOrderRejected::REJECTED_BY_BUYER) {
                     if ($item_rejected->rejected_seller == ItemOrderRejected::REJECTED_BY_SELLER) {
-                        return response()->error('لقد ارسلت الطلب الغاء, تفقد بياناتك', 403);
+                        return response()->error(__("messages.item.request_sended"), 422);
                     }
                     // عملية قبول طلب الغاء الطلبية
                     $item_rejected->update($data_accept_request_by_seller);
@@ -511,17 +511,17 @@ class ItemController extends Controller
                     $item->status = Item::STATUS_REJECTED_REQUEST;
                     $item->save();
                 } else {
-                    return response()->error('لم يتم ارسال طلب, تفقد بياناتك', 403);
+                    return response()->error(__('messages.item.request_not_found'), 403);
                 }
             } else {
                 // رسالة خطأ
-                return response()->error('لا يمكنك اجراء هذه العملية, تفقد بياناتك', 403);
+                return response()->error(__("messages.item.not_may_this_operation"), 403);
             }
             // رسالة نجاح
-            return response()->success("تم قبول طلب الغاء من قبل البائع و تم رفض الخدمة");
+            return response()->success(__("messages.item.request_accepted_by_seller"));
         } catch (Exception $ex) {
             // رسالة خطأ
-            return response()->error('هناك خطأ ما حدث في قاعدة بيانات , يرجى التأكد من ذلك', 403);
+            return response()->error(__("messages.errors.error_database"), 403);
         }
     }
 
@@ -538,7 +538,7 @@ class ItemController extends Controller
             // شرط اذا كانت متواجدة
             if (!$item) {
                 // رسالة خطأ
-                return response()->error('هذا العنصر غير موجود', 403);
+                return response()->error(__("messages.errors.element_not_found"), 403);
             }
             // جلب عنصر الطلب
             $item_rejected = ItemOrderRejected::where('item_id', $item->id)->first();
@@ -553,7 +553,7 @@ class ItemController extends Controller
                 // شرط اذا كان هناك طلب الغاء و ايضا ارسال عملية طلب من طرف البائع
                 if ($item_rejected && $item_rejected->rejected_buyer == ItemOrderRejected::REJECTED_BY_BUYER) {
                     if ($item_rejected->rejected_seller == ItemOrderRejected::REJECTED_BY_BUYER) {
-                        return response()->error('لقد ارسلت الطلب الغاء, تفقد بياناتك', 403);
+                        return response()->error(__("messages.item.request_sended"), 403);
                     }
                     // عملية قبول طلب الغاء الطلبية
                     $item_rejected->update($data_accept_request_by_buyer);
@@ -561,17 +561,17 @@ class ItemController extends Controller
                     $item->status = Item::STATUS_REJECTED_REQUEST;
                     $item->save();
                 } else {
-                    return response()->error('لم يتم ارسال طلب, تفقد بياناتك', 403);
+                    return response()->error(__("messages.item.request_not_found"), 403);
                 }
             } else {
                 // رسالة خطأ
-                return response()->error('لا يمكنك اجراء هذه العملية, تفقد بياناتك', 403);
+                return response()->error(__("messages.item.not_may_this_operation"), 403);
             }
             // رسالة نجاح
-            return response()->success("تم قبول طلب الغاء من قبل المشتري");
+            return response()->success(__("messages.item.request_buyer_success"));
         } catch (Exception $ex) {
             // رسالة خطأ
-            return response()->error('هناك خطأ ما حدث في قاعدة بيانات , يرجى التأكد من ذلك', 403);
+            return response()->error(__("messages.errors.error_database"), 403);
         }
     }
 
@@ -590,7 +590,7 @@ class ItemController extends Controller
             // شرط اذا كانت متواجدة
             if (!$item) {
                 // رسالة خطأ
-                return response()->error('هذا العنصر غير موجود', 403);
+                return response()->error(__("messages.errors.element_not_found"), 403);
             }
             // جلب عنصر الطلب
             $item_rejected = ItemOrderRejected::where('item_id', $item->id)->first();
@@ -600,22 +600,22 @@ class ItemController extends Controller
                 // شرط اذا كان هناك طلب الغاء و ايضا ارسال عملية طلب من طرف البائع
                 if ($item_rejected && $item_rejected->rejected_buyer == ItemOrderRejected::REJECTED_BY_BUYER) {
                     if ($item_rejected->rejected_seller == ItemOrderRejected::REJECTED_BY_SELLER) {
-                        return response()->error('لقد ارسلت الطلب الغاء, تفقد بياناتك', 403);
+                        return response()->error(__("messages.item.request_sended"), 403);
                     }
-                    // عملية قبول طلب الغاء الطلبية
+                    // عملية رفض طلب الغاء الطلبية
                     $item_rejected->update(['rejected_buyer' => 0]);
                 } else {
-                    return response()->error('لم يتم ارسال طلب, تفقد بياناتك', 403);
+                    return response()->error(__("messages.item.request_not_found"), 403);
                 }
             } else {
                 // رسالة خطأ
-                return response()->error('لا يمكنك اجراء هذه العملية, تفقد بياناتك', 403);
+                return response()->error(__("messages.item.not_may_this_operation"), 403);
             }
             // رسالة نجاح
-            return response()->success("تم رفض طلب الغاء من قبل البائع , سيتم مراسلة الادارة");
+            return response()->success(__("messages.item.request_rejected_by_seller"));
         } catch (Exception $ex) {
             // رسالة خطأ
-            return response()->error('هناك خطأ ما حدث في قاعدة بيانات , يرجى التأكد من ذلك', 403);
+            return response()->error(__("messages.errors.error_database"), 403);
         }
     }
 
@@ -632,7 +632,7 @@ class ItemController extends Controller
             // شرط اذا كانت متواجدة
             if (!$item) {
                 // رسالة خطأ
-                return response()->error('هذا العنصر غير موجود', 403);
+                return response()->error(__("messages.errors.element_not_found"), 403);
             }
             // جلب عنصر الطلب
             $item_rejected = ItemOrderRejected::where('item_id', $item->id)->first();
@@ -642,22 +642,22 @@ class ItemController extends Controller
                 // شرط اذا كان هناك طلب الغاء و ايضا ارسال عملية طلب من طرف البائع
                 if ($item_rejected && $item_rejected->rejected_seller == ItemOrderRejected::REJECTED_BY_SELLER) {
                     if ($item_rejected->rejected_buyer == ItemOrderRejected::REJECTED_BY_BUYER) {
-                        return response()->error(422, 'لقد ارسلت الطلب الغاء, تفقد بياناتك');
+                        return response()->error(422, __("messages.item.request_sended"));
                     }
                     // عملية رفض طلب الغاء الطلبية
                     $item_rejected->update(['rejected_seller' => 0]);
                 } else {
-                    return response()->error(422, 'لم يتم ارسال طلب, تفقد بياناتك');
+                    return response()->error(422, __("messages.item.request_not_found"));
                 }
             } else {
                 // رسالة خطأ
-                return response()->error(422, 'لا يمكنك اجراء هذه العملية, تفقد بياناتك');
+                return response()->error(422, __("messages.item.not_may_this_operation"));
             }
             // رسالة نجاح
-            return response()->success("تم رفض طلب الغاء من قبل المشتري , سيتم مراسلة الادارة");
+            return response()->success(__("messages.item.request_rejected_by_buyer"));
         } catch (Exception $ex) {
             // رسالة خطأ
-            return response()->error('هناك خطأ ما حدث في قاعدة بيانات , يرجى التأكد من ذلك', 403);
+            return response()->error(__("messages.errors.error_database"), 403);
         }
     }
     /* -------------------------------------------------------------------------- */

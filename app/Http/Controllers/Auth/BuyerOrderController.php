@@ -24,6 +24,6 @@ class BuyerOrderController extends Controller
                 $q->where('user_id', $buyer);
             }]);
         }])->withCount('item_rejected')->paginate($paginate);
-        return response()->success('لقد تم جلب مشترياتك بنجاح', $items);
+        return response()->success(__("messages.oprations.get_all_data"), $items);
     }
 }

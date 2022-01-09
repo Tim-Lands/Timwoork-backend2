@@ -14,7 +14,6 @@ use Illuminate\Support\Facades\Storage;
 
 class ProfileController extends Controller
 {
-
     public function show($username)
     {
         // البحث في قاعدة البيانات عن اسم المستخدم
@@ -28,11 +27,11 @@ class ProfileController extends Controller
             ->first();
         if (!$user) {
             // في حالة عدم وجود اسم مستخدم يتم إرسال رسالة الخطأ
-            return response()->error('عذرا لم نجد معلومات مطابقة لهذا الاسم');
+            return response()->error(__("messages.errors.element_not_found"));
         } else {
 
             // في حالة وجود اسم المستخدم يتم عرض معلوماته الشخصية
-            return response()->success('لقد تمّ جلب معلومات الملف الشخصي', $user);
+            return response()->success(__("messages.oprations.get_data"), $user);
         }
     }
 
@@ -46,12 +45,11 @@ class ProfileController extends Controller
     public function step_one(ProfileStepOneRequest $request)
     {
         try {
-
             $user = Auth::user();
-            // تغيير اسم المستخدم 
+            // تغيير اسم المستخدم
             $user->username = $request->username;
             $user->save();
-            // تغيير المعلومات الشخصية 
+            // تغيير المعلومات الشخصية
             $user->profile->first_name = $request->first_name;
             $user->profile->last_name = $request->last_name;
             $user->profile->full_name = $request->first_name . ' ' . $request->last_name;
@@ -61,10 +59,10 @@ class ProfileController extends Controller
             $user->profile->steps = Profile::COMPLETED_SETP_ONE;
             $user->profile->save();
             // إرسال رسالة نجاح المرحلة اﻷولى
-            return response()->success('نجاح المرحلة اﻷولى', $user);
+            return response()->success(__("messages.product.success_step_one"), $user);
         } catch (Exception $ex) {
             //return $ex;
-            return response()->error('حدث خطأ غير متوقع');
+            return response()->error(__("messages.errors.error_database"));
         }
     }
 
@@ -85,16 +83,16 @@ class ProfileController extends Controller
             $path = Storage::putFileAs('avatars', $request->file('avatar'), $avatarName);
             // تخزين اسم الصورة في قاعدة البيانات
             $user = Auth::user();
-            // تغيير اسم المستخدم 
+            // تغيير اسم المستخدم
             $avatarUrl = Storage::disk('avatars')->url($avatarName);
             $user->profile->avatar = $avatarUrl;
             $user->profile->steps = Profile::COMPLETED_SETP_TWO;
             $user->profile->save();
             // إرسال رسالة نجاح المرحلة الثانية مع إرسال رابط الصورة كاملا
-            return response()->success('نجاح المرحلة اﻷولى', $avatarUrl);
+            return response()->success(__("messages.product.success_step_two"), $avatarUrl);
         } catch (Exception $ex) {
             //return $ex;
-            return response()->error('حدث خطأ غير متوقع');
+            return response()->error(__("messages.errors.error_database"));
         }
     }
 
@@ -114,10 +112,10 @@ class ProfileController extends Controller
             $user->profile->steps = Profile::COMPLETED_SETP_THREE;
             $user->profile->save();
             // إرسال رسالة نجاح المرحلة الثانية مع إرسال رابط الصورة كاملا
-            return response()->success('نجاح المرحلة الثالثة');
+            return response()->success(__("messages.product.success_step_three"));
         } catch (Exception $ex) {
             //return $ex;
-            return response()->error('حدث خطأ غير متوقع');
+            return response()->error(__("messages.errors.error_database"));
         }
     }
 }

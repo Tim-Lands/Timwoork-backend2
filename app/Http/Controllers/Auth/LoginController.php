@@ -9,13 +9,10 @@ use App\Http\Requests\SocialProviderRequest;
 use App\Models\User;
 use App\Traits\LoginUser;
 use Exception;
-use GuzzleHttp\Exception\ClientException;
 use Illuminate\Http\Request;
-use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
-use Laravel\Socialite\Facades\Socialite;
 use Illuminate\Support\Facades\Http;
 
 class LoginController extends Controller
@@ -31,7 +28,7 @@ class LoginController extends Controller
         // في حالة عدم وجود المستخدم في قاعدة البيانات أو عدم تطابق كلمة المرور المحفوظة مع كلمة المرور المرسلة
         // يتم إرسال رسالة عدم صحة البيانات
         if (!$user || !Hash::check($request->password, $user->password)) {
-            return response()->error('المعلومات التي أدخلتها خاطئة', 401);
+            return response()->error(__("messages.user.error_login"), 401);
         }
         Auth::login($user);
         // في حالة صحة البيانات سيتم إنشاء توكن وتخزينه في جلسة كوكي وإرساله مع كل طلب
@@ -45,7 +42,8 @@ class LoginController extends Controller
             'profile.profile_seller.level',
             'profile.profile_seller.skills',
             'profile.badge',
-            'profile.level'
+            'profile.level',
+            'profile.country'
         ]);
 
         // make some columns hidden in response
@@ -69,7 +67,7 @@ class LoginController extends Controller
     }
 
     /**
-     * get user unread messeges count   
+     * get user unread messeges count
      */
     public function getUnreadMessagesCount($user)
     {
@@ -108,10 +106,10 @@ class LoginController extends Controller
         } else {
             $email_exists = User::select('email')->where('email', $request->email)->first();
             if ($email_exists) {
-                return response()->error('هذا البريد الالكتروني موجود من قبل', 422);
+                return response()->error(__("messages.user.email_already"), 422);
             } else {
 
-                // وإلا قم بإنشاء مستخدم جديد 
+                // وإلا قم بإنشاء مستخدم جديد
                 try {
                     DB::beginTransaction();
                     $user = User::create([
@@ -131,7 +129,7 @@ class LoginController extends Controller
                         'credit' => 0,
                     ]);
 
-                    // تسجيل اسم المزوّد و المعرّف الخاص بالمستخدم في المزود الخاص به 
+                    // تسجيل اسم المزوّد و المعرّف الخاص بالمستخدم في المزود الخاص به
                     $user->providers()->create([
                         'provider' => $provider,
                         'provider_id' => $request->provider_id
@@ -144,7 +142,7 @@ class LoginController extends Controller
                     return $this->login_with_token($user);
                 } catch (Exception $ex) {
                     DB::rollBack();
-                    return response()->error('هناك خطأ ما حدث في قاعدة بيانات , يرجى التأكد من ذلك', 403);
+                    return response()->error(__("messages.errors.error_database"), 403);
                 }
             }
         }

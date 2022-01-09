@@ -13,9 +13,9 @@ use Illuminate\Support\Facades\DB;
 
 class MessageController extends Controller
 {
-    public function sendMessage(Conversation $conversation,  MessageStoreRequest $request)
+    public function sendMessage(Conversation $conversation, MessageStoreRequest $request)
     {
-        //   إرسال رسالة جديدة   
+        //   إرسال رسالة جديدة
 
         $user_id = Auth::user()->id;
         $conversation_id = $request->conversation_id;
@@ -34,7 +34,7 @@ class MessageController extends Controller
             return $ex;
             DB::rollback();
             // رسالة خطأ
-            return response()->error('هناك خطأ ما حدث في قاعدة بيانات , يرجى التأكد من ذلك', 403);
+            return response()->error(__("messages.errors.error_database"), 403);
         }
     }
 }

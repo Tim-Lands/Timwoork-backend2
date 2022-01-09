@@ -21,6 +21,6 @@ class SellerOrderController extends Controller
         $seller = Auth::user()->profile->profile_seller->id;
         $items = Item::where('profile_seller_id', $seller)->with(['order.cart.user.profile'])
             ->withCount('item_rejected')->paginate($paginate);
-        return response()->success('لقد تم جلب مشترياتك بنجاح', $items);
+        return response()->success(__("messages.oprations.get_all_data"), $items);
     }
 }

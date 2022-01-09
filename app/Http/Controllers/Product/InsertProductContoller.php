@@ -35,7 +35,7 @@ class InsertProductContoller extends Controller
             $number_of_products_seller = Auth::user()->profile->profile_seller->level->products_number_max;
             // شرط اضافة خدمة
             if ($count_products_seller >= $number_of_products_seller) {
-                return response()->error('لا يمكن اضافة خدمة فوق عدد الاقصى المحدد لك', 422);
+                return response()->error(__("messages.product.number_of_products_seller"), 422);
             }
              
             // ============= انشاء المعرف للخدمة ================:
@@ -46,13 +46,13 @@ class InsertProductContoller extends Controller
             // انهاء المعاملة بشكل جيد :
             DB::commit();
             // اظهار العناصر
-            return response()->success('عرض كل تصنيفات الرئيسية و الفرعيىة و الوسوم من اجل انشاء خدمة ', Product::selection()->where('id', $product->id)->first());
+            return response()->success(__("messages.oprations.get_all_data"), Product::selection()->where('id', $product->id)->first());
         } catch (Exception $ex) {
             // لم تتم المعاملة بشكل نهائي و لن يتم ادخال اي بيانات لقاعدة البيانات
             DB::rollback();
             return $ex;
             // رسالة خطأ
-            return response()->error('هناك خطأ ما حدث في قاعدة بيانات , يرجى التأكد من ذلك', 403);
+            return response()->error(__("messages.errors.error_database"), 403);
         }
     }
 
@@ -71,13 +71,13 @@ class InsertProductContoller extends Controller
             // شرط اذا كان العنصر موجود
             if (!$product || !is_numeric($id)) {
                 // رسالة خطأ
-                return response()->error('هذا العنصر غير موجود', 422);
+                return response()->error(__("messages.errors.element_not_found"), 422);
             }
             // جلب التصنيف الفرعي
             $subcategory = Category::child()->where('id', $request->subcategory)->exists();
             // التحقق اذا كان موجود ام لا
             if (!$subcategory) {
-                return response()->error('التصنيف الفرعي لا يوجد', 403);
+                return response()->error(__("messages.errors.element_not_found"), 403);
             }
             // انشاء مصفوفة و وضع فيها بيانات المرحلة الاولى
             $data = [
@@ -102,13 +102,13 @@ class InsertProductContoller extends Controller
             // انهاء المعاملة بشكل جيد :
             DB::commit();
             // رسالة نجاح عملية الاضافة:
-            return response()->success('تم انشاء المرحلة الاولى بنجاح', $product);
+            return response()->success(__("messages.product.success_step_one"), $product);
             /* -------------------------------------------------------------------------- */
         } catch (Exception $ex) {
             // لم تتم المعاملة بشكل نهائي و لن يتم ادخال اي بيانات لقاعدة البيانات
             DB::rollback();
             // رسالة خطأ
-            return response()->error('هناك خطأ ما حدث في قاعدة بيانات , يرجى التأكد من ذلك', 403);
+            return response()->error(__("messages.errors.error_database"), 403);
         }
     }
 
@@ -131,7 +131,7 @@ class InsertProductContoller extends Controller
             // شرط اذا كان العنصر موجود
             if (!$product || !is_numeric($id)) {
                 // رسالة خطأ
-                return response()->error('هذا العنصر غير موجود', 403);
+                return response()->error(__("messages.errors.element_not_found"), 403);
             }
             // وضع البيانات في مصفوفة من اجل اضافة فالمرحلة الثانية
             $data = [
@@ -149,14 +149,14 @@ class InsertProductContoller extends Controller
             // شرط اذا كانت هناك توجد تطورات
             if ($request->only('developments') != null) {
                 if (count($request->developments) >= $number_developments_max) {
-                    return response()->error('لا يمكن اضافة تطوير فوق عدد الاقصى المحدد لك', 422);
+                    return response()->error(__("messages.product.number_developments_max"), 422);
                 }
                 // جلب المرسلات من العميل و وضعهم فالمصفوفة الجديدة
                 foreach ($request->only('developments')['developments'] as $key => $value) {
                     $developments[] = $value;
                     // اذا كان السعر اكبر
                     if ($value['price'] >= $price_development_max) {
-                        return response()->error('لا يمكن اضافة سعر فوق عدد الاقصى المحدد لك', 422);
+                        return response()->error(__("messages.product.price_development_max"), 422);
                     }
                 }
             }
@@ -176,13 +176,13 @@ class InsertProductContoller extends Controller
             // انهاء المعاملة بشكل جيد :
             DB::commit();
             // رسالة نجاح عملية الاضافة:
-            return response()->success('تم انشاء المرحلة الثانية بنجاح', $product);
+            return response()->success(__("messages.product.success_step_two"), $product);
         } catch (Exception $ex) {
             return $ex;
             // لم تتم المعاملة بشكل نهائي و لن يتم ادخال اي بيانات لقاعدة البيانات
             DB::rollback();
             // رسالة خطأ
-            return response()->error('هناك خطأ ما حدث في قاعدة بيانات , يرجى التأكد من ذلك', 403);
+            return response()->error(__("messages.errors.error_database"), 403);
         }
     }
 
@@ -201,7 +201,7 @@ class InsertProductContoller extends Controller
             // شرط اذا كان العنصر موجود
             if (!$product || !is_numeric($id)) {
                 // رسالة خطأ
-                return response()->error('هذا العنصر غير موجود', 403);
+                return response()->error(__("messages.errors.element_not_found"), 403);
             }
             // وضع البيانات في مصفوفة من اجل اضافة فالمرحلة الثالثة
             $data = [
@@ -222,12 +222,12 @@ class InsertProductContoller extends Controller
             // انهاء المعاملة بشكل جيد :
             DB::commit();
             // رسالة نجاح عملية الاضافة:
-            return response()->success('تم انشاء المرحلة الثالثة بنجاح', $product);
+            return response()->success(__("messages.product.success_step_three"), $product);
         } catch (Exception $ex) {
             // لم تتم المعاملة بشكل نهائي و لن يتم ادخال اي بيانات لقاعدة البيانات
             DB::rollback();
             // رسالة خطأ
-            return response()->error('هناك خطأ ما حدث في قاعدة بيانات , يرجى التأكد من ذلك', 403);
+            return response()->error(__("messages.errors.error_database"), 403);
         }
     }
 
@@ -247,7 +247,7 @@ class InsertProductContoller extends Controller
             // شرط اذا كان العنصر موجود
             if (!$product || !is_numeric($id)) {
                 // رسالة خطأ
-                return response()->error('هذا العنصر غير موجود', 403);
+                return response()->error(__("messages.errors.element_not_found"), 403);
             }
             /* ------------------------- معالجة الصورة الامامية ------------------------- */
             
@@ -279,7 +279,7 @@ class InsertProductContoller extends Controller
             } else {
                 // شرط اذا لم يرسل المستخدم صورة الامامية
                 if (!$request->has('thumbnail')) {
-                    return response()->error('يجب عليك رفع الصورة الامامية', 403);
+                    return response()->error(__("messages.product.thumbnail_required"), 403);
                 }
                 // جلب الصورة من المرسلات
                 $thumbnailPath = $request->file('thumbnail');
@@ -292,7 +292,6 @@ class InsertProductContoller extends Controller
             }
             
             // جلب الصور اذا كان هناك تعديل
-            
             $get_galaries_images =  $product->whereId($id)->with(['galaries' => function ($q) {
                 $q->select('id', 'path', 'product_id')->get();
             }])->first()->galaries;
@@ -337,7 +336,7 @@ class InsertProductContoller extends Controller
             } else {
                 // شرط اذا لم يجد الصور التي يرسلهم المستخدم في حالة الانشاء لاول مرة
                 if (!$request->has('images')) {
-                    return response()->error('يجب ان يكون عدد الصور المرفوعة لا تزيد عن  5 و لا تقل عن 1', 403);
+                    return response()->error(__("messages.product.count_galaries"), 403);
                 }
                 // عدد الصور التي تم رفعها
                 foreach ($request->file('images') as $key => $value) {
@@ -352,7 +351,7 @@ class InsertProductContoller extends Controller
                 }
                 // شرط اذا كان عدد صور يزيد عند 5 و يقل عن 1
                 if (count($galaries_images) > 5 || count($galaries_images) == 0) {
-                    return response()->error('يجب ان يكون عدد الصور المرفوعة لا تزيد عن  5 و لا تقل عن 1', 403);
+                    return response()->error(__("messages.product.count_galaries"), 403);
                 } else {
                     // عملية رفع المفات
                     foreach ($galaries_images as $image) {
@@ -444,14 +443,14 @@ class InsertProductContoller extends Controller
             // انهاء المعاملة بشكل جيد :
             DB::commit();
             // رسالة نجاح عملية الاضافة:
-            return response()->success('تم انشاء المرحلة الرابعة بنجاح', $product);
+            return response()->success(__("messages.product.success_step_four"), $product);
             // ========================================================
         } catch (Exception $ex) {
             // لم تتم المعاملة بشكل نهائي و لن يتم ادخال اي بيانات لقاعدة البيانات
             DB::rollback();
             return $ex;
             // رسالة خطأ
-            return response()->error('هناك خطأ ما حدث في قاعدة بيانات , يرجى التأكد من ذلك', 403);
+            return response()->error(__("messages.errors.error_database"), 403);
         }
     }
 
@@ -469,7 +468,7 @@ class InsertProductContoller extends Controller
             // شرط اذا كان العنصر موجود
             if (!$product || !is_numeric($id)) {
                 // رسالة خطأ
-                return response()->error('هذا العنصر غير موجود', 403);
+                return response()->error(__("messages.errors.element_not_found"), 403);
                 exit();
             }
             // شرط هل يوجد رابط مختصر من قبل
@@ -501,13 +500,13 @@ class InsertProductContoller extends Controller
             DB::commit();
             // ================================================================
             // رسالة نجاح عملية الاضافة:
-            return response()->success('تم انهاء المراحل و انشاء الخدمة بنجاح', $product);
+            return response()->success(__("messages.product.success_step_final"), $product);
         } catch (Exception $ex) {
             return $ex;
             // لم تتم المعاملة بشكل نهائي و لن يتم ادخال اي بيانات لقاعدة البيانات
             DB::rollback();
             // رسالة خطأ
-            return response()->error('هناك خطأ ما حدث في قاعدة بيانات , يرجى التأكد من ذلك', 403);
+            return response()->error(__("messages.errors.error_database"), 403);
         }
     }
     

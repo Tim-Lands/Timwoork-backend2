@@ -13,13 +13,12 @@ use Illuminate\Support\Str;
 
 class ForgetPasswordController extends Controller
 {
-
     public function send_token(ForgetPasswordRequest $request)
     {
         $user = User::whereEmail($request->email)->first();
         $this->store_token($user);
         event(new ForgetPassword($user));
-        return response()->success('لقد تم ارسال رابط استعادة كلمة المرور إلى بريدك الالكتروني', ['email' => $user->email]);
+        return response()->success(__("messages.user.send_eamil_reset_password"), ['email' => $user->email]);
     }
 
     /**
@@ -27,11 +26,11 @@ class ForgetPasswordController extends Controller
      */
     public function store_token($user)
     {
-
         $token = Str::random(60);
         $forget_token = ForgetPasswordToken::whereEmail($user->email)->first();
-        if ($forget_token)
+        if ($forget_token) {
             $forget_token->delete();
+        }
         $forget = ForgetPasswordToken::create([
             'user_id' => $user->id,
             'email' => $user->email,
@@ -43,10 +42,11 @@ class ForgetPasswordController extends Controller
     {
         $verify = ForgetPasswordToken::where('token', $request->token)
             ->first();
-        if (!$verify)
-            return response()->error('حدث خطأ ما لم يتم العثور على رمز استعادة كلمة المرور الخاص بك');
-        // إرسال رسالة تفيد بنجاح العملية  
-        return response()->success('رمز استعادة كلمة المرور الخاص بك صحيح', ['email' => $verify->user->email]);
+        if (!$verify) {
+            return response()->error(__("messages.user.error_verify"));
+        }
+        // إرسال رسالة تفيد بنجاح العملية
+        return response()->success(__("messages.user.success_verify_reset_password"), ['email' => $verify->user->email]);
     }
 
     public function reset_password(ForgetPasswordResetRequest $request)
@@ -59,9 +59,9 @@ class ForgetPasswordController extends Controller
             if ($user->save()) {
                 $token->delete();
             }
-            return response()->success('لقد تم إعادة تعيين كلمة المرور بنجاح');
+            return response()->success(__("messages.user.success_reset_password"));
         } else {
-            return response()->error('فشلت العملية');
+            return response()->error(__("messages.user.fieled_operation"));
         }
     }
 }

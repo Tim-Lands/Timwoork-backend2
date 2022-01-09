@@ -33,7 +33,7 @@ class FrontEndController extends Controller
         }
 
         // اظهار العناصر
-        return response()->success('عرض تصنيفات الرئيسية', $data);
+        return response()->success(__("messages.oprations.get_all_data"), $data);
     }
 
     /**
@@ -47,7 +47,7 @@ class FrontEndController extends Controller
         // جلب التصنيف الرئيسي من اجل التحقق
         $catagory = Category::find($id);
         if (!$catagory) {
-            return response()->error('هذا العنصر غير موجود', 403);
+            return response()->error(__("messages.errors.element_not_found"), 403);
         }
         // جلب التصنيفات الفرعية
         $subcategorie = Category::select('id', 'name_ar', 'icon')
@@ -59,7 +59,7 @@ class FrontEndController extends Controller
             ->get();
 
         // اظهار العناصر
-        return response()->success('عرض تصنيفات الفرعية', $subcategorie);
+        return response()->success(__("messages.oprations.get_all_data"), $subcategorie);
     }
 
 
@@ -77,7 +77,7 @@ class FrontEndController extends Controller
             ->orWhere('id', $slug)
             ->withOnly([
                 'subcategory' => function ($q) {
-                    $q->select('id', 'parent_id', 'name_ar',)
+                    $q->select('id', 'parent_id', 'name_ar', )
                         ->with('category', function ($q) {
                             $q->select('id', 'name_ar')
                                 ->without('subcategories');
@@ -122,9 +122,9 @@ class FrontEndController extends Controller
         // فحص اذا كان يوجد هذا العنصر
         if (!$product) {
             // رسالة خطأ
-            return response()->error('هذا العنصر غير موجود', 403);
+            return response()->error(__("messages.errors.element_not_found"), 403);
         }
         // اظهار العناصر
-        return response()->success('عرض خدمة', $product);
+        return response()->success(__("messages.oprations.get_data"), $product);
     }
 }

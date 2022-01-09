@@ -20,9 +20,9 @@ class LevelController extends Controller
      */
     public function index(Request $request): JsonResponse
     {
-        /* جلب جميع المستويات عن طريق كيوري  ترسل من الفرونت اند 
+        /* جلب جميع المستويات عن طريق كيوري  ترسل من الفرونت اند
          من أجل عرض مستويات حسب نوعها
-        type = 0 
+        type = 0
          مستويات خاصة بالمشتري
         type = 1
         مستويات خاصة بالبائع
@@ -35,7 +35,7 @@ class LevelController extends Controller
         } else {
             $levels = Level::all();
         }
-        return response()->success('لقد تمّ جلب المستويات بنجاح', $levels);
+        return response()->success(__("messages.oprations.get_all_data"), $levels);
     }
 
     /**
@@ -67,12 +67,12 @@ class LevelController extends Controller
             DB::commit();
             // =================================================
             // رسالة نجاح عملية الاضافة:
-            return response()->success('تم إضافة المستوى بنجاح', $level);
+            return response()->success(__("messages.oprations.add_success"), $level);
         } catch (Exception $ex) {
             // لم تتم المعاملة بشكل نهائي و لن يتم ادخال اي بيانات لقاعدة البيانات
             DB::rollback();
             //return $ex;
-            return response()->error('هناك خطأ ما حدث في قاعدة بيانات , يرجى التأكد من ذلك');
+            return response()->error(__("messages.errors.error_database"));
         }
     }
 
@@ -80,7 +80,7 @@ class LevelController extends Controller
     /**
      * show => id  دالة جلب مستوى معين بواسطة المعرّف
      *
-     *s @param  string $id => id متغير المعرف 
+     *s @param  string $id => id متغير المعرف
      * @return object
      */
     public function show(mixed $id): ?object
@@ -88,11 +88,12 @@ class LevelController extends Controller
         //id  جلب العنصر بواسطة
         $level = Level::Selection()->where('id', $id)->first();
         // شرط اذا كان العنصر موجود
-        if (!$level)
+        if (!$level) {
             // رسالة خطأ
-            return response()->error('هذا العنصر غير موجود', 403);
+            return response()->error(__("messages.errors.element_not_found"), 403);
+        }
         // اظهار العنصر
-        return response()->success('لقد تم العثور على  بنجاح', $level);
+        return response()->success(__("messages.oprations.get_data"), $level);
     }
 
     /**
@@ -105,13 +106,14 @@ class LevelController extends Controller
     public function update(LevelRequest $request, mixed $id): ?object
     {
         try {
-            //من اجل التعديل  id  جلب العنصر بواسطة المعرف 
+            //من اجل التعديل  id  جلب العنصر بواسطة المعرف
             $level = Level::find($id);
 
             // شرط اذا كان العنصر موجود او المعرف اذا كان رقم غير صحيح
-            if (!$level || !is_numeric($id))
+            if (!$level || !is_numeric($id)) {
                 // رسالة خطأ
-                return response()->error('هذا العنصر غير موجود', 403);
+                return response()->error(__("messages.errors.element_not_found"), 403);
+            }
 
             // جلب البيانات و وضعها في مصفوفة:
             $data = [
@@ -135,10 +137,10 @@ class LevelController extends Controller
             // =================================================
 
             // رسالة نجاح عملية التعديل:
-            return response()->success('لقد تم التعديل على المستوى بنجاح', $level);
+            return response()->success(__("messages.oprations.update_success"), $level);
         } catch (Exception $ex) {
             // رسالة خطأ :
-            return response()->error('هناك خطأ ما حدث في قاعدة بيانات , يرجى التأكد من ذلك', 400);
+            return response()->error(__("messages.errors.error_database"), 400);
         }
     }
 
@@ -151,12 +153,13 @@ class LevelController extends Controller
     public function delete(mixed $id): ?object
     {
         try {
-            //من اجل الحذف  id  جلب العنصر بواسطة المعرف 
+            //من اجل الحذف  id  جلب العنصر بواسطة المعرف
             $level = Level::find($id);
             // شرط اذا كان العنصر موجود او المعرف اذا كان رقم غير صحيح
-            if (!$level || !is_numeric($id))
+            if (!$level || !is_numeric($id)) {
                 // رسالة خطأ
-                return response()->error('هذا العنصر غير موجود', 403);
+                return response()->error(__("messages.errors.element_not_found"), 403);
+            }
 
             // ============= التعديل على التصنيف  ================:
             // بداية المعاملة مع البيانات المرسلة لقاعدة بيانات :
@@ -167,11 +170,11 @@ class LevelController extends Controller
             DB::commit();
             // =================================================
 
-            // رسالة نجاح عملية التعديل:
-            return response()->success('تم حذف المستوى بنجاح');
+            // رسالة نجاح عملية الحذف:
+            return response()->success(__('messages.oprations.delete_success'));
         } catch (Exception $ex) {
             // return $ex;
-            return response()->error('هناك خطأ ما حدث في قاعدة بيانات , يرجى التأكد من ذلك', 400);
+            return response()->error(__("messages.errors.error_database"), 400);
         }
     }
 }
