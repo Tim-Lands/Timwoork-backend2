@@ -29,4 +29,20 @@ class ProfileSellerStoreRequest extends FormRequest
             'skills' => 'required',
         ];
     }
+
+    /**
+    * messages
+    *
+    * @return void
+    */
+    public function messages()
+    {
+        return [
+            'bio.required' => __("messages.validation.bio_required"),
+            'bio.min' => __("messages.validation.bio_min"),
+            'portfolio.required' => __("messages.validation.portfolio_required"),
+            'portfolio.url' => __("messages.validation.url"),
+            'skills.required' => __("messages.validation.skills_required"),
+        ];
+    }
 }

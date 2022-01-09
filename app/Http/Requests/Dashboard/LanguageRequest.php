@@ -40,10 +40,10 @@ class LanguageRequest extends FormRequest
     public function messages()
     {
         return [
-            'name_ar.required' => ' اسم المستوى مطلوب',
-            'name_ar.unique' => 'هذا الحقل موجود من قبل',
-            'name_en.unique' => 'هذا الحقل موجود من قبل',
-            'name_fr.unique' => 'هذا الحقل موجود من قبل',
+            'name_ar.required' => __("messages.validation.required_name_ar"),
+            'name_ar.unique' => __("messages.validation.unique"),
+            'name_en.unique' => __("messages.validation.unique"),
+            'name_fr.unique' => __("messages.validation.unique"),
         ];
     }
 

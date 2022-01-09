@@ -27,4 +27,16 @@ class ProfileStepTwoRequest extends FormRequest
             'avatar' => 'required',
         ];
     }
+
+    /**
+    * messages
+    *
+    * @return void
+    */
+    public function messages()
+    {
+        return [
+            'avatar.required' => __("messages.validation.avatar_required"),
+        ];
+    }
 }

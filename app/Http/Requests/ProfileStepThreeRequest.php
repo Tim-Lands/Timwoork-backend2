@@ -27,4 +27,16 @@ class ProfileStepThreeRequest extends FormRequest
             'phone_number' => 'required',
         ];
     }
+
+    /**
+    * messages
+    *
+    * @return void
+    */
+    public function messages()
+    {
+        return [
+            'phone_number.required' => __("messages.validation.phone_number_required"),
+        ];
+    }
 }

@@ -43,7 +43,7 @@ class ConversationController extends Controller
         // شرط اذا كان العنصر موجود
         if (!$conversation) {
             // رسالة خطأ
-            return response()->error('هذا العنصر غير موجود', 403);
+            return response()->error(__("messages.errors.element_not_found"), 403);
         }
         // اظهار العنصر
         return response()->success(__("messages.oprations.get_data"), $conversation);
@@ -70,7 +70,7 @@ class ConversationController extends Controller
 
             broadcast(new MessageSent($message));
             DB::commit();
-            return response()->success('لقد تمّ إضافة المحادثة بنجاح', $conversation);
+            return response()->success(__("messages.conversation.conversation_success"), $conversation);
         } catch (Exception $ex) {
             return $ex;
             DB::rollback();
@@ -95,7 +95,7 @@ class ConversationController extends Controller
             ]);
             broadcast(new MessageSent($message));
             DB::commit();
-            return response()->success('لقد تمّ إرسال الرسالة بنجاح', $message);
+            return response()->success(__("messages.conversation.message_success"), $message);
         } catch (Exception $ex) {
             return $ex;
             DB::rollback();

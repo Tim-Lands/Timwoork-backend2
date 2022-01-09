@@ -7,7 +7,6 @@ use App\Http\Requests\SalesProcces\CartRequest;
 use App\Models\Cart;
 use App\Models\Product;
 use App\Models\CartItem;
-use App\Models\Order;
 use App\Traits\Paypal;
 use App\Traits\Stripe;
 use Exception;

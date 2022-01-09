@@ -24,7 +24,7 @@ class SearchController extends Controller
                 },
                 'ratings',
                 'subcategory' => function ($q) {
-                    $q->select('id', 'parent_id', 'name_ar',)
+                    $q->select('id', 'parent_id', 'name_ar', )
                         ->with('category', function ($q) {
                             $q->select('id', 'name_ar')
                                 ->without('subcategories');
@@ -35,9 +35,9 @@ class SearchController extends Controller
             ->take($limit);
 
         if (!$res->isEmpty()) {
-            return response()->success('تمت عملية الفلترة بنجاح', $res);
+            return response()->success(__("messages.filter.filter_success"), $res);
         } else {
-            return response()->success('لم يتم العثور على نتائج', [], 204);
+            return response()->success(__("messages.filter.filter_field"), [], 204);
         }
     }
 }

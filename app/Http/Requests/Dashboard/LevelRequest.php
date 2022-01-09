@@ -42,12 +42,12 @@ class LevelRequest extends FormRequest
     public function messages()
     {
         return [
-            'name_ar.required' => ' اسم المستوى مطلوب',
-            'type.required' => 'حقل نوع المستوى مطلوب',
-            'number_developments.required_if' => 'حقل عدد التطويرات مطلوب',
-            'price_developments.required_if' => 'أقصى سعر للتطوير مطلوب',
-            'number_sales.required_if' => 'عدد المبيعات المستوى مطلوب',
-            'value_bayer.required_if' => 'حقل القيمة الشرائية مطلوب',
+            'name_ar.required' =>__("messages.validation.required_name_ar"),
+            'type.required' => __("messages.validation.type_level"),
+            'number_developments.required_if' => __("messages.validation.number_developments"),
+            'price_developments.required_if' => __("messages.validation.price_developments"),
+            'number_sales.required_if' => __("messages.validation.number_sales"),
+            'value_bayer.required_if' => __("messages.validation.value_bayer"),
 
         ];
     }

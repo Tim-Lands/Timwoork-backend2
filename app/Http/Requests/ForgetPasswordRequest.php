@@ -27,4 +27,18 @@ class ForgetPasswordRequest extends FormRequest
             'email' => 'required|email|exists:users'
         ];
     }
+
+    /**
+    * messages
+    *
+    * @return void
+    */
+    public function messages()
+    {
+        return [
+            'email.required' => __("messages.validation.email_required"),
+            'email.email' => __("messages.validation.email"),
+            'email.exists' => __("messages.validation.exists"),
+        ];
+    }
 }

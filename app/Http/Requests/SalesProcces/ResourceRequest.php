@@ -36,9 +36,9 @@ class ResourceRequest extends FormRequest
     public function messages()
     {
         return [
-            'file_resource.required' => 'هذا الحقل موجود من قبل',
-            'file_resource.file' => 'هذا الحقل موجود من قبل',
-            'file_resource.mimes' => 'هذا الحقل موجود من قبل',
+            'file_resource.required' => __("messages.validation.file_resource_required"),
+            'file_resource.file' => __("messages.validation.file_resource_file"),
+            'file_resource.mimes' => __("messages.validation.file_resource_mimes"),
         ];
     }
 }

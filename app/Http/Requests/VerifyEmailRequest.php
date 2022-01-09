@@ -28,4 +28,21 @@ class VerifyEmailRequest extends FormRequest
             'code' => 'required|min:6|max:6'
         ];
     }
+
+
+    /**
+    * messages
+    *
+    * @return void
+    */
+    public function messages()
+    {
+        return [
+            'email.required' => __("messages.validation.email_required"),
+            'email.email' => __("messages.validation.email"),
+            'code.required' => __("messages.validation.code_required"),
+            'code.min' => __("messages.validation.code_size"),
+            'code.max' => __("messages.validation.code_size"),
+        ];
+    }
 }

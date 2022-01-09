@@ -35,4 +35,22 @@ class ProfileStepOneRequest extends FormRequest
             'country_id' => 'required',
         ];
     }
+
+    /**
+    * messages
+    *
+    * @return void
+    */
+    public function messages()
+    {
+        return [
+            'first_name.required' => __("messages.validation.bio_required"),
+            'last_name.min' => __("messages.validation.bio_min"),
+            'username.required' => __("messages.validation.username_required"),
+            'username.unique' => __("messages.validation.unique"),
+            'date_of_birth.required' => __("messages.validation.date_of_birth_required"),
+            'gender.required' => __("messages.validation.gender_required"),
+            'country_id.required' => __("messages.validation.country_id"),
+        ];
+    }
 }

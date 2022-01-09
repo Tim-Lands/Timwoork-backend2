@@ -29,4 +29,19 @@ class ChangePasswordRequest extends FormRequest
             'password_confirmation' => 'required',
         ];
     }
+
+    /**
+    * messages
+    *
+    * @return void
+    */
+    public function messages()
+    {
+        return [
+            'old_password.required' => __("messages.validation.old_password_required"),
+            'password.required' => __("messages.validation.password_required"),
+            'password.confirmed' => __("messages.validation.password_confirmed"),
+            'password_confirmation.required' => __("messages.validation.password_confirmation_required"),
+        ];
+    }
 }

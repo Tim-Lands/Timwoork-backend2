@@ -32,9 +32,6 @@ class ItemController extends Controller
         // جلب الطلبية
         $item = Item::whereId($id)
             ->with(['order.cart.user', 'profileSeller'])
-            ->whereHas('order.cart', function ($q) {
-                $q->where('user_id', Auth::id());
-            })
             ->first();
         if (!$item) {
             // رسالة خطأ

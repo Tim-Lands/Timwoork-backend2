@@ -24,11 +24,30 @@ class ProductStepFourRequest extends FormRequest
     public function rules()
     {
         return [
-            'thumbnail'      => 'sometimes|image|mimes:png,jpg,jpeg|max:2048',
-            //'images'         => 'sometimes',
-            //'images.*'       => 'mimes:png,jpg,jpeg|max:2048',
-            //'file'           => 'mimes:pdf|max:2048',
-            //'url_video'      => 'nullable|url'
+            'thumbnail'      => 'required|image|mimes:png,jpg,jpeg|max:2048',
+            'images'         => 'sometimes',
+            'images.*'       => 'mimes:png,jpg,jpeg|max:2048',
+            'file'           => 'mimes:pdf|max:2048',
+            'url_video'      => 'nullable|url'
+        ];
+    }
+
+    /**
+    * messages
+    *
+    * @return void
+    */
+    public function messages()
+    {
+        return [
+            'thumbnail.required' =>__("messages.validation.thumbnail"),
+            'thumbnail.mimes' =>__("messages.validation.thumbnail_mimes"),
+            'thumbnail.size' =>__("messages.validation.thumbnail_size"),
+            'images.mimes' => __("messages.validation.images_mimes"),
+            'name_en.size' => __("messages.validation.images_size"),
+            'file.mimes'   => __("messages.validation.file_mimes"),
+            'file.size'   => __("messages.validation.file_size"),
+            'url_video.url' => __("messages.validation.url"),
         ];
     }
 }

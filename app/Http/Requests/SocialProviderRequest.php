@@ -29,4 +29,18 @@ class SocialProviderRequest extends FormRequest
             'full_name' => 'required'
         ];
     }
+
+    /**
+    * messages
+    *
+    * @return void
+    */
+    public function messages()
+    {
+        return [
+            'provider_id.required' => __("messages.validation.provider_id"),
+            'email.required' => __("messages.validation.email_required"),
+            'full_name.required' => __("messages.validation.skills"),
+        ];
+    }
 }

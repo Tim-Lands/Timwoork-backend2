@@ -28,4 +28,20 @@ class RatingStoreRequest extends FormRequest
             'comment' => 'required',
         ];
     }
+
+    /**
+    * messages
+    *
+    * @return void
+    */
+    public function messages()
+    {
+        return [
+            'rating.required' =>__("messages.validation.rating_required"),
+            'rating.integer' => __("messages.validation.numeric"),
+            'rating.between' => __("messages.validation.rating_between"),
+            'comment.required' => __("messages.validation.comment_required"),
+            
+        ];
+    }
 }

@@ -27,4 +27,16 @@ class ResendVerifyRequest extends FormRequest
             'email' => 'required|email'
         ];
     }
+
+    /**
+    * messages
+    *
+    * @return void
+    */
+    public function messages()
+    {
+        return [
+            'phone_number.required' => __("messages.validation.phone_number_required"),
+        ];
+    }
 }

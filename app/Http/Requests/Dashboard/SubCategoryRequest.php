@@ -46,15 +46,15 @@ class SubCategoryRequest extends FormRequest
     public function messages()
     {
         return [
-            'name_ar.required' => ' اسم المستوى مطلوب',
-            'name_ar.unique' => 'هذا الحقل موجود من قبل',
-            'name_en.unique' => 'هذا الحقل موجود من قبل',
-            'name_fr.unique' => 'هذا الحقل موجود من قبل',
-            'description_ar.min' => 'هذا الحقل موجود من قبل',
-            'description_en.min' => 'هذا الحقل موجود من قبل',
-            'description_fr.min' => 'هذا الحقل موجود من قبل',
-            'icon.required' => 'نسبة الاقتطاع مطلوبة',
-            'parent_id' => 'هذا الحقل مطلوب'
+            'name_ar.required' =>__("messages.validation.required_name_ar"),
+            'name_ar.unique' => __("messages.validation.unique"),
+            'name_en.unique' => __("messages.validation.unique"),
+            'name_fr.unique' => __("messages.validation.unique"),
+            'description_ar.min' => __("messages.validation.min_description"),
+            'description_en.min' => __("messages.validation.min_description"),
+            'description_fr.min' => __("messages.validation.min_description"),
+            'icon.required' => __("messages.validation.icon"),
+            'parent_id' => __("messages.validation.parent_id")
         ];
     }
     /**

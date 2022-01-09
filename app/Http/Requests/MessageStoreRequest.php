@@ -27,4 +27,16 @@ class MessageStoreRequest extends FormRequest
             'message' => 'required'
         ];
     }
+
+    /**
+    * messages
+    *
+    * @return void
+    */
+    public function messages()
+    {
+        return [
+            'message.required' => __("messages.validation.message_required"),
+        ];
+    }
 }

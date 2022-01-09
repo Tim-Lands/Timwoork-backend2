@@ -38,9 +38,9 @@ class CartRequest extends FormRequest
     public function messages()
     {
         return [
-            'quantity.numeric' => ' اسم المستوى مطلوب',
-            'product_id.required' => 'هذا الحقل موجود من قبل',
-            'developments.exists' => 'هذا الحقل موجود من قبل',
+            'quantity.numeric' => __("messages.validation.numeric"),
+            'product_id.required' => __("messages.validation.product_id"),
+            'developments.exists' => __("messages.validation.exists"),
         ];
     }
 }

@@ -28,4 +28,18 @@ class SellerStepOneRequest extends FormRequest
             'languages.*' => 'required'
         ];
     }
+
+    /**
+    * messages
+    *
+    * @return void
+    */
+    public function messages()
+    {
+        return [
+            'bio.required' => __("messages.validation.bio_required"),
+            'bio.min' => __("messages.validation.bio_min"),
+            'languages.required' => __("messages.validation.languages"),
+        ];
+    }
 }

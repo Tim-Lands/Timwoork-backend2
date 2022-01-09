@@ -207,7 +207,7 @@ Route::prefix('order')->group(function () {
         Route::post('/{id}/reject_item_seller', [ItemController::class, 'item_rejected_seller']);
         // رفض الطلبية من قبل المشتري
         Route::post('/{id}/reject_item_buyer', [ItemController::class, 'item_rejected_buyer']);
-        // رفض المشروع
+        // رفع المشروع
         Route::post('/{id}/upload_resources', [ItemController::class, 'upload_resource_by_seller']);
         // تسليم المشروع من قبل البائع
         Route::post('/{id}/dilevery_resources', [ItemController::class, 'delivery_resource_by_seller']);

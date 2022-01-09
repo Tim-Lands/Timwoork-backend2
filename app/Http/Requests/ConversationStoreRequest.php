@@ -29,4 +29,18 @@ class ConversationStoreRequest extends FormRequest
             'initial_message' => 'required'
         ];
     }
+
+    /**
+    * messages
+    *
+    * @return void
+    */
+    public function messages()
+    {
+        return [
+            'title.required' => __("messages.validation.conversation_title"),
+            'receiver_id.required' => __("messages.validation.receiver_id"),
+            'initial_message.required' => __("messages.validation.initial_message"),
+        ];
+    }
 }

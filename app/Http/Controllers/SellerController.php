@@ -63,7 +63,7 @@ class SellerController extends Controller
             DB::commit();
 
             // إرسال رسالة نجاح
-            return response()->success('تم تسجيل بروفايل البائع بنجاح', $seller);
+            return response()->success(__("messages.seller.add_profile_seller"), $seller);
         } catch (Exception $ex) {
             DB::rollback();
             //return $ex;

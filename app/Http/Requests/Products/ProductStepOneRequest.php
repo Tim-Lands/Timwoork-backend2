@@ -29,4 +29,22 @@ class ProductStepOneRequest extends FormRequest
             'tags.*'              => 'required|exists:tags,id'
         ];
     }
+
+    /**
+    * messages
+    *
+    * @return void
+    */
+    public function messages()
+    {
+        return [
+            'title.required' =>__("messages.validation.title_required"),
+            'title.unique' =>__("messages.validation.unique"),
+            'title.string' =>__("messages.validation.string"),
+            'subcategory.required' =>__("messages.validation.subcategory_required"),
+            'subcategory.exists' =>__("messages.validation.exists"),
+            'tags.required' => __("messages.validation.tags_required"),
+            'tags.exists' => __("messages.validation.exists"),
+        ];
+    }
 }

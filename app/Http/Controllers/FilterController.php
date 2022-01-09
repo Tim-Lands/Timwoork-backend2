@@ -8,7 +8,6 @@ use Illuminate\Database\Eloquent\Builder;
 
 class FilterController extends Controller
 {
-
     public function __invoke(Request $request)
     {
         $paginate = $request->query('paginate') ? $request->query('paginate') : 12;
@@ -28,12 +27,12 @@ class FilterController extends Controller
                 },
             ])->withAvg('ratings', 'rating')
             ->withCount('ratings as rats_count')
-            ->where('is_completed',1)
+            ->where('is_completed', 1)
             ->paginate($paginate);
         if (!$res->isEmpty()) {
-            return response()->success('تمت عملية الفلترة بنجاح', $res);
+            return response()->success(__("messages.filter.filter_success"), $res);
         } else {
-            return response()->success('لم يتم العثور على نتائج', [], 204);
+            return response()->success(__("messages.filter.filter_field"), [], 204);
         }
     }
 }

@@ -28,4 +28,17 @@ class SellerSteptwoRequest extends FormRequest
             'skills.*' => 'required',
         ];
     }
+
+    /**
+    * messages
+    *
+    * @return void
+    */
+    public function messages()
+    {
+        return [
+            'professions.required' => __("messages.validation.professions"),
+            'skills.required' => __("messages.validation.skills"),
+        ];
+    }
 }

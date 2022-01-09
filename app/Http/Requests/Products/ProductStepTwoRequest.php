@@ -33,4 +33,28 @@ class ProductStepTwoRequest extends FormRequest
 
         ];
     }
+
+    /**
+    * messages
+    *
+    * @return void
+    */
+    public function messages()
+    {
+        return [
+            'price.required' =>__("messages.validation.required_name_ar"),
+            'price.integer' => __("messages.validation.numeric"),
+            'developments.*.title' => [
+                'required' => __("messages.validation.developements_title_required"),
+                'string' => __("messages.validation.string"),
+            ],
+            'developments.*.duration' => [
+                'required' => __("messages.validation.developements_duration_required"),
+            ],
+            'developments.*.price' => [
+                'required' => __("messages.validation.developements_price_required"),
+                'integer' => __("messages.validation.numeric"),
+            ],
+        ];
+    }
 }
