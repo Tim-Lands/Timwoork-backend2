@@ -47,7 +47,7 @@ class AcceptOrder extends Notification
             ->from('support@timlands.com')
             ->subject('قبول الطلبية')
             ->view('emails.orders.accept_order', [
-                'type' => "accept_order",
+                'type' => "order",
                 'title' =>  " قام " . Auth::user()->profile->full_name . " بقبول الطلبية التي اشتريتها ",
                 'user_sender' => Auth::user()->profile,
                 'content' => [
@@ -66,7 +66,7 @@ class AcceptOrder extends Notification
     public function toArray($notifiable)
     {
         return [
-            'type' => "accept_order",
+            'type' => "order",
             'title' =>  " قام " . Auth::user()->profile->full_name . " بقبول الطلبية التي اشتريتها ",
             'user_sender' => Auth::user()->profile,
             'content' => [

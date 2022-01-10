@@ -47,7 +47,7 @@ class NewOrder extends Notification implements ShouldQueue
             ->from('support@timlands.com')
             ->subject('طلبية جديدة')
             ->view('emails.orders.new_order', [
-                'type' => "new_order",
+                'type' => "order",
                 'title' =>  " قام " . Auth::user()->profile->full_name . " بشراء خدمة من خدماتك ",
                 'user_sender' => Auth::user()->profile,
                 'content' => [
@@ -66,7 +66,7 @@ class NewOrder extends Notification implements ShouldQueue
     public function toArray($notifiable)
     {
         return [
-            'type' => "new_order",
+            'type' => "order",
             'title' =>  " قام " . Auth::user()->profile->full_name . " برفض الطلبية ",
             'user_sender' => Auth::user()->profile,
             'content' => [
