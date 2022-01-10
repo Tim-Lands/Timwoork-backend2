@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests;
 
+use Carbon\Carbon;
 use Illuminate\Validation\Rule;
 
 use Illuminate\Foundation\Http\FormRequest;
@@ -26,21 +27,24 @@ class ProfileStepOneRequest extends FormRequest
      */
     public function rules()
     {
+        $dt1 = new Carbon();
+        $dt2 = new Carbon();
+        $before = $dt1->now()->subYears(19)->format('Y-m-d');
+        $after = $dt2->subYears(101)->format('Y-m-d');
         return [
             'first_name' => 'required',
             'last_name' => 'required',
-            'username' => ['required', "unique:users,username," . Auth::id(), 'regex:/(^([a-zA-Z]+)(\d+)?$)/u'],
-            'date_of_birth' => 'required|date_format:Y-m-d',
+            'date_of_birth' => 'required|date_format:Y-m-d|before_or_equal:' . $before . '|after_or_equal:' . $after,
             'gender' => 'required',
             'country_id' => 'required',
         ];
     }
 
     /**
-    * messages
-    *
-    * @return void
-    */
+     * messages
+     *
+     * @return void
+     */
     public function messages()
     {
         return [

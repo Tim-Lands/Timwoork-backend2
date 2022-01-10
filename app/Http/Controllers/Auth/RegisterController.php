@@ -30,15 +30,22 @@ class RegisterController extends Controller
             DB::beginTransaction();
             $user = User::create([
                 'email' => $request->email,
+                'username' => $request->username,
                 'password' => bcrypt($request->password)
             ]);
 
+            // انشاء مستخدم جديد
             $user->profile()->create([
                 'avatar' => url('avatars/avatar.png'),
                 'lang' => 'ar',
                 'badge_id' => 1,
                 'level_id' => 1,
             ]);
+
+            // انشاء محفظة للمستخدم
+
+            $user->profile->wallet()->create([]);
+
             // إنشاء رمز تفعيل البريد اﻹلكتروني
 
             $this->store_code_bin($user);
