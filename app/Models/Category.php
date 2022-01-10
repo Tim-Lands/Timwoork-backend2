@@ -21,7 +21,6 @@ class Category extends Model
 
     // ================== Acssesor & mutators ==========================
 
-
     // ============================ Scopes =============================
     // code
 
@@ -38,7 +37,7 @@ class Category extends Model
     }
 
     /**
-     * scopeParent => دالة تعمل على تصفية التصنيفات الرئيسية 
+     * scopeParent => دالة تعمل على تصفية التصنيفات الرئيسية
      *
      * @param  mixed $query
      * @return void

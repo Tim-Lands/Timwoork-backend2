@@ -27,6 +27,12 @@ class FrontEndController extends Controller
                 [
                     'id'      => $category['id'],
                     'name_ar' => $category['name_ar'],
+                    'name_en' => $category['name_en'],
+                    'name_fr' => $category['name_fr'],
+                    'description_ar' => $category['description_ar'],
+                    'description_en' => $category['description_en'],
+                    'description_fr' => $category['description_fr'],
+                    'parent_id' => $category['parent_id'],
                     'icon'    => $category['icon'],
                     'products_count' => $category['subcategories']->sum('products_count')
                 ];
@@ -45,21 +51,20 @@ class FrontEndController extends Controller
     public function get_subcategories(mixed $id): JsonResponse
     {
         // جلب التصنيف الرئيسي من اجل التحقق
-        $catagory = Category::find($id);
-        if (!$catagory) {
+        $catagory = Category::whereId($id);
+        if (!$catagory->first()) {
             return response()->error(__("messages.errors.element_not_found"), 403);
         }
         // جلب التصنيفات الفرعية
-        $subcategorie = Category::select('id', 'name_ar', 'icon')
+        $subcategories = $catagory->selection()->with('subCategories', function ($q) {
+            $q->selection()
             ->withCount('products')
-            ->where('parent_id', $id)
-            ->child()
             ->orderBy('products_count', 'desc')
             ->take(Category::SUBCATEGORY_DISPLAY)
             ->get();
-
+        })->first();
         // اظهار العناصر
-        return response()->success(__("messages.oprations.get_all_data"), $subcategorie);
+        return response()->success(__("messages.oprations.get_all_data"), $subcategories);
     }
 
 
