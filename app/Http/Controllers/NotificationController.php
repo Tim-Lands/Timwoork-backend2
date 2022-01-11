@@ -24,10 +24,11 @@ class NotificationController extends Controller
     {
         $paginate = $request->query('paginate') ? $request->query('paginate') : 10;
 
-        $notifications = Auth::user()->notifications()->orderBy('created_at')
+        /*         $notifications = Auth::user()->notifications()->orderBy('created_at')
             ->paginate($paginate)->groupBy(function ($data) {
                 return $data->created_at->diffForHumans();
-            });
+            }); */
+        $notifications = Auth::user()->notifications()->paginate($paginate);
         return response()->success('لقد تم جلب الاشعارات بنجاح', $notifications);
     }
 

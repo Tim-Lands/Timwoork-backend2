@@ -47,7 +47,7 @@ class AcceptRequestRejectOrder extends Notification
             ->from('support@timlands.com')
             ->subject('قبول إلغاء الطلبية')
             ->view('emails.orders.accept_request_reject_order', [
-                'type' => "accept_request_reject_order",
+                'type' => "order",
                 'title' =>  " قبل " . Auth::user()->profile->full_name . " بطلب إلغاء الطلبية   ",
                 'user_sender' => Auth::user()->profile,
                 'content' => [
@@ -66,7 +66,7 @@ class AcceptRequestRejectOrder extends Notification
     public function toArray($notifiable)
     {
         return [
-            'type' => "accept_request_reject_order",
+            'type' => "order",
             'title' =>  " قبل " . Auth::user()->profile->full_name . " بطلب إلغاء الطلبية ",
             'user_sender' => Auth::user()->profile,
             'content' => [

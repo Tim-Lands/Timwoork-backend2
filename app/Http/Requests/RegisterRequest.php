@@ -3,6 +3,7 @@
 namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Support\Facades\Auth;
 
 class RegisterRequest extends FormRequest
 {
@@ -25,16 +26,17 @@ class RegisterRequest extends FormRequest
     {
         return [
             'email' => 'required|email|unique:users',
+            'username' => ['required', "unique:users,username," . Auth::id(), 'regex:/(^([a-zA-Z]+)(\d+)?$)/u'],
             'password' => 'required|min:8'
         ];
     }
 
 
     /**
-    * messages
-    *
-    * @return void
-    */
+     * messages
+     *
+     * @return void
+     */
     public function messages()
     {
         return [
