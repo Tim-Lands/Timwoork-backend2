@@ -15,90 +15,11 @@ class CategoryTableSeeder extends Seeder
      */
     public function run()
     {
-
-        DB::table('categories')->insert([
-            'name_ar'   => '',
-            'name_en'   => '',
-            'name_fr'   => '',
-            'icon'      => '',
-            'slug'      => ''
-        ]);
-
-        DB::table('categories')->insert([
-            'name_ar'   => '',
-            'name_en'   => '',
-            'name_fr'   => '',
-            'icon'      => '',
-            'slug'      => ''
-        ]);
-
-        DB::table('categories')->insert([
-            'name_ar'   => '',
-            'name_en'   => '',
-            'name_fr'   => '',
-            'icon'      => '',
-            'slug'      => ''
-        ]);
-
-        DB::table('categories')->insert([
-            'name_ar'   => '',
-            'name_en'   => '',
-            'name_fr'   => '',
-            'icon'      => '',
-            'slug'      => ''
-        ]);
-
-        DB::table('categories')->insert([
-            'name_ar'   => '',
-            'name_en'   => '',
-            'name_fr'   => '',
-            'icon'      => '',
-            'slug'      => ''
-        ]);
-
-        DB::table('categories')->insert([
-            'name_ar'   => '',
-            'name_en'   => '',
-            'name_fr'   => '',
-            'icon'      => '',
-            'slug'      => ''
-        ]);
-
-        DB::table('categories')->insert([
-            'name_ar'   => '',
-            'name_en'   => '',
-            'name_fr'   => '',
-            'icon'      => '',
-            'slug'      => ''
-        ]);
-
-        DB::table('categories')->insert([
-            'name_ar'   => '',
-            'name_en'   => '',
-            'name_fr'   => '',
-            'icon'      => '',
-            'slug'      => ''
-        ]);
-
         DB::table('categories')->insert([
             'name_ar'   => 'نمط الحياة',
             'name_en'   => 'LifeStyle',
             'icon'      => 'support',
             'slug'      => 'life-style'
-        ]);
-
-        DB::table('categories')->insert([
-            'name_ar'   => 'التصميم الغرافيكي',
-            'name_en'   => 'Graphic Design',
-            'icon'      => 'view_in_ar',
-            'slug'      => 'graphic-design'
-        ]);
-
-        DB::table('categories')->insert([
-            'name_ar'   => 'التصميم الغرافيكي',
-            'name_en'   => 'Graphic Design',
-            'icon'      => 'view_in_ar',
-            'slug'      => 'graphic-design'
         ]);
 
         DB::table('categories')->insert([
@@ -148,6 +69,13 @@ class CategoryTableSeeder extends Seeder
             'name_en'   => 'Video & Animation',
             'icon'      => 'video_camera_back',
             'slug'      => 'video-and-animation'
+        ]);
+
+        DB::table('categories')->insert([
+            'name_ar'   => 'تطوير الويب',
+            'name_en'   => 'web development',
+            'parent_id'      => 7,
+            'slug'      => 'web-development'
         ]);
     }
 }
