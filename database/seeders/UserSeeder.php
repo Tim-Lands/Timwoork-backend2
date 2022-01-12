@@ -35,7 +35,7 @@ class UserSeeder extends Seeder
         ProfileSeller::all()->each(function ($p) use ($skills, $langs, $cats) {
             $p->languages()->attach($langs->random(rand(1, 3))->pluck('id')->toArray(), ["level" => rand(5, 10)]);
             $p->skills()->attach($skills->random(rand(1, 10))->pluck('id')->toArray(),  ["level" => rand(5, 10)]);
-            $p->professions()->attach($cats->random(rand(1, 30))->pluck('id')->toArray());
+            $p->professions()->attach($cats->random(rand(1, 8))->pluck('id')->toArray());
         });
     }
 }

@@ -128,6 +128,9 @@ class LoginController extends Controller
                         'lang' => 'ar',
                     ]);
 
+                    // انشاء محفظة للمستخدم
+
+                    $user->profile->wallet()->create([]);
                     // تسجيل اسم المزوّد و المعرّف الخاص بالمستخدم في المزود الخاص به
                     $user->providers()->create([
                         'provider' => $provider,
