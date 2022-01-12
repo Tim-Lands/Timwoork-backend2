@@ -24,7 +24,7 @@ class ProductStepTwoRequest extends FormRequest
     public function rules()
     {
         return [
-            'price' => 'required|integer',
+            'price' => 'required|integer|between:5,5000',
             'duration' => 'required',
             'developments.*' => 'sometimes',
             'developments.*.title' => 'required|string|max:255',
@@ -42,19 +42,17 @@ class ProductStepTwoRequest extends FormRequest
     public function messages()
     {
         return [
-            'price.required' =>__("messages.validation.required_name_ar"),
+            'price.required' =>__("messages.validation.price_required"),
             'price.integer' => __("messages.validation.numeric"),
-            'developments.*.title' => [
-                'required' => __("messages.validation.developements_title_required"),
-                'string' => __("messages.validation.string"),
-            ],
-            'developments.*.duration' => [
-                'required' => __("messages.validation.developements_duration_required"),
-            ],
-            'developments.*.price' => [
-                'required' => __("messages.validation.developements_price_required"),
-                'integer' => __("messages.validation.numeric"),
-            ],
+            'price.between' => __("messages.validation.price_between"),
+            'duration.required' => __("messages.validation.duration_required"),
+
+            'developments.*.duration.required' =>__("messages.validation.developements_title_required"),
+            'developments.*.duration.string' => __("messages.validation.string"),
+
+            'developments.*.duration.required' => __("messages.validation.developements_duration_required"),
+            'developments.*.price.required' => __("messages.validation.developements_price_required"),
+            'developments.*.price.integer' => __("messages.validation.numeric")
         ];
     }
 }

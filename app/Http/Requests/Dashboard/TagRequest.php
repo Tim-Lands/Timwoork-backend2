@@ -26,9 +26,7 @@ class TagRequest extends FormRequest
     public function rules()
     {
         return [
-            'name_ar'            => 'required|string|unique:tags,name_ar,' . $this->id,
-            'name_en'            => 'sometimes|nullable|unique:tags,name_en,' . $this->id,
-            'name_fr'            => 'sometimes|nullable|unique:tags,name_fr,' . $this->id,
+            'name'            => 'required|string|unique:tags,name,' . $this->id,
         ];
     }
     /**
@@ -41,8 +39,6 @@ class TagRequest extends FormRequest
         return [
             'name_ar.required' => __("messages.validation.required_name_ar"),
             'name_ar.unique' => __("messages.validation.unique"),
-            'name_en.unique' => __("messages.validation.unique"),
-            'name_fr.unique' => __("messages.validation.unique"),
         ];
     }
     /**

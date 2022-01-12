@@ -22,7 +22,7 @@ class TagFactory extends Factory
     public function definition()
     {
         return [
-            'name_ar' => $this->faker->word,
+            'name' => $this->faker->unique()->word,
         ];
     }
 }

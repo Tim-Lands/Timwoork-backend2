@@ -11,6 +11,7 @@ use App\Models\Category;
 use App\Models\File;
 use App\Models\Product;
 use App\Models\Shortener;
+use App\Models\Tag;
 use App\Models\Video;
 use Exception;
 use Illuminate\Http\JsonResponse;
@@ -62,10 +63,9 @@ class InsertProductContoller extends Controller
      * @param  ProductStepOneRequest $request
      * @return object
      */
-    public function storeStepOne($id, ProductStepOneRequest $request): JsonResponse
+    public function storeStepOne($id, ProductStepOneRequest $request)
     {
         try {
-
             //id  جلب العنصر بواسطة
             $product = Product::find($id);
             // شرط اذا كان العنصر موجود
@@ -91,20 +91,50 @@ class InsertProductContoller extends Controller
             } else {
                 $data['current_step'] = Product::PRODUCT_STEP_ONE;
             }
-
+            // حلب الوسوم الموجودة داخل القواعد البيانات
+            $tags = Tag::whereIn("name", $request->tags)->get();
+            // مصفوفة فارغة
+            $tags_total = [];
+            // جلب الاسماء الوسوم فقط
+            $get_name_tags = array_map(function ($key) {
+                return $key["name"] ;
+            }, $tags->toArray());
+            // جلب معرفات الوسوم و وضعهم في مصفوفة
+            $tags_total = array_map(function ($key) {
+                return $key["id"] ;
+            }, $tags->toArray());
+            // فلترة اسماء الوسوم من التكرار المتواجدة في قواعد البيانات
+            $filter_tags = array_unique($get_name_tags);
+            // جلب الاسماء الجديدة الغير موجودة في قواعد البيانات
+            $new_tags = array_values(array_diff($request->tags, $filter_tags));
             /* --------------------- انشاء المرحلة الاولى في الخدمة --------------------- */
             // بداية المعاملة مع البيانات المرسلة لقاعدة بيانات :
             DB::beginTransaction();
             // عملية انشاء المرحلة الاولى
             $product->update($data);
             // اضافة الكلمات المفتاحية الكلمات المفتاحية او الوسوم
-            $product->product_tag()->syncWithoutDetaching(collect($request->tags));
+            // شرط اذا كانت هناك كلمات مفتاحية جديدة
+            if (!empty($new_tags)) {
+                // عمل لوب من اجل اضافة كلمة جيدة
+                foreach ($new_tags as $tag) {
+                    // اضافة وسم جديد
+                    $tag = Tag::create(['name' => $tag]);
+                    // وضع معرف الوسم في المصفوفة
+                    $tags_total[] = $tag->id;
+                }
+                // اضافة وسوم التابع للخدمة
+                $product->product_tag()->syncWithoutDetaching($tags_total);
+            } else {
+                // اضافة وسوم التابع للخدمة
+                $product->product_tag()->syncWithoutDetaching($tags_total);
+            }
             // انهاء المعاملة بشكل جيد :
             DB::commit();
             // رسالة نجاح عملية الاضافة:
             return response()->success(__("messages.product.success_step_one"), $product);
             /* -------------------------------------------------------------------------- */
         } catch (Exception $ex) {
+            return $ex;
             // لم تتم المعاملة بشكل نهائي و لن يتم ادخال اي بيانات لقاعدة البيانات
             DB::rollback();
             // رسالة خطأ

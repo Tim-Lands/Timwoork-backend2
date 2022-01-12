@@ -26,7 +26,8 @@ class ProductStepOneRequest extends FormRequest
         return [
             'title'               => 'required|string|max:255|unique:products,title,' . $this->id,
             'subcategory'         => 'required|exists:categories,id',
-            'tags.*'              => 'required|exists:tags,id'
+            'tags'              => 'required',
+            'tags.*'              => 'string|min:3'
         ];
     }
 
@@ -44,7 +45,7 @@ class ProductStepOneRequest extends FormRequest
             'subcategory.required' =>__("messages.validation.subcategory_required"),
             'subcategory.exists' =>__("messages.validation.exists"),
             'tags.required' => __("messages.validation.tags_required"),
-            'tags.exists' => __("messages.validation.exists"),
+            'tags.*.min' => __("messages.validation.tags_min"),
         ];
     }
 }

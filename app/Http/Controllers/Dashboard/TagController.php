@@ -35,9 +35,7 @@ class TagController extends Controller
         try {
             // جلب البيانات و وضعها في مصفوفة:
             $data = [
-                'name_ar'            => $request->name_ar,
-                'name_en'            => $request->name_en,
-                'name_fr'            => $request->name_fr,
+                'name'            => $request->name,
             ];
             // ============= انشاء وسم جديد ================:
             // بداية المعاملة مع البيانات المرسلة لقاعدة بيانات :
@@ -97,16 +95,8 @@ class TagController extends Controller
 
             // جلب البيانات و وضعها في مصفوفة:
             $data = [
-                'name_ar' => $request->name_ar,
+                'name' => $request->name,
             ];
-            //  في حالة ما اذا وجد الاسم بالانجليزية , اضفها الى مصفوفة التعديل:
-            if ($request->name_en) {
-                $data['name_en'] = $request->name_en;
-            }
-            //  في حالة ما اذا وجد الاسم بالفرنيسة , اضفها الى مصفوفة التعديل:
-            if ($request->name_fr) {
-                $data['name_fr'] = $request->name_fr;
-            }
             // ============= التعديل على الوسم  ================:
             // بداية المعاملة مع البيانات المرسلة لقاعدة بيانات :
             DB::beginTransaction();
