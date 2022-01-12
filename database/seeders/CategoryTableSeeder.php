@@ -74,6 +74,7 @@ class CategoryTableSeeder extends Seeder
         DB::table('categories')->insert([
             'name_ar'   => 'تطوير الويب',
             'name_en'   => 'web development',
+            'icon'      => 'web',
             'parent_id'      => 7,
             'slug'      => 'web-development'
         ]);
