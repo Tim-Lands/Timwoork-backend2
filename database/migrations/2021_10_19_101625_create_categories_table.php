@@ -23,7 +23,7 @@ class CreateCategoriesTable extends Migration
             $table->string('description_ar')->nullable();
             $table->string('description_en')->nullable();
             $table->string('description_fr')->nullable();
-            $table->string('icon');
+            $table->string('icon')->nullable();
 
             // relation of Model Category => Subcategory
             $table->foreignId('parent_id')

@@ -24,9 +24,8 @@ class ProfileSellerStoreRequest extends FormRequest
     public function rules()
     {
         return [
-            'bio' => 'required|min:26',
-            'portfolio' => 'required|url',
-            'skills' => 'required',
+            'bio' => 'min:26',
+            'portfolio' => 'url',
         ];
     }
 
@@ -38,11 +37,11 @@ class ProfileSellerStoreRequest extends FormRequest
     public function messages()
     {
         return [
-            'bio.required' => __("messages.validation.bio_required"),
+            //'bio.required' => __("messages.validation.bio_required"),
             'bio.min' => __("messages.validation.bio_min"),
-            'portfolio.required' => __("messages.validation.portfolio_required"),
+            //'portfolio.required' => __("messages.validation.portfolio_required"),
             'portfolio.url' => __("messages.validation.url"),
-            'skills.required' => __("messages.validation.skills_required"),
+            //'skills.required' => __("messages.validation.skills_required"),
         ];
     }
 }

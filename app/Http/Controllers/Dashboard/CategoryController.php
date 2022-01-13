@@ -7,6 +7,7 @@ use App\Http\Requests\Dashboard\CategoryRequest;
 use App\Models\Category;
 use Exception;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Response;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 
@@ -44,7 +45,7 @@ class CategoryController extends Controller
         // شرط اذا كان العنصر موجود
         if (!$category) {
             //رسالة خطأ
-            return response()->error(__("messages.errors.element_not_found"), 403);
+            return response()->error(__("messages.errors.element_not_found"), Response::HTTP_NOT_FOUND);
         }
         // اظهار العنصر
         return response()->success(__("messages.oprations.get_data"), $category);
@@ -104,7 +105,7 @@ class CategoryController extends Controller
             // شرط اذا كان العنصر موجود او المعرف اذا كان رقم غير صحيح
             if (!$category || !is_numeric($id)) {
                 //رسالة خطأ
-                return response()->error(__("messages.errors.element_not_found"), 403);
+                return response()->error(__("messages.errors.element_not_found"), Response::HTTP_NOT_FOUND);
             }
 
             // جلب البيانات و وضعها في مصفوفة:
@@ -164,7 +165,7 @@ class CategoryController extends Controller
             // شرط اذا كان العنصر موجود او المعرف اذا كان رقم غير صحيح
             if (!$category || !is_numeric($id)) {
                 //رسالة خطأ
-                return response()->error(__("messages.errors.element_not_found"), 403);
+                return response()->error(__("messages.errors.element_not_found"), Response::HTTP_NOT_FOUND);
             }
 
             // ============= التعديل على التصنيف  ================:

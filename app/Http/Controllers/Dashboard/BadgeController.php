@@ -6,7 +6,9 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Dashboard\BadgeRequest;
 use App\Models\Badge;
 use Exception;
+
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Response;
 use Illuminate\Support\Facades\DB;
 
 class BadgeController extends Controller
@@ -72,7 +74,7 @@ class BadgeController extends Controller
         // شرط اذا كان العنصر موجود
         if (!$badge) {
             // رسالة خطأ
-            return response()->error(__("messages.errors.element_not_found"), 403);
+            return response()->error(__("messages.errors.element_not_found"), Response::HTTP_NOT_FOUND);
         }
 
         // اظهار العنصر
@@ -96,7 +98,7 @@ class BadgeController extends Controller
             // شرط اذا كان العنصر موجود او المعرف اذا كان رقم غير صحيح
             if (!$badge || !is_numeric($id)) {
                 // رسالة خطأ
-                return response()->error(__("messages.errors.element_not_found"), 403);
+                return response()->error(__("messages.errors.element_not_found"), Response::HTTP_NOT_FOUND);
             }
 
             // جلب البيانات و وضعها في مصفوفة:
@@ -145,7 +147,7 @@ class BadgeController extends Controller
             // شرط اذا كان العنصر موجود او المعرف اذا كان رقم غير صحيح
             if (!$badge || !is_numeric($id)) {
                 // رسالة خطأ
-                return response()->error(__("messages.errors.element_not_found"), 403);
+                return response()->error(__("messages.errors.element_not_found"), Response::HTTP_NOT_FOUND);
             }
 
             // ============= حذف الشارة  ================:

@@ -24,8 +24,8 @@ class SellerSteptwoRequest extends FormRequest
     public function rules()
     {
         return [
-            'professions.*' => 'required',
-            'skills.*' => 'required',
+            //'professions.*' => 'required',
+            //'skills.*' => 'required',
         ];
     }
 
@@ -37,8 +37,8 @@ class SellerSteptwoRequest extends FormRequest
     public function messages()
     {
         return [
-            'professions.required' => __("messages.validation.professions"),
-            'skills.required' => __("messages.validation.skills"),
+            //'professions.required' => __("messages.validation.professions"),
+            //'skills.required' => __("messages.validation.skills"),
         ];
     }
 }

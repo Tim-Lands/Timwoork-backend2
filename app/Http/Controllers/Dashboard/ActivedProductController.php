@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Product;
 use Exception;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Response;
 use Illuminate\Support\Facades\DB;
 
 class ActivedProductController extends Controller
@@ -22,7 +23,7 @@ class ActivedProductController extends Controller
             $product = Product::find($id);
             if (!$product) {
                 // رسالة خطأ
-                return response()->error(__('messages.errors.element_not_found'), 403);
+                return response()->error(__('messages.errors.element_not_found'), Response::HTTP_NOT_FOUND);
             }
 
             // ============= تنشيط الخدمة  ================:
@@ -40,7 +41,7 @@ class ActivedProductController extends Controller
             // لم تتم المعاملة بشكل نهائي و لن يتم ادخال اي بيانات لقاعدة البيانات
             DB::rollback();
             // رسالة خطأ :
-            return response()->error(__('messages.errors.error_database'), 403);
+            return response()->error(__('messages.errors.error_database'), Response::HTTP_FORBIDDEN);
         }
     }
     /**
@@ -55,7 +56,7 @@ class ActivedProductController extends Controller
             $product = Product::find($id);
             if (!$product) {
                 // رسالة خطأ
-                return response()->error(__('messages.errors.element_not_found'), 403);
+                return response()->error(__('messages.errors.element_not_found'), Response::HTTP_NOT_FOUND);
             }
 
             // ============= رفض الخدمة  ================:
@@ -73,7 +74,7 @@ class ActivedProductController extends Controller
             // لم تتم المعاملة بشكل نهائي و لن يتم ادخال اي بيانات لقاعدة البيانات
             DB::rollback();
             // رسالة خطأ :
-            return response()->error(__('messages.errors.error_database'), 403);
+            return response()->error(__('messages.errors.error_database'), Response::HTTP_FORBIDDEN);
         }
     }
 }

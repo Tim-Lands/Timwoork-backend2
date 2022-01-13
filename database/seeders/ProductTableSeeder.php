@@ -26,10 +26,8 @@ class ProductTableSeeder extends Seeder
         foreach ($images as $image) {
             unlink($image);
         }
+        
         Product::factory()->times(15)->create()
-            ->each(function ($product) {
-                $product->product_tag()->saveMany(Tag::factory()->times(4)->make());
-            })
             ->each(function ($product) {
                 $product->developments()->saveMany(Development::factory()->times(3)->make());
             })
@@ -39,5 +37,13 @@ class ProductTableSeeder extends Seeder
             ->each(function ($product) {
                 $product->video()->save(Video::factory()->make());
             });
+        // factory tags
+        $tags = Tag::all();
+        // Populate the pivot table
+        Product::all()->each(function ($product) use ($tags) {
+            $product->product_tag()->attach(
+                $tags->random(rand(1, 20))->pluck('id')->toArray()
+            );
+        });
     }
 }

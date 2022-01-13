@@ -8,6 +8,7 @@ use App\Models\Level;
 use Exception;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Http\Response;
 use Illuminate\Support\Facades\DB;
 
 class LevelController extends Controller
@@ -90,7 +91,7 @@ class LevelController extends Controller
         // شرط اذا كان العنصر موجود
         if (!$level) {
             // رسالة خطأ
-            return response()->error(__("messages.errors.element_not_found"), 403);
+            return response()->error(__("messages.errors.element_not_found"), Response::HTTP_NOT_FOUND);
         }
         // اظهار العنصر
         return response()->success(__("messages.oprations.get_data"), $level);
@@ -112,7 +113,7 @@ class LevelController extends Controller
             // شرط اذا كان العنصر موجود او المعرف اذا كان رقم غير صحيح
             if (!$level || !is_numeric($id)) {
                 // رسالة خطأ
-                return response()->error(__("messages.errors.element_not_found"), 403);
+                return response()->error(__("messages.errors.element_not_found"), Response::HTTP_NOT_FOUND);
             }
 
             // جلب البيانات و وضعها في مصفوفة:
@@ -140,7 +141,7 @@ class LevelController extends Controller
             return response()->success(__("messages.oprations.update_success"), $level);
         } catch (Exception $ex) {
             // رسالة خطأ :
-            return response()->error(__("messages.errors.error_database"), 400);
+            return response()->error(__("messages.errors.error_database"), Response::HTTP_FORBIDDEN);
         }
     }
 
@@ -158,7 +159,7 @@ class LevelController extends Controller
             // شرط اذا كان العنصر موجود او المعرف اذا كان رقم غير صحيح
             if (!$level || !is_numeric($id)) {
                 // رسالة خطأ
-                return response()->error(__("messages.errors.element_not_found"), 403);
+                return response()->error(__("messages.errors.element_not_found"), Response::HTTP_NOT_FOUND);
             }
 
             // ============= التعديل على التصنيف  ================:
@@ -174,7 +175,7 @@ class LevelController extends Controller
             return response()->success(__('messages.oprations.delete_success'));
         } catch (Exception $ex) {
             // return $ex;
-            return response()->error(__("messages.errors.error_database"), 400);
+            return response()->error(__("messages.errors.error_database"), Response::HTTP_FORBIDDEN);
         }
     }
 }
