@@ -5,7 +5,6 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 
@@ -16,12 +15,14 @@ class Item extends Model
     protected $table = 'items';
     // ===========================Contants =============================
     // code
-    const STATUS_PENDING_REQUEST       = 0;
-    const STATUS_ACCEPT_REQUEST        = 1;
-    const STATUS_REJECTED_BY_SELLER    = 2;
-    const STATUS_REJECTED_BY_BUYER     = 3;
-    const STATUS_REJECTED_REQUEST      = 4;
-    const STATUS_FINISHED              = 5;
+    const STATUS_PENDING_REQUEST              = 0;
+    const STATUS_ACCEPT_REQUEST               = 1;
+    const STATUS_REJECTED_BY_SELLER           = 2;
+    const STATUS_REJECTED_BY_BUYER            = 3;
+    const STATUS_REJECTED_REQUEST             = 4;
+    const STATUS_FINISHED                     = 5;
+    const STATUS_DILEVERED_RESOURCE           = 6;
+    const STATUS_ACCEPT_DILEVERED_RESOURCE    = 7;
     // ================== Acssesor & mutators ==========================
     // code
     public function getUserIdAttribute()

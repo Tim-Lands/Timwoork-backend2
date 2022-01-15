@@ -24,8 +24,8 @@ class ProfileSellerStoreRequest extends FormRequest
     public function rules()
     {
         return [
-            'bio' => 'min:26',
-            'portfolio' => 'url',
+            'bio' => 'sometimes|nullable|min:26',
+            'portfolio' => 'sometimes|nullable|url',
         ];
     }
 
