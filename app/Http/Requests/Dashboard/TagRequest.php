@@ -37,8 +37,8 @@ class TagRequest extends FormRequest
     public function messages()
     {
         return [
-            'name_ar.required' => __("messages.validation.required_name_ar"),
-            'name_ar.unique' => __("messages.validation.unique"),
+            'name.required' => __("messages.validation.required_name_ar"),
+            'name.unique' => __("messages.validation.unique"),
         ];
     }
     /**

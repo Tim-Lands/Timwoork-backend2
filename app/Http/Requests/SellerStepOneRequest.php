@@ -24,7 +24,7 @@ class SellerStepOneRequest extends FormRequest
     public function rules()
     {
         return [
-            'bio' => 'sometimes|min:26',
+            'bio' => 'sometimes|nullable|min:26',
             'languages.*' => 'required'
         ];
     }

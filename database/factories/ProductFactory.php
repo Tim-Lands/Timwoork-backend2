@@ -35,6 +35,7 @@ class ProductFactory extends Factory
             'count_buying'              => $this->faker->numberBetween(0, 80),
             'current_step'          => 5,
             'is_active'             => 1,
+            'status'                => 1,
             'is_completed'          => 1,
             'is_draft'              => 0,
             'thumbnail'             => $this->faker->image(storage_path('app/products/thumbnails'), 640, 480, null, null, null, $name_images[$key], false),

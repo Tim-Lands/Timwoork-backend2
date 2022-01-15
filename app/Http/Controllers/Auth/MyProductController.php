@@ -179,7 +179,9 @@ class MyProductController extends Controller
     {
         $product = Product::whereId($id)
                             ->where('profile_seller_id', Auth::user()->profile->profile_seller->id)
-                            ->with(['subcategory.category','ratings','developments','product_tag','galaries','file','video','shortener'])
+                            ->with(['subcategory.category','ratings','developments','product_tag','galaries','file','video','shortener','profileSeller.profile' => function ($q) {
+                                $q->with(['badge','level','wallet']);
+                            }])
                             ->first();
         
         if (!$product) {

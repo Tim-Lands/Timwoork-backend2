@@ -25,7 +25,7 @@ class Tag extends Model
      */
     public function scopeSelection(mixed $query): ?object
     {
-        return $query->select('id', 'name_ar', 'name_en', 'name_fr', 'created_at');
+        return $query->select('id', 'name', 'created_at');
     }
     // ========================== Relations ============================
     // code

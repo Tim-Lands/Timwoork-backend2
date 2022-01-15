@@ -15,7 +15,6 @@ use App\Models\ItemOrderRejected;
 use App\Models\ItemOrderResource;
 use App\Models\User;
 use Exception;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 
@@ -35,7 +34,7 @@ class ItemController extends Controller
     {
         // جلب الطلبية
         $item = Item::whereId($id)
-            ->with(['order.cart.user.profile', 'profileSeller.profile'])
+            ->with(['order.cart.user.profile', 'profileSeller.profile','Resource'])
             ->first();
         if (!$item) {
             // رسالة خطأ
@@ -174,11 +173,11 @@ class ItemController extends Controller
                 // تحويله الى محفظة المشتري
                 $wallet->amounts()->save($amount);
                 $wallet->refresh();
-                // تحديث بيانات المشتري 
+                // تحديث بيانات المشتري
                 $profile->withdrawable_amount += $item_amount;
                 $profile->save();
 
-                // إرسال إشعار 
+                // إرسال إشعار
                 event(new RejectOrder($user, $item));
             } else {
                 // رسالة خطأ
@@ -201,25 +200,23 @@ class ItemController extends Controller
     public function delivery_resource_by_seller($id)
     {
         try {
+            $item = Item::find($id);
             // جلب المشروع
-            $item_resource = ItemOrderResource::find($id);
+            $item_resource = $item->resource;
             // شرط اذا كان المشؤروع موجود
             if (!$item_resource) {
                 // رسالة خطأ
                 return response()->error(__("messages.item.must_be_dilevery_resources"), 422);
             }
-
-            // جلب حالة الطلبية
-            $status_item = $item_resource->item->status;
             // شرط اذا كانت حالة الطلبية في قيد التنفيذ
-            if ($status_item == Item::STATUS_ACCEPT_REQUEST) {
-                if ($item_resource->status == 0) {
+            if ($item->status == Item::STATUS_ACCEPT_REQUEST) {
+                if ($item_resource) {
                     // وضع المشروع في حالة التسليم
-                    $item_resource->status = ItemOrderResource::RESOURCE_DELIVERY;
-                    $item_resource->save();
+                    $item->status = Item::STATUS_DILEVERED_RESOURCE;
+                    $item->save();
                 } else {
                     // رسالة خطأ
-                    return response()->error(__("messages.item.dilevery_resources_founded"), 422);
+                    return response()->error(__("messages.item.must_be_dilevery_resources"), 422);
                 }
             } else {
                 return response()->error(__("messages.item.not_may_this_operation"), 403);
@@ -250,7 +247,7 @@ class ItemController extends Controller
                 // رسالة خطأ
                 return response()->error(__("messages.errors.element_not_found"), 403);
             }
-            $item_rousource = ItemOrderResource::where('item_id', $item->id)->first();
+            $item_rousource = $item->resource;
             if ($item_rousource) {
                 // رسالة خطأ
                 return response()->error(__('messages.item.resource_uploaded'), 403);
@@ -305,36 +302,24 @@ class ItemController extends Controller
     {
         try {
             // جلب المشروع
-            $item_resource = ItemOrderResource::find($id);
+            $item = Item::find($id);
+            $item_resource = $item->resource;
             // شرط اذا كان المشؤروع موجود
             if (!$item_resource) {
                 // رسالة خطأ
                 return response()->error(__("messages.item.resource_not_found"), 422);
             }
 
-            // جلب حالة الطلبية
-            $status_item = $item_resource->item->status;
             // شرط اذا كانت حالة الطلبية في قيد التنفيذ
-            if ($status_item == Item::STATUS_ACCEPT_REQUEST) {
-                if ($item_resource->status == ItemOrderResource::RESOURCE_DELIVERY) {
-                    // قبول تسليم المشروع
-                    $item_resource->status = ItemOrderResource::RESOURCE_ACCEPTED;
-                    $item_resource->save();
-                    // اكتمال الطلبية
-                    $item_resource->item->status = Item::STATUS_FINISHED;
-                    $item_resource->item->save();
-                } elseif ($item_resource->status == ItemOrderResource::RESOURCE_REJECTED) {
-                    // رسالة خطأ
-                    return response()->error(__("messages.item.resource_rejected"), 422);
-                } else {
-                    // رسالة خطأ
-                    return response()->error(__("messages.item.resource_not_dilevery"), 422);
-                }
+            if ($item->status == Item::STATUS_ACCEPT_DILEVERED_RESOURCE) {
+                //  قبول المشروع اكتمال الطلبية
+                $item_resource->item->status = Item::STATUS_FINISHED;
+                $item_resource->item->save();
             } else {
                 return response()->error(__("messages.item.not_may_this_operation"), 422);
             }
             // رسالة نجاح عملية تسليم المشروع:
-            return response()->success(__('messages.item.resource_dilevered'));
+            return response()->success(__('messages.item.resource_dilevered'), $item_resource);
         } catch (Exception $ex) {
             // رسالة خطأ
             return response()->error(__("messages.errors.error_database"), 403);
@@ -416,7 +401,7 @@ class ItemController extends Controller
             ];
             /* --------------------------- تغيير حالة الطلبية --------------------------- */
             // شرط اذا كانت الحالة الطلبية في حالة قيد التنفيذ
-            if ($item->status == Item::STATUS_ACCEPT_REQUEST) {
+            if ($item->status == Item::STATUS_ACCEPT_REQUEST || $item->status == Item::STATUS_DILEVERED_RESOURCE) {
                 // شرط اذا كان تم ارسال الطلب من قبل المشتري
                 if ($item_rejected && $item_rejected->rejected_buyer == ItemOrderRejected::REJECTED_BY_BUYER) {
                     return response()->error(__("messages.item.request_buyer_sended"), 422);
@@ -432,7 +417,7 @@ class ItemController extends Controller
                         // عملية طلب الغاء الطلبية
                         ItemOrderRejected::create($data_request_rejected_by_seller);
 
-                        // ارسال الاشعار 
+                        // ارسال الاشعار
                         event(new RejectRequestRejectOrder($user, $item));
                     }
                 }
@@ -460,7 +445,7 @@ class ItemController extends Controller
             // جلب عنصر الطلبية من اجل طلب الغائها
             $item = Item::whereId($id)->first();
 
-            // جلب  البائع    
+            // جلب  البائع
             $user = User::find($item->user_id);
             // شرط اذا كانت متواجدة
             if (!$item) {
@@ -477,7 +462,7 @@ class ItemController extends Controller
 
             /* --------------------------- تغيير حالة الطلبية --------------------------- */
             // شرط اذا كانت الحالة الطلبية في حالة قيد التنفيذ
-            if ($item->status == Item::STATUS_ACCEPT_REQUEST) {
+            if ($item->status == Item::STATUS_ACCEPT_REQUEST || $item->status == Item::STATUS_DILEVERED_RESOURCE) {
                 if ($item_rejected && $item_rejected->rejected_seller == ItemOrderRejected::REJECTED_BY_SELLER) {
                     return response()->error(__("messages.item.request_seller_sended"), 422);
                 }
@@ -539,7 +524,7 @@ class ItemController extends Controller
 
             /* --------------------------- تغيير حالة الطلبية --------------------------- */
             // شرط اذا كانت الحالة الطلبية في حالة قيد التنفيذ
-            if ($item->status == Item::STATUS_ACCEPT_REQUEST) {
+            if ($item->status == Item::STATUS_ACCEPT_REQUEST || $item->status == Item::STATUS_DILEVERED_RESOURCE) {
                 // شرط اذا كان هناك طلب الغاء و ايضا ارسال عملية طلب من طرف المشتري
                 if ($item_rejected && $item_rejected->rejected_buyer == ItemOrderRejected::REJECTED_BY_BUYER) {
                     if ($item_rejected->rejected_seller == ItemOrderRejected::REJECTED_BY_SELLER) {
@@ -562,7 +547,7 @@ class ItemController extends Controller
                     // تحويله الى محفظة المشتري
                     $wallet->amounts()->save($amount);
                     $wallet->refresh();
-                    // تحديث بيانات المشتري 
+                    // تحديث بيانات المشتري
                     $profile->withdrawable_amount += $item_amount;
                     $profile->save();
                     // إرسال الاشعار
@@ -616,7 +601,7 @@ class ItemController extends Controller
             ];
 
             /* --------------------------- تغيير حالة الطلبية --------------------------- */
-            if ($item->status == Item::STATUS_ACCEPT_REQUEST) {
+            if ($item->status == Item::STATUS_ACCEPT_REQUEST || $item->status == Item::STATUS_DILEVERED_RESOURCE) {
                 // شرط اذا كان هناك طلب الغاء و ايضا ارسال عملية طلب من طرف البائع
                 if ($item_rejected && $item_rejected->rejected_buyer == ItemOrderRejected::REJECTED_BY_BUYER) {
                     if ($item_rejected->rejected_seller == ItemOrderRejected::REJECTED_BY_BUYER) {
@@ -639,7 +624,7 @@ class ItemController extends Controller
                     // تحويله الى محفظة المشتري
                     $wallet->amounts()->save($amount);
                     $wallet->refresh();
-                    // تحديث بيانات المشتري 
+                    // تحديث بيانات المشتري
                     $profile->withdrawable_amount += $item_amount;
                     $profile->save();
                     // ارسال الاشعار
@@ -671,7 +656,7 @@ class ItemController extends Controller
         try {
             // جلب عنصر الطلبية من اجل طلب الغائها
             $item = Item::whereId($id)->first();
-            // جلب البائع 
+            // جلب البائع
             $user = $item->order->cart->user;
             // شرط اذا كانت متواجدة
             if (!$item) {
@@ -682,7 +667,7 @@ class ItemController extends Controller
             $item_rejected = ItemOrderRejected::where('item_id', $item->id)->first();
 
             /* --------------------------- تغيير حالة الطلبية --------------------------- */
-            if ($item->status == Item::STATUS_ACCEPT_REQUEST) {
+            if ($item->status == Item::STATUS_ACCEPT_REQUEST || $item->status == Item::STATUS_DILEVERED_RESOURCE) {
                 // شرط اذا كان هناك طلب الغاء و ايضا ارسال عملية طلب من طرف البائع
                 if ($item_rejected && $item_rejected->rejected_buyer == ItemOrderRejected::REJECTED_BY_BUYER) {
                     if ($item_rejected->rejected_seller == ItemOrderRejected::REJECTED_BY_SELLER) {
@@ -729,7 +714,7 @@ class ItemController extends Controller
             $item_rejected = ItemOrderRejected::where('item_id', $item->id)->first();
 
             /* ---------------------------  حالة الطلبية --------------------------- */
-            if ($item->status == Item::STATUS_ACCEPT_REQUEST) {
+            if ($item->status == Item::STATUS_ACCEPT_REQUEST || $item->status == Item::STATUS_DILEVERED_RESOURCE) {
                 // شرط اذا كان هناك طلب الغاء و ايضا ارسال عملية طلب من طرف البائع
                 if ($item_rejected && $item_rejected->rejected_seller == ItemOrderRejected::REJECTED_BY_SELLER) {
                     if ($item_rejected->rejected_buyer == ItemOrderRejected::REJECTED_BY_BUYER) {
@@ -737,7 +722,7 @@ class ItemController extends Controller
                     }
                     // عملية رفض طلب الغاء الطلبية
                     $item_rejected->update(['rejected_seller' => 0]);
-                    // ارسال الاشعار 
+                    // ارسال الاشعار
                     event(new RejectRequestRejectOrder($user, $item));
                 } else {
                     return response()->error(422, __("messages.item.request_not_found"));
