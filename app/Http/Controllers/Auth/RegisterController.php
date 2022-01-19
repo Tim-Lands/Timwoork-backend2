@@ -86,7 +86,7 @@ class RegisterController extends Controller
             'PRIVATE-KEY' => '2805db84-87b8-4fef-bb94-7e3c5fd22b37'
         ])->asForm()->put('https://api.chatengine.io/users/', [
             'username' => $user->username,
-            'secret' => $user->email,
+            'secret' => $user->email + $user->id,
         ]);
     }
 }

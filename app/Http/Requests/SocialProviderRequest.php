@@ -26,15 +26,16 @@ class SocialProviderRequest extends FormRequest
         return [
             'provider_id' => 'required',
             'email' => 'required',
-            'full_name' => 'required'
+            'full_name' => 'required',
+            'username' => 'required'
         ];
     }
 
     /**
-    * messages
-    *
-    * @return void
-    */
+     * messages
+     *
+     * @return void
+     */
     public function messages()
     {
         return [
