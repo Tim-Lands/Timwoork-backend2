@@ -114,6 +114,7 @@ class LoginController extends Controller
                     DB::beginTransaction();
                     $user = User::create([
                         'email' => $request->email,
+                        'username' => $request->username,
                         'email_verified_at' => now(),
                     ]);
 
@@ -156,8 +157,8 @@ class LoginController extends Controller
         return Http::withHeaders([
             'PRIVATE-KEY' => '2805db84-87b8-4fef-bb94-7e3c5fd22b37'
         ])->asForm()->put('https://api.chatengine.io/users/', [
-            'username' => $user->email,
-            'secret' => $user->email,
+            'username' => $user->username,
+            'secret' => $user->email + $user->id,
         ]);
     }
 }

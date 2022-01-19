@@ -276,8 +276,18 @@ Route::prefix('/purchase')->group(function () {
 });
 
 Route::get('users', function () {
-    $user = User::with('profile')->first();
-    //return $user;
-    $item = Item::first();
-    event(new NewOrder($user, $item));
-})->middleware('auth:sanctum');
+
+    $basic  = new \Vonage\Client\Credentials\Basic("b5c4c461", "8zJCbf47nkL2bc6k");
+    $client = new \Vonage\Client(new \Vonage\Client\Credentials\Container($basic));
+    $response = $client->sms()->send(
+        new \Vonage\SMS\Message\SMS("213554668588", 'SHAHDAH', 'لقد تم ارسال رسالة تجريبية إلى رقمك')
+    );
+
+    $message = $response->current();
+
+    if ($message->getStatus() == 0) {
+        echo "The message was sent successfully\n";
+    } else {
+        echo "The message failed with status: " . $message->getStatus() . "\n";
+    }
+});
