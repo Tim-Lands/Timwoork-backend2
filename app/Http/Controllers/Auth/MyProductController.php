@@ -94,7 +94,7 @@ class MyProductController extends Controller
             ]);
         return response()->success(__("messages.oprations.get_all_data"), $products);
     }
-    
+
     /**
      * active_product_by_user => تنشيط الخدمة من قبل البائع
      *
@@ -109,11 +109,7 @@ class MyProductController extends Controller
             ->whereId($id)
             ->where('profile_seller_id', Auth::user()->profile->profile_seller->id)
             ->where('is_completed', 1)
-            ->first()
-            ->makeHidden([
-                'buyer_instruct','status', 'content', 'profile_seller_id', 'category_id', 'duration'
-            ]);
-            ;
+            ->first();
             // شرط اذا وجد هذه الخدمة
             if (!$product) {
                 return response()->error(__("messages.errors.element_not_found"), 422);
@@ -147,11 +143,7 @@ class MyProductController extends Controller
             ->whereId($id)
             ->where('profile_seller_id', Auth::user()->profile->profile_seller->id)
             ->where('is_completed', 1)
-            ->first()
-            ->makeHidden([
-                'buyer_instruct','status', 'content', 'profile_seller_id', 'category_id', 'duration'
-            ]);
-            ;
+            ->first();
             // شرط اذا وجد هذه الخدمة
             if (!$product) {
                 return response()->error(__("messages.errors.element_not_found"), 422);
@@ -183,7 +175,7 @@ class MyProductController extends Controller
                                 $q->with(['badge','level','wallet']);
                             }])
                             ->first();
-        
+
         if (!$product) {
             return response()->error(__("messages.errors.element_not_found"), 422);
         }
