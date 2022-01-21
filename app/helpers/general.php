@@ -45,3 +45,25 @@ if (!function_exists('calculate_price_with_tax')) {
 // فحص التطويرات المدخلة من قبل المستخدم
 if (!function_exists('check_found_developments')) {
 }
+
+// slug arabic
+if (!function_exists('slug_with_arabic')) {
+    function slug_with_arabic($string, $separator = '-')
+    {
+        if (is_null($string)) {
+            return "";
+        }
+
+        $string = trim($string);
+
+        $string = mb_strtolower($string, "UTF-8");
+
+        $string = preg_replace("/[^a-z0-9_\sءاأإآؤئبتثجحخدذرزسشصضطظعغفقكلمنهويةى]#u/", "", $string);
+
+        $string = preg_replace("/[\s-]+/", " ", $string);
+
+        $string = preg_replace("/[\s_]/", $separator, $string);
+
+        return $string;
+    }
+}

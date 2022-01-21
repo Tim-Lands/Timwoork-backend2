@@ -244,6 +244,8 @@ Route::prefix('order')->group(function () {
 /*                            مسارات واجهة المستخدم                           */
 /* -------------------------------------------------------------------------- */
 
+// عرض كل التصنيفات
+Route::get('/categories', [FrontEndController::class, 'get_all_categories']);
 // عرض التصنيفات الرئيسية
 Route::get('/get_categories', [FrontEndController::class, 'get_categories']);
 // عرض التصنيفات الفرعية
@@ -276,7 +278,6 @@ Route::prefix('/purchase')->group(function () {
 });
 
 Route::get('users', function () {
-
     $basic  = new \Vonage\Client\Credentials\Basic("b5c4c461", "8zJCbf47nkL2bc6k");
     $client = new \Vonage\Client(new \Vonage\Client\Credentials\Container($basic));
     $response = $client->sms()->send(
