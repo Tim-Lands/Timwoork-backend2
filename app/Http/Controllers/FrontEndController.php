@@ -132,4 +132,20 @@ class FrontEndController extends Controller
         // اظهار العناصر
         return response()->success(__("messages.oprations.get_data"), $product);
     }
+
+    /**
+     * get_all_categories => دالة عرض كل التصنيفات
+     *
+     * @return JsonResponse
+     */
+    public function get_all_categories()
+    {
+        // جلب جميع الاصناف الرئيسة و الاصناف الفرعية عن طريق التصفح
+        $categories = Category::Selection()->with(['subcategories' => function ($q) {
+            $q->select('id', 'name_ar', 'name_en', 'parent_id', 'icon');
+        }])->parent()->get();
+
+        // اظهار العناصر
+        return response()->success(__("messages.oprations.get_all_data"), $categories);
+    }
 }

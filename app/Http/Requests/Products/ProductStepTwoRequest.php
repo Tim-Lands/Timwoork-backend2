@@ -24,7 +24,7 @@ class ProductStepTwoRequest extends FormRequest
     public function rules()
     {
         return [
-            'price' => 'required|integer|between:5,5000',
+            'price' => 'required|numeric|between:5,5000',
             'duration' => 'required',
             'developments.*' => 'sometimes',
             'developments.*.title' => 'required|string|max:255',
@@ -43,7 +43,7 @@ class ProductStepTwoRequest extends FormRequest
     {
         return [
             'price.required' =>__("messages.validation.price_required"),
-            'price.integer' => __("messages.validation.numeric"),
+            'price.numeric' => __("messages.validation.numeric"),
             'price.between' => __("messages.validation.price_between"),
             'duration.required' => __("messages.validation.duration_required"),
 

@@ -38,7 +38,7 @@ class InsertProductContoller extends Controller
             if ($count_products_seller >= $number_of_products_seller) {
                 return response()->error(__("messages.product.number_of_products_seller"), 422);
             }
-             
+
             // ============= انشاء المعرف للخدمة ================:
             // بداية المعاملة مع البيانات المرسلة لقاعدة بيانات :
             DB::beginTransaction();
@@ -82,7 +82,7 @@ class InsertProductContoller extends Controller
             // انشاء مصفوفة و وضع فيها بيانات المرحلة الاولى
             $data = [
                 'title'             => $request->title,
-                'slug'              => Str::slug($request->title),
+                'slug'              => slug_with_arabic($request->title),
                 'category_id'       =>  (int)$request->subcategory,
             ];
             // دراسة حالة المرحلة
@@ -280,7 +280,7 @@ class InsertProductContoller extends Controller
                 return response()->error(__("messages.errors.element_not_found"), 403);
             }
             /* ------------------------- معالجة الصورة الامامية ------------------------- */
-            
+
             $time = time();
             // وضع معلومات في مصفوفة من اجل عملية الانشاء
             $data_product = [];
@@ -320,7 +320,7 @@ class InsertProductContoller extends Controller
                 // وضع اسم الصورة في المصفوفة
                 $data_product['thumbnail'] = $thumbnailName;
             }
-            
+
             // جلب الصور اذا كان هناك تعديل
             $get_galaries_images =  $product->whereId($id)->with(['galaries' => function ($q) {
                 $q->select('id', 'path', 'product_id')->get();
@@ -539,7 +539,7 @@ class InsertProductContoller extends Controller
             return response()->error(__("messages.errors.error_database"), 403);
         }
     }
-    
+
     /**
      * change_septs
      *
