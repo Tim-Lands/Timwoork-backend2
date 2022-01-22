@@ -25,11 +25,11 @@ class ProductStepTwoRequest extends FormRequest
     {
         return [
             'price' => 'required|numeric|between:5,5000',
-            'duration' => 'required',
+            'duration' => 'required|gt:0.99',
             'developments.*' => 'sometimes',
             'developments.*.title' => 'required|string|max:255',
             'developments.*.duration' => 'required',
-            'developments.*.price' => 'required|integer'
+            'developments.*.price' => 'required|numeric|gt:0.99'
 
         ];
     }
@@ -45,14 +45,17 @@ class ProductStepTwoRequest extends FormRequest
             'price.required' =>__("messages.validation.price_required"),
             'price.numeric' => __("messages.validation.numeric"),
             'price.between' => __("messages.validation.price_between"),
-            'duration.required' => __("messages.validation.duration_required"),
 
-            'developments.*.duration.required' =>__("messages.validation.developements_title_required"),
-            'developments.*.duration.string' => __("messages.validation.string"),
+            'duration.required' => __("messages.validation.duration_required"),
+            // developments:
+            'developments.*.title.required'    =>__("messages.validation.developements_title_required"),
+            'developments.*.title.string'      => __("messages.validation.string"),
 
             'developments.*.duration.required' => __("messages.validation.developements_duration_required"),
-            'developments.*.price.required' => __("messages.validation.developements_price_required"),
-            'developments.*.price.integer' => __("messages.validation.numeric")
+
+            'developments.*.price.required'    => __("messages.validation.developements_price_required"),
+            'developments.*.price.numeric'     => __("messages.validation.numeric"),
+            'developments.*.price.gt'          => __("messages.validation.developements_price_great_zero"),
         ];
     }
 }

@@ -28,6 +28,7 @@ return [
         'type_level' => "حقل نوع المستوى مطلوب",
         "parent_id" => "التصنيف الرئيسي مطلوب",
         "thumbnail" => "الصورة الامامية مطلوبة",
+        'thumbnail_image' => "يجب ان تكون الصورة الامامية على شكل صورة",
         "thumbnail_mimes" => "png , jpg , jpeg يجب ان تكون الصورة الامامية من نوع",
         "thumbnail_size" => "2mb  يجب ان يكون حجم صورة الامامية اقل او يساوي",
         "images_mimes" =>"png , jpg , jpeg يجب ان تكون الصورة العرض من نوع",
@@ -36,14 +37,21 @@ return [
         "file_size" => "2mb  يجب ان يكون الملف اقل او يساوي",
         "url" => "يجب ان يكون هذا الحقل على شكل رابط",
         "title_required" => "عنوان الخدمة مطلوب",
+        "title_size" =>"العنوان لا يقل عن 20 حرف و لا يكون اكبر من 55 حرف",
+        "title_required" => "عنوان الخدمة مطلوب",
         "subcategory_required" => "تصنيف الفرعي مطلوب",
         "tags_required" => "الوسوم مطلوبة",
         "content_required" => "محتوى الخدمة مطلوب",
         "buyer_instruct_required" => "تعليمات شراء الخدمة مطلوبة",
         "price_required" => "سعر الخدمة مطلوب",
+        "price_two_after_number" => "يجب ان يكون السعر لديه رقمين بعد الفاصلة فقط",
+
         "developements_title_required" => "عنوان التطوير مطلوب",
         "developements_duration_required" => "مدة التطوير مطلوب",
+        "developements_duration_great_zero" => "مدة التطوير على الاقل تكون يوم واحد",
         "developements_price_required" => "سعر التطوير مطلوب",
+        "developements_price_great_zero" => "سعر التطوير يجب ان يكون اكبر من 0",
+        "developements_price_two_after_number" => "يجب ان يكون السعر لديه رقمين بعد الفاصلة فقط",
         "rating_required" => "التقيم مطلوب",
         "rating_between" => "يجب ان يكون التقيم بين من 0 الى 1",
         "comment_required" => "التعليق مطلوب",
@@ -81,11 +89,10 @@ return [
         "skills" => "المهارات مطلوبة",
         "price_between" => "يجب ان يكون السعر بين 5 دولار و 5000 دولار",
         "duration_required" => "يجب عليك ادخال المدة",
-        "tags_min" => "يجب ان يحتوي الوسم على الاقل 3 حروف",
+        "tags_min" => "يجب ان يحتوي الوسم على الاقل 1 حرف",
         "password_min" => "يجب ان تحتوي كلمة السر على الاقل 8 حروف و ارقام",
         "name_en_required" => "يجب ادخال الحقل بالانجليزي",
         "content_min" => "يجب المحتوى ان لا يقل عن 30 حرف",
-        "instruct_min" => "يجب التعليمات ان لا تقل عن 30 حرف"
     ],
 
     /* --------------------------------- الرسائل -------------------------------- */
@@ -96,6 +103,7 @@ return [
         "update_success"    =>"تم تعديل على العنصر بنجاح",
         "delete_success" =>"تم حذف العنصر بنجاح",
         "get_all_data" => "جلب العناصر بنجاح",
+        'nothing_this_operation' => 'لا يمكنك اجراء هذه العملية , تفقد بياناتك'
     ],
     // وضع الموقع
     "mode" => [
@@ -129,11 +137,15 @@ return [
         "success_step_two" => "تم انشاء المرحلة الثانية بنجاح",
         "success_step_three" => "تم انشاء المرحلة الثالثة بنجاح",
         "success_step_four" => "تم انشاء المرحلة الرابعة بنجاح",
+        "success_upload_thumbnail" => "تم رفع الصورة البارزة بنجاح",
+        "success_upload_images" => "تم رفع الصور العرض بنجاح",
         "success_step_final" => "تم انهاء المراحل و انشاء الخدمة بنجاح",
         "number_developments_max" => "لا يمكن اضافة تطوير فوق عدد الاقصى المحدد لك",
         "price_development_max" => "لا يمكن اضافة سعر فوق عدد الاقصى المحدد لك",
         "thumbnail_required" => "يجب عليك رفع الصورة الامامية",
         "count_galaries" => "يجب ان يكون عدد الصور المرفوعة لا تزيد عن  5 و لا تقل عن 1",
+        "success_upload_galaries" => "تم رفع صور العرض بنجاح",
+        "upload_images" => "يجب عليك رفع الصور"
     ],
 
     /* ------------------------------ رسائل الاخطاء ----------------------------- */
