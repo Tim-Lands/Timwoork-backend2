@@ -24,10 +24,10 @@ class ProductStepOneRequest extends FormRequest
     public function rules()
     {
         return [
-            'title'               => 'required|string|max:255|unique:products,title,' . $this->id,
+            'title'               => 'required|string|min:20|max:55|unique:products,title,' . $this->id,
             'subcategory'         => 'required|exists:categories,id',
             'tags'              => 'required',
-            'tags.*'              => 'string|min:3'
+            'tags.*'              => 'string|min:1'
         ];
     }
 
@@ -40,6 +40,8 @@ class ProductStepOneRequest extends FormRequest
     {
         return [
             'title.required' =>__("messages.validation.title_required"),
+            'title.min' =>__("messages.validation.title_size"),
+            'title.max' =>__("messages.validation.title_size"),
             'title.unique' =>__("messages.validation.unique"),
             'title.string' =>__("messages.validation.string"),
             'subcategory.required' =>__("messages.validation.subcategory_required"),

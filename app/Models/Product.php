@@ -21,6 +21,15 @@ class Product extends Model
      * @var string
      */
     protected $table = 'products';
+
+    /**
+     * appends
+     *
+     * @var array
+     */
+    protected $appends = ['full_path_thumbnail'];
+
+
     /**
      * filters
      *
@@ -45,7 +54,7 @@ class Product extends Model
         'count_buying'
     ];
 
-    
+
     /**
      * casts
      *
@@ -153,9 +162,12 @@ class Product extends Model
     const PRODUCT_STEP_FIVE   = 5;
     // اكتمال عملية انشاء الخدمة
     const PRODUCT_IS_COMPLETED = 1;
+    // حالة الخدمة اذا كانت في قائمة المسودات
+    const PRODUCT_IS_DRAFT = 1;
+    const PRODUCT_IS_NOT_DRAFT = 0;
     /* --------------------------- Accessor & Metators -------------------------- */
     // code
-        
+
     /**
      * getUrlVideoAttribute => جلب رابط الفيديو
      *
@@ -164,6 +176,16 @@ class Product extends Model
     public function getVideoUrlAttribute()
     {
         return $this->video->url_video;
+    }
+
+    /**
+     * getFullPathThumbnail => جلب رابط الصورة الامامية
+     *
+     * @return void
+     */
+    public function getFullPathThumbnailAttribute()
+    {
+        return asset('products/thumbnails/'.$this->thumbnail) ;
     }
 
     /* --------------------------------- Scopes --------------------------------- */
@@ -257,8 +279,8 @@ class Product extends Model
     {
         return $this->hasMany(Galary::class, 'product_id');
     }
-    
-        
+
+
     /**
      * file
      *

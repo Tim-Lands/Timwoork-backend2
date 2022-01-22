@@ -88,7 +88,7 @@ class MyProductController extends Controller
     {
         $paginate = $request->query('paginate') ? $request->query('paginate') : 10;
         $user = Auth::user();
-        $products = $user->profile->profile_seller->products()->where('is_draft', true)->paginate($paginate)
+        $products = $user->profile->profile_seller->products()->where('is_draft', Product::PRODUCT_IS_DRAFT)->paginate($paginate)
             ->makeHidden([
                 'buyer_instruct', 'content', 'profile_seller_id', 'category_id', 'duration'
             ]);
@@ -108,7 +108,8 @@ class MyProductController extends Controller
             $product = Product::ProductActive()
             ->whereId($id)
             ->where('profile_seller_id', Auth::user()->profile->profile_seller->id)
-            ->where('is_completed', 1)
+            ->where('is_completed', Product::PRODUCT_IS_COMPLETED)
+            ->where('is_draft', Product::PRODUCT_IS_NOT_DRAFT)
             ->first();
             // شرط اذا وجد هذه الخدمة
             if (!$product) {
@@ -142,7 +143,8 @@ class MyProductController extends Controller
             $product = Product::ProductActive()
             ->whereId($id)
             ->where('profile_seller_id', Auth::user()->profile->profile_seller->id)
-            ->where('is_completed', 1)
+            ->where('is_completed', Product::PRODUCT_IS_COMPLETED)
+            ->where('is_draft', Product::PRODUCT_IS_NOT_DRAFT)
             ->first();
             // شرط اذا وجد هذه الخدمة
             if (!$product) {

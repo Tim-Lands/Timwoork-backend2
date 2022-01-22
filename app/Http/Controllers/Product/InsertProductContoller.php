@@ -3,10 +3,12 @@
 namespace App\Http\Controllers\Product;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Products\ImagesRequest;
 use App\Http\Requests\Products\ProductStepFourRequest;
 use App\Http\Requests\Products\ProductStepOneRequest;
 use App\Http\Requests\Products\ProductStepThreeRequest;
 use App\Http\Requests\Products\ProductStepTwoRequest;
+use App\Http\Requests\Products\ThumbnailRequest;
 use App\Models\Category;
 use App\Models\File;
 use App\Models\Product;
@@ -43,7 +45,10 @@ class InsertProductContoller extends Controller
             // بداية المعاملة مع البيانات المرسلة لقاعدة بيانات :
             DB::beginTransaction();
             // عملية انشاء معرف جديد للخدمة
-            $product = Product::create(['profile_seller_id' => Auth::user()->profile->profile_seller->id]);
+            $product = Product::create([
+                'profile_seller_id' => Auth::user()->profile->profile_seller->id,
+                'is_draft'          => Product::PRODUCT_IS_DRAFT
+            ]);
             // انهاء المعاملة بشكل جيد :
             DB::commit();
             // اظهار العناصر
@@ -67,8 +72,8 @@ class InsertProductContoller extends Controller
     {
         try {
             //id  جلب العنصر بواسطة
-            $product = Product::find($id);
-            // شرط اذا كان العنصر موجود
+            $product = Product::whereId($id)
+                ->where('profile_seller_id', Auth::user()->profile->profile_seller->id)->first();     // شرط اذا كان العنصر موجود
             if (!$product || !is_numeric($id)) {
                 // رسالة خطأ
                 return response()->error(__("messages.errors.element_not_found"), 422);
@@ -153,7 +158,8 @@ class InsertProductContoller extends Controller
     {
         try {
             //id  جلب العنصر بواسطة
-            $product = Product::find($id);
+            $product = Product::whereId($id)
+            ->where('profile_seller_id', Auth::user()->profile->profile_seller->id)->first();
             // جلب عدد المطلبوب من انشاء التطويرات من المستوى
             $number_developments_max = Auth::user()->profile->profile_seller->level->number_developments_max;
             // جلب عدد المطلبوب من السعر التطويرات من المستوى
@@ -227,8 +233,8 @@ class InsertProductContoller extends Controller
     {
         try {
             //id  جلب العنصر بواسطة
-            $product = Product::find($id);
-            // شرط اذا كان العنصر موجود
+            $product = Product::whereId($id)
+                ->where('profile_seller_id', Auth::user()->profile->profile_seller->id)->first();     // شرط اذا كان العنصر موجود
             if (!$product || !is_numeric($id)) {
                 // رسالة خطأ
                 return response()->error(__("messages.errors.element_not_found"), 403);
@@ -273,187 +279,35 @@ class InsertProductContoller extends Controller
         try {
 
             //id  جلب العنصر بواسطة
-            $product = Product::find($id);
+            $product = Product::whereId($id)
+                ->where('profile_seller_id', Auth::user()->profile->profile_seller->id)
+                ->with(['galaries','video'])
+                ->first();
             // شرط اذا كان العنصر موجود
             if (!$product || !is_numeric($id)) {
                 // رسالة خطأ
                 return response()->error(__("messages.errors.element_not_found"), 403);
             }
-            /* ------------------------- معالجة الصورة الامامية ------------------------- */
+            if (count($product->galaries) == 0 && $product->thumbnail) {
+                // رسالة خطأ
+                return response()->error(__("messages.errors.upload_images"), 422);
+            }
 
-            $time = time();
-            // وضع معلومات في مصفوفة من اجل عملية الانشاء
-            $data_product = [];
+            $data = [];
             // دراسة حالة المرحلة
             if ($product->is_completed == 1 || $product->current_step > Product::PRODUCT_STEP_FOUR) {
-                $data_product['current_step'] = $product->current_step;
+                $data['current_step'] = $product->current_step;
             } else {
-                $data_product['current_step'] = Product::PRODUCT_STEP_FOUR;
+                $data['current_step'] = Product::PRODUCT_STEP_FOUR;
             }
-
-            // شرط في حالة ما اذا كانت الصورة مرسلة من المستخدم
-            if ($product->thumbnail) {
-                // شرط اذا قام المستخدم بأرسال صورة الامامية
-                if ($request->has('thumbnail')) {
-                    // حذف صورة السابقة
-                    Storage::delete("products/thumbnails/{$product->thumbnail}");
-                    // جلب الصورة من المرسلات
-                    $thumbnailPath = $request->file('thumbnail');
-                    // وضع اسم جديد للصورة
-                    $thumbnailName = "tw-thumbnail-{$product->slug}-{$id}-{$time}.{$thumbnailPath->getClientOriginalExtension()}";
-                    // رفع الصورة الامامية للخدمة
-                    Storage::putFileAs('products/thumbnails', $request->file('thumbnail'), $thumbnailName);
-                    // وضع اسم الصورة في المصفوفة
-                    $data_product['thumbnail'] = $thumbnailName;
-                }
-            } else {
-                // شرط اذا لم يرسل المستخدم صورة الامامية
-                if (!$request->has('thumbnail')) {
-                    return response()->error(__("messages.product.thumbnail_required"), 403);
-                }
-                // جلب الصورة من المرسلات
-                $thumbnailPath = $request->file('thumbnail');
-                // وضع اسم جديد للصورة
-                $thumbnailName = "tw-thumbnail-{$product->slug}-{$id}-{$time}.{$thumbnailPath->getClientOriginalExtension()}";
-                // رفع الصورة الامامية للخدمة
-                Storage::putFileAs('products/thumbnails', $request->file('thumbnail'), $thumbnailName);
-                // وضع اسم الصورة في المصفوفة
-                $data_product['thumbnail'] = $thumbnailName;
-            }
-
-            // جلب الصور اذا كان هناك تعديل
-            $get_galaries_images =  $product->whereId($id)->with(['galaries' => function ($q) {
-                $q->select('id', 'path', 'product_id')->get();
-            }])->first()->galaries;
-            //return $get_galaries_images;
-            // جلب الملف اذا كان هناك تعديل
-            $get_galaries_file =  $product->whereId($id)->with(['file' => function ($q) {
-                $q->select('id', 'path', 'full_path', 'product_id')->get();
-            }])->first()->file;
             // جلب رابط الفيديو
-            $get_galaries_url_video =  $product->whereId($id)->with(['video' => function ($q) use ($request) {
-                $q->select('id', 'url_video', 'product_id')->get();
-            }])->first()['video'];
-            /* -------------------------------------------------------------------------- */
+            $get_galaries_url_video =  $product->video;
 
-            /* ---------------- معالجة الصور و الملفات و روابط الفيديوهات --------------- */
-            // مصفوفة من اجل وضع فيها المعلومات الصور
-            $galaries_images = [];
-            // شرط اذا كانت هناك صورة مرسلة من قبل المستخدم
-            if (count($get_galaries_images) != 0) {
-                // شرط اذا كانت هناك صور ارسلت من قبل المستخدم
-                if ($request->has('images')) {
-                    foreach ($get_galaries_images as $image) {
-                        Storage::has("products/galaries-images/{$image['path']}") ? Storage::delete("products/galaries-images/{$image['path']}") : '';
-                    }
-                    // عدد الصور التي تم رفعها
-                    foreach ($request->file('images') as $key => $value) {
-                        $imagelName = "tw-galary-image-{$product->slug}-{$key}-{$time}.{$value->getClientOriginalExtension()}";
-                        // وضع المعلومات فالمصفوفة
-                        $galaries_images[$key] = [
-                            'path'      => $imagelName,
-                            'full_path' => $value,
-                            'size'      => number_format($value->getSize() / 1048576, 3) . ' MB',
-                            'mime_type' => $value->getClientOriginalExtension(),
-                        ];
-                    }
-                    // عملية رفع المفات
-                    foreach ($galaries_images as $image) {
-                        // رفع الصور
-                        Storage::putFileAs('products/galaries-images', $image['full_path'], $image['path']);
-                    }
-                }
-            } else {
-                // شرط اذا لم يجد الصور التي يرسلهم المستخدم في حالة الانشاء لاول مرة
-                if (!$request->has('images')) {
-                    return response()->error(__("messages.product.count_galaries"), 403);
-                }
-                // عدد الصور التي تم رفعها
-                foreach ($request->file('images') as $key => $value) {
-                    $imagelName = "tw-galary-image-{$product->slug}-{$key}-{$time}.{$value->getClientOriginalExtension()}";
-                    // وضع المعلومات فالمصفوفة
-                    $galaries_images[$key] = [
-                        'path'      => $imagelName,
-                        'full_path' => $value,
-                        'size'      => number_format($value->getSize() / 1048576, 3) . ' MB',
-                        'mime_type' => $value->getClientOriginalExtension(),
-                    ];
-                }
-                // شرط اذا كان عدد صور يزيد عند 5 و يقل عن 1
-                if (count($galaries_images) > 5 || count($galaries_images) == 0) {
-                    return response()->error(__("messages.product.count_galaries"), 403);
-                } else {
-                    // عملية رفع المفات
-                    foreach ($galaries_images as $image) {
-                        // رفع الصور
-                        Storage::putFileAs('products/galaries-images', $image['full_path'], $image['path']);
-                    }
-                }
-            }
-
-
-            // pdf مصفوفة من اجل وضع فيها المعلومات الملف
-            $galary_file = [];
-            // شرط في حالة ما تم ارسال ملف جديد
-            if ($request->has('file')) {
-                if ($get_galaries_file) {
-                    // حذف الملف السابق
-                    Storage::delete("products/galaries-file/{$get_galaries_file['path']}");
-                    // وضع اسم للملف
-                    $filelName = "tw-file-{$product->slug}-{$id}-{$time}.{$request->file('file')->getClientOriginalExtension()}";
-                    // انشاء مصفوفة جديدة من اجل حفظ المعلومات في قواعد البيانات
-                    $galary_file = [
-                        'product_id'=> $product->id,
-                        'path'       => $filelName,
-                        'full_path'  => $request->file('file'),
-                        'size'       => number_format($request->file('file')->getSize() / 1048576, 3) . ' MB',
-                        'mime_type'  => $request->file('file')->getClientOriginalExtension(),
-                    ];
-                    // رفع الملف
-                    Storage::putFileAs('products/galaries-file', $request->file('file'), $filelName);
-                } else {
-                    // وضع اسم للملف
-                    $filelName = "tw-galary-galaries-file-{$product->slug}-{$id}-{$time}.{$request->file('file')->getClientOriginalExtension()}";
-                    // انشاء مصفوفة جديدة من اجل حفظ المعلومات في قواعد البيانات
-                    $galary_file = [
-                        'product_id'=> $product->id,
-                        'path'       => $filelName,
-                        'full_path'  => $request->file('file'),
-                        'size'       => number_format($request->file('file')->getSize() / 1048576, 3) . ' MB',
-                        'mime_type'  => $request->file('file')->getClientOriginalExtension(),
-                    ];
-                    // رفع الملف
-                    Storage::putFileAs('products/galaries-file', $request->file('file'), $filelName);
-                }
-            }
-
-            // ====================== انشاء المرحلة الثالثة في الخدمة =====================================:
+            // ====================== انشاء المرحلة الرابعة في الخدمة =====================================:
             // بداية المعاملة مع البيانات المرسلة لقاعدة بيانات :
             DB::beginTransaction();
-            // عملية انشاء المرحلة الثالثة
-            $product->update($data_product);
-
-            // شرط اذا كانت توجد بيانات الصور في المصفوفة
-            if (count($galaries_images) != 0) {
-                // شرط اذا كانت توجد بيانات الصور من قبل
-                if ($get_galaries_images) {
-                    // حذف كل الصور القديمة
-                    $product->galaries()->delete();
-                }
-                // انشاء صور جديدة
-                $product->galaries()->createMany($galaries_images);
-            }
-            // شرط اذا كانت توجد بيانات الملف في المصفوفة
-            if ($galary_file) {
-                // شرط اذا كانت توجد بيانات الملف من قبل
-                if ($get_galaries_file) {
-                    // عملية التعديل على الملف
-                    $product->file()->update($galary_file);
-                } else {
-                    // انشاء ملف جديد
-                    File::create($galary_file);
-                }
-            }
+            // تعديل على الخدمة
+            $product->update($data);
             // شرط اذا كانت هناك ارسال رابط في فيديو من قبل المستخدم
             if ($request->has('url_video')) {
                 // شرط اذا كانت توجد بيانات رابط الفيديو من قبل
@@ -494,7 +348,8 @@ class InsertProductContoller extends Controller
     {
         try {
             //id  جلب العنصر بواسطة
-            $product = Product::find($id);
+            $product = Product::whereId($id)
+            ->where('profile_seller_id', Auth::user()->profile->profile_seller->id)->first();
             // شرط اذا كان العنصر موجود
             if (!$product || !is_numeric($id)) {
                 // رسالة خطأ
@@ -513,9 +368,10 @@ class InsertProductContoller extends Controller
             }
             //  وضع معلومات في مصفوفة من اجل عملية الانشاء المرحلة الخامسة
             $data = [
-                'is_draft'      => 1,
+                'is_draft'      => Product::PRODUCT_IS_NOT_DRAFT,
                 'current_step'  => Product::PRODUCT_STEP_FIVE,
                 'is_completed'  => Product::PRODUCT_IS_COMPLETED,
+                'is_active'     => Product::PRODUCT_ACTIVE,
             ];
             // ============= انشاء المرحلة الاخيرة في الخدمة و نشرها ================:
             // بداية المعاملة مع البيانات المرسلة لقاعدة بيانات :
@@ -541,19 +397,188 @@ class InsertProductContoller extends Controller
     }
 
     /**
-     * change_septs
+     * upload_thumbnail => رفع الصورة البارزة
      *
-     * @param  mixed $product
-     * @param  mixed $data
-     * @param  mixed $step
+     * @param  mixed $id
+     * @param  ThumbnailRequest $request
      * @return void
      */
-    private function change_septs($product, $data, $step)
+    public function upload_thumbnail($id, ThumbnailRequest $request)
     {
-        if ($product->is_completed == 1 || $product->current_step > $step) {
-            $data['current_step'] = $product->current_step;
-        } else {
-            $data['current_step'] = $step;
+        try {
+            //id  جلب العنصر بواسطة
+            $product = Product::whereId($id)
+                ->where('profile_seller_id', Auth::user()->profile->profile_seller->id)->first();
+            ;
+            // شرط اذا كان العنصر موجود
+            if (!$product || !is_numeric($id)) {
+                // رسالة خطأ
+                return response()->error(__("messages.errors.element_not_found"), 403);
+            }
+            // وضع مصفوفة من اجل عملية التعديل
+            $data_thumbnail = [];
+            /* ------------------------- معالجة الصورة الامامية ------------------------- */
+
+            if ($product->current_step >= Product::PRODUCT_STEP_THREE) {
+                $time = time();
+                // شرط في حالة ما اذا كانت الصورة مرسلة من المستخدم
+                if ($product->thumbnail) {
+                    // شرط اذا قام المستخدم بأرسال صورة الامامية
+                    if ($request->has('thumbnail')) {
+                        // حذف صورة السابقة
+                        Storage::delete("products/thumbnails/{$product->thumbnail}");
+                        // جلب الصورة من المرسلات
+                        $thumbnailPath = $request->file('thumbnail');
+                        // وضع اسم جديد للصورة
+                        $thumbnailName = "tw-thumbnail-{$product->slug}-{$id}-{$time}.{$thumbnailPath->getClientOriginalExtension()}";
+                        // رفع الصورة الامامية للخدمة
+                        Storage::putFileAs('products/thumbnails', $request->file('thumbnail'), $thumbnailName);
+                        // وضع اسم الصورة في المصفوفة
+                        $data_thumbnail['thumbnail'] = $thumbnailName;
+                    }
+                    return;
+                } elseif ($request->has('thumbnail')) {
+                    // جلب الصورة من المرسلات
+                    $thumbnailPath = $request->file('thumbnail');
+                    // وضع اسم جديد للصورة
+                    $thumbnailName = "tw-thumbnail-{$product->slug}-{$id}-{$time}.{$thumbnailPath->getClientOriginalExtension()}";
+                    // رفع الصورة الامامية للخدمة
+                    Storage::putFileAs('products/thumbnails', $request->file('thumbnail'), $thumbnailName);
+                    // وضع اسم الصورة في المصفوفة
+                    $data_thumbnail['thumbnail'] = $thumbnailName;
+                } else {
+                    return response()->error(__("messages.product.thumbnail_required"), 403);
+                }
+            } else {
+                return response()->error(__("messages.oprations.nothing_this_operation"), 403);
+            }
+            /* ---------------------- رفع الصورة على قواعد البيانات --------------------- */
+            //بداية المعاملة مع البيانات المرسلة لقاعدة بيانات:
+            DB::beginTransaction();
+            // عملية التعديل او انشاء الصورة
+            $product->update($data_thumbnail);
+            // انهاء المعاملة بشكل جيد :
+            DB::commit();
+            // ================================================================
+            // رسالة نجاح عملية الاضافة:
+            return response()->success(__("messages.product.success_upload_thumbnail"), $product);
+        } catch (Exception $ex) {
+            return $ex;
+            // لم تتم المعاملة بشكل نهائي و لن يتم ادخال اي بيانات لقاعدة البيانات
+            DB::rollback();
+            // رسالة خطأ
+            return response()->error(__("messages.errors.error_database"), 403);
+        }
+    }
+
+    /**
+     * upload_images => رفع صور العرض
+     *
+     * @param  mixed $id
+     * @param  mixed $request
+     * @return void
+     */
+    public function upload_galaries($id, ImagesRequest $request)
+    {
+        try {
+            //id  جلب العنصر بواسطة
+            $product = Product::whereId($id)
+                ->where('profile_seller_id', Auth::user()->profile->profile_seller->id)
+                ->with('galaries')
+                ->first();
+            // شرط اذا كان العنصر موجود
+            if (!$product || !is_numeric($id)) {
+                // رسالة خطأ
+                return response()->error(__("messages.errors.element_not_found"), 403);
+            }
+            // وقت رفع الصورة
+            $time = time();
+            // جلب الصور اذا كان هناك تعديل
+            $get_galaries_images =  $product->galaries;
+            /* ---------------- معالجة الصور و الملفات و روابط الفيديوهات --------------- */
+            // مصفوفة من اجل وضع فيها المعلومات الصور
+            $galaries_images = [];
+
+            if ($product->current_step >= Product::PRODUCT_STEP_THREE) {
+                // شرط اذا كانت هناك صورة مرسلة من قبل المستخدم
+                if (count($get_galaries_images) != 0) {
+                    // شرط اذا كانت هناك صور ارسلت من قبل المستخدم
+                    if ($request->has('images')) {
+                        foreach ($get_galaries_images as $image) {
+                            Storage::has("products/galaries-images/{$image['path']}") ? Storage::delete("products/galaries-images/{$image['path']}") : '';
+                        }
+                        // عدد الصور التي تم رفعها
+                        foreach ($request->file('images') as $key => $value) {
+                            $imagelName = "tw-galary-image-{$product->slug}-{$key}-{$time}.{$value->getClientOriginalExtension()}";
+                            // وضع المعلومات فالمصفوفة
+                            $galaries_images[$key] = [
+                                'path'      => $imagelName,
+                                'full_path' => $value,
+                                'size'      => number_format($value->getSize() / 1048576, 3) . ' MB',
+                                'mime_type' => $value->getClientOriginalExtension(),
+                            ];
+                        }
+                        // عملية رفع المفات
+                        foreach ($galaries_images as $image) {
+                            // رفع الصور
+                            Storage::putFileAs('products/galaries-images', $image['full_path'], $image['path']);
+                        }
+                    }
+                } else {
+                    // شرط اذا لم يجد الصور التي يرسلهم المستخدم في حالة الانشاء لاول مرة
+                    if (!$request->has('images')) {
+                        return response()->error(__("messages.product.count_galaries"), 403);
+                    }
+                    // عدد الصور التي تم رفعها
+                    foreach ($request->file('images') as $key => $value) {
+                        $imagelName = "tw-galary-image-{$product->slug}-{$key}-{$time}.{$value->getClientOriginalExtension()}";
+                        // وضع المعلومات فالمصفوفة
+                        $galaries_images[$key] = [
+                            'path'      => $imagelName,
+                            'full_path' => $value,
+                            'size'      => number_format($value->getSize() / 1048576, 3) . ' MB',
+                            'mime_type' => $value->getClientOriginalExtension(),
+                        ];
+                    }
+                    // شرط اذا كان عدد صور يزيد عند 5 و يقل عن 1
+                    if (count($galaries_images) > 5 || count($galaries_images) == 0) {
+                        return response()->error(__("messages.product.count_galaries"), 403);
+                    } else {
+                        // عملية رفع المفات
+                        foreach ($galaries_images as $image) {
+                            // رفع الصور
+                            Storage::putFileAs('products/galaries-images', $image['full_path'], $image['path']);
+                        }
+                    }
+                }
+            } else {
+                return response()->error(__("messages.oprations.nothing_this_operation"), 403);
+            }
+
+            /* -------------------- رفع الصور العرض في قواعد البيانات ------------------- */
+            // بداية المعاملة مع البيانات المرسلة لقاعدة بيانات :
+            DB::beginTransaction();
+            // شرط اذا كانت توجد بيانات الصور في المصفوفة
+            if (count($galaries_images) != 0) {
+                // شرط اذا كانت توجد بيانات الصور من قبل
+                if ($get_galaries_images) {
+                    // حذف كل الصور القديمة
+                    $product->galaries()->delete();
+                }
+                // انشاء صور جديدة
+                $product->galaries()->createMany($galaries_images);
+            }
+            // انهاء المعاملة بشكل جيد :
+            DB::commit();
+            // ================================================================
+            // رسالة نجاح عملية الاضافة:
+            return response()->success(__("messages.product.success_upload_galaries"), $product);
+        } catch (Exception $ex) {
+            return $ex;
+            // لم تتم المعاملة بشكل نهائي و لن يتم ادخال اي بيانات لقاعدة البيانات
+            DB::rollback();
+            // رسالة خطأ
+            return response()->error(__("messages.errors.error_database"), 403);
         }
     }
 }

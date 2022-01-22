@@ -154,6 +154,10 @@ Route::prefix('product')->middleware('auth:sanctum')->group(function () {
     Route::post('/{id}/product-step-two', [InsertProductContoller::class, 'storeStepTwo']);
     // المحلة الثالثة
     Route::post('/{id}/product-step-three', [InsertProductContoller::class, 'storeStepThree']);
+    // رفع الصورة البارزة
+    Route::post('/{id}/upload-thumbnail-step-four', [InsertProductContoller::class, 'upload_thumbnail']);
+    // رفع الصور العرض
+    Route::post('/{id}/upload-galaries-step-four', [InsertProductContoller::class, 'upload_galaries']);
     // المحلة الرابعة
     Route::post('/{id}/product-step-four', [InsertProductContoller::class, 'storeStepFour']);
     // المحلة الخامسة
