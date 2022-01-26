@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Dashboard;
 use App\Http\Controllers\Controller;
 use App\Models\Product;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Response;
 
 class ProductController extends Controller
 {
@@ -34,7 +35,7 @@ class ProductController extends Controller
         // شرط اذا كان العنصر موجود
         if (!$product) {
             // رسالة خطأ
-            return response()->error(__("messages.errors.element_not_found"), 403);
+            return response()->error(__("messages.errors.element_not_found"), Response::HTTP_FORBIDDEN);
         }
 
         // اظهار العنصر

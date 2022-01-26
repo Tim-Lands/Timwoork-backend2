@@ -15,6 +15,7 @@ use App\Models\ItemOrderRejected;
 use App\Models\ItemOrderResource;
 use App\Models\User;
 use Exception;
+use Illuminate\Http\Response;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 
@@ -38,7 +39,7 @@ class ItemController extends Controller
             ->first();
         if (!$item) {
             // رسالة خطأ
-            return response()->error(__("messages.errors.element_not_found"), 422);
+            return response()->error(__("messages.errors.element_not_found"), Response::HTTP_NOT_FOUND);
         }
         // رسالة نجاح
         return response()->success(__("messages.oprations.get_data"), $item);
@@ -71,7 +72,7 @@ class ItemController extends Controller
             // شرط اذا كانت متواجدة
             if (!$item) {
                 // رسالة خطأ
-                return response()->error(__("messages.errors.element_not_found"), 403);
+                return response()->error(__("messages.errors.element_not_found"), Response::HTTP_NOT_FOUND);
             }
             /* --------------------------- تغيير حالة الطلبية --------------------------- */
             // شرط اذا كانت الحالة الطلبية في حالة الانتظار
@@ -81,14 +82,14 @@ class ItemController extends Controller
                 $item->save();
                 event(new AcceptOrder($user, $item));
             } else {
-                return response()->error(__("messages.item.not_may_this_operation"), 403);
+                return response()->error(__("messages.item.not_may_this_operation"), Response::HTTP_NOT_FOUND);
             }
             // رسالة نجاح
             return response()
                 ->success(__("messages.item.accept_item_by_seller"));
         } catch (Exception $ex) {
             // رسالة خطأ
-            return response()->error(__("messages.errors.error_database"), 403);
+            return response()->error(__("messages.errors.error_database"), Response::HTTP_FORBIDDEN);
         }
     }
 
@@ -109,7 +110,7 @@ class ItemController extends Controller
             // شرط اذا كانت متواجدة
             if (!$item) {
                 // رسالة خطأ
-                return response()->error(__("messages.errors.element_not_found"), 422);
+                return response()->error(__("messages.errors.element_not_found"), Response::HTTP_NOT_FOUND);
             }
             /* --------------------------- تغيير حالة الطلبية --------------------------- */
             // شرط اذا كانت الحالة الطلبية في حالة الانتظار
@@ -120,13 +121,13 @@ class ItemController extends Controller
                 event(new RejectOrder($user, $item));
             } else {
                 // رسالة خطأ
-                return response()->error(__("messages.item.not_may_this_operation"), 403);
+                return response()->error(__("messages.item.not_may_this_operation"), Response::HTTP_FORBIDDEN);
             }
             // رسالة نجاح
             return response()->success(__("messages.item.reject_item_by_seller"));
         } catch (Exception $ex) {
             // رسالة خطأ
-            return response()->error(__("messages.errors.error_database"), 403);
+            return response()->error(__("messages.errors.error_database"), Response::HTTP_FORBIDDEN);
         }
     }
 
@@ -153,7 +154,7 @@ class ItemController extends Controller
             // شرط اذا كانت متواجدة
             if (!$item) {
                 // رسالة خطأ
-                return response()->error(__("messages.errors.element_not_found"), 422);
+                return response()->error(__("messages.errors.element_not_found"), Response::HTTP_NOT_FOUND);
             }
             /* --------------------------- تغيير حالة الطلبية --------------------------- */
             // شرط اذا كانت الحالة الطلبية في حالة الانتظار
@@ -181,13 +182,13 @@ class ItemController extends Controller
                 event(new RejectOrder($user, $item));
             } else {
                 // رسالة خطأ
-                return response()->error(__("messages.item.not_may_this_operation"), 403);
+                return response()->error(__("messages.item.not_may_this_operation"), Response::HTTP_FORBIDDEN);
             }
             // رسالة نجاح
             return response()->success(__("messages.item.reject_item_by_buyer"));
         } catch (Exception $ex) {
             // رسالة خطأ
-            return response()->error(__("messages.errors.error_database"), 403);
+            return response()->error(__("messages.errors.error_database"), Response::HTTP_FORBIDDEN);
         }
     }
 
@@ -206,7 +207,7 @@ class ItemController extends Controller
             // شرط اذا كان المشؤروع موجود
             if (!$item_resource) {
                 // رسالة خطأ
-                return response()->error(__("messages.item.must_be_dilevery_resources"), 422);
+                return response()->error(__("messages.item.must_be_dilevery_resources"), Response::HTTP_NOT_FOUND);
             }
             // شرط اذا كانت حالة الطلبية في قيد التنفيذ
             if ($item->status == Item::STATUS_ACCEPT_REQUEST) {
@@ -216,16 +217,16 @@ class ItemController extends Controller
                     $item->save();
                 } else {
                     // رسالة خطأ
-                    return response()->error(__("messages.item.must_be_dilevery_resources"), 422);
+                    return response()->error(__("messages.item.must_be_dilevery_resources"), Response::HTTP_NOT_FOUND);
                 }
             } else {
-                return response()->error(__("messages.item.not_may_this_operation"), 403);
+                return response()->error(__("messages.item.not_may_this_operation"), Response::HTTP_FORBIDDEN);
             }
             // رسالة نجاح عملية تسليم المشروع:
             return response()->success(__("messages.item.dilevery_resources_success"));
         } catch (Exception $ex) {
             // رسالة خطأ
-            return response()->error(__("messages.errors.error_database"), 403);
+            return response()->error(__("messages.errors.error_database"), Response::HTTP_FORBIDDEN);
         }
     }
 
@@ -245,12 +246,12 @@ class ItemController extends Controller
             // شرط اذا كانت متواجدة
             if (!$item) {
                 // رسالة خطأ
-                return response()->error(__("messages.errors.element_not_found"), 403);
+                return response()->error(__("messages.errors.element_not_found"), Response::HTTP_FORBIDDEN);
             }
             $item_rousource = $item->resource;
             if ($item_rousource) {
                 // رسالة خطأ
-                return response()->error(__('messages.item.resource_uploaded'), 403);
+                return response()->error(__('messages.item.resource_uploaded'), Response::HTTP_FORBIDDEN);
             }
             // انشاء مصفوفة من اجل رفع المشروع
             $data_resource = [];
@@ -273,7 +274,7 @@ class ItemController extends Controller
                 ];
             } else {
                 // رسالة خطأ
-                return response()->error(__("messages.item.not_may_this_operation"), 422);
+                return response()->error(__("messages.item.not_may_this_operation"), Response::HTTP_NOT_FOUND);
             }
             /* ---------------------- وضع المشروع في قواعد البيانات --------------------- */
             // بداية المعاملة مع قواعد البيانات
@@ -289,7 +290,7 @@ class ItemController extends Controller
             // لم تتم المعاملة بشكل نهائي و لن يتم ادخال اي بيانات لقاعدة البيانات
             DB::rollback();
             // رسالة خطأ
-            return response()->error(__("messages.errors.error_database"), 403);
+            return response()->error(__("messages.errors.error_database"), Response::HTTP_FORBIDDEN);
         }
     }
 
@@ -307,7 +308,7 @@ class ItemController extends Controller
             // شرط اذا كان المشؤروع موجود
             if (!$item_resource) {
                 // رسالة خطأ
-                return response()->error(__("messages.item.resource_not_found"), 422);
+                return response()->error(__("messages.item.resource_not_found"), Response::HTTP_NOT_FOUND);
             }
 
             // شرط اذا كانت حالة الطلبية في قيد التنفيذ
@@ -316,13 +317,13 @@ class ItemController extends Controller
                 $item_resource->item->status = Item::STATUS_FINISHED;
                 $item_resource->item->save();
             } else {
-                return response()->error(__("messages.item.not_may_this_operation"), 422);
+                return response()->error(__("messages.item.not_may_this_operation"), Response::HTTP_NOT_FOUND);
             }
             // رسالة نجاح عملية تسليم المشروع:
             return response()->success(__('messages.item.resource_dilevered'), $item_resource);
         } catch (Exception $ex) {
             // رسالة خطأ
-            return response()->error(__("messages.errors.error_database"), 403);
+            return response()->error(__("messages.errors.error_database"), Response::HTTP_FORBIDDEN);
         }
     }
 
@@ -339,7 +340,7 @@ class ItemController extends Controller
             // شرط اذا كان المشروع موجود
             if (!$item_resource) {
                 // رسالة خطأ
-                return response()->error(__('messages.item.resource_not_found'), 422);
+                return response()->error(__('messages.item.resource_not_found'), Response::HTTP_NOT_FOUND);
             }
 
             // جلب حالة الطلبية
@@ -355,19 +356,19 @@ class ItemController extends Controller
                     $item_resource->item->save();
                 } elseif ($item_resource->status == ItemOrderResource::RESOURCE_ACCEPTED) {
                     // رسالة خطأ
-                    return response()->error(__("messages.item.resource_accepted"), 403);
+                    return response()->error(__("messages.item.resource_accepted"), Response::HTTP_FORBIDDEN);
                 } else {
                     // رسالة خطأ
-                    return response()->error(__("messages.item.resource_uploaded"), 403);
+                    return response()->error(__("messages.item.resource_uploaded"), Response::HTTP_FORBIDDEN);
                 }
             } else {
-                return response()->error(__("messages.item.not_may_this_operation"), 403);
+                return response()->error(__("messages.item.not_may_this_operation"), Response::HTTP_FORBIDDEN);
             }
             // رسالة نجاح عملية تسليم المشروع:
             return response()->success(__("messages.item.resource_not_dilevered"));
         } catch (Exception $ex) {
             // رسالة خطأ
-            return response()->error(__("messages.errors.error_database"), 403);
+            return response()->error(__("messages.errors.error_database"), Response::HTTP_FORBIDDEN);
         }
     }
 
@@ -389,7 +390,7 @@ class ItemController extends Controller
             // شرط اذا كانت متواجدة
             if (!$item) {
                 // رسالة خطأ
-                return response()->error(__("messages.errors.element_not_found"), 403);
+                return response()->error(__("messages.errors.element_not_found"), Response::HTTP_FORBIDDEN);
             }
 
             // جلب طلب الغاء الخدمة
@@ -404,12 +405,12 @@ class ItemController extends Controller
             if ($item->status == Item::STATUS_ACCEPT_REQUEST || $item->status == Item::STATUS_DILEVERED_RESOURCE) {
                 // شرط اذا كان تم ارسال الطلب من قبل المشتري
                 if ($item_rejected && $item_rejected->rejected_buyer == ItemOrderRejected::REJECTED_BY_BUYER) {
-                    return response()->error(__("messages.item.request_buyer_sended"), 422);
+                    return response()->error(__("messages.item.request_buyer_sended"), Response::HTTP_NOT_FOUND);
                 }
 
                 if ($item_rejected->rejected_seller == ItemOrderRejected::REJECTED_BY_SELLER) {
                     // عملية طلب الغاء الطلبية
-                    return response()->error(__("messages.item.request_sended"), 422);
+                    return response()->error(__("messages.item.request_sended"), Response::HTTP_NOT_FOUND);
                 } else {
                     if ($item_rejected) {
                         $item_rejected->update($data_request_rejected_by_seller);
@@ -423,13 +424,13 @@ class ItemController extends Controller
                 }
             } else {
                 // رسالة خطأ
-                return response()->error(__("messages.item.not_may_this_operation"), 403);
+                return response()->error(__("messages.item.not_may_this_operation"), Response::HTTP_FORBIDDEN);
             }
             // رسالة نجاح
             return response()->success(__('messages.item.request_seller_success'));
         } catch (Exception $ex) {
             // رسالة خطأ
-            return response()->error(__("messages.errors.error_database"), 403);
+            return response()->error(__("messages.errors.error_database"), Response::HTTP_FORBIDDEN);
         }
     }
 
@@ -450,7 +451,7 @@ class ItemController extends Controller
             // شرط اذا كانت متواجدة
             if (!$item) {
                 // رسالة خطأ
-                return response()->error(__("messages.errors.element_not_found"), 403);
+                return response()->error(__("messages.errors.element_not_found"), Response::HTTP_FORBIDDEN);
             }
             // جلب طلب الغاء الخدمة
             $item_rejected = ItemOrderRejected::where('item_id', $item->id)->first();
@@ -464,11 +465,11 @@ class ItemController extends Controller
             // شرط اذا كانت الحالة الطلبية في حالة قيد التنفيذ
             if ($item->status == Item::STATUS_ACCEPT_REQUEST || $item->status == Item::STATUS_DILEVERED_RESOURCE) {
                 if ($item_rejected && $item_rejected->rejected_seller == ItemOrderRejected::REJECTED_BY_SELLER) {
-                    return response()->error(__("messages.item.request_seller_sended"), 422);
+                    return response()->error(__("messages.item.request_seller_sended"), Response::HTTP_NOT_FOUND);
                 }
                 if ($item_rejected->rejected_seller == ItemOrderRejected::REJECTED_BY_BUYER) {
                     // عملية طلب الغاء الطلبية
-                    return response()->error(__("messages.item.request_sended"), 422);
+                    return response()->error(__("messages.item.request_sended"), Response::HTTP_NOT_FOUND);
                 } else {
                     if ($item_rejected) {
                         $item_rejected->update($data_request_rejected_by_buyer);
@@ -482,14 +483,14 @@ class ItemController extends Controller
                 }
             } else {
                 // رسالة خطأ
-                return response()->error(__("messages.item.not_may_this_operation"), 422);
+                return response()->error(__("messages.item.not_may_this_operation"), Response::HTTP_NOT_FOUND);
             }
 
             // رسالة نجاح
             return response()->success(__("messages.item.request_buyer_success"));
         } catch (Exception $ex) {
             // رسالة خطأ
-            return response()->error(__("messages.errors.error_database"), 403);
+            return response()->error(__("messages.errors.error_database"), Response::HTTP_FORBIDDEN);
         }
     }
     /* ----------------------- قبول الطلبية من قبل الطرفين ---------------------- */
@@ -512,7 +513,7 @@ class ItemController extends Controller
             // شرط اذا كانت متواجدة
             if (!$item) {
                 // رسالة خطأ
-                return response()->error(__("messages.errors.element_not_found"), 403);
+                return response()->error(__("messages.errors.element_not_found"), Response::HTTP_FORBIDDEN);
             }
             // جلب طلب الغاء الخدمة
             $item_rejected = ItemOrderRejected::where('item_id', $item->id)->first();
@@ -528,7 +529,7 @@ class ItemController extends Controller
                 // شرط اذا كان هناك طلب الغاء و ايضا ارسال عملية طلب من طرف المشتري
                 if ($item_rejected && $item_rejected->rejected_buyer == ItemOrderRejected::REJECTED_BY_BUYER) {
                     if ($item_rejected->rejected_seller == ItemOrderRejected::REJECTED_BY_SELLER) {
-                        return response()->error(__("messages.item.request_sended"), 422);
+                        return response()->error(__("messages.item.request_sended"), Response::HTTP_NOT_FOUND);
                     }
                     // عملية قبول طلب الغاء الطلبية
                     $item_rejected->update($data_accept_request_by_seller);
@@ -553,17 +554,17 @@ class ItemController extends Controller
                     // إرسال الاشعار
                     event(new AcceptRequestRejectOrder($buyer, $item));
                 } else {
-                    return response()->error(__('messages.item.request_not_found'), 403);
+                    return response()->error(__('messages.item.request_not_found'), Response::HTTP_FORBIDDEN);
                 }
             } else {
                 // رسالة خطأ
-                return response()->error(__("messages.item.not_may_this_operation"), 403);
+                return response()->error(__("messages.item.not_may_this_operation"), Response::HTTP_FORBIDDEN);
             }
             // رسالة نجاح
             return response()->success(__("messages.item.request_accepted_by_seller"));
         } catch (Exception $ex) {
             // رسالة خطأ
-            return response()->error(__("messages.errors.error_database"), 403);
+            return response()->error(__("messages.errors.error_database"), Response::HTTP_FORBIDDEN);
         }
     }
 
@@ -590,7 +591,7 @@ class ItemController extends Controller
             // شرط اذا كانت متواجدة
             if (!$item) {
                 // رسالة خطأ
-                return response()->error(__("messages.errors.element_not_found"), 403);
+                return response()->error(__("messages.errors.element_not_found"), Response::HTTP_FORBIDDEN);
             }
             // جلب عنصر الطلب
             $item_rejected = ItemOrderRejected::where('item_id', $item->id)->first();
@@ -605,7 +606,7 @@ class ItemController extends Controller
                 // شرط اذا كان هناك طلب الغاء و ايضا ارسال عملية طلب من طرف البائع
                 if ($item_rejected && $item_rejected->rejected_buyer == ItemOrderRejected::REJECTED_BY_BUYER) {
                     if ($item_rejected->rejected_seller == ItemOrderRejected::REJECTED_BY_BUYER) {
-                        return response()->error(__("messages.item.request_sended"), 403);
+                        return response()->error(__("messages.item.request_sended"), Response::HTTP_FORBIDDEN);
                     }
                     // عملية قبول طلب الغاء الطلبية
                     $item_rejected->update($data_accept_request_by_buyer);
@@ -630,17 +631,17 @@ class ItemController extends Controller
                     // ارسال الاشعار
                     event(new AcceptRequestRejectOrder($user, $item));
                 } else {
-                    return response()->error(__("messages.item.request_not_found"), 403);
+                    return response()->error(__("messages.item.request_not_found"), Response::HTTP_FORBIDDEN);
                 }
             } else {
                 // رسالة خطأ
-                return response()->error(__("messages.item.not_may_this_operation"), 403);
+                return response()->error(__("messages.item.not_may_this_operation"), Response::HTTP_FORBIDDEN);
             }
             // رسالة نجاح
             return response()->success(__("messages.item.request_buyer_success"));
         } catch (Exception $ex) {
             // رسالة خطأ
-            return response()->error(__("messages.errors.error_database"), 403);
+            return response()->error(__("messages.errors.error_database"), Response::HTTP_FORBIDDEN);
         }
     }
 
@@ -661,7 +662,7 @@ class ItemController extends Controller
             // شرط اذا كانت متواجدة
             if (!$item) {
                 // رسالة خطأ
-                return response()->error(__("messages.errors.element_not_found"), 403);
+                return response()->error(__("messages.errors.element_not_found"), Response::HTTP_FORBIDDEN);
             }
             // جلب عنصر الطلب
             $item_rejected = ItemOrderRejected::where('item_id', $item->id)->first();
@@ -671,7 +672,7 @@ class ItemController extends Controller
                 // شرط اذا كان هناك طلب الغاء و ايضا ارسال عملية طلب من طرف البائع
                 if ($item_rejected && $item_rejected->rejected_buyer == ItemOrderRejected::REJECTED_BY_BUYER) {
                     if ($item_rejected->rejected_seller == ItemOrderRejected::REJECTED_BY_SELLER) {
-                        return response()->error(__("messages.item.request_sended"), 403);
+                        return response()->error(__("messages.item.request_sended"), Response::HTTP_FORBIDDEN);
                     }
                     // عملية رفض طلب الغاء الطلبية
                     $item_rejected->update(['rejected_buyer' => 0]);
@@ -679,17 +680,17 @@ class ItemController extends Controller
                     // ارسال الاشعار
                     event(new RejectRequestRejectOrder($user, $item));
                 } else {
-                    return response()->error(__("messages.item.request_not_found"), 403);
+                    return response()->error(__("messages.item.request_not_found"), Response::HTTP_FORBIDDEN);
                 }
             } else {
                 // رسالة خطأ
-                return response()->error(__("messages.item.not_may_this_operation"), 403);
+                return response()->error(__("messages.item.not_may_this_operation"), Response::HTTP_FORBIDDEN);
             }
             // رسالة نجاح
             return response()->success(__("messages.item.request_rejected_by_seller"));
         } catch (Exception $ex) {
             // رسالة خطأ
-            return response()->error(__("messages.errors.error_database"), 403);
+            return response()->error(__("messages.errors.error_database"), Response::HTTP_FORBIDDEN);
         }
     }
 
@@ -708,7 +709,7 @@ class ItemController extends Controller
             // شرط اذا كانت متواجدة
             if (!$item) {
                 // رسالة خطأ
-                return response()->error(__("messages.errors.element_not_found"), 403);
+                return response()->error(__("messages.errors.element_not_found"), Response::HTTP_FORBIDDEN);
             }
             // جلب عنصر الطلب
             $item_rejected = ItemOrderRejected::where('item_id', $item->id)->first();
@@ -718,24 +719,24 @@ class ItemController extends Controller
                 // شرط اذا كان هناك طلب الغاء و ايضا ارسال عملية طلب من طرف البائع
                 if ($item_rejected && $item_rejected->rejected_seller == ItemOrderRejected::REJECTED_BY_SELLER) {
                     if ($item_rejected->rejected_buyer == ItemOrderRejected::REJECTED_BY_BUYER) {
-                        return response()->error(422, __("messages.item.request_sended"));
+                        return response()->error(Response::HTTP_NOT_FOUND, __("messages.item.request_sended"));
                     }
                     // عملية رفض طلب الغاء الطلبية
                     $item_rejected->update(['rejected_seller' => 0]);
                     // ارسال الاشعار
                     event(new RejectRequestRejectOrder($user, $item));
                 } else {
-                    return response()->error(422, __("messages.item.request_not_found"));
+                    return response()->error(Response::HTTP_NOT_FOUND, __("messages.item.request_not_found"));
                 }
             } else {
                 // رسالة خطأ
-                return response()->error(422, __("messages.item.not_may_this_operation"));
+                return response()->error(Response::HTTP_NOT_FOUND, __("messages.item.not_may_this_operation"));
             }
             // رسالة نجاح
             return response()->success(__("messages.item.request_rejected_by_buyer"));
         } catch (Exception $ex) {
             // رسالة خطأ
-            return response()->error(__("messages.errors.error_database"), 403);
+            return response()->error(__("messages.errors.error_database"), Response::HTTP_FORBIDDEN);
         }
     }
     /* -------------------------------------------------------------------------- */

@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Product;
 use Illuminate\Http\Request;
+use Illuminate\Http\Response;
 
 class SearchController extends Controller
 {
@@ -37,7 +38,7 @@ class SearchController extends Controller
         if (!$res->isEmpty()) {
             return response()->success(__("messages.filter.filter_success"), $res);
         } else {
-            return response()->success(__("messages.filter.filter_field"), [], 204);
+            return response()->success(__("messages.filter.filter_field"), [], Response::HTTP_NO_CONTENT);
         }
     }
 }

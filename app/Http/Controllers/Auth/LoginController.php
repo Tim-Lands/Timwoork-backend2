@@ -10,6 +10,7 @@ use App\Models\User;
 use App\Traits\LoginUser;
 use Exception;
 use Illuminate\Http\Request;
+use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
@@ -28,7 +29,7 @@ class LoginController extends Controller
         // في حالة عدم وجود المستخدم في قاعدة البيانات أو عدم تطابق كلمة المرور المحفوظة مع كلمة المرور المرسلة
         // يتم إرسال رسالة عدم صحة البيانات
         if (!$user || !Hash::check($request->password, $user->password)) {
-            return response()->error(__("messages.user.error_login"), 401);
+            return response()->error(__("messages.user.error_login"), Response::HTTP_UNAUTHORIZED);
         }
         Auth::login($user);
         // في حالة صحة البيانات سيتم إنشاء توكن وتخزينه في جلسة كوكي وإرساله مع كل طلب
@@ -56,7 +57,7 @@ class LoginController extends Controller
             'unread_notifications_count' => $notifications_count,
             'cart_items_count' => $cart_items_count
         ];
-        return response()->json($data, 200);
+        return response()->json($data, Response::HTTP_OK);
     }
     public function logout()
     {
@@ -106,7 +107,7 @@ class LoginController extends Controller
         } else {
             $email_exists = User::select('email')->where('email', $request->email)->first();
             if ($email_exists) {
-                return response()->error(__("messages.user.email_already"), 422);
+                return response()->error(__("messages.user.email_already"), Response::HTTP_UNPROCESSABLE_ENTITY);
             } else {
 
                 // وإلا قم بإنشاء مستخدم جديد
@@ -145,7 +146,7 @@ class LoginController extends Controller
                     return $this->login_with_token($user);
                 } catch (Exception $ex) {
                     DB::rollBack();
-                    return response()->error(__("messages.errors.error_database"), 403);
+                    return response()->error(__("messages.errors.error_database"), Response::HTTP_FORBIDDEN);
                 }
             }
         }

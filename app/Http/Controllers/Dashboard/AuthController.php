@@ -3,19 +3,12 @@
 namespace App\Http\Controllers\Dashboard;
 
 use App\Http\Controllers\Controller;
-use Illuminate\Auth\AuthenticationException;
-use Illuminate\Http\Request;
-use Illuminate\Http\Response;
+use App\Http\Requests\AdminRequest;
 
 class AuthController extends Controller
 {
-    public function login(Request $request)
+    public function login(AdminRequest $request)
     {
-        $this->validate($request, [
-            'email'   => 'required|email',
-            'password' => 'required|min:6'
-        ]);
-
         if (!auth('admin')->attempt($request->only('email', 'password'))) {
             return response()->error(__('messages.user.error_login'));
         }
@@ -24,7 +17,7 @@ class AuthController extends Controller
         return response()->success(__('messages.dashboard.get_login'), $token);
     }
 
-    public function me(Request $request)
+    public function me(AdminRequest $request)
     {
         return $request->user();
     }
