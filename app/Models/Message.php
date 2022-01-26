@@ -5,6 +5,8 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 
 class Message extends Model
 {
@@ -14,6 +16,15 @@ class Message extends Model
 
     // ===========================Contants =============================
     // code
+    const MESSAGE_TYPE_TEXT                 = 0;
+    const MESSAGE_TYPE_INSTRUCTION          = 1;
+    const MESSAGE_TYPE_IMAGE                = 2;
+    const MESSAGE_TYPE_AUDIO                = 3;
+    const MESSAGE_TYPE_VEDIO                = 4;
+    const MESSAGE_TYPE_FILE                 = 5;
+    const MESSAGE_TYPE_ZIP                  = 6;
+
+    // ================== Acssesor & mutators ==========================
     // ================== Acssesor & mutators ==========================
     // code
     // ============================ Scopes =============================
@@ -50,5 +61,15 @@ class Message extends Model
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
+    }
+
+    /**
+     * user
+     *
+     * @return hasMany
+     */
+    public function attachments(): hasMany
+    {
+        return $this->hasMany(MessageAttachment::class);
     }
 }

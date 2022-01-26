@@ -32,6 +32,10 @@ class Conversation extends Model
     // ========================== Relations ============================
     // code
 
+    public function conversationable()
+    {
+        return $this->morphTo();
+    }
     /**
      * messages
      *

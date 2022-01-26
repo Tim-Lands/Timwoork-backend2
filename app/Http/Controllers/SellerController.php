@@ -24,8 +24,8 @@ class SellerController extends Controller
         try {
             // إنشاء ملف شخصي للبائع
             $seller = Auth::user()->profile->profile_seller()->create([
-                'bio' => 'نبذة عنك',
-                'portfolio' => 'http://example.org',
+                'bio' => '',
+                'portfolio' => '',
                 'seller_badge_id' => 1,
                 'seller_level_id' => 1,
             ]);

@@ -32,8 +32,8 @@ class ProfileStepOneRequest extends FormRequest
         $before = $dt1->now()->subYears(19)->format('Y-m-d');
         $after = $dt2->subYears(101)->format('Y-m-d');
         return [
-            'first_name' => 'required',
-            'last_name' => 'required',
+            'first_name' => 'required|min:3',
+            'last_name' => 'required|min:3',
             'date_of_birth' => 'required|date_format:Y-m-d|before_or_equal:' . $before . '|after_or_equal:' . $after,
             'gender' => 'required',
             'country_id' => 'required',
@@ -48,8 +48,10 @@ class ProfileStepOneRequest extends FormRequest
     public function messages()
     {
         return [
-            'first_name.required' => __("messages.validation.bio_required"),
-            'last_name.min' => __("messages.validation.bio_min"),
+            'first_name.required' => __("messages.validation.first_name_required"),
+            'last_name.required' => __("messages.validation.last_name_required"),
+            'first_name.min' => __("messages.validation.first_name_min"),
+            'last_name.min' => __("messages.validation.last_name_min"),
             'username.required' => __("messages.validation.username_required"),
             'username.unique' => __("messages.validation.unique"),
             'date_of_birth.required' => __("messages.validation.date_of_birth_required"),

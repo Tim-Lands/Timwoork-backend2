@@ -185,7 +185,7 @@ class Product extends Model
      */
     public function getFullPathThumbnailAttribute()
     {
-        return asset('products/thumbnails/'.$this->thumbnail) ;
+        return asset('products/thumbnails/' . $this->thumbnail);
     }
 
     /* --------------------------------- Scopes --------------------------------- */
@@ -286,7 +286,7 @@ class Product extends Model
      *
      * @return HasOne
      */
-    public function file():HasOne
+    public function file(): HasOne
     {
         return $this->hasOne(File::class, 'product_id');
     }
@@ -296,7 +296,7 @@ class Product extends Model
      *
      * @return HasOne
      */
-    public function video():HasOne
+    public function video(): HasOne
     {
         return $this->hasOne(Video::class, 'product_id');
     }
@@ -341,6 +341,14 @@ class Product extends Model
     public function ratings(): HasMany
     {
         return $this->hasMany(Rating::class);
+    }
+
+    /**
+     * conversations
+     */
+    public function conversations()
+    {
+        return $this->morphMany(Conversation::class, 'conversationable');
     }
 
     /* -------------------------------------------------------------------------- */

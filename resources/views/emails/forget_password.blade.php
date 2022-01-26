@@ -9,7 +9,7 @@
 </head>
 
 <body>
-    <h1>Your code Token is : {{ $user->forgetPasswordToken->token }}</h1>
+    <a href={{ 'https://timwoork.com/email/hash/' . $user->forgetPasswordToken->token }} >{{ __('email.reset_password_button') }}</a>
 </body>
 
 </html>

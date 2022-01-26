@@ -24,20 +24,20 @@ class ProfileSellerStoreRequest extends FormRequest
     public function rules()
     {
         return [
-            'bio' => 'sometimes|nullable|min:26',
+            'bio' => 'sometimes|required|nullable|min:26',
             'portfolio' => 'sometimes|nullable|url',
         ];
     }
 
     /**
-    * messages
-    *
-    * @return void
-    */
+     * messages
+     *
+     * @return void
+     */
     public function messages()
     {
         return [
-            //'bio.required' => __("messages.validation.bio_required"),
+            'bio.required' => __("messages.validation.bio_required"),
             'bio.min' => __("messages.validation.bio_min"),
             //'portfolio.required' => __("messages.validation.portfolio_required"),
             'portfolio.url' => __("messages.validation.url"),
