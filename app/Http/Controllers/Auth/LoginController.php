@@ -60,10 +60,15 @@ class LoginController extends Controller
     }
     public function logout()
     {
-        $cookie = cookie()->forget('timwoork_token');
-        return response([
-            'msg' => "Success"
-        ])->withCookie($cookie);
+        // get current user 
+        $user = Auth::user();
+        // delete all user tokens
+        $user->tokens()->delete();
+        // تغيير حالة المستخدم الى اوفلاين
+        $user->status = false;
+        $user->save();
+        // send success message to frontend
+        return response()->success(__("messages.user.logout"));
     }
 
     /**
@@ -137,7 +142,7 @@ class LoginController extends Controller
                         'provider' => $provider,
                         'provider_id' => $request->provider_id
                     ]);
-                    $this->createChatEngineUser($user);
+                    //$this->createChatEngineUser($user);
 
                     DB::commit();
                     // عملية تسجيل الدخول بعد نجاح العملية
@@ -152,7 +157,7 @@ class LoginController extends Controller
     }
     /**************************************************************** */
 
-    public function createChatEngineUser($user)
+    /*     public function createChatEngineUser($user)
     {
         return Http::withHeaders([
             'PRIVATE-KEY' => '2805db84-87b8-4fef-bb94-7e3c5fd22b37'
@@ -160,5 +165,5 @@ class LoginController extends Controller
             'username' => $user->username,
             'secret' => $user->email + $user->id,
         ]);
-    }
+    } */
 }

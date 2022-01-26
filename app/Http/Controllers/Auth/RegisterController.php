@@ -54,7 +54,7 @@ class RegisterController extends Controller
 
             // تسجيل المستخدم الجديد في chatEngine
 
-            $this->createChatEngineUser($user);
+            //$this->createChatEngineUser($user);
             // تسجيل الدخول للمستخدم الجديد
             Auth::login($user);
             // إنهاء العملية
@@ -80,7 +80,7 @@ class RegisterController extends Controller
         return $this->resend_code($request->email);
     }
 
-    public function createChatEngineUser($user)
+    /*     public function createChatEngineUser($user)
     {
         return Http::withHeaders([
             'PRIVATE-KEY' => '2805db84-87b8-4fef-bb94-7e3c5fd22b37'
@@ -88,5 +88,5 @@ class RegisterController extends Controller
             'username' => $user->username,
             'secret' => $user->email + $user->id,
         ]);
-    }
+    } */
 }
