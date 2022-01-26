@@ -128,7 +128,7 @@ class LoginController extends Controller
                         'first_name' => $request->first_name,
                         'last_name' => $request->last_name,
                         'full_name' => $request->full_name,
-                        'avatar' => $request->avatar,
+                        'avatar_url' => $request->avatar,
                         'badge_id' => 1,
                         'level_id' => 1,
                         'lang' => 'ar',
