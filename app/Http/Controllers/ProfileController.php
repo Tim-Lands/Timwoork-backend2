@@ -96,7 +96,8 @@ class ProfileController extends Controller
             $user = Auth::user();
             // تغيير اسم المستخدم
             $avatarUrl = Storage::disk('avatars')->url($avatarName);
-            $user->profile->avatar = $avatarUrl;
+            $user->profile->avatar = $avatarName;
+            $user->profile->avatar_url = $avatarUrl;
             $user->profile->steps = Profile::COMPLETED_SETP_TWO;
             $user->profile->save();
             // إرسال رسالة نجاح المرحلة الثانية مع إرسال رابط الصورة كاملا
