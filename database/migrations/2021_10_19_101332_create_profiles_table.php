@@ -19,6 +19,7 @@ class CreateProfilesTable extends Migration
             $table->string("first_name")->nullable();
             $table->string('last_name')->nullable();
             $table->string('avatar')->default('avatar.png');
+            $table->string('avatar_url')->default(url("avatars/avatar.png"));
             // type => male or female
             $table->boolean('gender')->nullable();
             $table->date('date_of_birth')->nullable();
