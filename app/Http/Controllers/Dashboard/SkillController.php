@@ -7,6 +7,7 @@ use App\Http\Requests\Dashboard\SkillRequest;
 use App\Models\Skill;
 use Exception;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Response;
 use Illuminate\Support\Facades\DB;
 
 class SkillController extends Controller
@@ -53,7 +54,7 @@ class SkillController extends Controller
         } catch (Exception $ex) {
             // لم تتم المعاملة بشكل نهائي و لن يتم ادخال اي بيانات لقاعدة البيانات
             DB::rollback();
-            return response()->error(__("messages.errors.error_database"), 403);
+            return response()->error(__("messages.errors.error_database"), Response::HTTP_FORBIDDEN);
         }
     }
 
@@ -70,7 +71,7 @@ class SkillController extends Controller
         // شرط اذا كان العنصر موجود
         if (!$skill) {
             // رسالة خطأ
-            return response()->error(__("messages.errors.element_not_found"), 403);
+            return response()->error(__("messages.errors.element_not_found"), Response::HTTP_NOT_FOUND);
         }
         // اظهار العنصر
         return response()->success(__("messages.oprations.get_data"), $skill);
@@ -93,7 +94,7 @@ class SkillController extends Controller
             // شرط اذا كان العنصر موجود او المعرف اذا كان رقم غير صحيح
             if (!$skill || !is_numeric($id)) {
                 // رسالة خطأ
-                return response()->error(__("messages.errors.element_not_found"), 403);
+                return response()->error(__("messages.errors.element_not_found"), Response::HTTP_NOT_FOUND);
             }
 
             // جلب البيانات و وضعها في مصفوفة:
@@ -123,7 +124,7 @@ class SkillController extends Controller
             // لم تتم المعاملة بشكل نهائي و لن يتم ادخال اي بيانات لقاعدة البيانات
             DB::rollback();
             // رسالة خطأ :
-            return response()->error(__("messages.errors.error_database"), 403);
+            return response()->error(__("messages.errors.error_database"), Response::HTTP_FORBIDDEN);
         }
     }
 
@@ -141,7 +142,7 @@ class SkillController extends Controller
             // شرط اذا كان العنصر موجود او المعرف اذا كان رقم غير صحيح
             if (!$skill || !is_numeric($id)) {
                 // رسالة خطأ
-                return response()->error(__("messages.errors.element_not_found"), 403);
+                return response()->error(__("messages.errors.element_not_found"), Response::HTTP_NOT_FOUND);
             }
 
             // ============= حذف المهارة  ================:
@@ -159,7 +160,7 @@ class SkillController extends Controller
             // لم تتم المعاملة بشكل نهائي و لن يتم ادخال اي بيانات لقاعدة البيانات
             DB::rollback();
             // return $ex;
-            return response()->error(__("messages.errors.error_database"), 403);
+            return response()->error(__("messages.errors.error_database"), Response::HTTP_FORBIDDEN);
         }
     }
 }

@@ -7,6 +7,7 @@ use App\Http\Requests\Dashboard\SubCategoryRequest;
 use App\Models\Category;
 use Exception;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Response;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 
@@ -39,7 +40,7 @@ class SubCategoryController extends Controller
         // شرط اذا كان العنصر موجود ام لا
         if (!$subcategory) {
             // رسالة خطأ
-            return response()->error(__("messages.errors.element_not_found"), 403);
+            return response()->error(__("messages.errors.element_not_found"), Response::HTTP_NOT_FOUND);
         }
         // اظهار العنصر
         return response()->success(__("messages.oprations.get_data"), $subcategory);
@@ -81,7 +82,7 @@ class SubCategoryController extends Controller
             // لم تتم المعاملة بشكل نهائي و لن يتم ادخال اي بيانات لقاعدة البيانات
             DB::rollback();
             // رسالة خطأ
-            return response()->error(__("messages.errors.error_database"), 403);
+            return response()->error(__("messages.errors.error_database"), Response::HTTP_FORBIDDEN);
         }
     }
 
@@ -100,7 +101,7 @@ class SubCategoryController extends Controller
             // شرط اذا كان العنصر موجود او المعرف اذا كان رقم غير صحيح
             if (!$subcategory || !is_numeric($id)) {
                 // رسالة خطأ
-                return response()->error(__("messages.errors.element_not_found"), 403);
+                return response()->error(__("messages.errors.element_not_found"), Response::HTTP_NOT_FOUND);
             }
 
             // جلب البيانات و وضعها في مصفوفة:
@@ -143,7 +144,7 @@ class SubCategoryController extends Controller
             // لم تتم المعاملة بشكل نهائي و لن يتم ادخال اي بيانات لقاعدة البيانات
             DB::rollback();
             // رسالة خطأ :
-            return response()->error(__("messages.errors.error_database"), 403);
+            return response()->error(__("messages.errors.error_database"), Response::HTTP_FORBIDDEN);
         }
     }
 
@@ -161,7 +162,7 @@ class SubCategoryController extends Controller
             // شرط اذا كان العنصر موجود او المعرف اذا كان رقم غير صحيح
             if (!$subcategory || !is_numeric($id)) {
                 // رسالة خطأ
-                return response()->error(__("messages.errors.element_not_found"), 403);
+                return response()->error(__("messages.errors.element_not_found"), Response::HTTP_NOT_FOUND);
             }
 
             // ============= حذف التصنيف الفرعي  ================:
@@ -179,7 +180,7 @@ class SubCategoryController extends Controller
             // لم تتم المعاملة بشكل نهائي و لن يتم ادخال اي بيانات لقاعدة البيانات
             DB::rollback();
             // رسالة خطأ
-            return response()->error(__("messages.errors.error_database"), 403);
+            return response()->error(__("messages.errors.error_database"), Response::HTTP_FORBIDDEN);
         }
     }
 }

@@ -13,6 +13,7 @@ use Exception;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Request;
+use Illuminate\Http\Response;
 
 class CartController extends Controller
 {
@@ -32,14 +33,14 @@ class CartController extends Controller
         // عرض السلة المستخدم
         $cart = Cart::selection()
             ->with(['cart_items' => function ($q) {
-                $q->select('id', 'cart_id', 'product_title', 'price_product', 'product_id', 'quantity')
+                $q->select('id', 'cart_id', 'product_title', 'price_product', 'price_unit', 'product_id', 'quantity')
                     ->with(['cartItem_developments' => function ($q) {
                         $q->select('development_id', 'title', 'duration', 'price')->get();
                     }, 'product' => fn ($q) => $q->select('id', 'title', 'price', 'duration')]);
             }])
             ->withCount('cart_items')
             ->where('user_id', Auth::user()->id)
-            ->where('is_buying', 0)
+            ->isnotbuying()
             ->first();
         // اظهار السلة مع عناصرها
         return response()->success(__('messages.oprations.get_data'), $cart);
@@ -55,22 +56,22 @@ class CartController extends Controller
     {
         try {
             // جلب سلة المستخدم
-            $cart = Cart::where('user_id', Auth::user()->id);
+            $cart = Cart::where('user_id', Auth::user()->id)->first();
             // اذا كانت هناك سلة مباعة
-            $cart_found_buying =  Cart::where('user_id', Auth::id())->where('is_buying', 1)->exists();
+            $cart_found_buying =  Cart::where('user_id', Auth::user()->id)->isbuying()->exists();
             // اذا كانت هناك سلة غير مباعة
-            $cart_found_not_buying =  Cart::where('user_id', Auth::id())->where('is_buying', 0)->exists();
+            $cart_found_not_buying =  Cart::where('user_id', Auth::user()->id)->isnotbuying()->exists();
             // وضع البيانات فالمصفوفة من اجل اضافة السلة
             $data_cart = [
                 'user_id' => Auth::user()->id,
             ];
             // الخدمة المضافة في السلة
             $product = Product::whereId($request->product_id)->first();
-            
+
             // شرط اذا كانت الخدمة للمستخدم المشتري
             if (Auth::user()->profile->profile_seller) {
                 if ($product->profile_seller_id == Auth::user()->profile->profile_seller->id) {
-                    return response()->error(__('messages.cart.product_not_buying'), 400);
+                    return response()->error(__('messages.cart.product_not_buying'), Response::HTTP_BAD_REQUEST);
                 }
             }
             // وضع البيانات فالمصفوفة من اجل اضافة عناصر فالسلة السلة
@@ -88,7 +89,7 @@ class CartController extends Controller
             // شرط في حالة ما اذا قام المستخدم بارسال تطويرات
             if ($request->has('developments')) {
                 if ($this->check_found_developments($request->developments, $request->product_id) == 0) {
-                    return response()->error(__('messages.cart.same_developments'), 422);
+                    return response()->error(__('messages.cart.same_developments'), Response::HTTP_NOT_FOUND);
                 }
                 // سعر التطويرات المدخلة
                 $price_developments = Product::whereId($request->product_id)
@@ -118,14 +119,14 @@ class CartController extends Controller
                     $this->add_developments($cart_item, collect($request->developments));
                 }
                 // جلب العنصر المضاف حديثا
-                $new_cart = Cart::where('user_id', Auth::user()->id)->where('is_buying', 0);
+                $new_cart = Cart::where('user_id', Auth::user()->id)->isnotbuying();
                 // عمليات حساب السعر المتواجد في السلة
                 $this->calculate_price($new_cart, $cart_item, $data_cart_items['quantity']);
             }
             // شرط اذا توجد سلة مباعة و سلة غير مباعة او توجد سلة غير مباعة و لا توجد سلة مباعة :
             elseif (($cart_found_buying && $cart_found_not_buying) || (!$cart_found_buying && $cart_found_not_buying)) {
                 // جلب العنصر
-                $cart_item_found = CartItem::whereCartId($cart->where('is_buying', 0)->first()->id)
+                $cart_item_found = CartItem::whereCartId($cart->isnotbuying()->first()->id)
                     ->where('product_id', $request->product_id)
                     ->wherehas('cart', function ($q) {
                         $q->where('user_id', Auth::id());
@@ -134,10 +135,10 @@ class CartController extends Controller
                 // شرط اذا كان العنصر موجود
                 if ($cart_item_found) {
                     // رسالة خطأ
-                    return response()->error(__('messages.cart.cartitem_found'), 422);
+                    return response()->error(__('messages.cart.cartitem_found'), Response::HTTP_NOT_FOUND);
                 }
                 // جلب السلة المستخدم الغير مباعة
-                $new_cart =  Cart::where('user_id', Auth::id())->where('is_buying', 0);
+                $new_cart =  Cart::where('user_id', Auth::id())->isnotbuying();
                 // وضع معرف السلة في مصفوفة العنصر
                 $data_cart_items['cart_id'] = $new_cart->first()->id;
                 // انشاء عنصر جديد
@@ -163,7 +164,7 @@ class CartController extends Controller
                 __("messages.oprations.add_success"),
                 $cart->with('cart_items')
                     ->withCount('cart_items')
-                    ->where('is_buying', 0)
+                    ->isnotbuying()
                     ->first()
             );
         } catch (Exception $ex) {
@@ -171,7 +172,7 @@ class CartController extends Controller
             // لم تتم المعاملة بشكل نهائي و لن يتم ادخال اي بيانات لقاعدة البيانات
             DB::rollback();
             // رسالة خطأ
-            return response()->error(__('messages.errors.error_database'), 403);
+            return response()->error(__('messages.errors.error_database'), Response::HTTP_FORBIDDEN);
         }
     }
 
@@ -185,28 +186,28 @@ class CartController extends Controller
     public function update($id, CartRequest $request)
     {
         try {
-            // جلب سلة المستخدم
-            $cart = Cart::where('user_id', Auth::user()->id)->where('is_buying', 0)->first();
+            // جلب سلة المستخدم الغير المباعة
+            $cart = Cart::where('user_id', Auth::user()->id)->isnotbuying()->first();
             // فحص ان كانت هناك سلة
             if (!$cart) {
                 // رسالة خطأ
-                return response()->error('السلة غير موجودة', 403);
+                return response()->error(__("messages.cart.cart_not_found"), Response::HTTP_NOT_FOUND);
             }
             // جلب سلة مستخدم في حالة تم بيعها
-            $cart_found =  Cart::where('user_id', Auth::user()->id)->where('is_buying', 0)->exists();
+            $cart_found =  Cart::where('user_id', Auth::user()->id)->isnotbuying()->exists();
             // جلب عنصر السلة
             $cart_item_founded = CartItem::whereId($id)
                 ->whereCartId($cart->id)
                 ->where('product_id', $request->product_id);
             if (!$cart_item_founded->first()) {
                 // رسالة خطأ
-                return response()->error(__("messages.errors.element_not_found"), 422);
+                return response()->error(__("messages.errors.element_not_found"), Response::HTTP_NOT_FOUND);
             }
 
             // شرط في حالة ما اذا قام المستخدم بارسال تطويرات
             if ($request->has('developments')) {
                 if ($this->check_found_developments($request->developments, $request->product_id) == 0) {
-                    return response()->error(__('messages.cart.same_developments'), 422);
+                    return response()->error(__('messages.cart.same_developments'), Response::HTTP_NOT_FOUND);
                 }
             }
             /* ----------------------- التعديل على العنصر من السلة ---------------------- */
@@ -229,12 +230,12 @@ class CartController extends Controller
                     // عملية اضافة تطويرات فالسلة
                     $this->add_developments($cart_item, $request->developments);
                 }
-                $cart = Cart::where('user_id', Auth::user()->id)->where('is_buying', 0);
+                $cart = Cart::where('user_id', Auth::user()->id)->isnotbuying();
                 // عمليات حساب السعر المتواجد في السلة
                 $this->calculate_price($cart, $cart_item, $request->quantity);
             } else {
                 // رسالة خطأ
-                return response()->error(__('messages.cart.not_found_cartitem'));
+                return response()->error(__('messages.cart.not_found_cartitem'), Response::HTTP_NOT_FOUND);
             }
             // انهاء المعاملة بشكل جيد :
             DB::commit();
@@ -245,7 +246,7 @@ class CartController extends Controller
             // لم تتم المعاملة بشكل نهائي و لن يتم ادخال اي بيانات لقاعدة البيانات
             DB::rollback();
             // رسالة خطأ
-            return response()->error(__('messages.errors.error_database'), 403);
+            return response()->error(__('messages.errors.error_database'), Response::HTTP_FORBIDDEN);
         }
     }
 
@@ -260,7 +261,7 @@ class CartController extends Controller
         try {
             // جلب السلة
             $cart = Cart::where('user_id', Auth::user()->id)
-                ->where('is_buying', 0);
+                          ->isnotbuying();
 
             //id  جلب العنصر بواسطة
             $cart_item = CartItem::whereId($id)
@@ -268,7 +269,7 @@ class CartController extends Controller
             // شرط اذا كان العنصر موجود
             if (!$cart_item || !is_numeric($id)) {
                 // رسالة خطأ
-                return response()->error(__("messages.errors.element_not_found"), 403);
+                return response()->error(__("messages.errors.element_not_found"), Response::HTTP_NOT_FOUND);
             }
             // جلب العنصر من السلة
             /* ---------------------------- حذف عنصر من السلة --------------------------- */
@@ -280,7 +281,7 @@ class CartController extends Controller
             return response()->success(__("messages.oprations.delete_success"), $cart_item);
         } catch (Exception $ex) {
             // رسالة خطأ
-            return response()->error(__('messages.errors.error_database'), 403);
+            return response()->error(__('messages.errors.error_database'), Response::HTTP_FORBIDDEN);
         }
     }
 
@@ -356,7 +357,7 @@ class CartController extends Controller
         }
         return 1;
     }
-    
+
     /**
      * cart_approve
      *
@@ -373,7 +374,7 @@ class CartController extends Controller
             ->first();
         return $this->approve($cart);
     }
-    
+
     /**
      * paypal_charge
      *
@@ -391,7 +392,7 @@ class CartController extends Controller
             ->first();
         return $this->paypal_purchase($request->token, $cart);
     }
-    
+
     /**
      * stripe_charge
      *

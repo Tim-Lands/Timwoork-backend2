@@ -7,6 +7,9 @@
     <title>Document</title>
 </head>
 <body>
-    <h1>Your code BIN is : {{ $user->verifyEmailCode->code }}</h1>
+    <h1> Welcome to Timwoork website  </h1>
+    <hr>
+    <h2>Your code BIN is : {{ $user->verifyEmailCode->code }}</h2>
+
 </body>
 </html>
