@@ -4,6 +4,7 @@ namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Validation\Rules\Password;
 
 class RegisterRequest extends FormRequest
 {
@@ -27,7 +28,7 @@ class RegisterRequest extends FormRequest
         return [
             'email' => 'required|email|unique:users',
             'username' => ['required', "unique:users,username," . Auth::id(), 'regex:/(^([a-zA-Z]+)(\d+)?$)/u'],
-            'password' => 'required|min:8'
+            'password' => ['required', 'confirmed', Password::min(8)->mixedCase()],
         ];
     }
 
