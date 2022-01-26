@@ -62,7 +62,7 @@ return [
         "file_resource_mimes" => "zip يجب ان الملف من نوع",
         "old_password_required" => "كلمة السر القديمة مطلوبة",
         "password_required" => "كلمة السر مطلوبة",
-        "password_confirmed" => "كلمة السر غير مطابقة",
+        "password_confirmed" => "كلمتا السر غير متطابقتين",
         "password_confirmation_required" => "كلمة السر المطاقبة مطلوبة",
         "conversation_title" => "عنوان المحادثة مطلوب",
         "receiver_id" => "مستقبل الرسالة مطلوب",

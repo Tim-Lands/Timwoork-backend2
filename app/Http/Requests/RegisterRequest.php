@@ -28,7 +28,7 @@ class RegisterRequest extends FormRequest
         return [
             'email' => 'required|email|unique:users',
             'username' => ['required', "unique:users,username," . Auth::id(), 'regex:/(^([a-zA-Z]+)(\d+)?$)/u'],
-            'password' => ['required', 'confirmed', Password::min(8)->mixedCase()],
+            'password' => ['required', 'confirmed', Password::min(8)->mixedCase()->letters()->numbers()->symbols()],
         ];
     }
 
@@ -45,7 +45,7 @@ class RegisterRequest extends FormRequest
             'email.email' => __("messages.validation.email"),
             'email.unique' => __("messages.validation.unique"),
             'password.required' => __("messages.validation.password_required"),
-            'password.min' => __("messages.validation.password_min"),
+            'password.confirmed' => __("messages.validation.password_confirmed"),
             'phone_number.required' => __("messages.validation.phone_number_required"),
         ];
     }
