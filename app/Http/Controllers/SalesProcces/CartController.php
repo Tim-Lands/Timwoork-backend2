@@ -56,7 +56,7 @@ class CartController extends Controller
     {
         try {
             // جلب سلة المستخدم
-            $cart = Cart::where('user_id', Auth::user()->id)->first();
+            $cart = Cart::where('user_id', Auth::user()->id);
             // اذا كانت هناك سلة مباعة
             $cart_found_buying =  Cart::where('user_id', Auth::user()->id)->isbuying()->exists();
             // اذا كانت هناك سلة غير مباعة
@@ -107,7 +107,7 @@ class CartController extends Controller
             // بداية المعاملة مع البيانات المرسلة لقاعدة بيانات :
             DB::beginTransaction();
             // شرط اذا لم توجد اي سلة او توجد سلل مباعة و لا توجد سلة غير مباعة :
-            if ($cart || ($cart_found_buying && !$cart_found_not_buying)) {
+            if ($cart->count() == 0 || ($cart_found_buying && !$cart_found_not_buying)) {
                 $new_cart = Cart::create($data_cart);
                 // وضع معرف السلة في مصفوفة العنصر
                 $data_cart_items['cart_id'] = $new_cart->id;
