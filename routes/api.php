@@ -226,35 +226,37 @@ Route::prefix('order')->group(function () {
         // اظهار الطلبية الواحدة
         Route::get('/{id}/show_item', [ItemController::class, 'show']);
         // قبول الطلبية من قبل البائع
-        Route::post('/{id}/accept_item_seller', [ItemController::class, 'item_accepted_by_seller']);
+        Route::post('/{id}/item_accepted_by_seller', [ItemController::class, 'item_accepted_by_seller']);
         // رفض الطلبية من قبل البائع
-        Route::post('/{id}/reject_item_seller', [ItemController::class, 'item_rejected_seller']);
-        // رفض الطلبية من قبل المشتري
-        Route::post('/{id}/reject_item_buyer', [ItemController::class, 'item_rejected_buyer']);
-        // رفع المشروع
-        Route::post('/{id}/upload_resources', [ItemController::class, 'upload_resource_by_seller']);
-        // تسليم المشروع من قبل البائع
-        Route::post('/{id}/dilevery_resources', [ItemController::class, 'delivery_resource_by_seller']);
-        // استلام المشروع من قبل المشتري و قبوله
-        Route::post('/{id}/accepted_dilevery_resources', [ItemController::class, 'accepted_delivery_resource_by_buyer']);
+        Route::post('/{id}/item_rejected_by_seller', [ItemController::class, 'item_rejected_by_seller']);
+        // الغاء الطلبية من قبل المشتري
+        Route::post('/{id}/item_cancelled_by_buyer', [ItemController::class, 'item_cancelled_by_buyer']);
+        // الغاء الطلبية من قبل البائع
+        Route::post('/{id}/item_cancelled_by_seller', [ItemController::class, 'item_cancelled_by_buyer']);
+        // رفع و تسليم المشروع من قبل البائع
+        Route::post('/{id}/dilevered_by_seller', [ItemController::class, 'dilevered_by_seller']);
+        // قبول المشروع من قبل المشتري
+        Route::post('/{id}/accepted_delivery_by_buyer', [ItemController::class, 'accepted_delivery_by_buyer']);
         // رفض المشروع من قبل المشتري
         Route::post('/{id}/rejected_dilevery_resources', [ItemController::class, 'rejected_delivery_resource_by_buyer']);
         // عرض الالغاء طلب الخدمة
         Route::get('/{id}/display_item_rejected', [ItemController::class, 'display_item_rejected']);
-        // طلب الالغاء الخدمة من قبل البائع
-        Route::post('/{id}/request_cancel_item_by_seller', [ItemController::class, 'request_cancel_item_by_seller']);
         // طلب الالغاء الخدمة من قبل المشتري
         Route::post('/{id}/request_cancel_item_by_buyer', [ItemController::class, 'request_cancel_item_by_buyer']);
         //  قبول طلب الالغاء الخدمة من قبل البائع
         Route::post('/{id}/accept_cancel_request_by_seller', [ItemController::class, 'accept_cancel_request_by_seller']);
-        //  قبول طلب الالغاء الخدمة من قبل المشتري
-        Route::post('/{id}/accept_cancel_request_by_buyer', [ItemController::class, 'accept_cancel_request_by_buyer']);
         //  رفض طلب الالغاء الخدمة من قبل البائع
         Route::post('/{id}/reject_cancel_request_by_seller', [ItemController::class, 'reject_cancel_request_by_seller']);
-        //  رفض طلب الالغاء الخدمة من قبل المشتري
-        Route::post('/{id}/reject_cancel_request_by_buyer', [ItemController::class, 'reject_cancel_request_by_buyer']);
-
-
+        // حل النزاع بين الطرفين في حالة الغاء الطلبية
+        Route::post('/{id}/resolve_the_conflict_between_them_in_rejected', [ItemController::class, 'resolve_the_conflict_between_them_in_rejected']);
+        // طلب تعديل الخدمة من قبل المشتري
+        Route::post('/{id}/request_modified_by_buyer', [ItemController::class, 'request_modified_by_buyer']);
+        // قبول تعديل الخدمة من قبل المشتري
+        Route::post('/{id}/accept_modified_by_seller', [ItemController::class, 'accept_modified_by_seller']);
+        // رفض تعديل الخدمة من قبل المشتري
+        Route::post('/{id}/reject_modified_by_seller', [ItemController::class, 'reject_modified_by_seller']);
+        // حل النزاع بين الطرفين في حالة الغاء الطلبية
+        Route::post('/{id}/resolve_the_conflict_between_them_in_rejected', [ItemController::class, 'resolve_the_conflict_between_them_in_rejected']);
         // إضافة محادثة للخدمة
         Route::post('/{id}/create/conversation', [ConversationController::class, 'product_conversation_store']);
     });

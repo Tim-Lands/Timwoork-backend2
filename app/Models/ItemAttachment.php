@@ -6,23 +6,17 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
-class ItemOrderRejected extends Model
+class ItemAttachment extends Model
 {
     use HasFactory;
-    protected $table = "item_order_rejecteds";
+    protected $table = "item_attachments";
 
 
-    /* -------------------------------- Contants -------------------------------- */
-    const PENDING      = 0;
-    const ACCEPTED     = 1;
-    const REJECTED     = 2;
-    /* --------------------------- Acssesor & mutators -------------------------- */
-    /* --------------------------------- Scopes --------------------------------- */
 
     /* -------------------------------- Relations ------------------------------- */
 
     /**
-     * Item
+     * item
      *
      * @return BelongsTo
      */

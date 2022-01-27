@@ -18,11 +18,8 @@ class Message extends Model
     // code
     const MESSAGE_TYPE_TEXT                 = 0;
     const MESSAGE_TYPE_INSTRUCTION          = 1;
-    const MESSAGE_TYPE_IMAGE                = 2;
-    const MESSAGE_TYPE_AUDIO                = 3;
-    const MESSAGE_TYPE_VEDIO                = 4;
-    const MESSAGE_TYPE_FILE                 = 5;
-    const MESSAGE_TYPE_ZIP                  = 6;
+    const MESSAGE_TYPE_CAUSE                = 2;
+
 
     // ================== Acssesor & mutators ==========================
     // ================== Acssesor & mutators ==========================
@@ -37,7 +34,7 @@ class Message extends Model
      */
     public function scopeSelection(mixed $query): ?object
     {
-        return $query->select('id', 'user_id', 'conversation_id', 'message', 'read_at',  'created_at');
+        return $query->select('id', 'user_id', 'conversation_id', 'message', 'read_at', 'created_at');
     }
     // ========================== Relations ============================
     // code

@@ -6,10 +6,10 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
-class ItemOrderRejected extends Model
+class ItemOrderModified extends Model
 {
     use HasFactory;
-    protected $table = "item_order_rejecteds";
+    protected $table = "item_order_modifieds";
 
 
     /* -------------------------------- Contants -------------------------------- */

@@ -15,14 +15,17 @@ class Item extends Model
     protected $table = 'items';
     // ===========================Contants =============================
     // code
-    const STATUS_PENDING_REQUEST              = 0;
-    const STATUS_ACCEPT_REQUEST               = 1;
-    const STATUS_REJECTED_BY_SELLER           = 2;
-    const STATUS_REJECTED_BY_BUYER            = 3;
-    const STATUS_REJECTED_REQUEST             = 4;
-    const STATUS_FINISHED                     = 5;
-    const STATUS_DILEVERED_RESOURCE           = 6;
-    const STATUS_ACCEPT_DILEVERED_RESOURCE    = 7;
+    const STATUS_PENDING                       = 0; // قيد الانتظار
+    const STATUS_CANCELLED_BY_BUYER            = 1; // ملغية من طرف المشتري
+    const STATUS_REJECTED_BY_SELLER            = 2; // مرفوضة من البائع قبل التنفيذ
+    const STATUS_ACCEPT                        = 3; // قيد التنفيذ
+    const STATUS_CANCELLED_REQUEST_BUYER       = 4; // طلب الغاء من طرف المشتري
+    const STATUS_CANCELLED_BY_SELLER           = 5; // ملغية من البائع بعد التنفيذ
+    const STATUS_DILEVERED                     = 6; // قيد الاستلام
+    const STATUS_FINISHED                      = 7; // مكتملة
+    const STATUS_SUSPEND                       = 8; // معلقة
+    const STATUS_MODIFIED_REQUEST_BUYER        = 9; // طلب تعديل من طرف المشتري
+
     // ================== Acssesor & mutators ==========================
     // code
     public function getUserIdAttribute()
@@ -81,7 +84,7 @@ class Item extends Model
      */
     public function attachments(): HasMany
     {
-        return $this->hasMany(Attachment::class);
+        return $this->hasMany(ItemAttachment::class);
     }
 
     /**
@@ -102,6 +105,16 @@ class Item extends Model
     public function item_rejected(): HasOne
     {
         return $this->hasOne(ItemOrderRejected::class);
+    }
+
+    /**
+     * item_modified
+     *
+     * @return void
+     */
+    public function item_modified(): HasOne
+    {
+        return $this->hasOne(ItemOrderModified::class);
     }
 
     /**
