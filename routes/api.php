@@ -171,7 +171,7 @@ Route::prefix('product')->middleware('auth:sanctum')->group(function () {
     Route::post('/{id}/deleteProduct', DeleteProductController::class);
 
     // إضافة محادثة للخدمة
-    Route::post('/{id}/create/conversation', [ConversationController::class, 'product_conversation_store']);
+    Route::post('/{id}/conversations/create', [ConversationController::class, 'product_conversation_store']);
 
     // تقييم الخدمة
 

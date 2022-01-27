@@ -37,10 +37,9 @@ class ProductStepThreeRequest extends FormRequest
     public function messages()
     {
         return [
-            'buyer_instruct.required' =>__("messages.validation.content_required"),
-            'buyer_instruct.min' =>__("messages.validation.content_min"),
-            'content.required' =>__("messages.validation.buyer_instruct_required"),
-            'content.min' =>__("messages.validation.buyer_instruct_min"),
+            'buyer_instruct.required' =>__("messages.validation.buyer_instruct_required"),
+            'content.required' => __("messages.validation.content_required"),
+            'content.min' =>__("messages.validation.content_min"),
         ];
     }
 }

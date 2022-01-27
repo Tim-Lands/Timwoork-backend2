@@ -572,7 +572,7 @@ class InsertProductContoller extends Controller
             DB::commit();
             // ================================================================
             // رسالة نجاح عملية الاضافة:
-            return response()->success(__("messages.product.success_upload_galaries"), $product);
+            return response()->success(__("messages.product.success_upload_galaries"), $product->load('galaries'));
         } catch (Exception $ex) {
             return $ex;
             // لم تتم المعاملة بشكل نهائي و لن يتم ادخال اي بيانات لقاعدة البيانات

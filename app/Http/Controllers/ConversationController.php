@@ -135,13 +135,13 @@ class ConversationController extends Controller
                 foreach ($request->file('attachments') as $key => $value) {
                     $attachmentPath = $value;
                     $attachmentName = 'tw-attch-' . $conversation_id . Auth::user()->id .  time() . '.' . $attachmentPath->getClientOriginalExtension();
-                    //$size = Storage::size($request->file('attachment'));
+                    $size = number_format($value->getSize() / 1048576, 3) . ' MB';
                     $path = Storage::putFileAs('attachments', $value, $attachmentName);
                     // تخزين معلومات المرفق
                     $message->attachments()->create([
                         'name' => $attachmentName,
                         'full_path' => $path,
-                        'size' => '$size',
+                        'size' => $size,
                         'type_file' => 0,
                         'mime_type' => $attachmentPath->getClientMimeType(),
                     ]);
