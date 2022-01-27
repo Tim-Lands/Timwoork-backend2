@@ -6,7 +6,9 @@ use App\Events\MessageSent;
 use App\Http\Requests\ConversationStoreRequest;
 use App\Http\Requests\MessageStoreRequest;
 use App\Models\Conversation;
+use App\Models\Item;
 use App\Models\Message;
+use App\Models\Product;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
@@ -14,6 +16,7 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Storage;
 
 class ConversationController extends Controller
 {
@@ -50,16 +53,17 @@ class ConversationController extends Controller
     }
 
 
-    public function store(ConversationStoreRequest $request)
+    //   إضافة محادثة جديدة
+    public function product_conversation_store($id, ConversationStoreRequest $request)
     {
-        //   إضافة محادثة جديدة
-
+        $product = Product::findOrFail($id);
         $user_id = Auth::user()->id;
         //return Auth::user()->id;
         $receiver_id = $request->receiver_id;
         try {
             DB::beginTransaction();
-            $conversation = Conversation::create([
+
+            $conversation = $product->conversations()->create([
                 'title' => $request->title
             ]);
             $conversation->members()->attach([$user_id, $receiver_id]);
@@ -68,7 +72,38 @@ class ConversationController extends Controller
                 'message' => $request->initial_message
             ]);
 
-            broadcast(new MessageSent($message));
+            //broadcast(new MessageSent($message));
+            DB::commit();
+            return response()->success(__("messages.conversation.conversation_success"), $conversation);
+        } catch (Exception $ex) {
+            return $ex;
+            DB::rollback();
+            // رسالة خطأ
+            return response()->error(__("messages.errors.error_database"), 403);
+        }
+    }
+
+    public function item_conversation_store($id, ConversationStoreRequest $request)
+    {
+        //   إضافة محادثة جديدة
+
+        $item = Item::findOrFail($id);
+
+        $user_id = Auth::user()->id;
+        //return Auth::user()->id;
+        $receiver_id = $request->receiver_id;
+        try {
+            DB::beginTransaction();
+            $conversation = $item->conversations()->create([
+                'title' => $request->title
+            ]);
+            $conversation->members()->attach([$user_id, $receiver_id]);
+            $message = $conversation->messages()->create([
+                'user_id' => $user_id,
+                'message' => $request->initial_message
+            ]);
+
+            //broadcast(new MessageSent($message));
             DB::commit();
             return response()->success(__("messages.conversation.conversation_success"), $conversation);
         } catch (Exception $ex) {
@@ -92,8 +127,27 @@ class ConversationController extends Controller
                 'user_id' => $user_id,
                 'conversation_id' => $conversation_id,
                 'message' => $message,
+                'type' => $request->type,
+                'is_reply' => $request->is_reply,
             ]);
-            broadcast(new MessageSent($message));
+
+            if ($request->has('attachments')) {
+                foreach ($request->file('attachments') as $key => $value) {
+                    $attachmentPath = $value;
+                    $attachmentName = 'tw-attch-' . $conversation_id . Auth::user()->id .  time() . '.' . $attachmentPath->getClientOriginalExtension();
+                    //$size = Storage::size($request->file('attachment'));
+                    $path = Storage::putFileAs('attachments', $value, $attachmentName);
+                    // تخزين معلومات المرفق
+                    $message->attachments()->create([
+                        'name' => $attachmentName,
+                        'full_path' => $path,
+                        'size' => '$size',
+                        'type_file' => 0,
+                        'mime_type' => $attachmentPath->getClientMimeType(),
+                    ]);
+                }
+            }
+            //broadcast(new MessageSent($message));
             DB::commit();
             return response()->success(__("messages.conversation.message_success"), $message);
         } catch (Exception $ex) {

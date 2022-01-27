@@ -48,6 +48,12 @@ return [
             'url' => env('APP_URL') . '/avatars',
             'visibility' => 'public',
         ],
+        'attachments' => [
+            'driver' => 'local',
+            'root' => storage_path('app/attachments'),
+            'url' => env('APP_URL') . '/attachments',
+            'visibility' => 'public',
+        ],
 
         'products' => [
             'driver' => 'local',
@@ -92,6 +98,7 @@ return [
         //public_path('storage') => storage_path('app/public'),
         public_path('avatars') => storage_path('app/avatars'),
         public_path('products') => storage_path('app/products'),
+        public_path('attachments') => storage_path('app/attachments'),
         public_path('resources_files') => storage_path('app/resources_files'),
     ],
 

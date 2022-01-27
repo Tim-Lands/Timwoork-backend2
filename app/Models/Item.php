@@ -103,4 +103,12 @@ class Item extends Model
     {
         return $this->hasOne(ItemOrderRejected::class);
     }
+
+    /**
+     * conversations
+     */
+    public function conversations()
+    {
+        return $this->morphMany(Conversation::class, 'conversationable');
+    }
 }

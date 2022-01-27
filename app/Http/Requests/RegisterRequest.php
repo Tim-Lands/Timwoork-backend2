@@ -44,9 +44,10 @@ class RegisterRequest extends FormRequest
             'email.required' => __("messages.validation.email_required"),
             'email.email' => __("messages.validation.email"),
             'email.unique' => __("messages.validation.unique"),
+            'username.required' => __("messages.validation.username_required"),
+            'username.unique' => __("messages.validation.unique"),
             'password.required' => __("messages.validation.password_required"),
             'password.confirmed' => __("messages.validation.password_confirmed"),
-            'phone_number.required' => __("messages.validation.phone_number_required"),
         ];
     }
 }
