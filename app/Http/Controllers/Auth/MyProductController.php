@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Product;
 use Exception;
 use Illuminate\Http\Request;
+use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Auth;
 
 class MyProductController extends Controller
@@ -46,10 +47,13 @@ class MyProductController extends Controller
     {
         $paginate = $request->query('paginate') ? $request->query('paginate') : 10;
         $user = Auth::user();
-        $products = $user->profile->profile_seller->products()->productActive()->where('is_active', false)->paginate($paginate)
-            ->makeHidden([
-                'buyer_instruct', 'content', 'profile_seller_id', 'category_id', 'duration'
-            ]);
+        $products = $user->profile->profile_seller->products()->productActive()
+                         ->where('is_active', Product::PRODUCT_REJECT)
+                         ->paginate($paginate)
+                         ->makeHidden([
+                            'buyer_instruct', 'content', 'profile_seller_id', 'category_id', 'duration'
+                        ]);
+
         return response()->success(__("messages.oprations.get_all_data"), $products);
     }
 
@@ -113,10 +117,10 @@ class MyProductController extends Controller
             ->first();
             // شرط اذا وجد هذه الخدمة
             if (!$product) {
-                return response()->error(__("messages.errors.element_not_found"), 422);
+                return response()->error(__("messages.errors.element_not_found"), Response::HTTP_NOT_FOUND);
             }
             if ($product->is_active == Product::PRODUCT_ACTIVE) {
-                return response()->error(__("messages.seller.actived_product"), 422);
+                return response()->error(__("messages.seller.actived_product"), Response::HTTP_NOT_FOUND);
             }
             /* -------------------- عملية تنشيط الخدمة من طرف البائع -------------------- */
             $product->update(['is_active' => Product::PRODUCT_ACTIVE]);
@@ -126,7 +130,7 @@ class MyProductController extends Controller
         } catch (Exception $ex) {
             return $ex;
             // رسالة خطأ
-            return response()->error(__("messages.errors.error_database"), 403);
+            return response()->error(__("messages.errors.error_database"), Response::HTTP_FORBIDDEN);
         }
     }
 
@@ -146,12 +150,12 @@ class MyProductController extends Controller
             ->where('is_completed', Product::PRODUCT_IS_COMPLETED)
             ->where('is_draft', Product::PRODUCT_IS_NOT_DRAFT)
             ->first();
-            // شرط اذا وجد هذه الخدمة
+            // شرط اذا لم يجد هذه الخدمة
             if (!$product) {
-                return response()->error(__("messages.errors.element_not_found"), 422);
+                return response()->error(__("messages.errors.element_not_found"), Response::HTTP_NOT_FOUND);
             }
             if ($product->is_active == 0) {
-                return response()->error(__("messages.seller.disactived_product"), 422);
+                return response()->error(__("messages.seller.disactived_product"), Response::HTTP_NOT_FOUND);
             }
             /* -------------------- عملية تعطيل الخدمة من طرف البائع -------------------- */
             $product->update(['is_active' => Product::PRODUCT_REJECT]);
@@ -160,7 +164,7 @@ class MyProductController extends Controller
             return response()->success(__("messages.seller.disactive_product"), $product);
         } catch (Exception $ex) {
             // رسالة خطأ
-            return response()->error(__("messages.errors.error_database"), 403);
+            return response()->error(__("messages.errors.error_database"), Response::HTTP_FORBIDDEN);
         }
     }
     /**
@@ -171,15 +175,16 @@ class MyProductController extends Controller
      */
     public function product($id)
     {
+        // جلب الخدمة
         $product = Product::whereId($id)
                             ->where('profile_seller_id', Auth::user()->profile->profile_seller->id)
                             ->with(['subcategory.category','ratings','developments','product_tag','galaries','file','video','shortener','profileSeller.profile' => function ($q) {
                                 $q->with(['badge','level','wallet']);
                             }])
                             ->first();
-
+        // شرط اذا لم يتم ايجاد الخدمة
         if (!$product) {
-            return response()->error(__("messages.errors.element_not_found"), 422);
+            return response()->error(__("messages.errors.element_not_found"), Response::HTTP_NOT_FOUND);
         }
         // رسالة نجاح
         return response()->success(__("messages.oprations.get_data"), $product);

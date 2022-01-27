@@ -14,12 +14,21 @@ use Illuminate\Support\Facades\DB;
 class SellerController extends Controller
 {
     /**
+     * __construct
+     *
+     * @return void
+     */
+    public function __construct()
+    {
+        $this->middleware('auth:sanctum');
+    }
+
+    /**
      * store => دالة إنشاء ملف شخصي فارغ للبائع
      *
-     * @param  Request $request => انشاء هذا الكائن من اجل عملية التحقيق على المدخلات
      * @return object
      */
-    public function store(Request $request)
+    public function store()
     {
         try {
             // إنشاء ملف شخصي للبائع

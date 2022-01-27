@@ -14,6 +14,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 use Illuminate\Http\Request;
+use Illuminate\Http\Response;
 
 class OrderController extends Controller
 {
@@ -43,16 +44,16 @@ class OrderController extends Controller
                     $q->with('cartItem_developments')->get();
                 }])
                 ->where('user_id', Auth::user()->id)
-                ->where('is_buying', 0)
+                ->isnotbuying()
                 ->first();
 
             if (!$cart) {
-                return response()->error(__("messages.cart.cart_not_found"), 422);
+                return response()->error(__("messages.cart.cart_not_found"), Response::HTTP_NOT_FOUND);
             }
             // جلب المعرفات الخدمات المتواجدة في عناصر السلة
             $cart_items = $cart['cart_items']->pluck('product_id');
             if ($cart_items->count() == 0) {
-                return response()->error(__('messages.cart.cartitem_found'), 422);
+                return response()->error(__('messages.cart.cartitem_found'), Response::HTTP_NOT_FOUND);
             }
             // وضع البيانات فالمصفوفة من اجل اضافة طلبيىة
             $data_order = [
@@ -111,10 +112,10 @@ class OrderController extends Controller
             DB::rollBack();
             return $ex;
             // رسالة خطأ
-            return response()->error(__("messages.errors.error_database"), 422);
+            return response()->error(__("messages.errors.error_database"), Response::HTTP_FORBIDDEN);
         }
     }
-    
+
     /**
      * cart_approve
      *
@@ -127,11 +128,11 @@ class OrderController extends Controller
                 $q->with('cartItem_developments', 'product:title')->get();
             }])
             ->where('user_id', Auth::user()->id)
-            ->where('is_buying', 0)
+            ->isnotbuying()
             ->first();
         return $this->approve($cart);
     }
-    
+
     /**
      * paypal_charge
      *
@@ -145,14 +146,14 @@ class OrderController extends Controller
                 $q->with('cartItem_developments')->get();
             }])
             ->where('user_id', Auth::user()->id)
-            ->where('is_buying', 0)
+            ->isnotbuying()
             ->first();
         $pay =  $this->paypal_purchase($request->token, $cart);
         if ($pay) {
             return $this->create_order_with_items();
         }
     }
-    
+
     /**
      * stripe_charge
      *
@@ -166,7 +167,7 @@ class OrderController extends Controller
                 $q->with('cartItem_developments')->get();
             }])
             ->where('user_id', Auth::user()->id)
-            ->where('is_buying', 0)
+            ->isnotbuying()
             ->first();
         $pay = $this->stripe_purchase($request, $cart);
         if ($pay) {

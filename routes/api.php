@@ -1,11 +1,5 @@
 <?php
 
-use App\Events\AcceptOrder;
-use App\Events\AcceptRequestRejectOrder;
-use App\Events\NewOrder;
-use App\Events\RejectOrder;
-use App\Events\RejectRequestRejectOrder;
-use App\Events\RequestRejectOrder;
 use App\Http\Controllers\Auth\BuyerOrderController;
 use App\Http\Controllers\Auth\ChangePasswordController;
 use App\Http\Controllers\Auth\DarkModeController;
@@ -30,8 +24,6 @@ use App\Http\Controllers\SalesProcces\OrderController;
 use App\Http\Controllers\SalesProcces\ItemController;
 use App\Http\Controllers\SearchController;
 use App\Http\Controllers\Product\RatingController;
-use App\Models\Item;
-use App\Models\User;
 use Illuminate\Support\Facades\Broadcast;
 use Illuminate\Support\Facades\Route;
 
@@ -43,9 +35,11 @@ use Illuminate\Support\Facades\Route;
 
 Broadcast::routes(['middleware' => ['auth:sanctum']]);
 
+// مسار الرابط
 Route::fallback(function () {
     return response()->json('هذا الرابط غير موجود ', 200);
 });
+// مسار التسجيل الدخول
 Route::post('/login', [LoginController::class, 'login']);
 /* -------------------------------------------------------------------------- */
 /*                                 Auth Routes                                */
@@ -111,10 +105,13 @@ Route::prefix('notifications')->group(function () {
     Route::post('/{id}/markAsRead', [NotificationController::class, 'markAsRead']);
 });
 
-
+// تسجيل الدخول بواسطة مواقع تواصل الاجتماعي
 Route::post('/login/{provider}', [LoginController::class, 'handleProviderCallback']);
+// التسجيل بواسطة التواصل الاجتماعي
 Route::post('/register', [RegisterController::class, 'register']);
+// التححق من الايميل
 Route::post('/email/verify', [RegisterController::class, 'verifyEmail']);
+// ادخال رمز التحقق
 Route::post('/email/resend', [RegisterController::class, 'resend_verify_code']);
 /* -------------------------------------------------------------------------- */
 
@@ -123,9 +120,13 @@ Route::post('/email/resend', [RegisterController::class, 'resend_verify_code']);
 /* -------------------------------------------------------------------------- */
 
 Route::prefix('profiles')->group(function () {
-    Route::middleware('auth:sanctum')->post('/step_one', [ProfileController::class, 'step_one']);
-    Route::middleware('auth:sanctum')->post('/step_two', [ProfileController::class, 'step_two']);
-    Route::middleware('auth:sanctum')->post('/step_three', [ProfileController::class, 'step_three']);
+    // انشاء المرحلة الاولى من البروفايل
+    Route::post('/step_one', [ProfileController::class, 'step_one']);
+    // انشاء المرحلة الثانية من البروفايل
+    Route::post('/step_two', [ProfileController::class, 'step_two']);
+    // انشاء المرحلة الثالثة من البروفايل
+    Route::post('/step_three', [ProfileController::class, 'step_three']);
+    // اظهار البروفايل
     Route::get('/{username}', [ProfileController::class, 'show']);
 });
 
@@ -135,10 +136,14 @@ Route::prefix('profiles')->group(function () {
 /* -------------------------------------------------------------------------- */
 
 Route::prefix('sellers')->group(function () {
-    Route::middleware('auth:sanctum')->post('/store', [SellerController::class, 'store']);
-    Route::middleware('auth:sanctum')->post('/detailsStore', [SellerController::class, 'detailsStore']);
-    Route::middleware('auth:sanctum')->post('/step_one', [SellerController::class, 'step_one']);
-    Route::middleware('auth:sanctum')->post('/step_two', [SellerController::class, 'step_two']);
+    // اضافة بائع جديد
+    Route::post('/store', [SellerController::class, 'store']);
+    // اضافة تفاصيل بروفايل البائع
+    Route::post('/detailsStore', [SellerController::class, 'detailsStore']);
+    // اضافة المرحلة الاولى من بروفايل البائع
+    Route::post('/step_one', [SellerController::class, 'step_one']);
+    // اضافة المرحلة الثانية من بروفايل البائع
+    Route::post('/step_two', [SellerController::class, 'step_two']);
 });
 
 
@@ -184,9 +189,13 @@ Route::get('/s/{code}', ShortenerController::class);
 /* -------------------------------------------------------------------------- */
 
 Route::prefix('conversations')->middleware('auth:sanctum')->group(function () {
+    // عرض المحادثات
     Route::get('/', [ConversationController::class, 'index']);
+    // اظهار المحادثة
     Route::get('/{id}', [ConversationController::class, 'show']);
+    // اضافة المحادثة
     Route::post('/store', [ConversationController::class, 'store']);
+    // ارسال الرسالة
     Route::post('/{conversation}/sendMessage', [ConversationController::class, 'sendMessage']);
 });
 

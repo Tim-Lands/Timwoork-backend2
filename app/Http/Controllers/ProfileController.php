@@ -8,12 +8,26 @@ use App\Http\Requests\ProfileStepTwoRequest;
 use App\Models\Profile;
 use App\Models\User;
 use Exception;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
 
 class ProfileController extends Controller
 {
+    /**
+     * __construct
+     *
+     * @return void
+     */
+    public function __construct()
+    {
+        $this->middleware('auth:sanctum')->except('show');
+    }
+    /**
+     * show => اظهار بروفايل المشتري
+     *
+     * @param  mixed $username
+     * @return void
+     */
     public function show($username)
     {
         // البحث في قاعدة البيانات عن اسم المستخدم

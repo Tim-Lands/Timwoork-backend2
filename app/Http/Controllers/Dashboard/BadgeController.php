@@ -57,7 +57,7 @@ class BadgeController extends Controller
             // لم تتم المعاملة بشكل نهائي و لن يتم ادخال اي بيانات لقاعدة البيانات
             DB::rollback();
             // رسالة خطأ
-            return response()->error(__("messages.errors.error_database"), 403);
+            return response()->error(__("messages.errors.error_database"), Response::HTTP_FORBIDDEN);
         }
     }
 
@@ -129,7 +129,7 @@ class BadgeController extends Controller
             // لم تتم المعاملة بشكل نهائي و لن يتم ادخال اي بيانات لقاعدة البيانات
             DB::rollback();
             // رسالة خطأ :
-            return response()->error(__("messages.errors.error_database"), 403);
+            return response()->error(__("messages.errors.error_database"), Response::HTTP_FORBIDDEN);
         }
     }
 
@@ -165,7 +165,7 @@ class BadgeController extends Controller
             // لم تتم المعاملة بشكل نهائي و لن يتم ادخال اي بيانات لقاعدة البيانات
             DB::rollback();
             // رسالة الخطأ
-            return response()->error(__("messages.errors.error_database"), 403);
+            return response()->error(__("messages.errors.error_database"), Response::HTTP_FORBIDDEN);
         }
     }
 }

@@ -6,7 +6,6 @@ use App\Events\UserOffline;
 use App\Events\UserOnline;
 use App\Http\Controllers\Controller;
 use App\Models\User;
-use Illuminate\Http\Request;
 
 class UserStatusController extends Controller
 {

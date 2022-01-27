@@ -18,7 +18,7 @@ class Cart extends Model
      * @var string
      */
     protected $table = 'carts';
-    
+
     /**
      * casts
      *
@@ -31,6 +31,9 @@ class Cart extends Model
     ];
     /* -------------------------------- Contants -------------------------------- */
     // code
+    const IS_BUYING = 1;
+    const IS_NOT_BUYING = 0;
+
     /* --------------------------- Acssesor & mutators -------------------------- */
     // code
     /* --------------------------------- Scopes --------------------------------- */
@@ -53,6 +56,28 @@ class Cart extends Model
     public function scopeActiveCart(mixed $query): ?object
     {
         return $query->where('is_buying', 0);
+    }
+
+    /**
+     * scopeIsNotBuying => السلة غير مباعة
+     *
+     * @param  mixed $query
+     * @return void
+     */
+    public function scopeIsNotBuying(mixed $query)
+    {
+        return $query->where('is_buying', self::IS_NOT_BUYING);
+    }
+
+    /**
+     * scopeIsNotBuying => السلة مباعة
+     *
+     * @param  mixed $query
+     * @return void
+     */
+    public function scopeIsBuying(mixed $query)
+    {
+        return $query->where('is_buying', self::IS_BUYING);
     }
     /* -------------------------------- Relations ------------------------------- */
     // code
