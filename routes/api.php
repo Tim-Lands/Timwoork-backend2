@@ -170,6 +170,9 @@ Route::prefix('product')->middleware('auth:sanctum')->group(function () {
     // حذف الخدمة
     Route::post('/{id}/deleteProduct', DeleteProductController::class);
 
+    // إضافة محادثة للخدمة
+    Route::post('/{id}/create/conversation', [ConversationController::class, 'product_conversation_store']);
+
     // تقييم الخدمة
 
     Route::post('/{id}/rating', [RatingController::class, 'rate']);
@@ -250,6 +253,10 @@ Route::prefix('order')->group(function () {
         Route::post('/{id}/reject_cancel_request_by_seller', [ItemController::class, 'reject_cancel_request_by_seller']);
         //  رفض طلب الالغاء الخدمة من قبل المشتري
         Route::post('/{id}/reject_cancel_request_by_buyer', [ItemController::class, 'reject_cancel_request_by_buyer']);
+
+
+        // إضافة محادثة للخدمة
+        Route::post('/{id}/create/conversation', [ConversationController::class, 'product_conversation_store']);
     });
 });
 
