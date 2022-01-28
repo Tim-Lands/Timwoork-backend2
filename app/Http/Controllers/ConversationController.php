@@ -108,7 +108,7 @@ class ConversationController extends Controller
                 'message' => $request->initial_message
             ]);
 
-            //broadcast(new MessageSent($message));
+            broadcast(new MessageSent($message));
             DB::commit();
             return response()->success(__("messages.conversation.conversation_success"), $conversation);
         } catch (Exception $ex) {
@@ -152,9 +152,9 @@ class ConversationController extends Controller
                     ]);
                 }
             }
-            //broadcast(new MessageSent($message));
+            broadcast(new MessageSent($message));
             DB::commit();
-            return response()->success(__("messages.conversation.message_success"), $message);
+            return response()->success(__("messages.conversation.message_success"), $message->load('user.profile'));
         } catch (Exception $ex) {
             return $ex;
             DB::rollback();

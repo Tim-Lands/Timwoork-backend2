@@ -47,7 +47,7 @@ class MessageSent implements ShouldBroadcast
     public function broadcastWith()
     {
         return [
-            'message' =>  $this->message->load('user', 'conversation'),
+            'message' =>  $this->message->load('user.profile', 'conversation'),
             //'conversation_id' =>  $this->message->conversation->id,
         ];
     }
