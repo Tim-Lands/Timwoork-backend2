@@ -441,7 +441,8 @@ class ItemController extends Controller
                 // شرط اذا كان هناك طلب الغاء و ايضا ارسال عملية طلب من طرف المشتري
                 if ($item_rejected && $item_rejected->status == ItemOrderRejected::PENDING) {
                     // عملية قبول طلب الغاء الطلبية
-                    $item_rejected->update($data_accept_request_by_seller);
+                    //$item_rejected->update($data_accept_request_by_seller);
+                    $item_rejected->delete();
                     // رفض الطلبية
                     $item->status = Item::STATUS_CANCELLED_BY_BUYER;
                     $item->save();
@@ -503,6 +504,7 @@ class ItemController extends Controller
                 if ($item_rejected && $item_rejected->status == ItemOrderRejected::PENDING) {
                     // عملية رفع طلب الغاء الطلبية
                     $item_rejected->update(['status' =>  ItemOrderRejected::REJECTED]);
+
                     // عملية التعليق الطلبية
                     $item->status = Item::STATUS_SUSPEND;
                     $item->save();
@@ -652,7 +654,8 @@ class ItemController extends Controller
                 // شرط اذا كان هناك طلب الغاء و ايضا ارسال عملية طلب من طرف المشتري
                 if ($item_modified && $item_modified->status == ItemOrderModified::PENDING) {
                     // عملية قبول طلب الغاء الطلبية
-                    $item_modified->update($data_accept_request_by_seller);
+                    // $item_modified->update($data_accept_request_by_seller);
+                    $item_modified->delete();
                     //  الطلبية قيد التنفيذ
                     $item->status = Item::STATUS_ACCEPT;
                     $item->save();
