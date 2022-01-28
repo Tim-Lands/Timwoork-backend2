@@ -74,7 +74,7 @@ class ConversationController extends Controller
 
             //broadcast(new MessageSent($message));
             DB::commit();
-            return response()->success(__("messages.conversation.conversation_success"), $conversation);
+            return response()->success(__("messages.conversation.conversation_success"), $conversation->load('messages'));
         } catch (Exception $ex) {
             return $ex;
             DB::rollback();
