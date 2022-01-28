@@ -96,7 +96,7 @@ class OrderController extends Controller
                     'number_product' => $value,
                     'price_product' => $cart['cart_items'][$key]->price_product,
                     'duration' => $duration_total,
-                    'status' => Item::STATUS_PENDING_REQUEST,
+                    'status' => Item::STATUS_PENDING,
                 ];
             }
             // اضافة عناصر الطلبية
