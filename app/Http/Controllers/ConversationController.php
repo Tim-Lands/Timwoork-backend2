@@ -99,7 +99,7 @@ class ConversationController extends Controller
         $receiver_id = $request->receiver_id;
         try {
             DB::beginTransaction();
-            $conversation = $item->conversations()->create([
+            $conversation = $item->conversation()->create([
                 'title' => $request->title
             ]);
             $conversation->members()->attach([$user_id, $receiver_id]);
