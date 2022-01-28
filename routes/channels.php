@@ -23,7 +23,7 @@ Broadcast::channel('App.Models.User.{id}', function ($user, $id) {
     return (int) $user->id === (int) $id;
 });
 
-Broadcast::channel('presence-conversations.{id}', function ($user, $id) {
+Broadcast::channel('conversations.{id}', function ($user, $id) {
     $conversation = Conversation::findOrFail($id);
     $ids =  Arr::pluck($conversation->members, 'id');
     if (in_array($user->id, $ids)) {
