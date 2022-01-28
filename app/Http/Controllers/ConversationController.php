@@ -48,6 +48,11 @@ class ConversationController extends Controller
             // رسالة خطأ
             return response()->error(__("messages.errors.element_not_found"), 403);
         }
+        $unread_messages = $conversation->messages->whereNot('user_id', Auth::user())->get();
+        foreach ($unread_messages as $key => $value) {
+            $value->seen_at = time();
+            $value->save();
+        }
         // اظهار العنصر
         return response()->success(__("messages.oprations.get_data"), $conversation);
     }

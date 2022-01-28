@@ -120,8 +120,8 @@ class Item extends Model
     /**
      * conversations
      */
-    public function conversations()
+    public function conversation()
     {
-        return $this->morphMany(Conversation::class, 'conversationable');
+        return $this->morphOne(Conversation::class, 'conversationable');
     }
 }
