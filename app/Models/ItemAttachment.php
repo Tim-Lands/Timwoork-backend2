@@ -18,7 +18,7 @@ class ItemAttachment extends Model
 
     public function getFullPathAttribute()
     {
-        return url("resources_files/{$this->path}");
+        return url("resources_files/{$this->name}");
     }
     /* -------------------------------- Relations ------------------------------- */
 
