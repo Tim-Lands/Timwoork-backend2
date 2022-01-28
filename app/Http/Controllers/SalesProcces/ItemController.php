@@ -35,7 +35,7 @@ class ItemController extends Controller
     {
         // جلب الطلبية
         $item = Item::whereId($id)
-            ->with(['order.cart.user.profile', 'profileSeller.profile','Resource'])
+            ->with(['order.cart.user.profile', 'profileSeller.profile', 'item_rejected', 'item_modified', 'attachments'])
             ->first();
         if (!$item) {
             // رسالة خطأ
@@ -342,7 +342,7 @@ class ItemController extends Controller
                 $item->status = Item::STATUS_FINISHED;
                 $item->save();
 
-            // عبد الله ابعث الدراهم للسيد يرحم والديك و متنساش الاقتطاع
+                // عبد الله ابعث الدراهم للسيد يرحم والديك و متنساش الاقتطاع
             } else {
                 return response()->error(__("messages.item.not_may_this_operation"), Response::HTTP_NOT_FOUND);
             }
@@ -523,10 +523,10 @@ class ItemController extends Controller
     }
 
     /**
-    * resolve_the_conflict_between_them_in_rejected =>   حل النزاع بين الطرفين في حالة الغاء الطلبية
-    *
-    * @return void
-    */
+     * resolve_the_conflict_between_them_in_rejected =>   حل النزاع بين الطرفين في حالة الغاء الطلبية
+     *
+     * @return void
+     */
     public function resolve_the_conflict_between_them_in_rejected($id)
     {
         try {
@@ -551,8 +551,8 @@ class ItemController extends Controller
                     // عملية قيد التنفيذ الطلبية
                     $item->status = Item::STATUS_ACCEPT;
                     $item->save();
-                // ارسال الاشعار
-                  //  event(new RejectRequestRejectOrder($user, $item)); // عبد الله
+                    // ارسال الاشعار
+                    //  event(new RejectRequestRejectOrder($user, $item)); // عبد الله
                 } else {
                     return response()->error(__("messages.item.request_not_found"), Response::HTTP_FORBIDDEN);
                 }
@@ -587,7 +587,7 @@ class ItemController extends Controller
                 return response()->error(__("messages.errors.element_not_found"), Response::HTTP_FORBIDDEN);
             }
             // جلب طلب الغاء الخدمة
-            $item_modified= ItemOrderModified::where('item_id', $item->id)->first();
+            $item_modified = ItemOrderModified::where('item_id', $item->id)->first();
             // شرط اذا كان الطلب موجود من قيل
             if ($item_modified) {
                 return response()->error(__('messages.item.found_request_modified'), Response::HTTP_UNPROCESSABLE_ENTITY);
@@ -605,7 +605,7 @@ class ItemController extends Controller
 
                 $item->status = Item::STATUS_MODIFIED_REQUEST_BUYER;
                 $item->save();
-            // ارسال الاشعار
+                // ارسال الاشعار
                 //event(new RequestRejectOrder($user, $item)); // تعديل في الاشعار لعبد الله
             } else {
                 // رسالة خطأ
@@ -655,7 +655,7 @@ class ItemController extends Controller
                     $item->status = Item::STATUS_ACCEPT;
                     $item->save();
 
-                // إرسال الاشعار
+                    // إرسال الاشعار
                     //event(new AcceptRequestRejectOrder($buyer, $item));
                 } else {
                     return response()->error(__('messages.item.request_not_found'), Response::HTTP_FORBIDDEN);
@@ -702,7 +702,7 @@ class ItemController extends Controller
                     $item->status = Item::STATUS_SUSPEND;
                     $item->save();
 
-                // ارسال الاشعار
+                    // ارسال الاشعار
                     //event(new RejectRequestRejectOrder($user, $item));
                 } else {
                     return response()->error(__("messages.item.request_not_found"), Response::HTTP_FORBIDDEN);
@@ -719,10 +719,10 @@ class ItemController extends Controller
         }
     }
     /**
-    * resolve_the_conflict_between_them_in_modified =>   حل النزاع بين الطرفين في حالة التعديل
-    *
-    * @return void
-    */
+     * resolve_the_conflict_between_them_in_modified =>   حل النزاع بين الطرفين في حالة التعديل
+     *
+     * @return void
+     */
     public function resolve_the_conflict_between_them_in_modified($id)
     {
         try {
@@ -747,8 +747,8 @@ class ItemController extends Controller
                     // عملية قيد التنفيذ الطلبية
                     $item->status = Item::STATUS_ACCEPT;
                     $item->save();
-                // ارسال الاشعار
-                  //  event(new RejectRequestRejectOrder($user, $item)); // عبد الله
+                    // ارسال الاشعار
+                    //  event(new RejectRequestRejectOrder($user, $item)); // عبد الله
                 } else {
                     return response()->error(__("messages.item.request_not_found"), Response::HTTP_FORBIDDEN);
                 }
