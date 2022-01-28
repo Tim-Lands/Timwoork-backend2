@@ -38,6 +38,9 @@ class CartController extends Controller
                         $q->select('development_id', 'title', 'duration', 'price')->get();
                     }, 'product' => fn ($q) => $q->select('id', 'title', 'price', 'duration')]);
             }])
+            ->where('tax', '>', 0)
+            ->orWhere('total_price', '>', 0)
+            ->orWhere('price_with_tax', '>', 0)
             ->withCount('cart_items')
             ->where('user_id', Auth::user()->id)
             ->isnotbuying()

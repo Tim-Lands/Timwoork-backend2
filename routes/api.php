@@ -256,7 +256,7 @@ Route::prefix('order')->group(function () {
         // رفض تعديل الخدمة من قبل المشتري
         Route::post('/{id}/reject_modified_by_seller', [ItemController::class, 'reject_modified_by_seller']);
         // حل النزاع بين الطرفين في حالة الغاء الطلبية
-        Route::post('/{id}/resolve_the_conflict_between_them_in_rejected', [ItemController::class, 'resolve_the_conflict_between_them_in_rejected']);
+        Route::post('/{id}/resolve_the_conflict_between_them_in_modified', [ItemController::class, 'resolve_the_conflict_between_them_in_modified']);
         // إضافة محادثة للخدمة
         Route::post('/{id}/create/conversation', [ConversationController::class, 'product_conversation_store']);
     });
