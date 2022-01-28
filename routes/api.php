@@ -171,7 +171,7 @@ Route::prefix('product')->middleware('auth:sanctum')->group(function () {
     Route::post('/{id}/deleteProduct', DeleteProductController::class);
 
     // إضافة محادثة للخدمة
-    Route::post('/{id}/conversations/create', [ConversationController::class, 'product_conversation_store']);
+    Route::post('/{id}/conversations/create', [ConversationController::class, 'product_conversation_store'])->middleware('auth:sanctum');
 
     // تقييم الخدمة
 
@@ -258,7 +258,7 @@ Route::prefix('order')->group(function () {
         // حل النزاع بين الطرفين في حالة الغاء الطلبية
         Route::post('/{id}/resolve_the_conflict_between_them_in_modified', [ItemController::class, 'resolve_the_conflict_between_them_in_modified']);
         // إضافة محادثة للخدمة
-        Route::post('/{id}/create/conversation', [ConversationController::class, 'item_conversation_store']);
+        Route::post('/{id}/create/conversation', [ConversationController::class, 'item_conversation_store'])->middleware('auth:sanctum');
     });
 });
 
