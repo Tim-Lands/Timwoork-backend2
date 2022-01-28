@@ -35,7 +35,7 @@ class ItemController extends Controller
     {
         // جلب الطلبية
         $item = Item::whereId($id)
-            ->with(['order.cart.user.profile', 'profileSeller.profile', 'item_rejected', 'item_modified', 'attachments'])
+            ->with(['order.cart.user.profile', 'profileSeller.profile', 'item_rejected', 'item_modified', 'attachments', 'conversation'])
             ->first();
         if (!$item) {
             // رسالة خطأ
