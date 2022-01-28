@@ -699,7 +699,7 @@ class ItemController extends Controller
                     // عملية رفض التعديل
                     $item_modified->update(['status' =>  ItemOrderModified::REJECTED]);
                     // عملية التعليق الطلبية
-                    $item->status = Item::STATUS_SUSPEND;
+                    $item->status = Item::STATUS_SUSPEND_CAUSE_MODIFIED;
                     $item->save();
 
                     // ارسال الاشعار
@@ -739,7 +739,7 @@ class ItemController extends Controller
             $item_modified = ItemOrderModified::where('item_id', $item->id)->first();
 
             /* --------------------------- تغيير حالة الطلبية --------------------------- */
-            if ($item->status == Item::STATUS_SUSPEND) {
+            if ($item->status == Item::STATUS_SUSPEND_CAUSE_MODIFIED) {
                 // شرط اذا كان هناك طلب الغاء و ايضا ارسال عملية طلب من طرف البائع
                 if ($item_modified && $item_modified->status == ItemOrderModified::REJECTED) {
                     // عملية رفع طلب الغاء الطلبية

@@ -25,6 +25,7 @@ class Item extends Model
     const STATUS_FINISHED                      = 7; // مكتملة
     const STATUS_SUSPEND                       = 8; // معلقة
     const STATUS_MODIFIED_REQUEST_BUYER        = 9; // طلب تعديل من طرف المشتري
+    const STATUS_SUSPEND_CAUSE_MODIFIED        = 10; //  معلقة بسبب طلب التعديل
 
     // ================== Acssesor & mutators ==========================
     // code
