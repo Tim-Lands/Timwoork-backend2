@@ -277,21 +277,23 @@ class ItemController extends Controller
             // شرط اذا كانت الحالة قيد التنفيذ
             if ($item->status == Item::STATUS_ACCEPT) {
                 // جلب المشروع من المرسلات
-                $item_attachments = $request->file('item_attachments');
+                if ($request->has('item_attachments')) {
+                    $item_attachments = $request->file('item_attachments');
 
-                foreach ($item_attachments as $key => $value) {
-                    $time = time();
-                    $file_attachment = "tw-attachment-{$item->uuid}-{$time}.{$value->getClientOriginalExtension()}";
-                    // رفع المشروع
-                    Storage::putFileAs('resources_files', $value, $file_attachment);
-                    // وضع المشروع في المصفوفة
-                    $data_resource[$key] = [
-                        'item_id'    => $item->id,
-                        'name'       => $file_attachment,
-                        'path'  => $value,
-                        'size'       => number_format($value->getSize() / 1048576, 3) . ' MB',
-                        'mime_type'  => $value->getClientOriginalExtension(),
-                    ];
+                    foreach ($item_attachments as $key => $value) {
+                        $time = time();
+                        $file_attachment = "tw-attachment-{$item->uuid}-{$time}.{$value->getClientOriginalExtension()}";
+                        // رفع المشروع
+                        Storage::putFileAs('resources_files', $value, $file_attachment);
+                        // وضع المشروع في المصفوفة
+                        $data_resource[$key] = [
+                            'item_id'    => $item->id,
+                            'name'       => $file_attachment,
+                            'path'  => $value,
+                            'size'       => number_format($value->getSize() / 1048576, 3) . ' MB',
+                            'mime_type'  => $value->getClientOriginalExtension(),
+                        ];
+                    }
                 }
                 // وضع اسم جديد للمشروع
             } else {
