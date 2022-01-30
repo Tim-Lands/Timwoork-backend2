@@ -35,11 +35,11 @@ class BuyerOrderController extends Controller
         $logged_user_id = Auth::user()->id;
         $owner_user_id = User::find($item->user_id)->id;
         if ($logged_user_id !== $owner_user_id) {
-            return response()->error(__("messages.errors.element_not_found", Response::HTTP_FORBIDDEN));
+            return response()->error(__("messages.errors.element_not_found", 403));
         }
         if (!$item) {
             // رسالة خطأ
-            return response()->error(__("messages.errors.element_not_found"), Response::HTTP_NOT_FOUND);
+            return response()->error(__("messages.errors.element_not_found"), 404);
         }
         // رسالة نجاح
         return response()->success(__("messages.oprations.get_data"), $item);
