@@ -46,7 +46,7 @@ class BuyerOrderController extends Controller
         if ($item->conversation->messages()) {
             $unreaded_messages = $item->conversation->messages()
                 ->whereNull('read_at')
-                ->whereNot('user_id', $owner_user_id)
+                ->where('user_id', '!=', $owner_user_id)
                 ->get();
             foreach ($unreaded_messages as $key => $message) {
                 $message->read_at = now();
