@@ -29,11 +29,11 @@ class SellerOrderController extends Controller
         $logged_user_id = Auth::user()->id;
         $owner_user_id =  $item->order->cart->user->id;
         if ($logged_user_id !== $owner_user_id) {
-            return response()->error(__("messages.errors.element_not_found", 403));
+            return response()->error(__("messages.errors.element_not_found"), Response::HTTP_FORBIDDEN);
         }
         if (!$item) {
             // رسالة خطأ
-            return response()->error(__("messages.errors.element_not_found"), 404);
+            return response()->error(__("messages.errors.element_not_found"), Response::HTTP_NOT_FOUND);
         }
         // رسالة نجاح
         return response()->success(__("messages.oprations.get_data"), $item);
