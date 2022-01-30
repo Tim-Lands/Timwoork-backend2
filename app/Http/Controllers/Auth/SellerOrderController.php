@@ -39,7 +39,7 @@ class SellerOrderController extends Controller
 
         // تحديد الرسائل كمقروءة
 
-        if ($item->conversation->messages()) {
+        if ($item->conversation && $item->conversation->messages()) {
             $unreaded_messages = $item->conversation->messages()
                 ->whereNull('read_at')
                 ->where('user_id', '!=', $owner_user_id)
