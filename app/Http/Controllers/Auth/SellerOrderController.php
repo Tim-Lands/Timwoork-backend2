@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
 use App\Models\Item;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Response;
@@ -27,7 +28,7 @@ class SellerOrderController extends Controller
             ->with(['order.cart.user.profile', 'profileSeller.profile', 'item_rejected', 'item_modified', 'attachments', 'conversation.messages.user.profile', 'conversation.messages.attachments'])
             ->first();
         $logged_user_id = Auth::user()->id;
-        $owner_user_id =  $item->order->cart->user->id;
+        $owner_user_id = User::find($item->user_id)->id;
         if ($logged_user_id !== $owner_user_id) {
             return response()->error(__("messages.errors.element_not_found"), Response::HTTP_FORBIDDEN);
         }
