@@ -79,14 +79,19 @@ Route::prefix('my_products')->middleware('auth:sanctum')->group(function () {
 /**
  *  مسار لعرض مشترياتي
  */
-Route::middleware('auth:sanctum')->get('/my_purchases', BuyerOrderController::class);
+Route::middleware('auth:sanctum')->prefix('my_purchases')->group(function () {
+    Route::get('/', [BuyerOrderController::class, 'index']);
+    Route::get('/{id}', [BuyerOrderController::class, 'show']);
+});
 
 /********************************************************************** */
 /**
  *  مسار لعرض مشترياتي
  */
-Route::middleware('auth:sanctum')->get('/my_sales', SellerOrderController::class);
-
+Route::middleware('auth:sanctum')->prefix('my_sales')->group(function () {
+    Route::get('/', [SellerOrderController::class, 'index']);
+    Route::get('/{id}', [SellerOrderController::class, 'show']);
+});
 /******************************************************************** */
 
 /***********************مسارات استعادة كلمة المرور ******************** */
