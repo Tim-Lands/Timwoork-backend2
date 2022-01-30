@@ -154,7 +154,7 @@ class ConversationController extends Controller
             }
             broadcast(new MessageSent($message));
             DB::commit();
-            return response()->success(__("messages.conversation.message_success"), $message->load('user.profile'));
+            return response()->success(__("messages.conversation.message_success"), $message->load(['user.profile', 'attachments']));
         } catch (Exception $ex) {
             return $ex;
             DB::rollback();
