@@ -41,6 +41,19 @@ class BuyerOrderController extends Controller
             // رسالة خطأ
             return response()->error(__("messages.errors.element_not_found"), Response::HTTP_NOT_FOUND);
         }
+        // تحديد الرسائل كمقروءة
+
+        if ($item->conversation->messages()) {
+            $unreaded_messages = $item->conversation->messages()
+                ->whereNull('read_at')
+                ->whereNot('user_id', $owner_user_id)
+                ->get();
+            foreach ($unreaded_messages as $key => $message) {
+                $message->read_at = now();
+                $message->save();
+            }
+        }
+
         // رسالة نجاح
         return response()->success(__("messages.oprations.get_data"), $item);
     }
