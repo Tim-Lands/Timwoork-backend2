@@ -9,6 +9,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 class MessageAttachment extends Model
 {
     use HasFactory;
+    protected $appends = ['full_path'];
 
 
     // ============================ Scopes =============================
@@ -20,7 +21,12 @@ class MessageAttachment extends Model
      */
     public function scopeSelection(mixed $query): ?object
     {
-        return $query->select('id', 'full_path', 'size', 'type_file', 'mime_type', 'message_id', 'created_at');
+        return $query->select('id', 'path', 'size', 'mime_type', 'message_id', 'created_at');
+    }
+
+    public function getFullPathAttribute()
+    {
+        return url("attachments/{$this->name}");
     }
 
     // ========================== Relations ============================

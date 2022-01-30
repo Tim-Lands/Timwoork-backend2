@@ -16,9 +16,8 @@ class CreateMessageAttachmentsTable extends Migration
         Schema::create('message_attachments', function (Blueprint $table) {
             $table->id();
             $table->string('name', 255)->nullable();
-            $table->string('full_path', 255)->nullable();
+            $table->string('path', 255)->nullable();
             $table->string('size')->nullable();
-            $table->string('type_file')->nullable();
             $table->string('mime_type')->nullable();
 
             // relation model of Item
