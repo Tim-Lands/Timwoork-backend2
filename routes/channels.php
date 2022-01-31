@@ -27,9 +27,9 @@ Broadcast::channel('App.Models.User.{id}', function ($user, $id) {
 Broadcast::channel('conversations.{id}', function ($user, $id) {
     $conversation = Conversation::findOrFail($id);
     $user_id = Auth::id();
-    $ids =  Arr::pluck($conversation->members, 'id');
-    $arr = array_diff($ids, array($user_id));
-    if (in_array($user->id, $arr)) {
+    $members = $conversation->members()->where('user_id', '<>', $user_id);
+    $ids =  Arr::pluck($members, 'id');
+    if (in_array($user->id, $ids)) {
         return $user;
     }
 });
