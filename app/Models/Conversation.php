@@ -52,7 +52,7 @@ class Conversation extends Model
      */
     public function latest_msg(): HasMany
     {
-        return $this->messages()->latest();
+        return $this->messages()->order_by('id', 'desc')->first();
     }
 
 
