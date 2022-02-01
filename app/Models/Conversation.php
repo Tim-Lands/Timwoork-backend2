@@ -50,9 +50,9 @@ class Conversation extends Model
      * latest messages
      *
      */
-    public function latest_msg(): HasMany
+    public function latest_msg()
     {
-        return $this->hasOne(Message::class)->latest();
+        return $this->messages()->latest()->first();
     }
 
 
