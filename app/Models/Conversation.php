@@ -47,12 +47,12 @@ class Conversation extends Model
     }
 
     /**
-     * latest messages
+     * latest message
      *
      */
-    public function latest_msg()
+    public function latestMessage()
     {
-        return $this->messages()->latest()->first();
+        return $this->hasOne(Message::class)->latest();
     }
 
 
