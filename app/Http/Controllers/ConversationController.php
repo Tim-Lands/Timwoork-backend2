@@ -44,7 +44,7 @@ class ConversationController extends Controller
         //id  جلب العنصر بواسطة
         $conversation = Conversation::Selection()->whereId($id)->with(['messages' => function ($q) {
             $q->orderBy('id', 'ASC')->with('attachments', 'user.profile');
-        }])->first();
+        }])->find($id);
         // شرط اذا كان العنصر موجود
         if (!$conversation) {
             // رسالة خطأ
