@@ -24,10 +24,9 @@ class ConversationController extends Controller
     {
         $paginate = $request->query('paginate') ? $request->query('paginate') : 10;
         $user = Auth::user();
-        $conversations = Conversation::with(['messages', 'members'])
-            ->whereHas('members', function ($query) use ($user) {
-                $query->where('user_id', $user->id);
-            })
+        $conversations = Conversation::with(['members' => function ($query) use ($user) {
+            $query->where('user_id', $user->id);
+        }, 'latest_msg'])
             ->withCount('messages', function ($q) {
                 $q->whereNull('read_at');
             })->paginate($paginate);

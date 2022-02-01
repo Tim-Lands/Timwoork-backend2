@@ -46,6 +46,15 @@ class Conversation extends Model
         return $this->hasMany(Message::class)->orderBy('id', 'ASC');
     }
 
+    /**
+     * latest messages
+     *
+     */
+    public function latest_msg(): HasMany
+    {
+        return $this->messages()->latest()->first();
+    }
+
 
 
     /**
