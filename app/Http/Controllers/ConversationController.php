@@ -12,6 +12,7 @@ use App\Models\Product;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Database\Eloquent\Builder;
 
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Auth;
@@ -27,8 +28,8 @@ class ConversationController extends Controller
         $conversations = Conversation::with(['members' => function ($query) use ($user) {
             $query->where('user_id', $user->id);
         }, 'latest_msg'])
-            ->withCount('messages', function ($q) {
-                $q->whereNull('read_at');
+            ->withCount('messages', function (Builder $query) {
+                $query->whereNull('read_at');
             })->paginate($paginate);
         return response()->success('ok', $conversations);
     }
