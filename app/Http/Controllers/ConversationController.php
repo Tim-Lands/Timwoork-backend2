@@ -26,7 +26,7 @@ class ConversationController extends Controller
         $paginate = $request->query('paginate') ? $request->query('paginate') : 10;
         $user = Auth::user();
         $conversations = $user->conversations()->with(['latestMessage', 'members' => function ($q) use ($user) {
-            $q->where('user_id', '<>', $user->id);
+            $q->where('user_id', '<>', $user->id)->with('profile:fullname,avatar');
         }])->withCount(['messages' => function (Builder $query) {
             $query->whereNull('read_at');
         }])->paginate($paginate);
