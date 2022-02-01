@@ -55,7 +55,7 @@ class ConversationController extends Controller
             ->where('user_id', '<>', Auth::user());
         if ($unread_messages->count() > 0) {
             foreach ($unread_messages->get() as $key => $value) {
-                $value->seen_at = time();
+                $value->read_at = time();
                 $value->save();
             }
         }
