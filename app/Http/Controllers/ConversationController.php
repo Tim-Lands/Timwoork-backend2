@@ -20,13 +20,14 @@ use Illuminate\Support\Facades\Storage;
 
 class ConversationController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
+        $paginate = $request->query('paginate') ? $request->query('paginate') : 10;
         $user = Auth::user();
         $conversations = Conversation::with(['messages', 'members'])
             ->whereHas('members', function ($query) use ($user) {
                 $query->where('user_id', $user->id);
-            })->get();
+            })->paginate($paginate);
 
         return response()->success('ok', $conversations);
     }
@@ -41,17 +42,19 @@ class ConversationController extends Controller
     {
         //id  جلب العنصر بواسطة
         $conversation = Conversation::Selection()->whereId($id)->with(['messages' => function ($q) {
-            $q->latest()->paginate(10);
+            $q->orderBy('id', 'ASC');
         }])->first();
         // شرط اذا كان العنصر موجود
         if (!$conversation) {
             // رسالة خطأ
             return response()->error(__("messages.errors.element_not_found"), 403);
         }
-        $unread_messages = $conversation->messages->whereNot('user_id', Auth::user())->get();
-        foreach ($unread_messages as $key => $value) {
-            $value->seen_at = time();
-            $value->save();
+        $unread_messages = $conversation->messages->where('user_id', '<>', Auth::user());
+        if ($unread_messages->count() > 0) {
+            foreach ($unread_messages->get() as $key => $value) {
+                $value->seen_at = time();
+                $value->save();
+            }
         }
         // اظهار العنصر
         return response()->success(__("messages.oprations.get_data"), $conversation);
