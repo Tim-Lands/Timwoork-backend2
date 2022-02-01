@@ -52,7 +52,7 @@ class Conversation extends Model
      */
     public function latest_msg(): HasMany
     {
-        return $this->messages()->first();
+        return $this->hasOne(Message::class)->latest();
     }
 
 
