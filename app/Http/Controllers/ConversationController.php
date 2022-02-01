@@ -29,7 +29,7 @@ class ConversationController extends Controller
             $q->latest('id')->first();
         }])->withCount(['messages' => function (Builder $query) {
             $query->whereNull('read_at');
-        }])->paginate(10);
+        }])->paginate($paginate);
         return response()->success('ok', $conversations);
     }
 
