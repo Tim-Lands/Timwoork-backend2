@@ -27,8 +27,10 @@ class ConversationController extends Controller
         $conversations = Conversation::with(['messages', 'members'])
             ->whereHas('members', function ($query) use ($user) {
                 $query->where('user_id', $user->id);
+            })
+            ->withCount('messages', function ($q) {
+                $q->whereNull('read_at');
             })->paginate($paginate);
-
         return response()->success('ok', $conversations);
     }
 
@@ -61,12 +63,11 @@ class ConversationController extends Controller
     }
 
 
-    //   إضافة محادثة جديدة
+    //   إضافة محادثة جديدة لخدمة
     public function product_conversation_store($id, ConversationStoreRequest $request)
     {
         $product = Product::findOrFail($id);
         $user_id = Auth::user()->id;
-        //return Auth::user()->id;
         $receiver_id = $request->receiver_id;
         try {
             DB::beginTransaction();
@@ -80,7 +81,7 @@ class ConversationController extends Controller
                 'message' => $request->initial_message
             ]);
 
-            //broadcast(new MessageSent($message));
+            broadcast(new MessageSent($message));
             DB::commit();
             return response()->success(__("messages.conversation.conversation_success"), $conversation->load('messages'));
         } catch (Exception $ex) {
@@ -93,7 +94,7 @@ class ConversationController extends Controller
 
     public function item_conversation_store($id, ConversationStoreRequest $request)
     {
-        //   إضافة محادثة جديدة
+        //   إضافة محادثة جديدة لطلبية
 
         $item = Item::findOrFail($id);
 
