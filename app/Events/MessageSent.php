@@ -49,6 +49,7 @@ class MessageSent implements ShouldBroadcast
 
     public function broadcastWith()
     {
+
         return [
             'message' =>  $this->message->load('user.profile', 'conversation'),
             'unreaded_messages_count' =>  $this->message->conversation->messages()
