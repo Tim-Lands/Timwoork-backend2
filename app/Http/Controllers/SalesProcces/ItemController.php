@@ -34,8 +34,23 @@ class ItemController extends Controller
     public function show($id)
     {
         // جلب الطلبية
+        $product_id = Item::whereId($id)->first()->number_product;
         $item = Item::whereId($id)
-            ->with(['order.cart.user.profile', 'profileSeller.profile', 'item_rejected', 'item_modified', 'attachments', 'conversation.messages.user.profile', 'conversation.messages.attachments'])
+                      ->with(['order.cart.user.profile'=>function ($q) {
+                          $q->with(['level','badge']);
+                      },
+                      'profileSeller.profile',
+                      'profileSeller.products'=>function ($q) use ($product_id) {
+                          $q->select('id', 'profile_seller_id', 'buyer_instruct')->where('id', $product_id);
+                      },
+                      'profileSeller'=>function ($q) {
+                          $q->with(['level','badge']);
+                      },
+                        'item_rejected',
+                        'item_modified',
+                        'attachments',
+                        'conversation.messages.user.profile',
+                        'conversation.messages.attachments'])
             ->first();
         if (!$item) {
             // رسالة خطأ
@@ -221,7 +236,7 @@ class ItemController extends Controller
 
             /* --------------------------- تغيير حالة الطلبية --------------------------- */
             // شرط اذا كانت الحالة الطلبية في حالة الانتظار
-            if ($item->status == Item::STATUS_PENDING) {
+            if ($item->status == Item::STATUS_ACCEPT) {
                 // تحويل الطلبية من حالة الابتدائية الى حالة الرفض
                 $item->status = Item::STATUS_CANCELLED_BY_SELLER;
                 $item->save();
@@ -344,7 +359,7 @@ class ItemController extends Controller
                 $item->status = Item::STATUS_FINISHED;
                 $item->save();
 
-                // عبد الله ابعث الدراهم للسيد يرحم والديك و متنساش الاقتطاع
+            // عبد الله ابعث الدراهم للسيد يرحم والديك و متنساش الاقتطاع
             } else {
                 return response()->error(__("messages.item.not_may_this_operation"), Response::HTTP_NOT_FOUND);
             }
@@ -441,7 +456,7 @@ class ItemController extends Controller
                 // شرط اذا كان هناك طلب الغاء و ايضا ارسال عملية طلب من طرف المشتري
                 if ($item_rejected && $item_rejected->status == ItemOrderRejected::PENDING) {
                     // عملية قبول طلب الغاء الطلبية
-                    //$item_rejected->update($data_accept_request_by_seller);
+                    $item_rejected->update($data_accept_request_by_seller);
 
                     $item_rejected->delete();
                     // رفض الطلبية
@@ -556,7 +571,7 @@ class ItemController extends Controller
                     // عملية قيد التنفيذ الطلبية
                     $item->status = Item::STATUS_ACCEPT;
                     $item->save();
-                    // ارسال الاشعار
+                // ارسال الاشعار
                     //  event(new RejectRequestRejectOrder($user, $item)); // عبد الله
                 } else {
                     return response()->error(__("messages.item.request_not_found"), Response::HTTP_FORBIDDEN);
@@ -610,7 +625,7 @@ class ItemController extends Controller
 
                 $item->status = Item::STATUS_MODIFIED_REQUEST_BUYER;
                 $item->save();
-                // ارسال الاشعار
+            // ارسال الاشعار
                 //event(new RequestRejectOrder($user, $item)); // تعديل في الاشعار لعبد الله
             } else {
                 // رسالة خطأ
@@ -662,7 +677,7 @@ class ItemController extends Controller
                     $item->status = Item::STATUS_ACCEPT;
                     $item->save();
 
-                    // إرسال الاشعار
+                // إرسال الاشعار
                     //event(new AcceptRequestRejectOrder($buyer, $item));
                 } else {
                     return response()->error(__('messages.item.request_not_found'), Response::HTTP_FORBIDDEN);
@@ -709,7 +724,7 @@ class ItemController extends Controller
                     $item->status = Item::STATUS_SUSPEND_CAUSE_MODIFIED;
                     $item->save();
 
-                    // ارسال الاشعار
+                // ارسال الاشعار
                     //event(new RejectRequestRejectOrder($user, $item));
                 } else {
                     return response()->error(__("messages.item.request_not_found"), Response::HTTP_FORBIDDEN);
@@ -755,7 +770,7 @@ class ItemController extends Controller
                     // عملية قيد التنفيذ الطلبية
                     $item->status = Item::STATUS_ACCEPT;
                     $item->save();
-                    // ارسال الاشعار
+                // ارسال الاشعار
                     //  event(new RejectRequestRejectOrder($user, $item)); // عبد الله
                 } else {
                     return response()->error(__("messages.item.request_not_found"), Response::HTTP_FORBIDDEN);
