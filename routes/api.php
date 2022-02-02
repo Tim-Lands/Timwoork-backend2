@@ -10,6 +10,7 @@ use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\Auth\SellerOrderController;
 use App\Http\Controllers\Auth\UserStatusController;
 use App\Http\Controllers\ChatController;
+use App\Http\Controllers\ContactController;
 use App\Http\Controllers\ConversationController;
 use App\Http\Controllers\FilterController;
 use App\Http\Controllers\FrontEndController;
@@ -279,6 +280,8 @@ Route::get('/get_categories', [FrontEndController::class, 'get_categories']);
 Route::get('/get_categories/{id}', [FrontEndController::class, 'get_subcategories']);
 // عرض الخدمة الواحدة
 Route::get('product/{slug}', [FrontEndController::class, 'show']);
+
+Route::post('/contactus', [ContactController::class, 'send_to_dashboad']);
 
 // مسار عملية الفلترة
 Route::prefix('filter')->group(function () {

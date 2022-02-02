@@ -220,6 +220,11 @@ return [
     "conversation" => [
         "conversation_success" => "لقد تمّ إضافة المحادثة بنجاح",
         "message_success" => "لقد تمّ إرسال الرسالة بنجاح",
+    ],
+    "contact" => [
+        "not_found_url" => "يجب ان يكون الملف مرفوع في غوغل درايف او دروب بوكس",
+        "success_message_contact" => "تم ارسال الرسالة بنجاح",
+        "cannot_sent_before_48" => "يجب عليك انتظار بعد 48 ساعة كي تستطيع ارسال رسالة جديدة"
     ]
 
 ];

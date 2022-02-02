@@ -207,6 +207,13 @@ return [
         "request_accepted_by_buyer" => "A cancellation request was accepted by the buyer and the service was refused",
         "request_rejected_by_seller" => "The cancellation request has been rejected by the seller, and the administration will be contacted if the problem is not resolved within 24 hours",
         "request_rejected_by_buyer" => "The cancellation request was rejected by the buyer, the administration will be contacted if the problem is not resolved within 24 hours",
+
+        "request_modified_by_buyer" => "A cancellation request has been sent by the buyer",
+         "accepted_modified_by_seller" => "modification accepted by seller",
+         "reject_modified_by_seller" => "The modification has been rejected by the seller, and the administration will be contacted if the problem is not resolved within 24 hours",
+         "found_request_modified" => "modification request already exists",
+         "found_request_rejected" => "cancellation request already exists",
+         "resolve_the_conflict_between_them" => "the dispute between the parties has been resolved"
     ],
     // الفلتر
      "filter" => [
@@ -216,6 +223,11 @@ return [
      "conversation" => [
          "conversation_success" => "Conversation added successfully",
          "message_success" =>"The message has been sent successfully",
+     ],
+     "contact" => [
+        "not_found_url" => "The file must be uploaded to Google Drive or Dropbox",
+        "success_message_contact" => "The message was sent successfully",
+        "cannot_sent_before_48" => "You must wait after 48 hours to be able to send a new message"
      ]
 
 ];
