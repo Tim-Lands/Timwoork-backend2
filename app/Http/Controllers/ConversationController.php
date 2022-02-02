@@ -23,12 +23,14 @@ class ConversationController extends Controller
 {
     public function index(Request $request)
     {
+
         $paginate = $request->query('paginate') ? $request->query('paginate') : 10;
         $user = Auth::user();
         $conversations = $user->conversations()->with(['latestMessage', 'members' => function ($q) use ($user) {
             $q->where('user_id', '<>', $user->id)->with('profile');
-        }])->withCount(['messages' => function (Builder $query) {
-            $query->whereNull('read_at');
+        }])->withCount(['messages' => function (Builder $query) use ($user) {
+            $query->where('user_id', '<>', $user->id)
+                ->whereNull('read_at');
         }])->paginate($paginate);
         return response()->success('ok', $conversations);
     }
