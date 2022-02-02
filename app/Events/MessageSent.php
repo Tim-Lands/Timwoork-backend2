@@ -35,7 +35,10 @@ class MessageSent implements ShouldBroadcast
      */
     public function broadcastOn()
     {
-        return new PresenceChannel('conversations.' . $this->message->conversation->id);
+        $receiver = $this->message->conversation->members()
+            ->where('user_id', '<>', Auth::id())
+            ->first();
+        return new PresenceChannel('receiver.' . $receiver->id);
     }
 
     public function broadcastAs()

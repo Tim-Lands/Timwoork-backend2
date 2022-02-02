@@ -12,6 +12,7 @@ use App\Models\Product;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Database\Eloquent\Builder;
 
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Auth;
@@ -20,14 +21,17 @@ use Illuminate\Support\Facades\Storage;
 
 class ConversationController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $user = Auth::user();
-        $conversations = Conversation::with(['messages', 'members'])
-            ->whereHas('members', function ($query) use ($user) {
-                $query->where('user_id', $user->id);
-            })->get();
 
+        $paginate = $request->query('paginate') ? $request->query('paginate') : 10;
+        $user = Auth::user();
+        $conversations = $user->conversations()->with(['latestMessage', 'members' => function ($q) use ($user) {
+            $q->where('user_id', '<>', $user->id)->with('profile');
+        }])->withCount(['messages' => function (Builder $query) use ($user) {
+            $query->where('user_id', '<>', $user->id)
+                ->whereNull('read_at');
+        }])->paginate($paginate);
         return response()->success('ok', $conversations);
     }
 
@@ -41,29 +45,32 @@ class ConversationController extends Controller
     {
         //id  جلب العنصر بواسطة
         $conversation = Conversation::Selection()->whereId($id)->with(['messages' => function ($q) {
-            $q->latest()->paginate(10);
-        }])->first();
+            $q->orderBy('id', 'ASC')->with('attachments', 'user.profile');
+        }])->find($id);
         // شرط اذا كان العنصر موجود
         if (!$conversation) {
             // رسالة خطأ
             return response()->error(__("messages.errors.element_not_found"), 403);
         }
-        $unread_messages = $conversation->messages->whereNot('user_id', Auth::user())->get();
-        foreach ($unread_messages as $key => $value) {
-            $value->seen_at = time();
-            $value->save();
+        $unread_messages = $conversation->messages()
+            ->whereNull('read_at')
+            ->where('user_id', '<>', Auth::user());
+        if ($unread_messages->count() > 0) {
+            foreach ($unread_messages->get() as $key => $value) {
+                $value->read_at = now();
+                $value->save();
+            }
         }
         // اظهار العنصر
         return response()->success(__("messages.oprations.get_data"), $conversation);
     }
 
 
-    //   إضافة محادثة جديدة
+    //   إضافة محادثة جديدة لخدمة
     public function product_conversation_store($id, ConversationStoreRequest $request)
     {
         $product = Product::findOrFail($id);
         $user_id = Auth::user()->id;
-        //return Auth::user()->id;
         $receiver_id = $request->receiver_id;
         try {
             DB::beginTransaction();
@@ -77,7 +84,7 @@ class ConversationController extends Controller
                 'message' => $request->initial_message
             ]);
 
-            //broadcast(new MessageSent($message));
+            broadcast(new MessageSent($message));
             DB::commit();
             return response()->success(__("messages.conversation.conversation_success"), $conversation->load('messages'));
         } catch (Exception $ex) {
@@ -90,7 +97,7 @@ class ConversationController extends Controller
 
     public function item_conversation_store($id, ConversationStoreRequest $request)
     {
-        //   إضافة محادثة جديدة
+        //   إضافة محادثة جديدة لطلبية
 
         $item = Item::findOrFail($id);
 
@@ -137,24 +144,24 @@ class ConversationController extends Controller
             ]);
 
             if ($request->has('attachments')) {
+
                 foreach ($request->file('attachments') as $key => $value) {
                     $attachmentPath = $value;
-                    $attachmentName = 'tw-attch-' . $conversation_id . Auth::user()->id .  time() . '.' . $attachmentPath->getClientOriginalExtension();
+                    $attachmentName = 'tw-attch-' . $key . $conversation_id . Auth::user()->id .  time() . '.' . $attachmentPath->getClientOriginalExtension();
                     $size = number_format($value->getSize() / 1048576, 3) . ' MB';
                     $path = Storage::putFileAs('attachments', $value, $attachmentName);
                     // تخزين معلومات المرفق
                     $message->attachments()->create([
                         'name' => $attachmentName,
-                        'full_path' => $path,
+                        'path' => $attachmentPath,
                         'size' => $size,
-                        'type_file' => 0,
-                        'mime_type' => $attachmentPath->getClientMimeType(),
+                        'mime_type' => $value->getClientOriginalExtension(),
                     ]);
                 }
             }
             broadcast(new MessageSent($message));
             DB::commit();
-            return response()->success(__("messages.conversation.message_success"), $message->load('user.profile'));
+            return response()->success(__("messages.conversation.message_success"), $message->load(['user.profile', 'attachments']));
         } catch (Exception $ex) {
             return $ex;
             DB::rollback();

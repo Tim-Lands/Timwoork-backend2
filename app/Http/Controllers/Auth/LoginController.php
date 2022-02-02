@@ -79,7 +79,7 @@ class LoginController extends Controller
     {
         $count = $user->conversations->loadCount(['messages' => function ($q) {
             $q->whereNull('read_at')
-                ->where('user_id', '!=', Auth::id());
+                ->where('user_id', '<>', Auth::id());
         }])->sum('messages_count');
         return $count;
     }

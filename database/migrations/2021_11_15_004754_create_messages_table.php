@@ -24,7 +24,7 @@ class CreateMessagesTable extends Migration
                 ->onDelete('CASCADE')
                 ->onUpdate('CASCADE');
 
-            $table->text('message');
+            $table->text('message')->nullable();
             $table->date('read_at')->nullable();
 
             $table->timestamps();

@@ -24,7 +24,7 @@ class MessageStoreRequest extends FormRequest
     public function rules()
     {
         return [
-            'message' => 'required',
+            'message' => 'nullable',
             'attachments'         => 'sometimes',
         ];
     }

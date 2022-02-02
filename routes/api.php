@@ -80,14 +80,19 @@ Route::prefix('my_products')->middleware('auth:sanctum')->group(function () {
 /**
  *  مسار لعرض مشترياتي
  */
-Route::middleware('auth:sanctum')->get('/my_purchases', BuyerOrderController::class);
+Route::middleware('auth:sanctum')->prefix('my_purchases')->group(function () {
+    Route::get('/', [BuyerOrderController::class, 'index']);
+    Route::get('/{id}', [BuyerOrderController::class, 'show']);
+});
 
 /********************************************************************** */
 /**
  *  مسار لعرض مشترياتي
  */
-Route::middleware('auth:sanctum')->get('/my_sales', SellerOrderController::class);
-
+Route::middleware('auth:sanctum')->prefix('my_sales')->group(function () {
+    Route::get('/', [SellerOrderController::class, 'index']);
+    Route::get('/{id}', [SellerOrderController::class, 'show']);
+});
 /******************************************************************** */
 
 /***********************مسارات استعادة كلمة المرور ******************** */
@@ -301,7 +306,7 @@ Route::prefix('/purchase')->group(function () {
     Route::post('/paypal/charge', [OrderController::class, 'paypal_charge']);
     Route::post('/stripe/charge', [OrderController::class, 'stripe_charge']);
 });
-
+/* 
 Route::get('users', function () {
     $basic  = new \Vonage\Client\Credentials\Basic("b5c4c461", "8zJCbf47nkL2bc6k");
     $client = new \Vonage\Client(new \Vonage\Client\Credentials\Container($basic));
@@ -317,3 +322,4 @@ Route::get('users', function () {
         echo "The message failed with status: " . $message->getStatus() . "\n";
     }
 });
+ */

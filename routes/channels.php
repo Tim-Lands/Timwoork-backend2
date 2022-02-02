@@ -2,6 +2,7 @@
 
 use App\Models\Conversation;
 use Illuminate\Support\Arr;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Broadcast;
 
 /*
@@ -23,10 +24,8 @@ Broadcast::channel('App.Models.User.{id}', function ($user, $id) {
     return (int) $user->id === (int) $id;
 });
 
-Broadcast::channel('conversations.{id}', function ($user, $id) {
-    $conversation = Conversation::findOrFail($id);
-    $ids =  Arr::pluck($conversation->members, 'id');
-    if (in_array($user->id, $ids)) {
+Broadcast::channel('receiver.{id}', function ($user, $id) {
+    if ($user->id == $id) {
         return $user;
     }
 });

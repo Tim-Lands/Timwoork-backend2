@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Support\Facades\Auth;
 
 class Conversation extends Model
 {
@@ -43,8 +44,29 @@ class Conversation extends Model
      */
     public function messages(): HasMany
     {
-        return $this->hasMany(Message::class);
+        return $this->hasMany(Message::class)->orderBy('id', 'ASC');
     }
+
+    /**
+     * latest message
+     *
+     */
+    public function latestMessage()
+    {
+        return $this->hasOne(Message::class)->latest();
+    }
+
+    /**
+     * latest message
+     *
+     */
+    public function receiver()
+    {
+        if (Auth::check()) {
+            return $this->members()->where('user_id', '<>', Auth::id())->first();
+        }
+    }
+
 
     /**
      * members
