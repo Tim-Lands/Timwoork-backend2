@@ -51,7 +51,8 @@ class MessageSent implements ShouldBroadcast
     {
         return [
             'message' =>  $this->message->load('user.profile', 'conversation'),
-            //'conversation_id' =>  $this->message->conversation->id,
+            'unreaded_messages_count' =>  $this->message->conversation->messages()
+                ->whereNull('read_at')->where('user_id', '<>', Auth::id())->count(),
         ];
     }
 }
