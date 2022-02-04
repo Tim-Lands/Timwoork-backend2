@@ -47,8 +47,12 @@ class NewOrder implements ShouldBroadcast
 
         return [
             'type' => "order",
+            'to' => 'seller',
             'title' =>  " قام " . $this->user->profile->full_name . " بشراء خدمة ",
-            'user_sender' => $this->user->profile,
+            'user_sender' => [
+                'full_name' => $this->user->profile->full_name,
+                'username' => $this->user->username,
+            ],
             'content' => [
                 'item_id' => $this->item->id,
                 'title' => $this->item->title,
