@@ -25,9 +25,22 @@ class BuyerOrderController extends Controller
 
     public function show($id)
     {
+        $product_id = Item::whereId($id)->first()->number_product;
+
         // جلب الطلبية
         $item = Item::whereId($id)
-            ->with(['order.cart.user.profile', 'profileSeller.profile', 'item_rejected', 'item_modified', 'attachments', 'conversation.messages.user.profile', 'conversation.messages.attachments'])
+            ->with([
+                'order.cart.user.profile',
+                'profileSeller.profile',
+                'profileSeller.products' => function ($q) use ($product_id) {
+                    $q->select('id', 'profile_seller_id', 'buyer_instruct')->where('id', $product_id);
+                },
+                'item_rejected',
+                'item_modified',
+                'attachments',
+                'conversation.messages.user.profile',
+                'conversation.messages.attachments'
+            ])
             ->first();
 
         $logged_user_id = Auth::user()->id;
