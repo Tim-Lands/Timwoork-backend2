@@ -36,21 +36,23 @@ class ItemController extends Controller
         // جلب الطلبية
         $product_id = Item::whereId($id)->first()->number_product;
         $item = Item::whereId($id)
-                      ->with(['order.cart.user.profile'=>function ($q) {
-                          $q->with(['level','badge']);
-                      },
-                      'profileSeller.profile',
-                      'profileSeller.products'=>function ($q) use ($product_id) {
-                          $q->select('id', 'profile_seller_id', 'buyer_instruct')->where('id', $product_id);
-                      },
-                      'profileSeller'=>function ($q) {
-                          $q->with(['level','badge']);
-                      },
-                        'item_rejected',
-                        'item_modified',
-                        'attachments',
-                        'conversation.messages.user.profile',
-                        'conversation.messages.attachments'])
+            ->with([
+                'order.cart.user.profile' => function ($q) {
+                    $q->with(['level', 'badge']);
+                },
+                'profileSeller.profile',
+                'profileSeller.products' => function ($q) use ($product_id) {
+                    $q->select('id', 'profile_seller_id', 'buyer_instruct')->where('id', $product_id);
+                },
+                'profileSeller' => function ($q) {
+                    $q->with(['level', 'badge']);
+                },
+                'item_rejected',
+                'item_modified',
+                'attachments',
+                'conversation.messages.user.profile',
+                'conversation.messages.attachments'
+            ])
             ->first();
         if (!$item) {
             // رسالة خطأ
@@ -184,6 +186,7 @@ class ItemController extends Controller
                 // انشاء مبلغ جديد
                 $amount = Amount::create([
                     'amount' => $item_amount,
+                    'wallet_id' => $wallet->id,
                     'item_id' => $item->id,
                     'status' => Amount::WITHDRAWABLE_AMOUNT
                 ]);
@@ -246,6 +249,7 @@ class ItemController extends Controller
                 // انشاء مبلغ جديد
                 $amount = Amount::create([
                     'amount' => $item_amount,
+                    'wallet_id' => $wallet->id,
                     'item_id' => $item->id,
                     'status' => Amount::WITHDRAWABLE_AMOUNT
                 ]);
@@ -258,6 +262,7 @@ class ItemController extends Controller
 
                 // إرسال إشعار
                 event(new RejectOrder($user, $item)); // تصحيح من طرف عبد الله
+
             } else {
                 // رسالة خطأ
                 return response()->error(__("messages.item.not_may_this_operation"), Response::HTTP_FORBIDDEN);
@@ -359,7 +364,7 @@ class ItemController extends Controller
                 $item->status = Item::STATUS_FINISHED;
                 $item->save();
 
-            // عبد الله ابعث الدراهم للسيد يرحم والديك و متنساش الاقتطاع
+                // عبد الله ابعث الدراهم للسيد يرحم والديك و متنساش الاقتطاع
             } else {
                 return response()->error(__("messages.item.not_may_this_operation"), Response::HTTP_NOT_FOUND);
             }
@@ -571,7 +576,7 @@ class ItemController extends Controller
                     // عملية قيد التنفيذ الطلبية
                     $item->status = Item::STATUS_ACCEPT;
                     $item->save();
-                // ارسال الاشعار
+                    // ارسال الاشعار
                     //  event(new RejectRequestRejectOrder($user, $item)); // عبد الله
                 } else {
                     return response()->error(__("messages.item.request_not_found"), Response::HTTP_FORBIDDEN);
@@ -625,7 +630,7 @@ class ItemController extends Controller
 
                 $item->status = Item::STATUS_MODIFIED_REQUEST_BUYER;
                 $item->save();
-            // ارسال الاشعار
+                // ارسال الاشعار
                 //event(new RequestRejectOrder($user, $item)); // تعديل في الاشعار لعبد الله
             } else {
                 // رسالة خطأ
@@ -677,7 +682,7 @@ class ItemController extends Controller
                     $item->status = Item::STATUS_ACCEPT;
                     $item->save();
 
-                // إرسال الاشعار
+                    // إرسال الاشعار
                     //event(new AcceptRequestRejectOrder($buyer, $item));
                 } else {
                     return response()->error(__('messages.item.request_not_found'), Response::HTTP_FORBIDDEN);
@@ -724,7 +729,7 @@ class ItemController extends Controller
                     $item->status = Item::STATUS_SUSPEND_CAUSE_MODIFIED;
                     $item->save();
 
-                // ارسال الاشعار
+                    // ارسال الاشعار
                     //event(new RejectRequestRejectOrder($user, $item));
                 } else {
                     return response()->error(__("messages.item.request_not_found"), Response::HTTP_FORBIDDEN);
@@ -770,7 +775,7 @@ class ItemController extends Controller
                     // عملية قيد التنفيذ الطلبية
                     $item->status = Item::STATUS_ACCEPT;
                     $item->save();
-                // ارسال الاشعار
+                    // ارسال الاشعار
                     //  event(new RejectRequestRejectOrder($user, $item)); // عبد الله
                 } else {
                     return response()->error(__("messages.item.request_not_found"), Response::HTTP_FORBIDDEN);

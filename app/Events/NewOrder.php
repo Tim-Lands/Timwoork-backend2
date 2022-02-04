@@ -9,8 +9,9 @@ use Illuminate\Broadcasting\PrivateChannel;
 use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Queue\SerializesModels;
+use Illuminate\Support\Facades\Auth;
 
-class NewOrder
+class NewOrder implements ShouldBroadcast
 {
     use Dispatchable, InteractsWithSockets, SerializesModels;
     public $user;
@@ -33,6 +34,25 @@ class NewOrder
      */
     public function broadcastOn()
     {
-        return new PrivateChannel('channel-name');
+        return new PresenceChannel('notify.' . $this->user->id);
+    }
+
+    public function broadcastAs()
+    {
+        return 'notification.sent';
+    }
+
+    public function broadcastWith()
+    {
+
+        return [
+            'type' => "order",
+            'title' =>  " قام " . $this->user->profile->full_name . " بشراء خدمة ",
+            'user_sender' => $this->user->profile,
+            'content' => [
+                'item_id' => $this->item->id,
+                'title' => $this->item->title,
+            ],
+        ];
     }
 }
