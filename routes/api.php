@@ -238,7 +238,7 @@ Route::prefix('order')->group(function () {
         // الغاء الطلبية من قبل المشتري
         Route::post('/{id}/item_cancelled_by_buyer', [ItemController::class, 'item_cancelled_by_buyer']);
         // الغاء الطلبية من قبل البائع
-        Route::post('/{id}/item_cancelled_by_seller', [ItemController::class, 'item_cancelled_by_buyer']);
+        Route::post('/{id}/item_cancelled_by_seller', [ItemController::class, 'item_cancelled_by_seller']);
         // رفع و تسليم المشروع من قبل البائع
         Route::post('/{id}/dilevered_by_seller', [ItemController::class, 'dilevered_by_seller']);
         // قبول المشروع من قبل المشتري
@@ -306,7 +306,7 @@ Route::prefix('/purchase')->group(function () {
     Route::post('/paypal/charge', [OrderController::class, 'paypal_charge']);
     Route::post('/stripe/charge', [OrderController::class, 'stripe_charge']);
 });
-/* 
+/*
 Route::get('users', function () {
     $basic  = new \Vonage\Client\Credentials\Basic("b5c4c461", "8zJCbf47nkL2bc6k");
     $client = new \Vonage\Client(new \Vonage\Client\Credentials\Container($basic));

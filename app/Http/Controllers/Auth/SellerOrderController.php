@@ -11,7 +11,6 @@ use Illuminate\Http\Response;
 
 class SellerOrderController extends Controller
 {
-
     public function index(Request $request)
     {
         $paginate = $request->query('paginate') ? $request->query('paginate') : 10;
@@ -24,8 +23,18 @@ class SellerOrderController extends Controller
     public function show($id)
     {
         // جلب الطلبية
+        $product_id = Item::whereId($id)->first()->number_product;
         $item = Item::whereId($id)
-            ->with(['order.cart.user.profile', 'profileSeller.profile', 'item_rejected', 'item_modified', 'attachments', 'conversation.messages.user.profile', 'conversation.messages.attachments'])
+            ->with(['order.cart.user.profile',
+                    'profileSeller.profile',
+                    'profileSeller.products'=>function ($q) use ($product_id) {
+                        $q->select('id', 'profile_seller_id', 'buyer_instruct')->where('id', $product_id);
+                    },
+                    'item_rejected',
+                    'item_modified',
+                    'attachments',
+                    'conversation.messages.user.profile',
+                    'conversation.messages.attachments'])
             ->first();
         $logged_user_id = Auth::user()->id;
         $owner_user_id = User::find($item->user_id)->id;
