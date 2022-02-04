@@ -2,6 +2,7 @@
 
 namespace App\Events;
 
+use App\Models\User;
 use Illuminate\Broadcasting\Channel;
 use Illuminate\Broadcasting\InteractsWithSockets;
 use Illuminate\Broadcasting\PresenceChannel;
@@ -44,15 +45,16 @@ class NewOrder implements ShouldBroadcast
 
     public function broadcastWith()
     {
-
+        $seller = User::find($this->item->user_id);
         return [
             'type' => "order",
             'to' => 'seller',
-            'title' =>  " قام " . $this->user->profile->full_name . " بشراء خدمة ",
+            'title' =>  " قام " . $seller->profile->full_name . " بشراء خدمة ",
             'user_sender' => [
-                'full_name' => $this->user->profile->full_name,
-                'username' => $this->user->username,
-                'avatar_url' => $this->user->profile->avatar_url
+                'notifications_count' => $seller->unreadNotifications->count(),
+                'full_name' => $seller->profile->full_name,
+                'username' => $seller->username,
+                'avatar_url' => $seller->profile->avatar_url
             ],
             'content' => [
                 'item_id' => $this->item->id,
