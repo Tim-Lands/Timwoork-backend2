@@ -29,3 +29,9 @@ Broadcast::channel('receiver.{id}', function ($user, $id) {
         return $user;
     }
 });
+
+Broadcast::channel('notify.{id}', function ($user, $id) {
+    if ($user->id == $id) {
+        return $user;
+    }
+});

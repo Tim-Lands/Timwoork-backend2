@@ -19,7 +19,7 @@ class BuyerOrderController extends Controller
             $q->whereHas('cart', function ($query) use ($buyer) {
                 $query->where('user_id', $buyer);
             })->with('cart');
-        })->with(['order', 'profileSeller.profile.user'])->withCount('item_rejected')->paginate($paginate);
+        })->with(['order', 'profileSeller.profile.user'])->withCount('item_rejected')->orderBy('created_at', 'DESC')->paginate($paginate);
         return response()->success(__("messages.oprations.get_all_data"), $items);
     }
 

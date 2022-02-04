@@ -18,6 +18,7 @@ class ItemObserver
     {
         $user = User::find($item->user_id);
         event(new NewOrder($user, $item));
+        //broadcast(new NewOrder($user, $item));
     }
 
     /**

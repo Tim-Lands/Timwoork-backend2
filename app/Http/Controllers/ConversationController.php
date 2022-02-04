@@ -57,8 +57,10 @@ class ConversationController extends Controller
             ->where('user_id', '<>', Auth::user());
         if ($unread_messages->count() > 0) {
             foreach ($unread_messages->get() as $key => $value) {
-                $value->read_at = now();
-                $value->save();
+                if ($value->user_id !== Auth::user()->id) {
+                    $value->read_at = now();
+                    $value->save();
+                }
             }
         }
         // اظهار العنصر
