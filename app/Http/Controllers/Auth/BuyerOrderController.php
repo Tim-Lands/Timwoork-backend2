@@ -9,10 +9,8 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Response;
 
-
 class BuyerOrderController extends Controller
 {
-
     public function index(Request $request)
     {
         $paginate = $request->query('paginate') ? $request->query('paginate') : 10;
