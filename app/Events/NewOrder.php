@@ -52,6 +52,7 @@ class NewOrder implements ShouldBroadcast
             'user_sender' => [
                 'full_name' => $this->user->profile->full_name,
                 'username' => $this->user->username,
+                'avatar_url' => $this->user->profile->avatar_url
             ],
             'content' => [
                 'item_id' => $this->item->id,
