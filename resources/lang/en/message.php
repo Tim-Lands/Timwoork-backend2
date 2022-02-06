@@ -94,6 +94,10 @@ return [
         "password_min" => "The password must contain at least 8 letters and numbers",
         "name_en_required" => "The field must be entered in English",
         "content_min" => "content must be at least 30 characters",
+        "subject_required" => "You must enter the subject of the message",
+        "full_name_required" => "You must enter your full name",
+        "type_message_required" =>"You must enter a message type",
+        "message_required" => "You must enter the message text"
     ],
 
     /* --------------------------------- الرسائل -------------------------------- */
@@ -227,7 +231,9 @@ return [
      "contact" => [
         "not_found_url" => "The file must be uploaded to Google Drive or Dropbox",
         "success_message_contact" => "The message was sent successfully",
-        "cannot_sent_before_48" => "You must wait after 48 hours to be able to send a new message"
+        "cannot_sent_before_48" => "You must wait after 48 hours to be able to send a new message",
+        "failures_send_email" => "The email was not sent, please try again",
+        "success_send_message_to_email" => "The message has been sent to the email successfully",
      ]
 
 ];

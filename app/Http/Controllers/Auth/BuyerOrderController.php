@@ -26,7 +26,6 @@ class BuyerOrderController extends Controller
     public function show($id)
     {
         $product_id = Item::whereId($id)->first()->number_product;
-
         // جلب الطلبية
         $item = Item::whereId($id)
             ->with([

@@ -25,6 +25,7 @@ use App\Http\Controllers\SalesProcces\OrderController;
 use App\Http\Controllers\SalesProcces\ItemController;
 use App\Http\Controllers\SearchController;
 use App\Http\Controllers\Product\RatingController;
+use App\Mail\ContactMail;
 use Illuminate\Support\Facades\Broadcast;
 use Illuminate\Support\Facades\Route;
 
@@ -281,8 +282,13 @@ Route::get('/get_categories/{id}', [FrontEndController::class, 'get_subcategorie
 // عرض الخدمة الواحدة
 Route::get('product/{slug}', [FrontEndController::class, 'show']);
 
+// ارسال رسالة الى لوحة التحكم
 Route::post('/contactus', [ContactController::class, 'send_to_dashboad']);
 
+
+Route::get('/test', function () {
+    return 'Hello Tarek';
+});
 // مسار عملية الفلترة
 Route::prefix('filter')->group(function () {
     Route::get('/', FilterController::class);
@@ -306,6 +312,7 @@ Route::prefix('/purchase')->group(function () {
     Route::post('/paypal/charge', [OrderController::class, 'paypal_charge']);
     Route::post('/stripe/charge', [OrderController::class, 'stripe_charge']);
 });
+
 /*
 Route::get('users', function () {
     $basic  = new \Vonage\Client\Credentials\Basic("b5c4c461", "8zJCbf47nkL2bc6k");

@@ -32,4 +32,23 @@ class ContactRequest extends FormRequest
             "url"            => "nullable|url",  // 5 MB
         ];
     }
+
+    /**
+    * messages
+    *
+    * @return void
+    */
+    public function messages()
+    {
+        return [
+            'subject.required' => __("messages.validation.subject_required"),
+            'email.required' => __("messages.validation.email_required"),
+            'email.email' => __("messages.validation.email"),
+            'full_name.required' => __("messages.validation.full_name_required"),
+            'message.required' => __("messages.validation.message_required"),
+            'type_message.required' => __("messages.validation.type_message_required"),
+            'url.url' => __("messages.validation.url"),
+
+        ];
+    }
 }

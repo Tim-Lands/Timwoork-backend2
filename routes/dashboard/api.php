@@ -1,19 +1,17 @@
 <?php
 
-use App\Http\Controllers\Dashboard\{
-    ActivedProductController,
-    AuthController,
-    CategoryController,
-    CountryController,
-    SubCategoryController,
-    LevelController,
-    BadgeController,
-    ProductController,
-    StatisticContoller,
-    TagController,
-    SkillController,
-    LanguageController
-};
+use App\Http\Controllers\Dashboard\ActivedProductController;
+use App\Http\Controllers\Dashboard\AuthController;
+use App\Http\Controllers\Dashboard\CategoryController;
+use App\Http\Controllers\Dashboard\CountryController;
+use App\Http\Controllers\Dashboard\SubCategoryController;
+use App\Http\Controllers\Dashboard\LevelController;
+use App\Http\Controllers\Dashboard\BadgeController;
+use App\Http\Controllers\Dashboard\ProductController;
+use App\Http\Controllers\Dashboard\StatisticContoller;
+use App\Http\Controllers\Dashboard\TagController;
+use App\Http\Controllers\Dashboard\SkillController;
+use App\Http\Controllers\Dashboard\LanguageController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -33,30 +31,30 @@ Route::get('/', StatisticContoller::class);
 // =============================== مسارات التصنيف ====================================
 Route::prefix('categories')->group(function () {
     // مسار العرض
-    Route::get('/',               [CategoryController::class, 'index']);
+    Route::get('/', [CategoryController::class, 'index']);
     // مسار انشاء عنصر جديد
-    Route::post('/store',         [CategoryController::class, 'store']);
+    Route::post('/store', [CategoryController::class, 'store']);
     // مسار جلب عنصر الواحد
-    Route::get('/{id}',           [CategoryController::class, 'show']);
+    Route::get('/{id}', [CategoryController::class, 'show']);
     // مسار التعديل على العنصر
-    Route::post('/{id}/update',   [CategoryController::class, 'update']);
+    Route::post('/{id}/update', [CategoryController::class, 'update']);
     // مسار حذف العنصر
-    Route::post('/{id}/delete',   [CategoryController::class, 'delete']);
+    Route::post('/{id}/delete', [CategoryController::class, 'delete']);
 });
 
 // =============================== مسارات التصنيف الفرعي ====================================
 Route::prefix('subcategories')->group(function () {
 
     // مسار عرض عنصر من اجل انشاء
-    Route::get('/create',           [SubCategoryController::class, 'create']);
+    Route::get('/create', [SubCategoryController::class, 'create']);
     // مسار انشاء عنصر جديد
-    Route::post('/store',           [SubCategoryController::class, 'store']);
+    Route::post('/store', [SubCategoryController::class, 'store']);
     // مسار جلب عنصر الواحد
-    Route::get('/{id}',             [SubCategoryController::class, 'show']);
+    Route::get('/{id}', [SubCategoryController::class, 'show']);
     // مسار التعديل على العنصر
-    Route::post('/{id}/update',     [SubCategoryController::class, 'update']);
+    Route::post('/{id}/update', [SubCategoryController::class, 'update']);
     // مسار حذف العنصر
-    Route::post('/{id}/delete',     [SubCategoryController::class, 'delete']);
+    Route::post('/{id}/delete', [SubCategoryController::class, 'delete']);
 });
 
 
@@ -67,11 +65,11 @@ Route::post('/login', [AuthController::class, 'login']);
 
 Route::prefix('levels')->group(function () {
     // مسار العرض
-    Route::get('/',             [LevelController::class, 'index']);
+    Route::get('/', [LevelController::class, 'index']);
     // مسار انشاء عنصر جديد
-    Route::post('/store',       [LevelController::class, 'store']);
+    Route::post('/store', [LevelController::class, 'store']);
     // مسار جلب عنصر الواحد
-    Route::get('/{id}',         [LevelController::class, 'show']);
+    Route::get('/{id}', [LevelController::class, 'show']);
     // مسار التعديل على العنصر
     Route::post('/{id}/update', [LevelController::class, 'update']);
     // مسار حذف العنصر
@@ -82,11 +80,11 @@ Route::prefix('levels')->group(function () {
 
 Route::prefix('badges')->group(function () {
     // مسار العرض
-    Route::get('/',             [BadgeController::class, 'index']);
+    Route::get('/', [BadgeController::class, 'index']);
     // مسار انشاء عنصر جديد
-    Route::post('/store',       [BadgeController::class, 'store']);
+    Route::post('/store', [BadgeController::class, 'store']);
     // مسار جلب عنصر الواحد
-    Route::get('/{id}',         [BadgeController::class, 'show']);
+    Route::get('/{id}', [BadgeController::class, 'show']);
     // مسار التعديل على العنصر
     Route::post('/{id}/update', [BadgeController::class, 'update']);
     // مسار حذف العنصر
@@ -96,41 +94,41 @@ Route::prefix('badges')->group(function () {
 // =============================== مسارات الخدمة ====================================
 Route::prefix('products')->group(function () {
     // مسار العرض الخدمات
-    Route::get('/',                     [ProductController::class, 'index']);
-    // مسار العرض الخدمات التي تم تنشيطها 
-    Route::get('/active/status',        [ProductController::class, 'getRroductsActived']);
-    // مسار العرض الخدمات التي تم تنشيطها 
-    Route::get('/reject/status',        [ProductController::class, 'getProductsRejected']);
+    Route::get('/', [ProductController::class, 'index']);
+    // مسار العرض الخدمات التي تم تنشيطها
+    Route::get('/active/status', [ProductController::class, 'getRroductsActived']);
+    // مسار العرض الخدمات التي تم تنشيطها
+    Route::get('/reject/status', [ProductController::class, 'getProductsRejected']);
     // مسار جلب عنصر الواحد
-    Route::get('/{id}',                 [ProductController::class, 'show']);
+    Route::get('/{id}', [ProductController::class, 'show']);
     // مسار تنشيط الخدمة
-    Route::post('/{id}/activeProduct',  [ActivedProductController::class, 'activeProduct']);
+    Route::post('/{id}/activeProduct', [ActivedProductController::class, 'activeProduct']);
     // مسار رفض الخدمة
-    Route::post('/{id}/rejectProduct',  [ActivedProductController::class, 'rejectProduct']);
+    Route::post('/{id}/rejectProduct', [ActivedProductController::class, 'rejectProduct']);
 });
 
 // =============================== مسارات الوسم ====================================
 Route::prefix('tags')->group(function () {
     // مسار العرض
-    Route::get('/',               [TagController::class, 'index']);
+    Route::get('/', [TagController::class, 'index']);
     // مسار انشاء عنصر جديد
-    Route::post('/store',         [TagController::class, 'store']);
+    Route::post('/store', [TagController::class, 'store']);
     // مسار جلب عنصر الواحد
-    Route::get('/{id}',           [TagController::class, 'show']);
+    Route::get('/{id}', [TagController::class, 'show']);
     // مسار التعديل على العنصر
-    Route::post('/{id}/update',   [TagController::class, 'update']);
+    Route::post('/{id}/update', [TagController::class, 'update']);
     // مسار حذف العنصر
-    Route::post('/{id}/delete',   [TagController::class, 'delete']);
+    Route::post('/{id}/delete', [TagController::class, 'delete']);
 });
 // =============================== مسارات الدولة ==================================
 
 Route::prefix('countries')->group(function () {
     // مسار العرض
-    Route::get('/',             [CountryController::class, 'index']);
+    Route::get('/', [CountryController::class, 'index']);
     // مسار انشاء عنصر جديد
-    Route::post('/store',       [CountryController::class, 'store']);
+    Route::post('/store', [CountryController::class, 'store']);
     // مسار جلب عنصر الواحد
-    Route::get('/{id}',         [CountryController::class, 'show']);
+    Route::get('/{id}', [CountryController::class, 'show']);
     // مسار التعديل على العنصر
     Route::post('/{id}/update', [CountryController::class, 'update']);
     // مسار حذف العنصر
@@ -140,27 +138,39 @@ Route::prefix('countries')->group(function () {
 // =============================== مسارات الوسم ====================================
 Route::prefix('skills')->group(function () {
     // مسار العرض
-    Route::get('/',               [SkillController::class, 'index']);
+    Route::get('/', [SkillController::class, 'index']);
     // مسار انشاء عنصر جديد
-    Route::post('/store',         [SkillController::class, 'store']);
+    Route::post('/store', [SkillController::class, 'store']);
     // مسار جلب عنصر الواحد
-    Route::get('/{id}',           [SkillController::class, 'show']);
+    Route::get('/{id}', [SkillController::class, 'show']);
     // مسار التعديل على العنصر
-    Route::post('/{id}/update',   [SkillController::class, 'update']);
+    Route::post('/{id}/update', [SkillController::class, 'update']);
     // مسار حذف العنصر
-    Route::post('/{id}/delete',   [SkillController::class, 'delete']);
+    Route::post('/{id}/delete', [SkillController::class, 'delete']);
 });
 
 // =============================== مسارات الوسم ====================================
 Route::prefix('languages')->group(function () {
     // مسار العرض
-    Route::get('/',               [LanguageController::class, 'index']);
+    Route::get('/', [LanguageController::class, 'index']);
     // مسار انشاء عنصر جديد
-    Route::post('/store',         [LanguageController::class, 'store']);
+    Route::post('/store', [LanguageController::class, 'store']);
     // مسار جلب عنصر الواحد
-    Route::get('/{id}',           [LanguageController::class, 'show']);
+    Route::get('/{id}', [LanguageController::class, 'show']);
     // مسار التعديل على العنصر
-    Route::post('/{id}/update',   [LanguageController::class, 'update']);
+    Route::post('/{id}/update', [LanguageController::class, 'update']);
     // مسار حذف العنصر
-    Route::post('/{id}/delete',   [LanguageController::class, 'delete']);
+    Route::post('/{id}/delete', [LanguageController::class, 'delete']);
 });
+// =============================== مسار اتصل بنا ====================================
+/*Route::prefix('contacts')->group(function () {
+    //  مسار العرض كل الرسائل
+    Route::get('/', [ContactController::class, 'index']);
+    // مسار انشاء عنصر جديد
+    Route::post('/sent_to_client_by_email/{$id}', [ContactController::class, 'sent_to_client_by_email']);
+    // مسار الشكاوي
+    Route::get('/get_messages_complaints', [ContactController::class, 'get_messages_complaints']);
+    //مسار الاستفسارات
+    Route::post('/get_messages_enquiries', [ContactController::class, 'get_messages_enquiries']);
+});
+*/
