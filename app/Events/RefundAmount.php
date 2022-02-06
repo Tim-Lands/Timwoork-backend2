@@ -46,7 +46,7 @@ class RefundAmount implements ShouldBroadcast
     {
         $seller = User::find($this->item->user_id);
         return [
-            'type' => "order",
+            'type' => "amount",
             'to' => 'seller',
             'title' =>  " قام " . $seller->profile->full_name . " بشراء خدمة ",
             'user_sender' => [
