@@ -67,8 +67,13 @@ class NewOrder extends Notification implements ShouldQueue
     {
         return [
             'type' => "order",
+            'to' => "seller",
             'title' =>  " قام " . Auth::user()->profile->full_name . " بشراء خدمة ",
-            'user_sender' => Auth::user()->profile,
+            'user_sender' =>  [
+                'full_name' => Auth::user()->profile->full_name,
+                'username' => Auth::user()->username,
+                'avatar_url' => Auth::user()->profile->avatar_url
+            ],
             'content' => [
                 'item_id' => $this->item->id,
                 'title' => $this->item->title,
