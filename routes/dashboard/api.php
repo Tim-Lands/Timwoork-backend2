@@ -190,4 +190,17 @@ Route::prefix('orders')->group(function () {
     Route::get('/{id}', [OrderController::class, 'show']);
     // عرض عنصر من عناصر الطلبية
     Route::get('item/{id}', [OrderController::class, 'get_order_item']);
+
 });
+// =============================== مسار اتصل بنا ====================================
+/*Route::prefix('contacts')->group(function () {
+    //  مسار العرض كل الرسائل
+    Route::get('/', [ContactController::class, 'index']);
+    // مسار انشاء عنصر جديد
+    Route::post('/sent_to_client_by_email/{$id}', [ContactController::class, 'sent_to_client_by_email']);
+    // مسار الشكاوي
+    Route::get('/get_messages_complaints', [ContactController::class, 'get_messages_complaints']);
+    //مسار الاستفسارات
+    Route::post('/get_messages_enquiries', [ContactController::class, 'get_messages_enquiries']);
+});
+*/
