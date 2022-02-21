@@ -189,4 +189,69 @@ class MyProductController extends Controller
         // رسالة نجاح
         return response()->success(__("messages.oprations.get_data"), $product);
     }
+
+    /**
+     * review => slug عرض الخدمة الواحدة بواسطة
+     *
+     * @param  mixed $slug
+     * @return JsonResponse
+     */
+    public function review(mixed $slug)
+    {
+        // slug جلب الخدمة بواسطة
+        $product = Product::select('id', 'title', 'price', 'duration', 'content', 'category_id', 'profile_seller_id', 'count_buying', 'thumbnail', 'buyer_instruct', 'ratings_count', 'is_active')
+            ->whereSlug($slug)
+            ->where('profile_seller_id', Auth::user()->profile->profile_seller->id)
+            ->withOnly([
+                'subcategory' => function ($q) {
+                    $q->select('id', 'parent_id', 'name_ar', 'name_en', 'name_fr')
+                        ->with('category', function ($q) {
+                            $q->select('id', 'name_ar', 'name_en', 'name_fr')
+                                ->without('subcategories');
+                        })->withCount('products');
+                },
+                'developments' => function ($q) {
+                    $q->select('id', 'title', 'price', 'duration', 'product_id');
+                },
+                'product_tag:id,name',
+                'ratings' => function ($q) {
+                    $q->with('user.profile');
+                },
+                'galaries' => function ($q) {
+                    $q->select('id', 'path', 'product_id');
+                },
+                'video' => function ($q) {
+                    $q->select('id', 'product_id', 'url_video');
+                },
+                'profileSeller' => function ($q) {
+                    $q->select('id', 'profile_id', 'number_of_sales', 'portfolio', 'profile_id', 'seller_badge_id', 'seller_level_id')
+                        ->with([
+                            'badge:id,name_ar,name_en,name_fr',
+                            'level:id,name_ar,name_en,name_fr',
+                            'profile' =>
+                            function ($q) {
+                                $q->select('id', 'user_id', 'first_name', 'last_name', 'avatar', 'precent_rating', 'level_id', 'badge_id', 'country_id')
+                                    ->with(['user' => function ($q) {
+                                        $q->select('id', 'username', 'email', 'phone');
+                                    },
+                                       'badge:id,name_ar,name_en,name_fr',
+                                       'level:id,name_ar,name_en,name_fr',
+                                       'country'
+                                      ])
+                                    ->without('profile_seller');
+                            }
+                        ]);
+                }
+            ])
+            ->withAvg('ratings', 'rating')
+            ->withCount('ratings')
+            ->first();
+        // فحص اذا كان يوجد هذا العنصر
+        if (!$product) {
+            // رسالة خطأ
+            return response()->error(__("messages.errors.element_not_found"), Response::HTTP_FORBIDDEN);
+        }
+        // اظهار العناصر
+        return response()->success(__("messages.oprations.get_data"), $product);
+    }
 }

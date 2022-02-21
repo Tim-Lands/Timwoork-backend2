@@ -12,6 +12,8 @@ use App\Http\Controllers\Dashboard\StatisticContoller;
 use App\Http\Controllers\Dashboard\TagController;
 use App\Http\Controllers\Dashboard\SkillController;
 use App\Http\Controllers\Dashboard\LanguageController;
+use App\Http\Controllers\Dashboard\OrderController;
+use App\Http\Controllers\Dashboard\RejectProductController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -99,12 +101,18 @@ Route::prefix('products')->group(function () {
     Route::get('/active/status', [ProductController::class, 'getRroductsActived']);
     // مسار العرض الخدمات التي تم تنشيطها
     Route::get('/reject/status', [ProductController::class, 'getProductsRejected']);
+    // عرض الرسائل خدمات المرفوضة
+    Route::get('/messages_rejected', [ProductController::class,'get_all_messages_for_rejected_product']);
     // مسار جلب عنصر الواحد
     Route::get('/{id}', [ProductController::class, 'show']);
+    // مسار جلب عنصر الواحد من اجل الفحص
+    Route::get('show_product_checked/{id}', [ProductController::class, 'show_product_for_checked']);
     // مسار تنشيط الخدمة
     Route::post('/{id}/activeProduct', [ActivedProductController::class, 'activeProduct']);
     // مسار رفض الخدمة
     Route::post('/{id}/rejectProduct', [ActivedProductController::class, 'rejectProduct']);
+    // مسار ارسال رسالة رفض الخدمة
+    Route::post('/{id}/send_reject_product', RejectProductController::class);
 });
 
 // =============================== مسارات الوسم ====================================
@@ -161,6 +169,28 @@ Route::prefix('languages')->group(function () {
     Route::post('/{id}/update', [LanguageController::class, 'update']);
     // مسار حذف العنصر
     Route::post('/{id}/delete', [LanguageController::class, 'delete']);
+});
+// =============================== مسار اتصل بنا ====================================
+Route::prefix('contacts')->group(function () {
+    //  مسار العرض كل الرسائل
+    Route::get('/', [ContactController::class, 'index']);
+    // مسار انشاء عنصر جديد
+    Route::post('/sent_to_client_by_email/{$id}', [ContactController::class, 'sent_to_client_by_email']);
+    // مسار الشكاوي
+    Route::get('/get_messages_complaints', [ContactController::class, 'get_messages_complaints']);
+    //مسار الاستفسارات
+    Route::post('/get_messages_enquiries', [ContactController::class, 'get_messages_enquiries']);
+});
+
+/* ------------------------------- مسار طلبيات ------------------------------ */
+Route::prefix('orders')->group(function () {
+    //  عرض كل الطلبيات
+    Route::get('/', [OrderController::class, 'index']);
+    // عرض طلبية الواحدة
+    Route::get('/{id}', [OrderController::class, 'show']);
+    // عرض عنصر من عناصر الطلبية
+    Route::get('item/{id}', [OrderController::class, 'get_order_item']);
+
 });
 // =============================== مسار اتصل بنا ====================================
 /*Route::prefix('contacts')->group(function () {

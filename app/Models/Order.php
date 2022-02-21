@@ -28,7 +28,7 @@ class Order extends Model
      */
     public function scopeSelection(mixed $query): ?object
     {
-        return $query->select('id', 'cart_id', 'payment_method_id',  'created_at');
+        return $query->select('id', 'uuid', 'cart_id', 'created_at');
     }
     // ========================== Relations ============================
     // code

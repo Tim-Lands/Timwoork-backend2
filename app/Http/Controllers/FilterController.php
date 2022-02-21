@@ -12,6 +12,7 @@ class FilterController extends Controller
     {
         $paginate = $request->query('paginate') ? $request->query('paginate') : 12;
         $res = Product::filter()->productActive()
+            ->where('is_active', 1)
             ->with([
                 'profileSeller' => function ($q) {
                     $q->with('profile')
