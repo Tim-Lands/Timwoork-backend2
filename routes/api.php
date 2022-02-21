@@ -76,6 +76,8 @@ Route::prefix('my_products')->middleware('auth:sanctum')->group(function () {
     Route::post('{id}/disactive_product', [MyProductController::class, 'disactive_product_by_seller']);
     // عرض الخدمة
     Route::get('/product/{id}', [MyProductController::class, 'product']);
+    // تعيين الخدمة
+    Route::get('/{slug}', [MyProductController::class, 'review']);
 });
 
 /**
