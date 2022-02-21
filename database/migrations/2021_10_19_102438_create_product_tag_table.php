@@ -23,7 +23,6 @@ class CreateProductTagTable extends Migration
             $table->foreignId('tag_id')->constrained()
                 ->onDelete('CASCADE')
                 ->onUpdate('CASCADE');
-            $table->timestamps();
         });
     }
 

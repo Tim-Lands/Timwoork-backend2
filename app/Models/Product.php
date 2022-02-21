@@ -351,5 +351,15 @@ class Product extends Model
         return $this->morphMany(Conversation::class, 'conversationable');
     }
 
+    /**
+    * reject_product
+    *
+    * @return HasOne
+    */
+    public function reject_product():HasOne
+    {
+        return $this->hasOne(RejectProduct::class, 'product_id');
+    }
+
     /* -------------------------------------------------------------------------- */
 }
