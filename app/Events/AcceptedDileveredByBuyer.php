@@ -10,7 +10,7 @@ use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Queue\SerializesModels;
 
-class RequestRejectOrder implements ShouldBroadcast
+class AcceptedDileveredByBuyer implements ShouldBroadcast
 {
     use Dispatchable, InteractsWithSockets, SerializesModels;
     public $user;
@@ -48,7 +48,7 @@ class RequestRejectOrder implements ShouldBroadcast
             'type' => "order",
             'to' => 'seller',
             'notifications_count' => $this->user->unreadNotifications->count(),
-            'title' =>  " قام " . $buyer->profile->full_name . " بطلب إلغاء الطلبية ",
+            'title' =>  " قام " . $buyer->profile->full_name . " باستلام العمل ",
             'user_sender' => [
                 'full_name' => $buyer->profile->full_name,
                 'username' => $buyer->username,

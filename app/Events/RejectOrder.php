@@ -2,6 +2,7 @@
 
 namespace App\Events;
 
+use App\Models\User;
 use Illuminate\Broadcasting\Channel;
 use Illuminate\Broadcasting\InteractsWithSockets;
 use Illuminate\Broadcasting\PresenceChannel;
@@ -33,6 +34,31 @@ class RejectOrder
      */
     public function broadcastOn()
     {
-        return new PrivateChannel('channel-name');
+        return new PresenceChannel('notify.' . $this->user->id);
+    }
+
+    public function broadcastAs()
+    {
+        return 'notification.sent';
+    }
+
+    public function broadcastWith()
+    {
+        $seller = User::find($this->item->user_id);
+        return [
+            'type' => "order",
+            'to' => 'buyer',
+            'notifications_count' => $this->user->unreadNotifications->count(),
+            'title' =>  " قام " . $seller->profile->full_name . " برفض الطلبية ",
+            'user_sender' => [
+                'full_name' => $seller->profile->full_name,
+                'username' => $seller->username,
+                'avatar_url' => $seller->profile->avatar_url
+            ],
+            'content' => [
+                'item_id' => $this->item->id,
+                'title' => $this->item->title,
+            ],
+        ];
     }
 }

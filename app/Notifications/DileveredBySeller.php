@@ -2,14 +2,13 @@
 
 namespace App\Notifications;
 
-use App\Models\User;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
 use Illuminate\Support\Facades\Auth;
 
-class NewOrder extends Notification implements ShouldQueue
+class DileveredBySeller extends Notification
 {
     use Queueable;
     public $user;
@@ -44,21 +43,18 @@ class NewOrder extends Notification implements ShouldQueue
      */
     public function toMail($notifiable)
     {
-        $seller = User::find($this->item->user_id);
-
         return (new MailMessage)
             ->from('support@timlands.com')
-            ->subject('طلبية جديدة')
-            ->view('emails.orders.new_order', [
+            ->subject('قبول الطلبية')
+            ->view('emails.orders.accept_order', [
                 'type' => "order",
-                'to' => "seller",
-                'title' =>  " قام " . Auth::user()->profile->full_name . " بشراء خدمة من خدماتك ",
-                'user_sender' =>  [
+                'to' => "buyer",
+                'title' =>  " قام " . Auth::user()->profile->full_name . " بإلغاء عملية الشراء التي قام بها",
+                'user_sender' => [
                     'full_name' => Auth::user()->profile->full_name,
                     'username' => Auth::user()->username,
                     'avatar_url' => Auth::user()->profile->avatar_url
-                ],
-                'content' => [
+                ],                'content' => [
                     'item_id' => $this->item->id,
                     'title' => $this->item->title,
                 ],
@@ -73,12 +69,11 @@ class NewOrder extends Notification implements ShouldQueue
      */
     public function toArray($notifiable)
     {
-        $seller = User::find($this->item->user_id);
         return [
             'type' => "order",
-            'to' => "seller",
-            'title' =>  " قام " . Auth::user()->profile->full_name . " بشراء خدمة ",
-            'user_sender' =>  [
+            'to' => "buyer",
+            'title' =>  " قام " . Auth::user()->profile->full_name . " بإلغاء عملية الشراء التي قام بها",
+            'user_sender' => [
                 'full_name' => Auth::user()->profile->full_name,
                 'username' => Auth::user()->username,
                 'avatar_url' => Auth::user()->profile->avatar_url

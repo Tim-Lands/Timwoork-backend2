@@ -45,16 +45,16 @@ class NewOrder implements ShouldBroadcast
 
     public function broadcastWith()
     {
-        $seller = User::find($this->item->user_id);
+        $buyer = $this->item->order->cart->user;
         return [
             'type' => "order",
             'to' => 'seller',
-            'title' =>  " قام " . $seller->profile->full_name . " بشراء خدمة ",
+            'notifications_count' => $this->user->unreadNotifications->count(),
+            'title' =>  " قام " . $buyer->profile->full_name . " بشراء خدمة ",
             'user_sender' => [
-                'notifications_count' => $seller->unreadNotifications->count(),
-                'full_name' => $seller->profile->full_name,
-                'username' => $seller->username,
-                'avatar_url' => $seller->profile->avatar_url
+                'full_name' => $buyer->profile->full_name,
+                'username' => $buyer->username,
+                'avatar_url' => $buyer->profile->avatar_url
             ],
             'content' => [
                 'item_id' => $this->item->id,

@@ -2,8 +2,13 @@
 
 namespace App\Http\Controllers\SalesProcces;
 
+use App\Events\AcceptedDileveredByBuyer;
 use App\Events\AcceptOrder;
 use App\Events\AcceptRequestRejectOrder;
+use App\Events\CanceledOrder;
+use App\Events\CanceledOrderByBuyer;
+use App\Events\CanceledOrderBySeller;
+use App\Events\DileveredBySeller;
 use App\Events\RejectOrder;
 use App\Events\RejectRequestRejectOrder;
 use App\Events\RequestRejectOrder;
@@ -85,7 +90,7 @@ class ItemController extends Controller
             // جلب عنصر الطلبية من اجل قبولها
             $item = Item::whereId($id)->first();
             // جلب مشتري الطلبية
-            $user = $item->order->cart->user;
+            $buyer = $item->order->cart->user;
             // شرط اذا كانت متواجدة
             if (!$item) {
                 // رسالة خطأ
@@ -97,7 +102,7 @@ class ItemController extends Controller
                 // تحويل الطلبية من حالة الابتدائية الى حالة القبول
                 $item->status = Item::STATUS_ACCEPT;
                 $item->save();
-                event(new AcceptOrder($user, $item));
+                event(new AcceptOrder($buyer, $item));
             } else {
                 return response()->error(__("messages.item.not_may_this_operation"), Response::HTTP_NOT_FOUND);
             }
@@ -198,7 +203,7 @@ class ItemController extends Controller
                 $profile->save();
 
                 // إرسال إشعار
-                event(new RejectOrder($user, $item));
+                event(new CanceledOrderByBuyer($user, $item));
             } else {
                 // رسالة خطأ
                 return response()->error(__("messages.item.not_may_this_operation"), Response::HTTP_FORBIDDEN);
@@ -222,9 +227,6 @@ class ItemController extends Controller
         try {
             // جلب عنصر الطلبية من اجل رفضها
             $item = Item::whereId($id)->first();
-
-            // جلب بيانات البائع
-            $user = User::find($item->user_id);
 
             if (!$item) {
                 // رسالة خطأ
@@ -261,8 +263,7 @@ class ItemController extends Controller
                 $profile->save();
 
                 // إرسال إشعار
-                event(new RejectOrder($user, $item)); // تصحيح من طرف عبد الله
-
+                event(new CanceledOrderBySeller($buyer, $item));
             } else {
                 // رسالة خطأ
                 return response()->error(__("messages.item.not_may_this_operation"), Response::HTTP_FORBIDDEN);
@@ -287,6 +288,10 @@ class ItemController extends Controller
         try {
             // جلب عنصر الطلبية من اجل رفع المشروع
             $item = Item::whereId($id)->first();
+
+            // جلب بيانات المشتري
+            $buyer = $item->order->cart->user;
+
             // شرط اذا كانت متواجدة
             if (!$item) {
                 // رسالة خطأ
@@ -338,6 +343,9 @@ class ItemController extends Controller
 
             // انهاء المعاملة
             DB::commit();
+
+            // إرسال الاشعار 
+            event(new DileveredBySeller($buyer, $item));
             // رسالة نجاح عملية رفع المشروع:
             return response()->success(__("messages.item.dilevery_resources_success"), $data_resource);
             /* -------------------------------------------------------------------------- */
@@ -358,6 +366,9 @@ class ItemController extends Controller
         try {
             // جلب المشروع
             $item = Item::find($id);
+
+            // جلب بيانات البائع
+            $user = User::find($item->user_id);
             // شرط اذا كانت حالة الطلبية في قيد التنفيذ
             if ($item->status == Item::STATUS_DILEVERED) {
                 //  قبول المشروع اكتمال الطلبية
@@ -368,6 +379,9 @@ class ItemController extends Controller
             } else {
                 return response()->error(__("messages.item.not_may_this_operation"), Response::HTTP_NOT_FOUND);
             }
+
+            // ارسال الاشعار 
+            event(new AcceptedDileveredByBuyer($user, $item));
             // رسالة نجاح عملية تسليم المشروع:
             return response()->success(__('messages.item.resource_dilevered'));
         } catch (Exception $ex) {
@@ -473,6 +487,7 @@ class ItemController extends Controller
                     // انشاء مبلغ جديد
                     $amount = Amount::create([
                         'amount' => $item_amount,
+                        'wallet_id' => $wallet->id,
                         'item_id' => $item->id,
                         'status' => Amount::WITHDRAWABLE_AMOUNT
                     ]);

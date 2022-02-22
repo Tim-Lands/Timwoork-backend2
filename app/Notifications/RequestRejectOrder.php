@@ -48,6 +48,7 @@ class RequestRejectOrder extends Notification
             ->subject('طلب رفض الطلبية')
             ->view('emails.orders.request_reject_order', [
                 'type' => "order",
+                'to' => "seller",
                 'title' =>  " قام " . Auth::user()->profile->full_name . " بطلب إلغاء الطلبية   ",
                 'user_sender' => Auth::user()->profile,
                 'content' => [
@@ -67,6 +68,7 @@ class RequestRejectOrder extends Notification
     {
         return [
             'type' => "order",
+            'to' => "seller",
             'title' =>  " قام " . Auth::user()->profile->full_name . " بطلب إلغاء الطلبية ",
             'user_sender' => Auth::user()->profile,
             'content' => [

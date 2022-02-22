@@ -48,9 +48,9 @@ class AcceptOrder implements ShouldBroadcast
         return [
             'type' => "order",
             'to' => 'buyer',
+            'notifications_count' => $this->user->unreadNotifications->count(),
             'title' =>  " قام " . $seller->profile->full_name . " بشراء خدمة ",
             'user_sender' => [
-                'notifications_count' => $seller->unreadNotifications->count(),
                 'full_name' => $seller->profile->full_name,
                 'username' => $seller->username,
                 'avatar_url' => $seller->profile->avatar_url

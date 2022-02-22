@@ -48,9 +48,13 @@ class AcceptOrder extends Notification
             ->subject('قبول الطلبية')
             ->view('emails.orders.accept_order', [
                 'type' => "order",
+                'to' => "buyer",
                 'title' =>  " قام " . Auth::user()->profile->full_name . " بقبول الطلبية التي اشتريتها ",
-                'user_sender' => Auth::user()->profile,
-                'content' => [
+                'user_sender' => [
+                    'full_name' => Auth::user()->profile->full_name,
+                    'username' => Auth::user()->username,
+                    'avatar_url' => Auth::user()->profile->avatar_url
+                ],                'content' => [
                     'item_id' => $this->item->id,
                     'title' => $this->item->title,
                 ],
@@ -67,8 +71,13 @@ class AcceptOrder extends Notification
     {
         return [
             'type' => "order",
+            'to' => "buyer",
             'title' =>  " قام " . Auth::user()->profile->full_name . " بقبول الطلبية التي اشتريتها ",
-            'user_sender' => Auth::user()->profile,
+            'user_sender' => [
+                'full_name' => Auth::user()->profile->full_name,
+                'username' => Auth::user()->username,
+                'avatar_url' => Auth::user()->profile->avatar_url
+            ],
             'content' => [
                 'item_id' => $this->item->id,
                 'title' => $this->item->title,

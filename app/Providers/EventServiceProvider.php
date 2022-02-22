@@ -2,16 +2,23 @@
 
 namespace App\Providers;
 
+use App\Events\AcceptedDileveredByBuyer;
 use App\Events\AcceptOrder;
 use App\Events\AcceptRequestRejectOrder;
+use App\Events\CanceledOrderByBuyer;
+use App\Events\DileveredBySeller;
 use App\Events\ForgetPassword;
 use App\Events\NewOrder;
 use App\Events\RejectOrder;
 use App\Events\RejectRequestRejectOrder;
 use App\Events\RequestRejectOrder;
 use App\Events\VerifyEmail;
+use App\Listeners\AcceptedDileveredByBuyerListener;
 use App\Listeners\AcceptOrderListener;
 use App\Listeners\AcceptRequestRejectOrderListener;
+use App\Listeners\CanceledOrderByBuyerListener;
+use App\Listeners\CanceledOrderListener;
+use App\Listeners\DileveredBySellerListener;
 use App\Listeners\ForgetPasswordListener;
 use App\Listeners\NewOrderListener;
 use App\Listeners\RejectOrderListener;
@@ -45,8 +52,17 @@ class EventServiceProvider extends ServiceProvider
         AcceptOrder::class => [
             AcceptOrderListener::class,
         ],
+        CanceledOrderByBuyer::class => [
+            CanceledOrderByBuyerListener::class,
+        ],
         RejectOrder::class => [
             RejectOrderListener::class,
+        ],
+        DileveredBySeller::class => [
+            DileveredBySellerListener::class,
+        ],
+        AcceptedDileveredByBuyer::class => [
+            AcceptedDileveredByBuyerListener::class
         ],
         RequestRejectOrder::class => [
             RequestRejectOrderListener::class,

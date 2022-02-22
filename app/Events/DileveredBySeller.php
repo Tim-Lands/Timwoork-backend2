@@ -2,6 +2,7 @@
 
 namespace App\Events;
 
+use App\Models\User;
 use Illuminate\Broadcasting\Channel;
 use Illuminate\Broadcasting\InteractsWithSockets;
 use Illuminate\Broadcasting\PresenceChannel;
@@ -10,7 +11,7 @@ use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Queue\SerializesModels;
 
-class RequestRejectOrder implements ShouldBroadcast
+class DileveredBySeller implements ShouldBroadcast
 {
     use Dispatchable, InteractsWithSockets, SerializesModels;
     public $user;
@@ -43,16 +44,16 @@ class RequestRejectOrder implements ShouldBroadcast
 
     public function broadcastWith()
     {
-        $buyer = $this->item->order->cart->user;
+        $seller = User::find($this->item->user_id);
         return [
             'type' => "order",
-            'to' => 'seller',
+            'to' => 'buyer',
             'notifications_count' => $this->user->unreadNotifications->count(),
-            'title' =>  " قام " . $buyer->profile->full_name . " بطلب إلغاء الطلبية ",
+            'title' =>  " قام " . $seller->profile->full_name . " بشراء خدمة ",
             'user_sender' => [
-                'full_name' => $buyer->profile->full_name,
-                'username' => $buyer->username,
-                'avatar_url' => $buyer->profile->avatar_url
+                'full_name' => $seller->profile->full_name,
+                'username' => $seller->username,
+                'avatar_url' => $seller->profile->avatar_url
             ],
             'content' => [
                 'item_id' => $this->item->id,
