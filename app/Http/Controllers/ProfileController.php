@@ -60,6 +60,9 @@ class ProfileController extends Controller
     {
         try {
             $user = Auth::user();
+            // تغيير اسم المستخدم 
+            $user->username = $request->username;
+            $user->save();
             // تغيير المعلومات الشخصية
             $user->profile->first_name = $request->first_name;
             $user->profile->last_name = $request->last_name;
