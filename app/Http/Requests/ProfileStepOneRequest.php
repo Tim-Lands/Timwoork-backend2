@@ -32,6 +32,7 @@ class ProfileStepOneRequest extends FormRequest
         $before = $dt1->now()->subYears(19)->format('Y-m-d');
         $after = $dt2->subYears(101)->format('Y-m-d');
         return [
+            'username' => ['required', "unique:users,username," . Auth::id(), 'regex:/(^([a-zA-Z]+)(\d+)?$)/u'],
             'first_name' => 'required|min:3',
             'last_name' => 'required|min:3',
             'date_of_birth' => 'required|date_format:Y-m-d|before_or_equal:' . $before . '|after_or_equal:' . $after,
