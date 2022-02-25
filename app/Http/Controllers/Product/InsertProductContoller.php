@@ -73,7 +73,8 @@ class InsertProductContoller extends Controller
         try {
             //id  جلب العنصر بواسطة
             $product = Product::whereId($id)
-                ->where('profile_seller_id', Auth::user()->profile->profile_seller->id)->first();     // شرط اذا كان العنصر موجود
+                ->where('profile_seller_id', Auth::user()->profile->profile_seller->id)->first();
+            // شرط اذا كان العنصر موجود
             if (!$product || !is_numeric($id)) {
                 // رسالة خطأ
                 return response()->error(__("messages.errors.element_not_found"), 422);
@@ -96,22 +97,27 @@ class InsertProductContoller extends Controller
             } else {
                 $data['current_step'] = Product::PRODUCT_STEP_ONE;
             }
+            // جلب الوسوم من المستخدم
+            $tag_values = array_map(function ($key) {
+                return $key["value"];
+            }, $request->tags);
             // حلب الوسوم الموجودة داخل القواعد البيانات
-            $tags = Tag::whereIn("name", $request->tags)->get();
+            $tags = Tag::whereIn("name", $tag_values)->get();
+
             // مصفوفة فارغة
             $tags_total = [];
             // جلب الاسماء الوسوم فقط
             $get_name_tags = array_map(function ($key) {
-                return $key["name"] ;
+                return $key["name"];
             }, $tags->toArray());
             // جلب معرفات الوسوم و وضعهم في مصفوفة
             $tags_total = array_map(function ($key) {
-                return $key["id"] ;
+                return $key["id"];
             }, $tags->toArray());
             // فلترة اسماء الوسوم من التكرار المتواجدة في قواعد البيانات
             $filter_tags = array_unique($get_name_tags);
             // جلب الاسماء الجديدة الغير موجودة في قواعد البيانات
-            $new_tags = array_values(array_diff($request->tags, $filter_tags));
+            $new_tags = array_values(array_diff($tag_values, $filter_tags));
             /* --------------------- انشاء المرحلة الاولى في الخدمة --------------------- */
             // بداية المعاملة مع البيانات المرسلة لقاعدة بيانات :
             DB::beginTransaction();
@@ -159,7 +165,7 @@ class InsertProductContoller extends Controller
         try {
             //id  جلب العنصر بواسطة
             $product = Product::whereId($id)
-            ->where('profile_seller_id', Auth::user()->profile->profile_seller->id)->first();
+                ->where('profile_seller_id', Auth::user()->profile->profile_seller->id)->first();
             // جلب عدد المطلبوب من انشاء التطويرات من المستوى
             $number_developments_max = Auth::user()->profile->profile_seller->level->number_developments_max;
             // جلب عدد المطلبوب من السعر التطويرات من المستوى
@@ -281,7 +287,7 @@ class InsertProductContoller extends Controller
             //id  جلب العنصر بواسطة
             $product = Product::whereId($id)
                 ->where('profile_seller_id', Auth::user()->profile->profile_seller->id)
-                ->with(['galaries','video'])
+                ->with(['galaries', 'video'])
                 ->first();
             // شرط اذا كان العنصر موجود
             if (!$product || !is_numeric($id)) {
@@ -349,7 +355,7 @@ class InsertProductContoller extends Controller
         try {
             //id  جلب العنصر بواسطة
             $product = Product::whereId($id)
-            ->where('profile_seller_id', Auth::user()->profile->profile_seller->id)->first();
+                ->where('profile_seller_id', Auth::user()->profile->profile_seller->id)->first();
             // شرط اذا كان العنصر موجود
             if (!$product || !is_numeric($id)) {
                 // رسالة خطأ
@@ -408,8 +414,7 @@ class InsertProductContoller extends Controller
         try {
             //id  جلب العنصر بواسطة
             $product = Product::whereId($id)
-                ->where('profile_seller_id', Auth::user()->profile->profile_seller->id)->first();
-            ;
+                ->where('profile_seller_id', Auth::user()->profile->profile_seller->id)->first();;
             // شرط اذا كان العنصر موجود
             if (!$product || !is_numeric($id)) {
                 // رسالة خطأ
