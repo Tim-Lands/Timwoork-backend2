@@ -8,7 +8,6 @@ use Illuminate\Database\Eloquent\Model;
 class Tag extends Model
 {
     use HasFactory;
-    protected $appends = ['value', 'label'];
     protected $table = 'tags';
     protected $hidden = ['pivot'];
 
@@ -17,15 +16,6 @@ class Tag extends Model
     // ================== Acssesor & mutators ==========================
     // code
 
-    public function getValueAttribute()
-    {
-        return $this->name;
-    }
-
-    public function getLabelAttribute()
-    {
-        return $this->name;
-    }
     // ============================ Scopes =============================
 
     /**
@@ -36,7 +26,7 @@ class Tag extends Model
      */
     public function scopeSelection(mixed $query): ?object
     {
-        return $query->select('id', 'name', 'created_at');
+        return $query->select('id', 'name', 'label', 'value', 'created_at');
     }
     // ========================== Relations ============================
     // code
