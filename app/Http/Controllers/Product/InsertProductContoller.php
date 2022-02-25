@@ -130,7 +130,9 @@ class InsertProductContoller extends Controller
                 foreach ($new_tags as $tag) {
                     // اضافة وسم جديد
                     $tag = Tag::create([
-                        'name' => $tag
+                        'name' => $tag,
+                        'label' => $tag,
+                        'value' => $tag
                     ]);
                     // وضع معرف الوسم في المصفوفة
                     $tags_total[] = $tag->id;
