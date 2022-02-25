@@ -13,7 +13,7 @@ class AddLabelColumnToProductTag extends Migration
      */
     public function up()
     {
-        Schema::table('product_tag', function (Blueprint $table) {
+        Schema::table('tags', function (Blueprint $table) {
             $table->string('label', 100)->nullable();
             $table->string('value', 100)->nullable();
         });
