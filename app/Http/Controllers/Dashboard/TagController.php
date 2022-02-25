@@ -9,6 +9,7 @@ use Exception;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Http\Request;
 
 class TagController extends Controller
 {
@@ -24,6 +25,16 @@ class TagController extends Controller
         // اظهار العناصر
         return response()->success(__("messages.oprations.get_all_data"), $tags);
     }
+
+    public function filter(Request $request): JsonResponse
+    {
+        $q = $request->query('tag');
+        // جلب جميع الوسم عن طريق التصفح
+        $tags = Tag::Selection()->where('name', 'like', '%' . $q . '%')->take(10);
+        // اظهار العناصر
+        return response()->success(__("messages.oprations.get_all_data"), $tags);
+    }
+
 
     /**
      * store => دالة اضافة وسم جديد
