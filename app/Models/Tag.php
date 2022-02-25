@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 class Tag extends Model
 {
     use HasFactory;
+    protected $appends = ['value', 'label'];
     protected $table = 'tags';
     protected $hidden = ['pivot'];
 
@@ -15,6 +16,16 @@ class Tag extends Model
     // code
     // ================== Acssesor & mutators ==========================
     // code
+
+    public function getValueAttribute()
+    {
+        return $this->name;
+    }
+
+    public function getLabelAttribute()
+    {
+        return $this->name;
+    }
     // ============================ Scopes =============================
 
     /**
