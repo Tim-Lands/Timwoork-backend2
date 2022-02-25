@@ -30,7 +30,7 @@ class TagController extends Controller
     {
         $q = $request->query('tag');
         // جلب جميع الوسم عن طريق التصفح
-        $tags = Tag::Selection()->where('name', 'like', '%' . $q . '%')->take(10);
+        $tags = Tag::Selection()->where('name', 'like', '%' . $q . '%')->paginate(10);
         // اظهار العناصر
         return response()->success(__("messages.oprations.get_all_data"), $tags);
     }
