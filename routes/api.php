@@ -12,6 +12,7 @@ use App\Http\Controllers\Auth\UserStatusController;
 use App\Http\Controllers\ChatController;
 use App\Http\Controllers\ContactController;
 use App\Http\Controllers\ConversationController;
+use App\Http\Controllers\Dashboard\TagController;
 use App\Http\Controllers\FilterController;
 use App\Http\Controllers\FrontEndController;
 use App\Http\Controllers\NotificationController;
@@ -287,6 +288,7 @@ Route::get('product/{slug}', [FrontEndController::class, 'show']);
 // ارسال رسالة الى لوحة التحكم
 Route::post('/contactus', [ContactController::class, 'send_to_dashboad']);
 
+Route::get('tags/filter', [TagController::class, 'filter']);
 
 Route::get('/test', function () {
     return 'Hello Tarek';
