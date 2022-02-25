@@ -73,7 +73,8 @@ class InsertProductContoller extends Controller
         try {
             //id  جلب العنصر بواسطة
             $product = Product::whereId($id)
-                ->where('profile_seller_id', Auth::user()->profile->profile_seller->id)->first();     // شرط اذا كان العنصر موجود
+                ->where('profile_seller_id', Auth::user()->profile->profile_seller->id)->first();
+            // شرط اذا كان العنصر موجود
             if (!$product || !is_numeric($id)) {
                 // رسالة خطأ
                 return response()->error(__("messages.errors.element_not_found"), 422);
@@ -96,8 +97,13 @@ class InsertProductContoller extends Controller
             } else {
                 $data['current_step'] = Product::PRODUCT_STEP_ONE;
             }
+            // جلب الوسوم من المستخدم
+            $tag_values = array_map(function ($key) {
+                return $key["value"] ;
+            }, $request->tags);
             // حلب الوسوم الموجودة داخل القواعد البيانات
-            $tags = Tag::whereIn("name", $request->tags)->get();
+            $tags = Tag::whereIn("name", $tag_values)->get();
+
             // مصفوفة فارغة
             $tags_total = [];
             // جلب الاسماء الوسوم فقط
@@ -111,7 +117,7 @@ class InsertProductContoller extends Controller
             // فلترة اسماء الوسوم من التكرار المتواجدة في قواعد البيانات
             $filter_tags = array_unique($get_name_tags);
             // جلب الاسماء الجديدة الغير موجودة في قواعد البيانات
-            $new_tags = array_values(array_diff($request->tags, $filter_tags));
+            $new_tags = array_values(array_diff($tag_values, $filter_tags));
             /* --------------------- انشاء المرحلة الاولى في الخدمة --------------------- */
             // بداية المعاملة مع البيانات المرسلة لقاعدة بيانات :
             DB::beginTransaction();
