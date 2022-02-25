@@ -1,27 +1,22 @@
 <?php
 
-namespace App\Http\Controllers\SalesProcces;
+namespace App\Http\Controllers;
 
-use App\Http\Controllers\Controller;
 use App\Models\Cart;
 use App\Models\Item;
 use App\Models\ItemDateExpired;
 use App\Models\Order;
 use App\Models\Product;
-use App\Traits\Paypal;
-use App\Traits\Stripe;
 use Carbon\Carbon;
 use Exception;
+use Illuminate\Http\Request;
+use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
-use Illuminate\Http\Request;
-use Illuminate\Http\Response;
 
-class OrderController extends Controller
+class OrderTestController extends Controller
 {
-    use Paypal, Stripe;
-
     /**
      * __construct
      *
@@ -40,6 +35,19 @@ class OrderController extends Controller
     public function create_order_with_items()
     {
         try {
+            $items = Item::select('id', 'status', 'profile_seller_id')->with(['item_date_expired' =>
+                function ($q) {
+                    $q->select('id', 'item_id', 'date_expired');
+                },'profileSeller' =>function ($q) {
+                    $q->select('id', 'profile_id')->with('profile', function ($q) {
+                        $q->select('id', 'user_id')->with('user:id')->without('level', 'badge');
+                    })->without('level', 'badge');
+                }])
+                ->where('status', Item::STATUS_PENDING)
+                ->get();
+            foreach ($items as $item) {
+                return Carbon::now()->toDateTimeString() >= $item['item_date_expired']->date_expired;
+            }
             //سلة المشتري
             $cart = Cart::selection()
                 ->with(['cart_items' => function ($q) {
@@ -107,25 +115,7 @@ class OrderController extends Controller
                                         ->toDateTimeString(),
                     'item_id'      => $item->id,
                 ]);
-                // وضع البيانات العناصر السلة في مصفوفة العناصر الطلبية
-                /*$data_items[] = [
-                    'uuid' => Str::uuid(),
-                    'title' => $title_product,
-                    'profile_seller_id' => $user_seller,
-                    'order_id' => $order->id,
-                    'number_product' => $value,
-                    'price_product' => $cart['cart_items'][$key]->price_product,
-                    'duration' => $duration_total,
-                    'status' => Item::STATUS_PENDING,
-                ];*/
             }
-            // اضافة عناصر الطلبية
-            //$order->items()->createMany($data_items);
-            // اضافة مواقيت انتهاء الطبيات:
-            /*$items_ids =Order::where('id', 6)->with('items')->first()['items']->pluck('id');
-            foreach ($items_ids as $id) {
-
-            }*/
             // انهاء المعاملة بشكل جيد :
             DB::commit();
             /* -------------------------------------------------------------------------- */
@@ -138,65 +128,6 @@ class OrderController extends Controller
             return $ex;
             // رسالة خطأ
             return response()->error(__("messages.errors.error_database"), Response::HTTP_FORBIDDEN);
-        }
-    }
-
-    /**
-     * cart_approve
-     *
-     * @return void
-     */
-    public function cart_approve()
-    {
-        $cart = Cart::selection()
-            ->with(['cart_items' => function ($q) {
-                $q->with('cartItem_developments', 'product:title')->get();
-            }])
-            ->where('user_id', Auth::user()->id)
-            ->isnotbuying()
-            ->first();
-        return $this->approve($cart);
-    }
-
-    /**
-     * paypal_charge
-     *
-     * @param  mixed $request
-     * @return void
-     */
-    public function paypal_charge(Request $request)
-    {
-        $cart = Cart::selection()
-            ->with(['cart_items' => function ($q) {
-                $q->with('cartItem_developments')->get();
-            }])
-            ->where('user_id', Auth::user()->id)
-            ->isnotbuying()
-            ->first();
-        $pay =  $this->paypal_purchase($request->token, $cart);
-        if ($pay) {
-            return $this->create_order_with_items();
-        }
-    }
-
-    /**
-     * stripe_charge
-     *
-     * @param  mixed $request
-     * @return void
-     */
-    public function stripe_charge(Request $request)
-    {
-        $cart = Cart::selection()
-            ->with(['cart_items' => function ($q) {
-                $q->with('cartItem_developments')->get();
-            }])
-            ->where('user_id', Auth::user()->id)
-            ->isnotbuying()
-            ->first();
-        $pay = $this->stripe_purchase($request, $cart);
-        if ($pay) {
-            return $this->create_order_with_items();
         }
     }
 }

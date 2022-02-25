@@ -29,6 +29,7 @@ class CreateItemsTable extends Migration
 
             $table->tinyInteger('status')->default(0);
             $table->tinyInteger('duration');
+            $table->datetime('date_expired')->nullable();
             $table->timestamps();
         });
     }

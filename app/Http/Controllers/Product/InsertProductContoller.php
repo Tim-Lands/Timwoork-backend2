@@ -88,7 +88,7 @@ class InsertProductContoller extends Controller
             // انشاء مصفوفة و وضع فيها بيانات المرحلة الاولى
             $data = [
                 'title'             => $request->title,
-                'slug'              => slug_with_arabic($request->title),
+                'slug'              => $product->id .'-'.slug_with_arabic($request->title),
                 'category_id'       =>  (int)$request->subcategory,
             ];
             // دراسة حالة المرحلة

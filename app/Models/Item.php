@@ -26,7 +26,10 @@ class Item extends Model
     const STATUS_SUSPEND                       = 8; // معلقة
     const STATUS_MODIFIED_REQUEST_BUYER        = 9; // طلب تعديل من طرف المشتري
     const STATUS_SUSPEND_CAUSE_MODIFIED        = 10; //  معلقة بسبب طلب التعديل
-
+    const STATUS_CANCELED_BY_SITE              = 11; // ملغية من طرف الموقع بسبب نفاذ وقت المقدر
+    // date_expired
+    const EXPIRED_TIME_NNTIL_SOME_DAYS         = 2;
+    const EXPIRED_ITEM_NULLABLE                = null;
     // ================== Acssesor & mutators ==========================
     // code
     public function getUserIdAttribute()
@@ -35,15 +38,22 @@ class Item extends Model
     }
     // ============================ Scopes =============================
 
-    /**
-     * scopeSelection => دالة من اجل جلب البيانات
-     *
-     * @param  mixed $query
-     * @return object
-     */
-    public function scopeSelection(mixed $query): ?object
+    /* --------------------------------accesor and mutators */
+
+    public function getFullPathAttribute()
     {
-        return $query->select('id', 'order_id', 'status', 'number_product', 'duration', 'price_product', 'profile_seller_id', 'created_at');
+        return url("resources_files/{$this->name}");
+    }
+    /* -------------------------------- Relations ------------------------------- */
+
+    /**
+     * item
+     *
+     * @return BelongsTo
+     */
+    public function item(): BelongsTo
+    {
+        return $this->belongsTo(Item::class);
     }
 
     // ========================== Relations ============================
@@ -106,6 +116,16 @@ class Item extends Model
     public function item_rejected(): HasOne
     {
         return $this->hasOne(ItemOrderRejected::class);
+    }
+
+    /**
+     * item_date_expired
+     *
+     * @return void
+     */
+    public function item_date_expired(): HasOne
+    {
+        return $this->hasOne(ItemDateExpired::class);
     }
 
     /**

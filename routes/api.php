@@ -15,6 +15,7 @@ use App\Http\Controllers\ConversationController;
 use App\Http\Controllers\FilterController;
 use App\Http\Controllers\FrontEndController;
 use App\Http\Controllers\NotificationController;
+use App\Http\Controllers\OrderTestController;
 use App\Http\Controllers\Product\InsertProductContoller;
 use App\Http\Controllers\Product\DeleteProductController;
 use App\Http\Controllers\Product\ShortenerController;
@@ -229,7 +230,8 @@ Route::prefix('cart')->group(function () {
 
 Route::prefix('order')->group(function () {
     // انشاء الطلبية و ارسال الطلبيات للبائعين
-    Route::post('/store', [OrderController::class, 'create_order_with_items']);
+    //Route::post('/store', [OrderController::class, 'create_order_with_items']);
+    Route::post('/store', [OrderTestController::class, 'create_order_with_items']);
     /* ------------------ مسارات المعاملة بين البائع و المشتري ------------------ */
     Route::prefix('items')->group(function () {
         // اظهار الطلبية الواحدة
