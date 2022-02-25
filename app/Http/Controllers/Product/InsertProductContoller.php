@@ -129,7 +129,9 @@ class InsertProductContoller extends Controller
                 // عمل لوب من اجل اضافة كلمة جيدة
                 foreach ($new_tags as $tag) {
                     // اضافة وسم جديد
-                    $tag = Tag::create(['name' => $tag]);
+                    $tag = Tag::create([
+                        'name' => $tag
+                    ]);
                     // وضع معرف الوسم في المصفوفة
                     $tags_total[] = $tag->id;
                 }
