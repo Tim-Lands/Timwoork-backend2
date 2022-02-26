@@ -15,6 +15,7 @@ class Tag extends Model
     // code
     // ================== Acssesor & mutators ==========================
     // code
+
     // ============================ Scopes =============================
 
     /**
@@ -25,7 +26,7 @@ class Tag extends Model
      */
     public function scopeSelection(mixed $query): ?object
     {
-        return $query->select('id', 'name', 'created_at');
+        return $query->select('id', 'name', 'label', 'value', 'created_at');
     }
     // ========================== Relations ============================
     // code
