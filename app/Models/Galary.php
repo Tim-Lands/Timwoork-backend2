@@ -15,16 +15,16 @@ class Galary extends Model
      * @var string
      */
     protected $table = 'galaries';
-    protected $appends = ['full_path_galary'];
+    protected $appends = ['data_url'];
 
     // ===========================Contants =============================
     // code
     // ================== Acssesor & mutators ==========================
     // code
 
-    public function getFullPathGalaryAttribute()
+    public function getDataUrlAttribute()
     {
-        return asset('products/galaries-images/'.$this->path);
+        return asset('products/galaries-images/' . $this->path);
     }
     // ============================ Scopes =============================
     // code
