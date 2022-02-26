@@ -1,27 +1,22 @@
 <?php
 
-namespace App\Http\Controllers\SalesProcces;
+namespace App\Http\Controllers;
 
-use App\Http\Controllers\Controller;
 use App\Models\Cart;
 use App\Models\Item;
 use App\Models\ItemDateExpired;
 use App\Models\Order;
 use App\Models\Product;
-use App\Traits\Paypal;
-use App\Traits\Stripe;
 use Carbon\Carbon;
 use Exception;
+use Illuminate\Http\Request;
+use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
-use Illuminate\Http\Request;
-use Illuminate\Http\Response;
 
-class OrderController extends Controller
+class OrderTestController extends Controller
 {
-    use Paypal, Stripe;
-
     /**
      * __construct
      *
@@ -120,65 +115,6 @@ class OrderController extends Controller
             return $ex;
             // رسالة خطأ
             return response()->error(__("messages.errors.error_database"), Response::HTTP_FORBIDDEN);
-        }
-    }
-
-    /**
-     * cart_approve
-     *
-     * @return void
-     */
-    public function cart_approve()
-    {
-        $cart = Cart::selection()
-            ->with(['cart_items' => function ($q) {
-                $q->with('cartItem_developments', 'product:title')->get();
-            }])
-            ->where('user_id', Auth::user()->id)
-            ->isnotbuying()
-            ->first();
-        return $this->approve($cart);
-    }
-
-    /**
-     * paypal_charge
-     *
-     * @param  mixed $request
-     * @return void
-     */
-    public function paypal_charge(Request $request)
-    {
-        $cart = Cart::selection()
-            ->with(['cart_items' => function ($q) {
-                $q->with('cartItem_developments')->get();
-            }])
-            ->where('user_id', Auth::user()->id)
-            ->isnotbuying()
-            ->first();
-        $pay =  $this->paypal_purchase($request->token, $cart);
-        if ($pay) {
-            return $this->create_order_with_items();
-        }
-    }
-
-    /**
-     * stripe_charge
-     *
-     * @param  mixed $request
-     * @return void
-     */
-    public function stripe_charge(Request $request)
-    {
-        $cart = Cart::selection()
-            ->with(['cart_items' => function ($q) {
-                $q->with('cartItem_developments')->get();
-            }])
-            ->where('user_id', Auth::user()->id)
-            ->isnotbuying()
-            ->first();
-        $pay = $this->stripe_purchase($request, $cart);
-        if ($pay) {
-            return $this->create_order_with_items();
         }
     }
 }

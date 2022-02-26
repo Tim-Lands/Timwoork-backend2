@@ -24,7 +24,10 @@ class Kernel extends ConsoleKernel
      */
     protected function schedule(Schedule $schedule)
     {
-        $schedule->command('inspire')->everyMinute();
+        // الغاء الخدمات في حالة نفاذ وقتها
+        $schedule->command('cancel:request')->everyMinute();
+        // حذف يومي للخدمات التي لم تتم تعبئتها
+        $schedule->command('product:vide')->daily();
     }
 
     /**

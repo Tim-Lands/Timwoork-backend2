@@ -19,6 +19,7 @@ use App\Models\Item;
 use App\Models\ItemOrderModified;
 use App\Models\ItemOrderRejected;
 use App\Models\User;
+use Carbon\Carbon;
 use Exception;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\DB;
@@ -55,6 +56,7 @@ class ItemController extends Controller
                 'item_rejected',
                 'item_modified',
                 'attachments',
+                'item_date_expired',
                 'conversation.messages.user.profile',
                 'conversation.messages.attachments'
             ])
@@ -99,6 +101,10 @@ class ItemController extends Controller
             /* --------------------------- تغيير حالة الطلبية --------------------------- */
             // شرط اذا كانت الحالة الطلبية في حالة الانتظار
             if ($item->status == Item::STATUS_PENDING) {
+                //الغاء وقت الانتهاء الطلبية
+                $item->item_date_expired->update([
+                    'date_expired' => Item::EXPIRED_ITEM_NULLABLE
+                ]);
                 // تحويل الطلبية من حالة الابتدائية الى حالة القبول
                 $item->status = Item::STATUS_ACCEPT;
                 $item->save();
@@ -137,6 +143,10 @@ class ItemController extends Controller
             /* --------------------------- تغيير حالة الطلبية --------------------------- */
             // شرط اذا كانت الحالة الطلبية في حالة الانتظار
             if ($item->status == Item::STATUS_PENDING) {
+                //الغاء وقت الانتهاء الطلبية
+                $item->item_date_expired->update([
+                    'date_expired' => Item::EXPIRED_ITEM_NULLABLE
+                ]);
                 // تحويل الطلبية من حالة الابتدائية الى حالة الرفض
                 $item->status = Item::STATUS_REJECTED_BY_SELLER;
                 $item->save();
@@ -182,6 +192,10 @@ class ItemController extends Controller
             /* --------------------------- تغيير حالة الطلبية --------------------------- */
             // شرط اذا كانت الحالة الطلبية في حالة الانتظار
             if ($item->status == Item::STATUS_PENDING) {
+                //الغاء وقت الانتهاء الطلبية
+                $item->item_date_expired->update([
+                    'date_expired' => Item::EXPIRED_ITEM_NULLABLE
+                ]);
                 // تحويل الطلبية من حالة الابتدائية الى حالة الرفض
                 $item->status = Item::STATUS_CANCELLED_BY_BUYER;
                 $item->save();
@@ -242,6 +256,10 @@ class ItemController extends Controller
             /* --------------------------- تغيير حالة الطلبية --------------------------- */
             // شرط اذا كانت الحالة الطلبية في حالة الانتظار
             if ($item->status == Item::STATUS_ACCEPT) {
+                //الغاء وقت الانتهاء الطلبية
+                $item->item_date_expired->update([
+                    'date_expired' => Item::EXPIRED_ITEM_NULLABLE
+                ]);
                 // تحويل الطلبية من حالة الابتدائية الى حالة الرفض
                 $item->status = Item::STATUS_CANCELLED_BY_SELLER;
                 $item->save();
@@ -344,7 +362,7 @@ class ItemController extends Controller
             // انهاء المعاملة
             DB::commit();
 
-            // إرسال الاشعار 
+            // إرسال الاشعار
             event(new DileveredBySeller($buyer, $item));
             // رسالة نجاح عملية رفع المشروع:
             return response()->success(__("messages.item.dilevery_resources_success"), $data_resource);
@@ -375,12 +393,12 @@ class ItemController extends Controller
                 $item->status = Item::STATUS_FINISHED;
                 $item->save();
 
-                // عبد الله ابعث الدراهم للسيد يرحم والديك و متنساش الاقتطاع
+            // عبد الله ابعث الدراهم للسيد يرحم والديك و متنساش الاقتطاع
             } else {
                 return response()->error(__("messages.item.not_may_this_operation"), Response::HTTP_NOT_FOUND);
             }
 
-            // ارسال الاشعار 
+            // ارسال الاشعار
             event(new AcceptedDileveredByBuyer($user, $item));
             // رسالة نجاح عملية تسليم المشروع:
             return response()->success(__('messages.item.resource_dilevered'));
@@ -420,11 +438,13 @@ class ItemController extends Controller
                 'status' => ItemOrderRejected::PENDING,
                 'item_id'         => $item->id
             ];
-
             /* --------------------------- تغيير حالة الطلبية --------------------------- */
             if ($item->status == Item::STATUS_ACCEPT) {
                 ItemOrderRejected::create($data_request_cancelled_by_buyer);
-
+                //وضع وقت طلب الغاء الطلبية 48 ساعة
+                $item->item_date_expired->update([
+                    'date_expired_request_canceled' => Carbon::now()->addDays(Item::EXPIRED_TIME_NNTIL_SOME_DAYS)->toDateTimeString(),
+                ]);
                 $item->status = Item::STATUS_CANCELLED_REQUEST_BUYER;
                 $item->save();
                 // ارسال الاشعار
@@ -478,6 +498,10 @@ class ItemController extends Controller
                     $item_rejected->update($data_accept_request_by_seller);
 
                     $item_rejected->delete();
+                    //الغاء وقت طلب الغاء الطلبية 48 ساعة
+                    $item->item_date_expired->update([
+                    'date_expired_request_canceled' => Item::EXPIRED_ITEM_NULLABLE,
+                    ]);
                     // رفض الطلبية
                     $item->status = Item::STATUS_CANCELLED_BY_BUYER;
                     $item->save();
@@ -538,13 +562,15 @@ class ItemController extends Controller
             if ($item->status == Item::STATUS_CANCELLED_REQUEST_BUYER) {
                 // شرط اذا كان هناك طلب الغاء و ايضا ارسال عملية طلب من طرف البائع
                 if ($item_rejected && $item_rejected->status == ItemOrderRejected::PENDING) {
-                    // عملية رفع طلب الغاء الطلبية
+                    // عملية رفض طلب الغاء الطلبية
                     $item_rejected->update(['status' =>  ItemOrderRejected::REJECTED]);
-
+                    //الغاء وقت طلب الغاء الطلبية 48 ساعة
+                    $item->item_date_expired->update([
+                        'date_expired_request_canceled' => Item::EXPIRED_ITEM_NULLABLE,
+                    ]);
                     // عملية التعليق الطلبية
                     $item->status = Item::STATUS_SUSPEND;
                     $item->save();
-
                     // ارسال الاشعار
                     event(new RejectRequestRejectOrder($user, $item));
                 } else {
@@ -591,7 +617,7 @@ class ItemController extends Controller
                     // عملية قيد التنفيذ الطلبية
                     $item->status = Item::STATUS_ACCEPT;
                     $item->save();
-                    // ارسال الاشعار
+                // ارسال الاشعار
                     //  event(new RejectRequestRejectOrder($user, $item)); // عبد الله
                 } else {
                     return response()->error(__("messages.item.request_not_found"), Response::HTTP_FORBIDDEN);
@@ -609,7 +635,7 @@ class ItemController extends Controller
     }
     /* --------------------------------  طلب تعديل المشروع ------------------------------- */
     /**
-     * request_cancel_item_by_buyer => طلب الغاء من قبل المشتري
+     * request_modified_by_buyer => طلب تعديل من قبل المشتري
      *
      * @return void
      */
@@ -642,10 +668,16 @@ class ItemController extends Controller
             /* --------------------------- تغيير حالة الطلبية --------------------------- */
             if ($item->status == Item::STATUS_DILEVERED) {
                 ItemOrderModified::create($data_request_modified_by_buyer);
+                //وضع وقت لطلب تعديل الطلبية 48 ساعة
+                $item->item_date_expired->update([
+                    'date_expired_request_modifier' => Carbon::now()
+                                                        ->addDays(Item::EXPIRED_TIME_NNTIL_SOME_DAYS)
+                                                        ->toDateTimeString(),
+                ]);
 
                 $item->status = Item::STATUS_MODIFIED_REQUEST_BUYER;
                 $item->save();
-                // ارسال الاشعار
+            // ارسال الاشعار
                 //event(new RequestRejectOrder($user, $item)); // تعديل في الاشعار لعبد الله
             } else {
                 // رسالة خطأ
@@ -692,12 +724,17 @@ class ItemController extends Controller
                     // عملية قبول طلب الغاء الطلبية
                     // $item_modified->update($data_accept_request_by_seller);
 
+                    //الغاء وقت لطلب تعديل الطلبية 48 ساعة
+                    $item->item_date_expired->update([
+                    'date_expired_request_modifier' => Item::EXPIRED_ITEM_NULLABLE,
+                    ]);
+
                     $item_modified->delete();
                     //  الطلبية قيد التنفيذ
                     $item->status = Item::STATUS_ACCEPT;
                     $item->save();
 
-                    // إرسال الاشعار
+                // إرسال الاشعار
                     //event(new AcceptRequestRejectOrder($buyer, $item));
                 } else {
                     return response()->error(__('messages.item.request_not_found'), Response::HTTP_FORBIDDEN);
@@ -740,11 +777,17 @@ class ItemController extends Controller
                 if ($item_modified && $item_modified->status == ItemOrderModified::PENDING) {
                     // عملية رفض التعديل
                     $item_modified->update(['status' =>  ItemOrderModified::REJECTED]);
+
+                    //الغاء وقت لطلب تعديل الطلبية 48 ساعة
+                    $item->item_date_expired->update([
+                        'date_expired_request_modifier' => Item::EXPIRED_ITEM_NULLABLE
+                    ]);
+
                     // عملية التعليق الطلبية
                     $item->status = Item::STATUS_SUSPEND_CAUSE_MODIFIED;
                     $item->save();
 
-                    // ارسال الاشعار
+                // ارسال الاشعار
                     //event(new RejectRequestRejectOrder($user, $item));
                 } else {
                     return response()->error(__("messages.item.request_not_found"), Response::HTTP_FORBIDDEN);
@@ -790,7 +833,7 @@ class ItemController extends Controller
                     // عملية قيد التنفيذ الطلبية
                     $item->status = Item::STATUS_ACCEPT;
                     $item->save();
-                    // ارسال الاشعار
+                // ارسال الاشعار
                     //  event(new RejectRequestRejectOrder($user, $item)); // عبد الله
                 } else {
                     return response()->error(__("messages.item.request_not_found"), Response::HTTP_FORBIDDEN);

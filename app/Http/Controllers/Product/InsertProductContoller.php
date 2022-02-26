@@ -33,7 +33,7 @@ class InsertProductContoller extends Controller
     {
         try {
             //جلب عدد خدمات
-            $count_products_seller =  Auth::user()->profile->profile_seller->products->count();
+            $count_products_seller =  Auth::user()->profile->profile_seller->products->where('is_vide', 0)->count();
             // جلب عدد المطلبوب من انشاء الخدمة من المستوى
             $number_of_products_seller = Auth::user()->profile->profile_seller->level->products_number_max;
             // شرط اضافة خدمة
@@ -47,7 +47,7 @@ class InsertProductContoller extends Controller
             // عملية انشاء معرف جديد للخدمة
             $product = Product::create([
                 'profile_seller_id' => Auth::user()->profile->profile_seller->id,
-                'is_draft'          => Product::PRODUCT_IS_DRAFT
+                'is_draft'          => Product::PRODUCT_IS_DRAFT,
             ]);
             // انهاء المعاملة بشكل جيد :
             DB::commit();
@@ -88,8 +88,9 @@ class InsertProductContoller extends Controller
             // انشاء مصفوفة و وضع فيها بيانات المرحلة الاولى
             $data = [
                 'title'             => $request->title,
-                'slug'              => slug_with_arabic($request->title),
+                'slug'              => $product->id .'-'.slug_with_arabic($request->title),
                 'category_id'       =>  (int)$request->subcategory,
+                'is_vide'           => 0,
             ];
             // دراسة حالة المرحلة
             if ($product->is_completed == 1 || $product->current_step > Product::PRODUCT_STEP_ONE) {
@@ -99,7 +100,7 @@ class InsertProductContoller extends Controller
             }
             // جلب الوسوم من المستخدم
             $tag_values = array_map(function ($key) {
-                return $key["value"];
+                return strtolower($key["value"]) 
             }, $request->tags);
             // حلب الوسوم الموجودة داخل القواعد البيانات
             $tags = Tag::whereIn("name", $tag_values)->get();
