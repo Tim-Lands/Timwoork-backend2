@@ -98,9 +98,10 @@ class InsertProductContoller extends Controller
             } else {
                 $data['current_step'] = Product::PRODUCT_STEP_ONE;
             }
+
             // جلب الوسوم من المستخدم
             $tag_values = array_map(function ($key) {
-                return strtolower($key["value"]) 
+                return strtolower($key["value"]) ;
             }, $request->tags);
             // حلب الوسوم الموجودة داخل القواعد البيانات
             $tags = Tag::whereIn("name", $tag_values)->get();
@@ -419,7 +420,8 @@ class InsertProductContoller extends Controller
         try {
             //id  جلب العنصر بواسطة
             $product = Product::whereId($id)
-                ->where('profile_seller_id', Auth::user()->profile->profile_seller->id)->first();;
+                ->where('profile_seller_id', Auth::user()->profile->profile_seller->id)->first();
+            ;
             // شرط اذا كان العنصر موجود
             if (!$product || !is_numeric($id)) {
                 // رسالة خطأ

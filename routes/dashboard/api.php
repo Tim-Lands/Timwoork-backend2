@@ -14,6 +14,7 @@ use App\Http\Controllers\Dashboard\SkillController;
 use App\Http\Controllers\Dashboard\LanguageController;
 use App\Http\Controllers\Dashboard\OrderController;
 use App\Http\Controllers\Dashboard\RejectProductController;
+use App\Http\Controllers\Dashboard\ContactController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -190,10 +191,9 @@ Route::prefix('orders')->group(function () {
     Route::get('/{id}', [OrderController::class, 'show']);
     // عرض عنصر من عناصر الطلبية
     Route::get('item/{id}', [OrderController::class, 'get_order_item']);
-
 });
 // =============================== مسار اتصل بنا ====================================
-/*Route::prefix('contacts')->group(function () {
+Route::prefix('contacts')->group(function () {
     //  مسار العرض كل الرسائل
     Route::get('/', [ContactController::class, 'index']);
     // مسار انشاء عنصر جديد
@@ -203,4 +203,3 @@ Route::prefix('orders')->group(function () {
     //مسار الاستفسارات
     Route::post('/get_messages_enquiries', [ContactController::class, 'get_messages_enquiries']);
 });
-*/

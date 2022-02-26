@@ -282,11 +282,13 @@ Route::get('/categories', [FrontEndController::class, 'get_all_categories']);
 Route::get('/get_categories', [FrontEndController::class, 'get_categories']);
 // عرض التصنيفات الفرعية
 Route::get('/get_categories/{id}', [FrontEndController::class, 'get_subcategories']);
+// عرض التصنيف الفرعي مع خدماته
+Route::get('/get_products_subcategory/{id}', [FrontEndController::class, 'get_products_by_subcategory']);
 // عرض الخدمة الواحدة
 Route::get('product/{slug}', [FrontEndController::class, 'show']);
 
 // ارسال رسالة الى لوحة التحكم
-Route::post('/contactus', [ContactController::class, 'send_to_dashboad']);
+Route::post('/contactus', [FrontEndController::class, 'send_to_dashboad']);
 
 Route::get('tags/filter', [TagController::class, 'filter']);
 
