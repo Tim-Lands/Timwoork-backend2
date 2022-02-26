@@ -36,6 +36,7 @@ class BuyerOrderController extends Controller
                 },
                 'item_rejected',
                 'item_modified',
+                'item_date_expired',
                 'attachments',
                 'conversation.messages.user.profile',
                 'conversation.messages.attachments'

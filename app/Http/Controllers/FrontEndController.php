@@ -59,7 +59,7 @@ class FrontEndController extends Controller
         $subcategories = $catagory->selection()->with('subCategories', function ($q) {
             $q->selection()
             ->withCount('products')
-            ->orderBy('products_count', 'desc')
+            ->orderBy('id', 'asc')
             ->take(Category::SUBCATEGORY_DISPLAY)
             ->get();
         })->first();

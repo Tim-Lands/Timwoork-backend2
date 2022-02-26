@@ -32,6 +32,7 @@ class SellerOrderController extends Controller
                     'profileSeller.profile',
                     'item_rejected',
                     'item_modified',
+                    'item_date_expired',
                     'attachments',
                     'conversation.messages.user.profile',
                     'conversation.messages.attachments'])
