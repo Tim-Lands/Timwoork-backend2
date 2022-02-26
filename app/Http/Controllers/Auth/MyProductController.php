@@ -18,7 +18,9 @@ class MyProductController extends Controller
     {
         $paginate = $request->query('paginate') ? $request->query('paginate') : 10;
         $user = Auth::user();
-        $products = $user->profile->profile_seller->products()->paginate($paginate)
+        $products = $user->profile->profile_seller->products()
+            ->where('is_vide', 0)
+            ->paginate($paginate)
             ->makeHidden([
                 'buyer_instruct', 'content', 'profile_seller_id', 'category_id', 'duration'
             ]);
@@ -34,7 +36,9 @@ class MyProductController extends Controller
         $paginate = $request->query('paginate') ? $request->query('paginate') : 10;
         $user = Auth::user();
         $products = $user->profile->profile_seller->products()->productActive()
-                    ->where('is_active', Product::PRODUCT_ACTIVE)->paginate($paginate)
+                    ->where('is_active', Product::PRODUCT_ACTIVE)
+                    ->where('is_vide', 0)
+                    ->paginate($paginate)
             ->makeHidden([
                 'buyer_instruct', 'content', 'profile_seller_id', 'category_id', 'duration'
             ]);
@@ -50,6 +54,7 @@ class MyProductController extends Controller
         $user = Auth::user();
         $products = $user->profile->profile_seller->products()->productActive()
                          ->where('is_active', Product::PRODUCT_REJECT)
+                         ->where('is_vide', 0)
                          ->paginate($paginate)
                          ->makeHidden([
                             'buyer_instruct', 'content', 'profile_seller_id', 'category_id', 'duration'
@@ -65,7 +70,8 @@ class MyProductController extends Controller
     {
         $paginate = $request->query('paginate') ? $request->query('paginate') : 10;
         $user = Auth::user();
-        $products = $user->profile->profile_seller->products()->productReject()->paginate($paginate)
+        $products = $user->profile->profile_seller->products()->productReject()
+                    ->where('is_vide', 0)->paginate($paginate)
             ->makeHidden([
                 'buyer_instruct', 'content', 'profile_seller_id', 'category_id', 'duration'
             ]);
@@ -79,7 +85,9 @@ class MyProductController extends Controller
     {
         $paginate = $request->query('paginate') ? $request->query('paginate') : 10;
         $user = Auth::user();
-        $products = $user->profile->profile_seller->products()->whereNull('status')->paginate($paginate)
+        $products = $user->profile->profile_seller->products()
+                    ->where('is_vide', 1)
+                    ->whereNull('status')->paginate($paginate)
             ->makeHidden([
                 'buyer_instruct', 'content', 'profile_seller_id', 'category_id', 'duration'
             ]);
@@ -93,8 +101,11 @@ class MyProductController extends Controller
     {
         $paginate = $request->query('paginate') ? $request->query('paginate') : 10;
         $user = Auth::user();
-        $products = $user->profile->profile_seller->products()->where('is_draft', Product::PRODUCT_IS_DRAFT)->paginate($paginate)
-            ->makeHidden([
+        $products = $user->profile->profile_seller->products()
+                    ->where('is_vide', 0)
+                    ->where('is_draft', Product::PRODUCT_IS_DRAFT)
+                    ->paginate($paginate)
+                    ->makeHidden([
                 'buyer_instruct', 'content', 'profile_seller_id', 'category_id', 'duration'
             ]);
         return response()->success(__("messages.oprations.get_all_data"), $products);
@@ -112,6 +123,7 @@ class MyProductController extends Controller
             // جلب الخدمة
             $product = Product::ProductActive()
             ->whereId($id)
+            ->where('is_vide', 0)
             ->where('profile_seller_id', Auth::user()->profile->profile_seller->id)
             ->where('is_completed', Product::PRODUCT_IS_COMPLETED)
             ->where('is_draft', Product::PRODUCT_IS_NOT_DRAFT)
@@ -147,6 +159,7 @@ class MyProductController extends Controller
             // جلب الخدمة
             $product = Product::ProductActive()
             ->whereId($id)
+            ->where('is_vide', 0)
             ->where('profile_seller_id', Auth::user()->profile->profile_seller->id)
             ->where('is_completed', Product::PRODUCT_IS_COMPLETED)
             ->where('is_draft', Product::PRODUCT_IS_NOT_DRAFT)
@@ -200,8 +213,9 @@ class MyProductController extends Controller
     public function review(mixed $slug)
     {
         // slug جلب الخدمة بواسطة
-        $product = Product::select('id', 'title', 'price', 'duration', 'content', 'category_id', 'profile_seller_id', 'count_buying', 'thumbnail', 'is_completed', 'is_draft', 'status', 'buyer_instruct', 'ratings_count', 'is_active')
+        $product = Product::select('id', 'title', 'price', 'duration', 'content', 'category_id', 'profile_seller_id', 'count_buying', 'is_vide', 'thumbnail', 'is_completed', 'is_draft', 'status', 'buyer_instruct', 'ratings_count', 'is_active')
             ->whereSlug($slug)
+            ->where('is_vide', 0)
             ->where('profile_seller_id', Auth::user()->profile->profile_seller->id)
             ->withOnly([
                 'subcategory' => function ($q) {

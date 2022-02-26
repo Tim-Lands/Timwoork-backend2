@@ -54,11 +54,12 @@ class CancelRequestItem extends Command
         // عمل لووب من اجل فحص وقت النافذ للطلبية
         foreach ($items as $item) {
             if ($item['item_date_expired']->date_expired != null && Carbon::now()->toDateTimeString() >= $item['item_date_expired']->date_expired) {
-                $item->status = Item::STATUS_CANCELLED_BY_BUYER;
+                $item->status = Item::STATUS_CANCELED_BY_SITE;
                 $item->save();
-                // ammount => عبد الله
 
-                // notification => لعبد الله
+                // ammount
+
+                // notification
             }
         }
         return 0;

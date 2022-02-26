@@ -9,7 +9,6 @@ use App\Http\Controllers\Auth\MyProductController;
 use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\Auth\SellerOrderController;
 use App\Http\Controllers\Auth\UserStatusController;
-use App\Http\Controllers\ChatController;
 use App\Http\Controllers\ContactController;
 use App\Http\Controllers\ConversationController;
 use App\Http\Controllers\FilterController;
@@ -26,7 +25,6 @@ use App\Http\Controllers\SalesProcces\OrderController;
 use App\Http\Controllers\SalesProcces\ItemController;
 use App\Http\Controllers\SearchController;
 use App\Http\Controllers\Product\RatingController;
-use App\Mail\ContactMail;
 use Illuminate\Support\Facades\Broadcast;
 use Illuminate\Support\Facades\Route;
 
@@ -231,7 +229,7 @@ Route::prefix('cart')->group(function () {
 Route::prefix('order')->group(function () {
     // انشاء الطلبية و ارسال الطلبيات للبائعين
     //Route::post('/store', [OrderController::class, 'create_order_with_items']);
-    Route::post('/store', [OrderTestController::class, 'create_order_with_items']);
+    Route::post('/store', [OrderController::class, 'create_order_with_items']);
     /* ------------------ مسارات المعاملة بين البائع و المشتري ------------------ */
     Route::prefix('items')->group(function () {
         // اظهار الطلبية الواحدة
@@ -289,10 +287,6 @@ Route::get('product/{slug}', [FrontEndController::class, 'show']);
 // ارسال رسالة الى لوحة التحكم
 Route::post('/contactus', [ContactController::class, 'send_to_dashboad']);
 
-
-Route::get('/test', function () {
-    return 'Hello Tarek';
-});
 // مسار عملية الفلترة
 Route::prefix('filter')->group(function () {
     Route::get('/', FilterController::class);

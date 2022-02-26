@@ -35,19 +35,6 @@ class OrderTestController extends Controller
     public function create_order_with_items()
     {
         try {
-            $items = Item::select('id', 'status', 'profile_seller_id')->with(['item_date_expired' =>
-                function ($q) {
-                    $q->select('id', 'item_id', 'date_expired');
-                },'profileSeller' =>function ($q) {
-                    $q->select('id', 'profile_id')->with('profile', function ($q) {
-                        $q->select('id', 'user_id')->with('user:id')->without('level', 'badge');
-                    })->without('level', 'badge');
-                }])
-                ->where('status', Item::STATUS_PENDING)
-                ->get();
-            foreach ($items as $item) {
-                return Carbon::now()->toDateTimeString() >= $item['item_date_expired']->date_expired;
-            }
             //سلة المشتري
             $cart = Cart::selection()
                 ->with(['cart_items' => function ($q) {

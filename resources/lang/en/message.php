@@ -41,6 +41,7 @@ return [
         "title_required" => "The title of the service is required",
         "subcategory_required" => "subcategory is required",
         "tags_required" => "tags are required",
+        "tags_value_required" => "No tags should be empty",
         "content_required" => "content_required",
         "buyer_instruct_required" => "Service purchase instructions required",
         "price_required" => "price required",

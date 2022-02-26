@@ -107,25 +107,7 @@ class OrderController extends Controller
                                         ->toDateTimeString(),
                     'item_id'      => $item->id,
                 ]);
-                // وضع البيانات العناصر السلة في مصفوفة العناصر الطلبية
-                /*$data_items[] = [
-                    'uuid' => Str::uuid(),
-                    'title' => $title_product,
-                    'profile_seller_id' => $user_seller,
-                    'order_id' => $order->id,
-                    'number_product' => $value,
-                    'price_product' => $cart['cart_items'][$key]->price_product,
-                    'duration' => $duration_total,
-                    'status' => Item::STATUS_PENDING,
-                ];*/
             }
-            // اضافة عناصر الطلبية
-            //$order->items()->createMany($data_items);
-            // اضافة مواقيت انتهاء الطبيات:
-            /*$items_ids =Order::where('id', 6)->with('items')->first()['items']->pluck('id');
-            foreach ($items_ids as $id) {
-
-            }*/
             // انهاء المعاملة بشكل جيد :
             DB::commit();
             /* -------------------------------------------------------------------------- */
