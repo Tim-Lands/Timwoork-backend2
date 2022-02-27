@@ -38,7 +38,7 @@ class RemoveProductsVide extends Command
      */
     public function handle()
     {
-        Product::select('id', 'is_vide')->where('is_vide', 1)->delete();
+        Product::select('id', 'is_vide')->where('is_vide', 1)->forceDelete();
         return 0;
     }
 }

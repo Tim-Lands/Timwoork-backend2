@@ -99,11 +99,13 @@ Route::prefix('products')->group(function () {
     // مسار العرض الخدمات
     Route::get('/', [ProductController::class, 'index']);
     // مسار العرض الخدمات التي تم تنشيطها
-    Route::get('/active/status', [ProductController::class, 'getRroductsActived']);
+    Route::get('/active/status', [ProductController::class, 'getProductsActived']);
     // مسار العرض الخدمات التي تم تنشيطها
     Route::get('/reject/status', [ProductController::class, 'getProductsRejected']);
     // عرض الرسائل خدمات المرفوضة
     Route::get('/messages_rejected', [ProductController::class,'get_all_messages_for_rejected_product']);
+    // جلب الخدمات المحذوفة
+    Route::get('/get_products_soft_deleted', [ProductController::class, 'get_products_soft_deleted']);
     // مسار جلب عنصر الواحد
     Route::get('/{id}', [ProductController::class, 'show']);
     // مسار جلب عنصر الواحد من اجل الفحص
@@ -114,6 +116,10 @@ Route::prefix('products')->group(function () {
     Route::post('/{id}/rejectProduct', [ActivedProductController::class, 'rejectProduct']);
     // مسار ارسال رسالة رفض الخدمة
     Route::post('/{id}/send_reject_product', RejectProductController::class);
+    // استرجاع الخدمة المحذوفة
+    Route::post('/{id}/restore_product_deleted', [ProductController::class, 'restore_product_deleted']);
+    // حذف الخدمة نهائيا
+    Route::post('/{id}/force_delete_product', [ProductController::class, 'force_delete_product']);
 });
 
 // =============================== مسارات الوسم ====================================
@@ -191,15 +197,4 @@ Route::prefix('orders')->group(function () {
     Route::get('/{id}', [OrderController::class, 'show']);
     // عرض عنصر من عناصر الطلبية
     Route::get('item/{id}', [OrderController::class, 'get_order_item']);
-});
-// =============================== مسار اتصل بنا ====================================
-Route::prefix('contacts')->group(function () {
-    //  مسار العرض كل الرسائل
-    Route::get('/', [ContactController::class, 'index']);
-    // مسار انشاء عنصر جديد
-    Route::post('/sent_to_client_by_email/{$id}', [ContactController::class, 'sent_to_client_by_email']);
-    // مسار الشكاوي
-    Route::get('/get_messages_complaints', [ContactController::class, 'get_messages_complaints']);
-    //مسار الاستفسارات
-    Route::post('/get_messages_enquiries', [ContactController::class, 'get_messages_enquiries']);
 });
