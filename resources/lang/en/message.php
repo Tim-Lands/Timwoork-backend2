@@ -108,6 +108,7 @@ return [
         "add_success" =>"The item was added successfully",
         "update_success" =>"The item has been modified successfully",
         "delete_success" =>"The item was deleted successfully",
+        "restore_delete_success" =>"The item was restored successfully",
         "get_all_data" => "get items successfully",
         'nothing_this_operation' => 'You cannot perform this operation, you will lose your data'
     ],

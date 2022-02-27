@@ -109,6 +109,7 @@ return [
         "add_success" =>"تم إضافة العنصر بنجاح",
         "update_success"    =>"تم تعديل على العنصر بنجاح",
         "delete_success" =>"تم حذف العنصر بنجاح",
+        "restore_delete_success" =>"تم استعادة العنصر بنجاح",
         "get_all_data" => "جلب العناصر بنجاح",
         'nothing_this_operation' => 'لا يمكنك إجراء هذه العملية , تفقد بياناتك'
     ],

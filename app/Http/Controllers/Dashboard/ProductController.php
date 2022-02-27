@@ -5,8 +5,11 @@ namespace App\Http\Controllers\Dashboard;
 use App\Http\Controllers\Controller;
 use App\Models\Product;
 use App\Models\RejectProduct;
+use Exception;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Response;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Storage;
 
 class ProductController extends Controller
 {
@@ -125,7 +128,7 @@ class ProductController extends Controller
      *
      * @return JsonResponse
      */
-    public function getRroductsActived(): JsonResponse
+    public function getProductsActived(): JsonResponse
     {
         // جلب جميع الخدمات التي تم تنشيطها
         $products_actived = Product::selection()->productActive()->with(['category', 'profileSeller'])->get();
@@ -144,5 +147,111 @@ class ProductController extends Controller
         $products_rejected = Product::selection()->productReject()->with(['category', 'profileSeller'])->get();
         // اظهار العناصر
         return response()->success(__("messages.dashboard.get_product_rejected"), $products_rejected);
+    }
+
+    /**
+     * products_soft_deleted => جلب الخدمات المحذوفة
+     *
+     * @return void
+     */
+    public function get_products_soft_deleted()
+    {
+        //استعلام جلب الخدمات المحذوفة
+        $products = Product::selection()->with(['profileSeller'=> function ($q) {
+            $q->select('id', 'profile_id')
+            ->with('profile', function ($q) {
+                $q->select('id', 'first_name', 'last_name', 'user_id')
+                ->with('user:id,username')
+                ->without('level', 'badge');
+            })
+            ->without('level', 'badge');
+        },'subcategory'=> function ($q) {
+            $q->select('id', 'name_ar', 'name_en', 'name_fr')
+            ->with('category:name_ar,name_en,name_fr');
+        }])
+        ->onlyTrashed()
+        ->get();
+
+        // اظهار العناصر
+        return response()->success(__("messages.oprations.get_all_data"), $products);
+    }
+
+    /**
+     * restore_product_deleted => استرجاع الخدمة المحذوفة
+     *
+     * @param  mixed $id
+     * @return void
+     */
+    public function restore_product_deleted($id)
+    {
+        try {
+            // جلب الخدمة المحذوفة
+            $product = Product::where('id', $id)->onlyTrashed()->first();
+            // شرط اذا كان العنصر موجود
+            if (!$product || !is_numeric($id)) {
+                // رسالة خطأ
+                return response()->error(__("messages.errors.element_not_found"), 403);
+            }
+            /* ------------------------- استعادة الخدمة المحذوفة ------------------------ */
+            $product->restore();
+            //رسالة نجاح العملية
+            return response()->success(__("messages.oprations.restore_delete_success"), $product);
+        } catch (Exception $ex) {
+            return $ex;
+            return response()->error(__("messages.errors.error_database"), Response::HTTP_FORBIDDEN);
+        }
+    }
+
+    /**
+     * force_delete_product => الحذف النهائي للخدمة
+     *
+     * @param  mixed $id
+     * @return void
+     */
+    public function force_delete_product($id)
+    {
+        try {
+            // جلب الخدمة المحذوفة
+            $product = Product::where('id', $id)->onlyTrashed()->first();
+            // شرط اذا كان العنصر موجود
+            if (!$product || !is_numeric($id)) {
+                // رسالة خطأ
+                return response()->error(__("messages.errors.element_not_found"), 403);
+            }
+            // ============================== حذف الصور و المفات ==================================
+            // حذف الصورة من مجلد
+            if ($product->thumbnail) {
+                Storage::has("products/thumbnails/{$product->thumbnail}") ? Storage::delete("products/thumbnails/{$product->thumbnail}") : '';
+            }
+
+            // جلب الصور مع الخدمة
+            $get_galaries_images =  $product->whereId($id)->onlyTrashed()->with(['galaries' => function ($q) {
+                $q->select('id', 'path', 'product_id')->get();
+            }])->first()->galaries;
+
+            // حذف الصور اذا وجدت فالمجلد
+            if ($get_galaries_images) {
+                foreach ($get_galaries_images as $key => $image) {
+                    Storage::has("products/galaries-images/{$image['path']}") ? Storage::delete("products/galaries-images/{$image['path']}") : '';
+                }
+            }
+            // ====================================================================================
+            // ============================== حذف الخدمة ====================================:
+            // بداية المعاملة مع البيانات المرسلة لقاعدة بيانات :
+            DB::beginTransaction();
+            // عملية حذف الخدمة
+            $product->forceDelete();
+            // انهاء المعاملة بشكل جيد :
+            DB::commit();
+            // ==============================================================================
+            // رسالة نجاح عملية الاضافة:
+            return response()->success(__("messages.oprations.delete_success"), $product);
+        } catch (Exception $ex) {
+            return $ex;
+            // لم تتم المعاملة بشكل نهائي و لن يتم ادخال اي بيانات لقاعدة البيانات
+            DB::rollback();
+            // رسالة خطأ
+            return response()->error(__("messages.errors.error_database"), 403);
+        }
     }
 }
