@@ -24,7 +24,7 @@ class CartItem extends Model
      * @var array
      */
 
-    protected $appends = ['duration_product'];
+    protected $appends = ['duration_product','price_product_origine'];
 
     /**
      * The attributes that should be hidden for arrays.
@@ -54,6 +54,16 @@ class CartItem extends Model
     public function getDurationProductAttribute()
     {
         return $this->product->duration;
+    }
+
+    /**
+     * getDurationProductAttribute => جلب مدة الخدمة
+     *
+     * @return void
+     */
+    public function getPriceProductOrigineAttribute()
+    {
+        return $this->product->price;
     }
 
     // ============================ Scopes =============================

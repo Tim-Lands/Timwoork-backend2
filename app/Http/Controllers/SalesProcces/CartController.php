@@ -42,6 +42,18 @@ class CartController extends Controller
             ->where('user_id', Auth::user()->id)
             ->isnotbuying()
             ->first();
+        // في حالة ما اذا كانت السلة فارغة
+        if (!$cart) {
+            $cart = [
+                'cart_items_count' => 0,
+                'cart_items' => [],
+                'is_buying' => 0,
+                'price_with_tax' => 0.00,
+                'tax' => 0.00,
+                'total_price' => 0.00,
+                'user_id' => auth()->user()->id,
+            ];
+        }
         // اظهار السلة مع عناصرها
         return response()->success(__('messages.oprations.get_data'), $cart);
     }
