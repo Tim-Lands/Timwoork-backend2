@@ -15,6 +15,8 @@ use App\Http\Controllers\Dashboard\LanguageController;
 use App\Http\Controllers\Dashboard\OrderController;
 use App\Http\Controllers\Dashboard\RejectProductController;
 use App\Http\Controllers\Dashboard\ContactController;
+use App\Http\Controllers\Dashboard\SellerBadgeController;
+use App\Http\Controllers\Dashboard\SellerLevelController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -79,6 +81,21 @@ Route::prefix('levels')->group(function () {
     Route::post('/{id}/delete', [LevelController::class, 'delete']);
 });
 
+// =============================== مسارات المستوى البائع ==================================
+
+Route::prefix('levels_sellers')->group(function () {
+    // مسار العرض
+    Route::get('/', [SellerLevelController::class, 'index']);
+    // مسار انشاء عنصر جديد
+    Route::post('/store', [SellerLevelController::class, 'store']);
+    // مسار جلب عنصر الواحد
+    Route::get('/{id}', [SellerLevelController::class, 'show']);
+    // مسار التعديل على العنصر
+    Route::post('/{id}/update', [SellerLevelController::class, 'update']);
+    // مسار حذف العنصر
+    Route::post('/{id}/delete', [SellerLevelController::class, 'delete']);
+});
+
 // =============================== مسارات الشارة ====================================
 
 Route::prefix('badges')->group(function () {
@@ -93,7 +110,20 @@ Route::prefix('badges')->group(function () {
     // مسار حذف العنصر
     Route::post('/{id}/delete', [BadgeController::class, 'delete']);
 });
+// =============================== مسارات الشارة البائع ====================================
 
+Route::prefix('badges_sellers')->group(function () {
+    // مسار العرض
+    Route::get('/', [SellerBadgeController::class, 'index']);
+    // مسار انشاء عنصر جديد
+    Route::post('/store', [SellerBadgeController::class, 'store']);
+    // مسار جلب عنصر الواحد
+    Route::get('/{id}', [SellerBadgeController::class, 'show']);
+    // مسار التعديل على العنصر
+    Route::post('/{id}/update', [SellerBadgeController::class, 'update']);
+    // مسار حذف العنصر
+    Route::post('/{id}/delete', [SellerBadgeController::class, 'delete']);
+});
 // =============================== مسارات الخدمة ====================================
 Route::prefix('products')->group(function () {
     // مسار العرض الخدمات

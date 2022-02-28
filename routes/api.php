@@ -9,13 +9,11 @@ use App\Http\Controllers\Auth\MyProductController;
 use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\Auth\SellerOrderController;
 use App\Http\Controllers\Auth\UserStatusController;
-use App\Http\Controllers\ContactController;
 use App\Http\Controllers\ConversationController;
 use App\Http\Controllers\Dashboard\TagController;
 use App\Http\Controllers\FilterController;
 use App\Http\Controllers\FrontEndController;
 use App\Http\Controllers\NotificationController;
-use App\Http\Controllers\OrderTestController;
 use App\Http\Controllers\Product\InsertProductContoller;
 use App\Http\Controllers\Product\DeleteProductController;
 use App\Http\Controllers\Product\ShortenerController;
@@ -178,12 +176,9 @@ Route::prefix('product')->middleware('auth:sanctum')->group(function () {
     Route::post('/{id}/product-step-five', [InsertProductContoller::class, 'storeStepFive']);
     // حذف الخدمة
     Route::post('/{id}/deleteProduct', DeleteProductController::class);
-
     // إضافة محادثة للخدمة
     Route::post('/{id}/conversations/create', [ConversationController::class, 'product_conversation_store'])->middleware('auth:sanctum');
-
     // تقييم الخدمة
-
     Route::post('/{id}/rating', [RatingController::class, 'rate']);
 });
 
@@ -292,9 +287,6 @@ Route::post('/contactus', [FrontEndController::class, 'send_to_dashboad']);
 
 Route::get('tags/filter', [TagController::class, 'filter']);
 
-Route::get('/test', function () {
-    return 'Hello Tarek';
-});
 // مسار عملية الفلترة
 Route::prefix('filter')->group(function () {
     Route::get('/', FilterController::class);

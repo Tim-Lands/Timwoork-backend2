@@ -22,7 +22,8 @@ class MyProductController extends Controller
             ->where('is_vide', 0)
             ->paginate($paginate)
             ->makeHidden([
-                'buyer_instruct', 'content', 'profile_seller_id', 'category_id', 'duration'
+                'buyer_instruct', 'content', 'profile_seller_id', 'category_id', 'duration','price','is_vide'
+                ,'updated_at','created_at','deleted_at','ratings_avg','current_step','thumbnail'
             ]);
         return response()->success(__("messages.oprations.get_all_data"), $products);
     }
@@ -40,7 +41,8 @@ class MyProductController extends Controller
                     ->where('is_vide', 0)
                     ->paginate($paginate)
             ->makeHidden([
-                'buyer_instruct', 'content', 'profile_seller_id', 'category_id', 'duration'
+                'buyer_instruct', 'content', 'profile_seller_id', 'category_id', 'duration','price','is_vide'
+                ,'updated_at','created_at','deleted_at','ratings_avg','current_step','thumbnail'
             ]);
         return response()->success(__("messages.oprations.get_all_data"), $products);
     }
@@ -57,7 +59,7 @@ class MyProductController extends Controller
                          ->where('is_vide', 0)
                          ->paginate($paginate)
                          ->makeHidden([
-                            'buyer_instruct', 'content', 'profile_seller_id', 'category_id', 'duration'
+                            'buyer_instruct', 'content', 'profile_seller_id', 'category_id', 'duration','price','is_vide','updated_at','created_at','deleted_at','ratings_avg','current_step','thumbnail'
                         ]);
 
         return response()->success(__("messages.oprations.get_all_data"), $products);
@@ -71,10 +73,11 @@ class MyProductController extends Controller
         $paginate = $request->query('paginate') ? $request->query('paginate') : 10;
         $user = Auth::user();
         $products = $user->profile->profile_seller->products()->productReject()
-                    ->where('is_vide', 0)->paginate($paginate)
-            ->makeHidden([
-                'buyer_instruct', 'content', 'profile_seller_id', 'category_id', 'duration'
-            ]);
+                    ->where('is_vide', 0)
+                    ->paginate($paginate)
+                    ->makeHidden([
+                        'buyer_instruct', 'content', 'profile_seller_id', 'category_id', 'duration','price','is_vide','updated_at','created_at','deleted_at','ratings_avg','current_step','thumbnail'
+                    ]);
         return response()->success(__("messages.oprations.get_all_data"), $products);
     }
 
@@ -89,7 +92,7 @@ class MyProductController extends Controller
                     ->where('is_vide', 1)
                     ->whereNull('status')->paginate($paginate)
             ->makeHidden([
-                'buyer_instruct', 'content', 'profile_seller_id', 'category_id', 'duration'
+                'buyer_instruct', 'content', 'profile_seller_id', 'category_id', 'duration','price','is_vide','updated_at','created_at','deleted_at','ratings_avg','current_step','thumbnail'
             ]);
         return response()->success(__("messages.oprations.get_all_data"), $products);
     }
@@ -106,8 +109,8 @@ class MyProductController extends Controller
                     ->where('is_draft', Product::PRODUCT_IS_DRAFT)
                     ->paginate($paginate)
                     ->makeHidden([
-                'buyer_instruct', 'content', 'profile_seller_id', 'category_id', 'duration'
-            ]);
+                        'buyer_instruct', 'content', 'profile_seller_id', 'category_id', 'duration','price','is_vide','updated_at','created_at','deleted_at','ratings_avg','current_step','thumbnail'
+                    ]);
         return response()->success(__("messages.oprations.get_all_data"), $products);
     }
 
@@ -121,7 +124,8 @@ class MyProductController extends Controller
     {
         try {
             // جلب الخدمة
-            $product = Product::ProductActive()
+            $product = Product::select('id', 'is_active')
+            ->ProductActive()
             ->whereId($id)
             ->where('is_vide', 0)
             ->where('profile_seller_id', Auth::user()->profile->profile_seller->id)
@@ -157,7 +161,8 @@ class MyProductController extends Controller
     {
         try {
             // جلب الخدمة
-            $product = Product::ProductActive()
+            $product = Product::select('id', 'is_active')
+            ->ProductActive()
             ->whereId($id)
             ->where('is_vide', 0)
             ->where('profile_seller_id', Auth::user()->profile->profile_seller->id)

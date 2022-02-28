@@ -34,9 +34,6 @@ class FrontEndController extends Controller
                     'name_ar' => $category['name_ar'],
                     'name_en' => $category['name_en'],
                     'name_fr' => $category['name_fr'],
-                    'description_ar' => $category['description_ar'],
-                    'description_en' => $category['description_en'],
-                    'description_fr' => $category['description_fr'],
                     'parent_id' => $category['parent_id'],
                     'icon'    => $category['icon'],
                     'products_count' => $category['subcategories']->sum('products_count')
@@ -61,8 +58,9 @@ class FrontEndController extends Controller
             return response()->error(__("messages.errors.element_not_found"), 403);
         }
         // جلب التصنيفات الفرعية
-        $subcategories = $catagory->selection()->with('subCategories', function ($q) {
-            $q->selection()
+        $subcategories = $catagory->select('id', 'name_ar', 'name_en', 'name_fr')
+        ->with('subCategories', function ($q) {
+            $q->select('id', 'name_ar', 'name_en', 'name_fr')
             ->withCount('products')
             ->orderBy('id', 'asc')
             ->take(Category::SUBCATEGORY_DISPLAY)
@@ -87,7 +85,7 @@ class FrontEndController extends Controller
             ->orWhere('id', $slug)
             ->withOnly([
                 'subcategory' => function ($q) {
-                    $q->select('id', 'parent_id', 'name_ar', )
+                    $q->select('id', 'parent_id', 'name_ar', 'name_en', 'name_fr')
                         ->with('category', function ($q) {
                             $q->select('id', 'name_ar')
                                 ->without('subcategories');
@@ -103,9 +101,6 @@ class FrontEndController extends Controller
                 'galaries' => function ($q) {
                     $q->select('id', 'path', 'product_id');
                 },
-                'file' => function ($q) {
-                    $q->select('id', 'path', 'product_id');
-                },
                 'video' => function ($q) {
                     $q->select('id', 'product_id', 'url_video');
                 },
@@ -117,11 +112,11 @@ class FrontEndController extends Controller
                                 $q->select('id', 'user_id', 'first_name', 'last_name', 'avatar', 'precent_rating')
                                     ->with(['user' => function ($q) {
                                         $q->select('id', 'username', 'email', 'phone');
-                                    }, 'badge', 'level', 'country'])
+                                    }, 'badge:id,name_ar,name_en,name_fr', 'level:id,name_ar,name_en,name_fr', 'country'])
                                     ->without('profile_seller');
                             },
-                            'level',
-                            'badge'
+                            'level:id,name_ar,name_en,name_fr',
+                            'badge:id,name_ar,name_en,name_fr'
                         ]);
                 }
             ])
@@ -147,7 +142,7 @@ class FrontEndController extends Controller
     {
         // جلب جميع الاصناف الرئيسة و الاصناف الفرعية عن طريق التصفح
         $categories = Category::Selection()->with(['subcategories' => function ($q) {
-            $q->select('id', 'name_ar', 'name_en', 'parent_id', 'icon');
+            $q->select('id', 'name_ar', 'name_en', 'name_fr', 'parent_id', 'icon');
         }])->parent()->get();
 
         // اظهار العناصر
