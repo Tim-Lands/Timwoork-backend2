@@ -58,9 +58,9 @@ class FrontEndController extends Controller
             return response()->error(__("messages.errors.element_not_found"), 403);
         }
         // جلب التصنيفات الفرعية
-        $subcategories = $catagory->select('id', 'name_ar', 'name_en', 'name_fr')
+        $subcategories = $catagory->select('id', 'slug', 'name_ar', 'name_en', 'name_fr')
         ->with('subCategories', function ($q) {
-            $q->select('id', 'name_ar', 'name_en', 'name_fr')
+            $q->select('id', 'name_ar', 'slug', 'name_en', 'name_fr', 'parent_id')
             ->withCount('products')
             ->orderBy('id', 'asc')
             ->take(Category::SUBCATEGORY_DISPLAY)
