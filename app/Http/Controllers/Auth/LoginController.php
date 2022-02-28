@@ -61,7 +61,7 @@ class LoginController extends Controller
     }
     public function logout()
     {
-        // get current user 
+        // get current user
         $user = Auth::user();
         // delete all user tokens
         $user->tokens()->delete();

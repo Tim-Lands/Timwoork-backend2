@@ -17,17 +17,23 @@ class SearchController extends Controller
     public function __invoke(Request $request)
     {
         $limit = $request->query('limit') ? $request->query('limit') : 5;
-        $res = Product::filter()->productActive()
+        $res = Product::select('id', 'title', 'slug', 'price', 'count_buying', 'thumbnail', 'ratings_count', 'category_id', 'profile_seller_id')
+            ->filter()
+            ->productActive()
             ->with([
                 'profileSeller' => function ($q) {
-                    $q->with('profile')
+                    $q->select('id', 'profile_id')
+                    ->with('profile', function ($q) {
+                        $q->select('id', 'first_name', 'last_name', 'user_id')
+                            ->with('user:id,username');
+                    })
                         ->without('languages', 'skills', 'professions');
                 },
                 'ratings',
                 'subcategory' => function ($q) {
-                    $q->select('id', 'parent_id', 'name_ar', )
+                    $q->select('id', 'parent_id', 'name_ar', 'name_en', 'name_fr')
                         ->with('category', function ($q) {
-                            $q->select('id', 'name_ar')
+                            $q->select('id', 'name_ar', 'name_en', 'name_fr')
                                 ->without('subcategories');
                         })->withCount('products');
                 },
