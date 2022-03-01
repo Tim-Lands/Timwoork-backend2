@@ -36,7 +36,9 @@ class MyProductController extends Controller
     {
         $paginate = $request->query('paginate') ? $request->query('paginate') : 10;
         $user = Auth::user();
-        $products = $user->profile->profile_seller->products()->productActive()
+        $products = $user->profile->profile_seller->products()
+                    ->productActive()
+                    ->where('is_completed', 1)
                     ->where('is_active', Product::PRODUCT_ACTIVE)
                     ->where('is_vide', 0)
                     ->paginate($paginate)
@@ -54,8 +56,10 @@ class MyProductController extends Controller
     {
         $paginate = $request->query('paginate') ? $request->query('paginate') : 10;
         $user = Auth::user();
-        $products = $user->profile->profile_seller->products()->productActive()
+        $products = $user->profile->profile_seller->products()
+                         ->productActive()
                          ->where('is_active', Product::PRODUCT_REJECT)
+                         ->where('is_completed', 1)
                          ->where('is_vide', 0)
                          ->paginate($paginate)
                          ->makeHidden([
@@ -72,7 +76,9 @@ class MyProductController extends Controller
     {
         $paginate = $request->query('paginate') ? $request->query('paginate') : 10;
         $user = Auth::user();
-        $products = $user->profile->profile_seller->products()->productReject()
+        $products = $user->profile->profile_seller->products()
+                    ->productReject()
+                    ->where('is_completed', 1)
                     ->where('is_vide', 0)
                     ->paginate($paginate)
                     ->makeHidden([
@@ -90,6 +96,7 @@ class MyProductController extends Controller
         $user = Auth::user();
         $products = $user->profile->profile_seller->products()
                     ->where('is_vide', 0)
+                    ->where('is_completed', 1)
                     ->whereNull('status')->paginate($paginate)
             ->makeHidden([
                 'buyer_instruct', 'content', 'profile_seller_id', 'category_id', 'duration','price','is_vide','updated_at','created_at','deleted_at','ratings_avg','current_step','thumbnail'
