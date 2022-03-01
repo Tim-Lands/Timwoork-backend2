@@ -310,7 +310,7 @@ class Product extends Model
 
     public function product_tag(): BelongsToMany
     {
-        return $this->belongsToMany(Tag::class);
+        return $this->belongsToMany(Tag::class)->withPivot('value', 'label');
     }
 
     /**

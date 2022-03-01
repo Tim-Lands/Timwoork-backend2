@@ -163,7 +163,7 @@ class FrontEndController extends Controller
         ->orWhere('slug', $id)
         ->child()
         ->with(['products' => function ($q) {
-            $q->select('id', 'profile_seller_id', 'category_id', 'title', 'price', 'thumbnail', 'count_buying', 'duration')
+            $q->select('id', 'profile_seller_id', 'slug', 'category_id', 'title', 'price', 'thumbnail', 'count_buying', 'duration')
             ->where('is_completed', 1)
             ->where('status', 1)
             ->where('is_active', 1)

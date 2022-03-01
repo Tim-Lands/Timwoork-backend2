@@ -89,7 +89,7 @@ class MyProductController extends Controller
         $paginate = $request->query('paginate') ? $request->query('paginate') : 10;
         $user = Auth::user();
         $products = $user->profile->profile_seller->products()
-                    ->where('is_vide', 1)
+                    ->where('is_vide', 0)
                     ->whereNull('status')->paginate($paginate)
             ->makeHidden([
                 'buyer_instruct', 'content', 'profile_seller_id', 'category_id', 'duration','price','is_vide','updated_at','created_at','deleted_at','ratings_avg','current_step','thumbnail'

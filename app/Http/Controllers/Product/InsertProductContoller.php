@@ -10,7 +10,6 @@ use App\Http\Requests\Products\ProductStepThreeRequest;
 use App\Http\Requests\Products\ProductStepTwoRequest;
 use App\Http\Requests\Products\ThumbnailRequest;
 use App\Models\Category;
-use App\Models\File;
 use App\Models\Product;
 use App\Models\Shortener;
 use App\Models\Tag;
@@ -100,26 +99,25 @@ class InsertProductContoller extends Controller
             }
 
             // جلب الوسوم من المستخدم
-            $tag_values = array_map(function ($key) {
+            $tag_request_values = array_values(array_map(function ($key) {
                 return strtolower($key["value"]) ;
-            }, $request->tags);
+            }, $request->tags));
             // حلب الوسوم الموجودة داخل القواعد البيانات
-            $tags = Tag::whereIn("name", $tag_values)->get();
+            $tags = Tag::select('id', 'name')->whereIn('name', $tag_request_values)->get();
 
-            // مصفوفة فارغة
-            $tags_total = [];
-            // جلب الاسماء الوسوم فقط
-            $get_name_tags = array_map(function ($key) {
+            // جلب الاسماء الوسوم مع فلترة تكرارها
+            $get_name_tags = array_unique(array_map(function ($key) {
                 return $key["name"];
-            }, $tags->toArray());
-            // جلب معرفات الوسوم و وضعهم في مصفوفة
-            $tags_total = array_map(function ($key) {
-                return $key["id"];
-            }, $tags->toArray());
-            // فلترة اسماء الوسوم من التكرار المتواجدة في قواعد البيانات
-            $filter_tags = array_unique($get_name_tags);
+            }, $tags->toArray()));
+
+            // جلب المعرفات الملفترة و وضعهم في مصفوفة
+            $ids = array_values(array_map(function ($key) {
+                return $key['id'];
+            }, array_filter($tags->toArray(), function ($key) {
+                return strtolower($key["name"]) == $key["name"];
+            })));
             // جلب الاسماء الجديدة الغير موجودة في قواعد البيانات
-            $new_tags = array_values(array_diff($tag_values, $filter_tags));
+            $new_tags = array_values(array_diff($tag_request_values, $get_name_tags));
             /* --------------------- انشاء المرحلة الاولى في الخدمة --------------------- */
             // بداية المعاملة مع البيانات المرسلة لقاعدة بيانات :
             DB::beginTransaction();
@@ -137,13 +135,13 @@ class InsertProductContoller extends Controller
                         'value' => $tag
                     ]);
                     // وضع معرف الوسم في المصفوفة
-                    $tags_total[] = $tag->id;
+                    $ids[] = $tag->id;
                 }
                 // اضافة وسوم التابع للخدمة
-                $product->product_tag()->syncWithoutDetaching($tags_total);
+                $product->product_tag()->syncWithoutDetaching($ids);
             } else {
                 // اضافة وسوم التابع للخدمة
-                $product->product_tag()->syncWithoutDetaching($tags_total);
+                $product->product_tag()->syncWithoutDetaching($ids);
             }
             // انهاء المعاملة بشكل جيد :
             DB::commit();
