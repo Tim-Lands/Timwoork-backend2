@@ -59,13 +59,13 @@ class FrontEndController extends Controller
         }
         // جلب التصنيفات الفرعية
         $subcategories = $catagory->select('id', 'slug', 'name_ar', 'name_en', 'name_fr')
-        ->with('subCategories', function ($q) {
-            $q->select('id', 'name_ar', 'slug', 'name_en', 'name_fr', 'parent_id')
-            ->withCount('products')
-            ->orderBy('id', 'asc')
-            ->take(Category::SUBCATEGORY_DISPLAY)
-            ->get();
-        })->first();
+            ->with('subCategories', function ($q) {
+                $q->select('id', 'name_ar', 'slug', 'name_en', 'name_fr', 'parent_id')
+                    ->withCount('products')
+                    ->orderBy('id', 'asc')
+                    ->take(Category::SUBCATEGORY_DISPLAY)
+                    ->get();
+            })->first();
         // اظهار العناصر
         return response()->success(__("messages.oprations.get_all_data"), $subcategories);
     }
@@ -109,7 +109,7 @@ class FrontEndController extends Controller
                         ->with([
                             'profile' =>
                             function ($q) {
-                                $q->select('id', 'user_id', 'first_name', 'last_name', 'avatar', 'precent_rating')
+                                $q->select('id', 'user_id', 'first_name', 'last_name', 'avatar', 'avatar_url', 'precent_rating')
                                     ->with(['user' => function ($q) {
                                         $q->select('id', 'username', 'email', 'phone');
                                     }, 'badge:id,name_ar,name_en,name_fr', 'level:id,name_ar,name_en,name_fr', 'country'])
@@ -159,23 +159,23 @@ class FrontEndController extends Controller
     {
         // جلب التصنيف الرئيسي من اجل التحقق
         $subcatagory = Category::select('id', 'name_ar', 'name_en', 'name_fr', 'parent_id', 'icon')
-        ->whereId($id)
-        ->orWhere('slug', $id)
-        ->child()
-        ->with(['products' => function ($q) {
-            $q->select('id', 'profile_seller_id', 'slug', 'category_id', 'title', 'price', 'thumbnail', 'count_buying', 'duration')
-            ->where('is_completed', 1)
-            ->where('status', 1)
-            ->where('is_active', 1)
-            ->where('is_vide', 0)
-            ->with('profileSeller', function ($q) {
-                $q->select('id', 'profile_id')->without('level', 'badge')
-                ->with('profile', function ($q) {
-                    $q->select('id', 'first_name', 'last_name', 'user_id')
-                    ->with('user:id,username')->without('level', 'badge');
-                });
-            });
-        }])->first();
+            ->whereId($id)
+            ->orWhere('slug', $id)
+            ->child()
+            ->with(['products' => function ($q) {
+                $q->select('id', 'profile_seller_id', 'slug', 'category_id', 'title', 'price', 'thumbnail', 'count_buying', 'duration')
+                    ->where('is_completed', 1)
+                    ->where('status', 1)
+                    ->where('is_active', 1)
+                    ->where('is_vide', 0)
+                    ->with('profileSeller', function ($q) {
+                        $q->select('id', 'profile_id')->without('level', 'badge')
+                            ->with('profile', function ($q) {
+                                $q->select('id', 'first_name', 'last_name', 'user_id')
+                                    ->with('user:id,username')->without('level', 'badge');
+                            });
+                    });
+            }])->first();
         // التحقق من التصنيف انه موجود
         if (!$subcatagory) {
             return response()->error(__("messages.errors.element_not_found"), 403);
@@ -196,12 +196,12 @@ class FrontEndController extends Controller
     {
         try {
             $contact = Contact::selection()
-                                        ->where(function ($query) use ($request) {
-                                            $query->where('email', $request->email)
-                                                  ->orWhere('ip_client', $request->ip());
-                                        })
-                                        ->where('date_expired', '>', Carbon::now()->toDateTimeString())
-                                        ->first();
+                ->where(function ($query) use ($request) {
+                    $query->where('email', $request->email)
+                        ->orWhere('ip_client', $request->ip());
+                })
+                ->where('date_expired', '>', Carbon::now()->toDateTimeString())
+                ->first();
             if ($contact) {
                 return response()->error(__("messages.contact.cannot_sent_before_48"), Response::HTTP_BAD_REQUEST);
             }
