@@ -109,7 +109,7 @@ class FrontEndController extends Controller
                         ->with([
                             'profile' =>
                             function ($q) {
-                                $q->select('id', 'user_id', 'first_name', 'last_name', 'avatar', 'precent_rating')
+                                $q->select('id', 'user_id', 'first_name', 'last_name', 'avatar', 'avatar_url', 'precent_rating')
                                     ->with(['user' => function ($q) {
                                         $q->select('id', 'username', 'email', 'phone');
                                     }, 'badge:id,name_ar,name_en,name_fr', 'level:id,name_ar,name_en,name_fr', 'country'])
