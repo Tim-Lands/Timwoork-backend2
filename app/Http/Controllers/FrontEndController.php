@@ -84,6 +84,7 @@ class FrontEndController extends Controller
             ->whereSlug($slug)
             ->orWhere('id', $slug)
             ->withOnly([
+                'conversations',
                 'subcategory' => function ($q) {
                     $q->select('id', 'parent_id', 'name_ar', 'name_en', 'name_fr')
                         ->with('category', function ($q) {
@@ -217,7 +218,7 @@ class FrontEndController extends Controller
             ];
 
             // شرط اذا كان يوجد رابط
-            if ($request->has('url')) {
+            if ($request->url) {
                 // شرط ان يكون الرابط يحتوي على غوغل درايف او دروب بوكس
                 if (str_contains($request->url, Contact::URL_GOOGLE_DRIVE) || str_contains($request->url, Contact::URL_DROPBOX)) {
                     $data_contact["url"] = $request->url;
