@@ -440,7 +440,7 @@ class InsertProductContoller extends Controller
                         // جلب الصورة من المرسلات
                         $thumbnailPath = $request->file('thumbnail');
                         // وضع اسم جديد للصورة
-                        $thumbnailName = "tw-thumbnail-{$product->slug}-{$id}-{$time}.{$thumbnailPath->getClientOriginalExtension()}";
+                        $thumbnailName = "tw-thumbnail-{$id}-{$time}.{$thumbnailPath->getClientOriginalExtension()}";
                         // رفع الصورة الامامية للخدمة
                         Storage::putFileAs('products/thumbnails', $request->file('thumbnail'), $thumbnailName);
                         // وضع اسم الصورة في المصفوفة
@@ -451,7 +451,7 @@ class InsertProductContoller extends Controller
                     // جلب الصورة من المرسلات
                     $thumbnailPath = $request->file('thumbnail');
                     // وضع اسم جديد للصورة
-                    $thumbnailName = "tw-thumbnail-{$product->slug}-{$id}-{$time}.{$thumbnailPath->getClientOriginalExtension()}";
+                    $thumbnailName = "tw-thumbnail-{$id}-{$time}.{$thumbnailPath->getClientOriginalExtension()}";
                     // رفع الصورة الامامية للخدمة
                     Storage::putFileAs('products/thumbnails', $request->file('thumbnail'), $thumbnailName);
                     // وضع اسم الصورة في المصفوفة
@@ -519,7 +519,7 @@ class InsertProductContoller extends Controller
                         }
                         // عدد الصور التي تم رفعها
                         foreach ($request->file('images') as $key => $value) {
-                            $imagelName = "tw-galary-image-{$product->slug}-{$key}-{$time}.{$value->getClientOriginalExtension()}";
+                            $imagelName = "tw-galary-image-{$key}-{$time}.{$value->getClientOriginalExtension()}";
                             // وضع المعلومات فالمصفوفة
                             $galaries_images[$key] = [
                                 'path'      => $imagelName,
@@ -541,7 +541,7 @@ class InsertProductContoller extends Controller
                     }
                     // عدد الصور التي تم رفعها
                     foreach ($request->file('images') as $key => $value) {
-                        $imagelName = "tw-galary-image-{$product->slug}-{$key}-{$time}.{$value->getClientOriginalExtension()}";
+                        $imagelName = "tw-galary-image-{$key}-{$time}.{$value->getClientOriginalExtension()}";
                         // وضع المعلومات فالمصفوفة
                         $galaries_images[$key] = [
                             'path'      => $imagelName,
