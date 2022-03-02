@@ -17,7 +17,12 @@ class User extends Authenticatable
 {
     use HasApiTokens, HasFactory, Notifiable, Billable;
 
-
+    /**
+     * appends
+     *
+     * @var array
+     */
+    protected $appends = ['password_is_vide'];
 
     /**
      * The attributes that should be hidden for serialization.
@@ -49,15 +54,22 @@ class User extends Authenticatable
     // code
     // ================== Acssesor & mutators ==========================
 
-
-    // code
+    /**
+     * getPasswordIsVideAttribute => تحقق من الباسورد فارغ ام لا
+     *
+     * @return void
+     */
+    public function getPasswordIsVideAttribute()
+    {
+        return $this->password == null ? true:false;
+    }
     // ============================ Scopes =============================
     // code
     // ========================== Relations ============================
 
     /**
 
-     * verify email token 
+     * verify email token
      *
      * @return HasOne
      */
@@ -68,7 +80,7 @@ class User extends Authenticatable
 
     /**
 
-     * verify email token 
+     * verify email token
      *
      * @return HasOne
      */
@@ -89,14 +101,13 @@ class User extends Authenticatable
 
 
     /**
-    
+
      * profile
      *
      * @return HasOne
      */
     public function profile(): HasOne
     {
-
         return $this->hasOne(Profile::class, 'user_id');
     }
 
