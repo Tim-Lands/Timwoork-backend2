@@ -36,7 +36,9 @@ class ProfileController extends Controller
             ->with([
                 'profile.profile_seller.badge',
                 'profile.profile_seller.level',
-                'profile.badge', 'profile.level'
+                'profile.badge',
+                'profile.level',
+                'profile.country'
             ])
             ->first();
         if (!$user) {
@@ -60,7 +62,7 @@ class ProfileController extends Controller
     {
         try {
             $user = Auth::user();
-            // تغيير اسم المستخدم 
+            // تغيير اسم المستخدم
             $user->username = $request->username;
             $user->save();
             // تغيير المعلومات الشخصية
