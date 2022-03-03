@@ -9,6 +9,7 @@ use App\Http\Controllers\Auth\MyProductController;
 use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\Auth\SellerOrderController;
 use App\Http\Controllers\Auth\UserStatusController;
+use App\Http\Controllers\Auth\WalletController;
 use App\Http\Controllers\ConversationController;
 use App\Http\Controllers\Dashboard\TagController;
 use App\Http\Controllers\FilterController;
@@ -93,6 +94,15 @@ Route::middleware('auth:sanctum')->prefix('my_purchases')->group(function () {
 Route::middleware('auth:sanctum')->prefix('my_sales')->group(function () {
     Route::get('/', [SellerOrderController::class, 'index']);
     Route::get('/{id}', [SellerOrderController::class, 'show']);
+});
+/******************************************************************** */
+
+/********************************************************************** */
+/**
+ *  مسار لعرض محفظتي
+ */
+Route::middleware('auth:sanctum')->prefix('my_wallet')->group(function () {
+    Route::get('/', [WalletController::class, 'index']);
 });
 /******************************************************************** */
 
@@ -263,7 +273,7 @@ Route::prefix('order')->group(function () {
         // حل النزاع بين الطرفين في حالة الغاء الطلبية
         Route::post('/{id}/resolve_the_conflict_between_them_in_modified', [ItemController::class, 'resolve_the_conflict_between_them_in_modified']);
         // إضافة محادثة للخدمة
-        Route::post('/{id}/create/conversation', [ConversationController::class, 'item_conversation_store'])->middleware('auth:sanctum');
+        Route::post('/{id}/conversations/create', [ConversationController::class, 'item_conversation_store'])->middleware('auth:sanctum');
     });
 });
 
