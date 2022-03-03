@@ -446,7 +446,6 @@ class InsertProductContoller extends Controller
                         // وضع اسم الصورة في المصفوفة
                         $data_thumbnail['thumbnail'] = $thumbnailName;
                     }
-                    return;
                 } elseif ($request->has('thumbnail')) {
                     // جلب الصورة من المرسلات
                     $thumbnailPath = $request->file('thumbnail');
