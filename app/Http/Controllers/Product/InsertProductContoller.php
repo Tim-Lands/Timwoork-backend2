@@ -138,10 +138,10 @@ class InsertProductContoller extends Controller
                     $ids[] = $tag->id;
                 }
                 // اضافة وسوم التابع للخدمة
-                $product->product_tag()->syncWithoutDetaching($ids);
+                $product->product_tag()->sync($ids);
             } else {
                 // اضافة وسوم التابع للخدمة
-                $product->product_tag()->syncWithoutDetaching($ids);
+                $product->product_tag()->sync($ids);
             }
             // انهاء المعاملة بشكل جيد :
             DB::commit();
