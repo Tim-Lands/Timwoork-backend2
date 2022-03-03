@@ -11,7 +11,7 @@ use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Queue\SerializesModels;
 
-class DileveredBySeller implements ShouldBroadcast
+class ResolveConflictBySeller implements ShouldBroadcast
 {
     use Dispatchable, InteractsWithSockets, SerializesModels;
     public $user;
@@ -47,9 +47,9 @@ class DileveredBySeller implements ShouldBroadcast
         $seller = User::find($this->item->user_id);
         return [
             'type' => "order",
-            'to' => 'buyer',
+            'to' => "buyer",
             'notifications_count' => $this->user->unreadNotifications->count(),
-            'title' =>  " قام " . $seller->profile->full_name . "  بتسليم العمل ",
+            'title' =>  " قام " . $seller->profile->full_name . " بحل النزاع بينكما ",
             'user_sender' => [
                 'full_name' => $seller->profile->full_name,
                 'username' => $seller->username,

@@ -49,7 +49,7 @@ class CanceledOrderByBuyer implements ShouldBroadcast
             'type' => "order",
             'to' => 'seller',
             'notifications_count' => $this->user->unreadNotifications->count(),
-            'title' =>  " قام " . $buyer->profile->full_name . " بشراء خدمة ",
+            'title' =>  " قام " . $buyer->profile->full_name . " بإلغاء عملية الشراء التي قام بها ",
             'user_sender' => [
                 'full_name' => $buyer->profile->full_name,
                 'username' => $buyer->username,

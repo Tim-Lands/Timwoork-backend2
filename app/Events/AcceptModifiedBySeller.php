@@ -11,7 +11,7 @@ use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Queue\SerializesModels;
 
-class DileveredBySeller implements ShouldBroadcast
+class AcceptModifiedBySeller implements ShouldBroadcast
 {
     use Dispatchable, InteractsWithSockets, SerializesModels;
     public $user;
@@ -49,7 +49,7 @@ class DileveredBySeller implements ShouldBroadcast
             'type' => "order",
             'to' => 'buyer',
             'notifications_count' => $this->user->unreadNotifications->count(),
-            'title' =>  " قام " . $seller->profile->full_name . "  بتسليم العمل ",
+            'title' =>  " قام " . $seller->profile->full_name . " بقبول طلب التعديلات ",
             'user_sender' => [
                 'full_name' => $seller->profile->full_name,
                 'username' => $seller->username,

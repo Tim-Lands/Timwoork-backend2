@@ -3,17 +3,22 @@
 namespace App\Providers;
 
 use App\Events\AcceptedDileveredByBuyer;
+use App\Events\AcceptModifiedBySeller;
 use App\Events\AcceptOrder;
 use App\Events\AcceptRequestRejectOrder;
 use App\Events\CanceledOrderByBuyer;
 use App\Events\DileveredBySeller;
 use App\Events\ForgetPassword;
 use App\Events\NewOrder;
+use App\Events\RejectModifiedRequestBySeller;
 use App\Events\RejectOrder;
 use App\Events\RejectRequestRejectOrder;
+use App\Events\RequestModifiedBuBuyer;
 use App\Events\RequestRejectOrder;
+use App\Events\ResolveConflictBySeller;
 use App\Events\VerifyEmail;
 use App\Listeners\AcceptedDileveredByBuyerListener;
+use App\Listeners\AcceptModifiedBySellerListener;
 use App\Listeners\AcceptOrderListener;
 use App\Listeners\AcceptRequestRejectOrderListener;
 use App\Listeners\CanceledOrderByBuyerListener;
@@ -21,9 +26,12 @@ use App\Listeners\CanceledOrderListener;
 use App\Listeners\DileveredBySellerListener;
 use App\Listeners\ForgetPasswordListener;
 use App\Listeners\NewOrderListener;
+use App\Listeners\RejectModifiedRequestBySellerListener;
 use App\Listeners\RejectOrderListener;
 use App\Listeners\RejectRequestRejectOrderListener;
+use App\Listeners\RequestModifiedByBuyerListener;
 use App\Listeners\RequestRejectOrderListener;
+use App\Listeners\ResolveConflictListener;
 use App\Listeners\VerifyEmailListener;
 use App\Models\Item;
 use App\Observers\ItemObserver;
@@ -72,6 +80,18 @@ class EventServiceProvider extends ServiceProvider
         ],
         RejectRequestRejectOrder::class => [
             RejectRequestRejectOrderListener::class,
+        ],
+        ResolveConflictBySeller::class => [
+            ResolveConflictListener::class,
+        ],
+        RequestModifiedBuBuyer::class => [
+            RequestModifiedByBuyerListener::class,
+        ],
+        AcceptModifiedBySeller::class => [
+            AcceptModifiedBySellerListener::class,
+        ],
+        RejectModifiedRequestBySeller::class => [
+            RejectModifiedRequestBySellerListener::class,
         ],
 
     ];

@@ -8,9 +8,8 @@ use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
 use Illuminate\Support\Facades\Auth;
 
-class CanceledOrderByBuyer extends Notification
+class AcceptModifiedBySeller extends Notification
 {
-    use Queueable;
     public $user;
     public $item;
     /**
@@ -45,16 +44,13 @@ class CanceledOrderByBuyer extends Notification
     {
         return (new MailMessage)
             ->from('support@timlands.com')
-            ->subject('قبول الطلبية')
-            ->view('emails.orders.canceled_order_by_buyer', [
+            ->subject('قبول طلب التعديلات')
+            ->view('emails.orders.accept_modified_by_seller', [
                 'type' => "order",
-                'to' => "seller",
-                'title' =>  " قام " . Auth::user()->profile->full_name . " بإلغاء عملية الشراء التي قام بها",
-                'user_sender' => [
-                    'full_name' => Auth::user()->profile->full_name,
-                    'username' => Auth::user()->username,
-                    'avatar_url' => Auth::user()->profile->avatar_url
-                ],                'content' => [
+                'to' => "buyer",
+                'title' =>  " قبل " . Auth::user()->profile->full_name . " بالموافقة على طلب التعديلات ",
+                'user_sender' => Auth::user()->profile,
+                'content' => [
                     'item_id' => $this->item->id,
                     'title' => $this->item->title,
                 ],
@@ -72,12 +68,8 @@ class CanceledOrderByBuyer extends Notification
         return [
             'type' => "order",
             'to' => "buyer",
-            'title' =>  " قام " . Auth::user()->profile->full_name . " بإلغاء عملية الشراء التي قام بها",
-            'user_sender' => [
-                'full_name' => Auth::user()->profile->full_name,
-                'username' => Auth::user()->username,
-                'avatar_url' => Auth::user()->profile->avatar_url
-            ],
+            'title' =>  " قبل " . Auth::user()->profile->full_name . " بالموافقة على طلب التعديلات ",
+            'user_sender' => Auth::user()->profile,
             'content' => [
                 'item_id' => $this->item->id,
                 'title' => $this->item->title,
