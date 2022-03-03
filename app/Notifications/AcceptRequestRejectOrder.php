@@ -45,11 +45,11 @@ class AcceptRequestRejectOrder extends Notification
     {
         return (new MailMessage)
             ->from('support@timlands.com')
-            ->subject('قبول إلغاء الطلبية')
+            ->subject('قبول طلب إلغاء الطلبية')
             ->view('emails.orders.accept_request_reject_order', [
                 'type' => "order",
                 'to' => "buyer",
-                'title' =>  " قبل " . Auth::user()->profile->full_name . " بطلب إلغاء الطلبية   ",
+                'title' =>  " قبل " . Auth::user()->profile->full_name . " بالموافقة على طلب إلغاء الطلبية   ",
                 'user_sender' => Auth::user()->profile,
                 'content' => [
                     'item_id' => $this->item->id,
@@ -69,7 +69,7 @@ class AcceptRequestRejectOrder extends Notification
         return [
             'type' => "order",
             'to' => "buyer",
-            'title' =>  " قبل " . Auth::user()->profile->full_name . " بطلب إلغاء الطلبية ",
+            'title' =>  " قبل " . Auth::user()->profile->full_name . " بالموافقة على طلب إلغاء الطلبية ",
             'user_sender' => Auth::user()->profile,
             'content' => [
                 'item_id' => $this->item->id,

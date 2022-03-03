@@ -8,20 +8,18 @@ use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
 use Illuminate\Support\Facades\Auth;
 
-class CanceledOrderByBuyer extends Notification
+class ResolveConflictBySeller extends Notification
 {
     use Queueable;
-    public $user;
-    public $item;
+
     /**
      * Create a new notification instance.
      *
      * @return void
      */
-    public function __construct($user, $item)
+    public function __construct()
     {
-        $this->user = $user;
-        $this->item = $item;
+        //
     }
 
     /**
@@ -32,7 +30,7 @@ class CanceledOrderByBuyer extends Notification
      */
     public function via($notifiable)
     {
-        return ['mail', 'database'];
+        return ['mail'];
     }
 
     /**
@@ -45,11 +43,11 @@ class CanceledOrderByBuyer extends Notification
     {
         return (new MailMessage)
             ->from('support@timlands.com')
-            ->subject('قبول الطلبية')
-            ->view('emails.orders.canceled_order_by_buyer', [
+            ->subject('حل نزاع')
+            ->view('emails.orders.resolve_conflict_by_seller', [
                 'type' => "order",
-                'to' => "seller",
-                'title' =>  " قام " . Auth::user()->profile->full_name . " بإلغاء عملية الشراء التي قام بها",
+                'to' => "buyer",
+                'title' =>  " قام " . Auth::user()->profile->full_name . " حل النزاع ",
                 'user_sender' => [
                     'full_name' => Auth::user()->profile->full_name,
                     'username' => Auth::user()->username,
@@ -72,7 +70,7 @@ class CanceledOrderByBuyer extends Notification
         return [
             'type' => "order",
             'to' => "buyer",
-            'title' =>  " قام " . Auth::user()->profile->full_name . " بإلغاء عملية الشراء التي قام بها",
+            'title' =>  " قام " . Auth::user()->profile->full_name . " بحل النزاع ",
             'user_sender' => [
                 'full_name' => Auth::user()->profile->full_name,
                 'username' => Auth::user()->username,

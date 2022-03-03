@@ -45,7 +45,7 @@ class RequestRejectOrder extends Notification
     {
         return (new MailMessage)
             ->from('support@timlands.com')
-            ->subject('طلب رفض الطلبية')
+            ->subject('طلب إلغاء الطلبية')
             ->view('emails.orders.request_reject_order', [
                 'type' => "order",
                 'to' => "seller",

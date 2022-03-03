@@ -8,7 +8,7 @@ use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
 use Illuminate\Support\Facades\Auth;
 
-class CanceledOrderByBuyer extends Notification
+class RequestModifiedByBuyer extends Notification
 {
     use Queueable;
     public $user;
@@ -45,16 +45,13 @@ class CanceledOrderByBuyer extends Notification
     {
         return (new MailMessage)
             ->from('support@timlands.com')
-            ->subject('قبول الطلبية')
-            ->view('emails.orders.canceled_order_by_buyer', [
+            ->subject('طلب تعديلات')
+            ->view('emails.orders.request_modified_by_buyer', [
                 'type' => "order",
                 'to' => "seller",
-                'title' =>  " قام " . Auth::user()->profile->full_name . " بإلغاء عملية الشراء التي قام بها",
-                'user_sender' => [
-                    'full_name' => Auth::user()->profile->full_name,
-                    'username' => Auth::user()->username,
-                    'avatar_url' => Auth::user()->profile->avatar_url
-                ],                'content' => [
+                'title' =>  " قام " . Auth::user()->profile->full_name . " بطلب تعديلات ",
+                'user_sender' => Auth::user()->profile,
+                'content' => [
                     'item_id' => $this->item->id,
                     'title' => $this->item->title,
                 ],
@@ -71,13 +68,9 @@ class CanceledOrderByBuyer extends Notification
     {
         return [
             'type' => "order",
-            'to' => "buyer",
-            'title' =>  " قام " . Auth::user()->profile->full_name . " بإلغاء عملية الشراء التي قام بها",
-            'user_sender' => [
-                'full_name' => Auth::user()->profile->full_name,
-                'username' => Auth::user()->username,
-                'avatar_url' => Auth::user()->profile->avatar_url
-            ],
+            'to' => "seller",
+            'title' =>  " قام " . Auth::user()->profile->full_name . " بطلب تعديلات ",
+            'user_sender' => Auth::user()->profile,
             'content' => [
                 'item_id' => $this->item->id,
                 'title' => $this->item->title,

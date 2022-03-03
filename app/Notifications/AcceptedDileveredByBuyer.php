@@ -6,19 +6,22 @@ use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
+use Illuminate\Support\Facades\Auth;
 
 class AcceptedDileveredByBuyer extends Notification
 {
     use Queueable;
-
+    public $user;
+    public $item;
     /**
      * Create a new notification instance.
      *
      * @return void
      */
-    public function __construct()
+    public function __construct($user, $item)
     {
-        //
+        $this->user = $user;
+        $this->item = $item;
     }
 
     /**
@@ -29,7 +32,7 @@ class AcceptedDileveredByBuyer extends Notification
      */
     public function via($notifiable)
     {
-        return ['mail'];
+        return ['mail', 'database'];
     }
 
     /**
@@ -41,9 +44,21 @@ class AcceptedDileveredByBuyer extends Notification
     public function toMail($notifiable)
     {
         return (new MailMessage)
-                    ->line('The introduction to the notification.')
-                    ->action('Notification Action', url('/'))
-                    ->line('Thank you for using our application!');
+            ->from('support@timlands.com')
+            ->subject('قبول استلام العمل')
+            ->view('emails.orders.dilevered_by_seller', [
+                'type' => "order",
+                'to' => "seller",
+                'title' =>  " قام " . Auth::user()->profile->full_name . " باستلام العمل ",
+                'user_sender' => [
+                    'full_name' => Auth::user()->profile->full_name,
+                    'username' => Auth::user()->username,
+                    'avatar_url' => Auth::user()->profile->avatar_url
+                ],                'content' => [
+                    'item_id' => $this->item->id,
+                    'title' => $this->item->title,
+                ],
+            ]);
     }
 
     /**
@@ -55,7 +70,18 @@ class AcceptedDileveredByBuyer extends Notification
     public function toArray($notifiable)
     {
         return [
-            //
+            'type' => "order",
+            'to' => "seller",
+            'title' =>  " قام " . Auth::user()->profile->full_name . " باستلام العمل ",
+            'user_sender' => [
+                'full_name' => Auth::user()->profile->full_name,
+                'username' => Auth::user()->username,
+                'avatar_url' => Auth::user()->profile->avatar_url
+            ],
+            'content' => [
+                'item_id' => $this->item->id,
+                'title' => $this->item->title,
+            ],
         ];
     }
 }

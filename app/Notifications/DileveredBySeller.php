@@ -46,10 +46,10 @@ class DileveredBySeller extends Notification
         return (new MailMessage)
             ->from('support@timlands.com')
             ->subject('قبول الطلبية')
-            ->view('emails.orders.accept_order', [
+            ->view('emails.orders.dilevered_by_seller', [
                 'type' => "order",
                 'to' => "buyer",
-                'title' =>  " قام " . Auth::user()->profile->full_name . " بإلغاء عملية الشراء التي قام بها",
+                'title' =>  " قام " . Auth::user()->profile->full_name . " بتسليم العمل ",
                 'user_sender' => [
                     'full_name' => Auth::user()->profile->full_name,
                     'username' => Auth::user()->username,
@@ -72,7 +72,7 @@ class DileveredBySeller extends Notification
         return [
             'type' => "order",
             'to' => "buyer",
-            'title' =>  " قام " . Auth::user()->profile->full_name . " بإلغاء عملية الشراء التي قام بها",
+            'title' =>  " قام " . Auth::user()->profile->full_name . " بتسليم العمل ",
             'user_sender' => [
                 'full_name' => Auth::user()->profile->full_name,
                 'username' => Auth::user()->username,

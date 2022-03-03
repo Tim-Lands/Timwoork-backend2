@@ -3,15 +3,19 @@
 namespace App\Http\Controllers\SalesProcces;
 
 use App\Events\AcceptedDileveredByBuyer;
+use App\Events\AcceptModifiedBySeller;
 use App\Events\AcceptOrder;
 use App\Events\AcceptRequestRejectOrder;
 use App\Events\CanceledOrder;
 use App\Events\CanceledOrderByBuyer;
 use App\Events\CanceledOrderBySeller;
 use App\Events\DileveredBySeller;
+use App\Events\RejectModifiedRequestBySeller;
 use App\Events\RejectOrder;
 use App\Events\RejectRequestRejectOrder;
+use App\Events\RequestModifiedBuBuyer;
 use App\Events\RequestRejectOrder;
+use App\Events\ResolveConflictBySeller;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\ItemAttachmentRequest;
 use App\Models\Amount;
@@ -134,7 +138,10 @@ class ItemController extends Controller
             // جلب عنصر الطلبية من اجل رفضها
             $item = Item::whereId($id)->first();
             // جلب مشتري الطلبية
-            $user = $item->order->cart->user;
+            $buyer = $item->order->cart->user;
+            $profile = $buyer->profile;
+            $wallet = $buyer->profile->wallet;
+            $item_amount = $item->price_product;
             // شرط اذا كانت متواجدة
             if (!$item) {
                 // رسالة خطأ
@@ -150,7 +157,24 @@ class ItemController extends Controller
                 // تحويل الطلبية من حالة الابتدائية الى حالة الرفض
                 $item->status = Item::STATUS_REJECTED_BY_SELLER;
                 $item->save();
-                event(new RejectOrder($user, $item));
+
+                // تحويل مبلغ الطلبية الى محفظة المشتري
+
+                // انشاء مبلغ جديد
+                $amount = Amount::create([
+                    'amount' => $item_amount,
+                    'wallet_id' => $wallet->id,
+                    'item_id' => $item->id,
+                    'status' => Amount::WITHDRAWABLE_AMOUNT
+                ]);
+                // تحويله الى محفظة المشتري
+                $wallet->amounts()->save($amount);
+                $wallet->refresh();
+                // تحديث بيانات المشتري
+                $profile->withdrawable_amount += $item_amount;
+                $profile->save();
+
+                event(new RejectOrder($buyer, $item));
             } else {
                 // رسالة خطأ
                 return response()->error(__("messages.item.not_may_this_operation"), Response::HTTP_FORBIDDEN);
@@ -386,20 +410,40 @@ class ItemController extends Controller
             $item = Item::find($id);
 
             // جلب بيانات البائع
-            $user = User::find($item->user_id);
+            $seller = User::find($item->user_id);
+            $profile = $seller->profile;
+            $precent_deducation = $seller->precent_deducation;
+            $wallet = $seller->profile->wallet;
+            $item_amount = ($item->price_product * $precent_deducation) / 100;
+            $final_amount = $item->price_product - $item_amount;
             // شرط اذا كانت حالة الطلبية في قيد التنفيذ
             if ($item->status == Item::STATUS_DILEVERED) {
                 //  قبول المشروع اكتمال الطلبية
                 $item->status = Item::STATUS_FINISHED;
                 $item->save();
 
-            // عبد الله ابعث الدراهم للسيد يرحم والديك و متنساش الاقتطاع
+                // عبد الله ابعث الدراهم للسيد يرحم والديك و متنساش الاقتطاع
             } else {
                 return response()->error(__("messages.item.not_may_this_operation"), Response::HTTP_NOT_FOUND);
             }
 
+            // تحويل مبلغ الطلبية الى محفظة المشتري
+
+            // انشاء مبلغ جديد
+            $amount = Amount::create([
+                'amount' => $final_amount,
+                'wallet_id' => $wallet->id,
+                'item_id' => $item->id,
+                'status' => Amount::PENDING_AMOUNT
+            ]);
+            // تحويله الى محفظة المشتري
+            $wallet->amounts()->save($amount);
+            $wallet->refresh();
+            // تحديث بيانات المشتري
+            $profile->withdrawable_amount += $item_amount;
+            $profile->save();
             // ارسال الاشعار
-            event(new AcceptedDileveredByBuyer($user, $item));
+            event(new AcceptedDileveredByBuyer($seller, $item));
             // رسالة نجاح عملية تسليم المشروع:
             return response()->success(__('messages.item.resource_dilevered'));
         } catch (Exception $ex) {
@@ -500,7 +544,7 @@ class ItemController extends Controller
                     $item_rejected->delete();
                     //الغاء وقت طلب الغاء الطلبية 48 ساعة
                     $item->item_date_expired->update([
-                    'date_expired_request_canceled' => Item::EXPIRED_ITEM_NULLABLE,
+                        'date_expired_request_canceled' => Item::EXPIRED_ITEM_NULLABLE,
                     ]);
                     // رفض الطلبية
                     $item->status = Item::STATUS_CANCELLED_BY_BUYER;
@@ -617,7 +661,8 @@ class ItemController extends Controller
                     // عملية قيد التنفيذ الطلبية
                     $item->status = Item::STATUS_ACCEPT;
                     $item->save();
-                // ارسال الاشعار
+                    // ارسال الاشعار
+                    event(new ResolveConflictBySeller($user, $item));
                     //  event(new RejectRequestRejectOrder($user, $item)); // عبد الله
                 } else {
                     return response()->error(__("messages.item.request_not_found"), Response::HTTP_FORBIDDEN);
@@ -671,14 +716,14 @@ class ItemController extends Controller
                 //وضع وقت لطلب تعديل الطلبية 48 ساعة
                 $item->item_date_expired->update([
                     'date_expired_request_modifier' => Carbon::now()
-                                                        ->addDays(Item::EXPIRED_TIME_NNTIL_SOME_DAYS)
-                                                        ->toDateTimeString(),
+                        ->addDays(Item::EXPIRED_TIME_NNTIL_SOME_DAYS)
+                        ->toDateTimeString(),
                 ]);
 
                 $item->status = Item::STATUS_MODIFIED_REQUEST_BUYER;
                 $item->save();
-            // ارسال الاشعار
-                //event(new RequestRejectOrder($user, $item)); // تعديل في الاشعار لعبد الله
+                // ارسال الاشعار
+                event(new RequestModifiedBuBuyer($user, $item)); // تعديل في الاشعار لعبد الله
             } else {
                 // رسالة خطأ
                 return response()->error(__("messages.item.not_may_this_operation"), Response::HTTP_NOT_FOUND);
@@ -726,7 +771,7 @@ class ItemController extends Controller
 
                     //الغاء وقت لطلب تعديل الطلبية 48 ساعة
                     $item->item_date_expired->update([
-                    'date_expired_request_modifier' => Item::EXPIRED_ITEM_NULLABLE,
+                        'date_expired_request_modifier' => Item::EXPIRED_ITEM_NULLABLE,
                     ]);
 
                     $item_modified->delete();
@@ -734,8 +779,8 @@ class ItemController extends Controller
                     $item->status = Item::STATUS_ACCEPT;
                     $item->save();
 
-                // إرسال الاشعار
-                    //event(new AcceptRequestRejectOrder($buyer, $item));
+                    // إرسال الاشعار
+                    event(new AcceptModifiedBySeller($buyer, $item));
                 } else {
                     return response()->error(__('messages.item.request_not_found'), Response::HTTP_FORBIDDEN);
                 }
@@ -787,8 +832,8 @@ class ItemController extends Controller
                     $item->status = Item::STATUS_SUSPEND_CAUSE_MODIFIED;
                     $item->save();
 
-                // ارسال الاشعار
-                    //event(new RejectRequestRejectOrder($user, $item));
+                    // ارسال الاشعار
+                    event(new RejectModifiedRequestBySeller($user, $item));
                 } else {
                     return response()->error(__("messages.item.request_not_found"), Response::HTTP_FORBIDDEN);
                 }
@@ -833,8 +878,8 @@ class ItemController extends Controller
                     // عملية قيد التنفيذ الطلبية
                     $item->status = Item::STATUS_ACCEPT;
                     $item->save();
-                // ارسال الاشعار
-                    //  event(new RejectRequestRejectOrder($user, $item)); // عبد الله
+                    // ارسال الاشعار
+                    event(new ResolveConflictBySeller($user, $item)); // عبد الله
                 } else {
                     return response()->error(__("messages.item.request_not_found"), Response::HTTP_FORBIDDEN);
                 }

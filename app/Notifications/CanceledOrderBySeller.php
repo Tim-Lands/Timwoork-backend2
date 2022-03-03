@@ -46,10 +46,10 @@ class CanceledOrderBySeller extends Notification
         return (new MailMessage)
             ->from('support@timlands.com')
             ->subject('قبول الطلبية')
-            ->view('emails.orders.accept_order', [
+            ->view('emails.orders.canceled_order_by_seller', [
                 'type' => "order",
                 'to' => "buyer",
-                'title' =>  " قام " . Auth::user()->profile->full_name . " بإلغاء عملية الشراء التي قام بها",
+                'title' =>  " قام " . Auth::user()->profile->full_name . " بإلغاء الطلبية ",
                 'user_sender' => [
                     'full_name' => Auth::user()->profile->full_name,
                     'username' => Auth::user()->username,
@@ -72,7 +72,7 @@ class CanceledOrderBySeller extends Notification
         return [
             'type' => "order",
             'to' => "buyer",
-            'title' =>  " قام " . Auth::user()->profile->full_name . " بإلغاء عملية الشراء التي قام بها",
+            'title' =>  " قام " . Auth::user()->profile->full_name . " بإلغاء الطلبية ",
             'user_sender' => [
                 'full_name' => Auth::user()->profile->full_name,
                 'username' => Auth::user()->username,

@@ -2,7 +2,6 @@
 
 namespace App\Events;
 
-use App\Models\User;
 use Illuminate\Broadcasting\Channel;
 use Illuminate\Broadcasting\InteractsWithSockets;
 use Illuminate\Broadcasting\PresenceChannel;
@@ -11,7 +10,7 @@ use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Queue\SerializesModels;
 
-class DileveredBySeller implements ShouldBroadcast
+class RequestModifiedBuBuyer implements ShouldBroadcast
 {
     use Dispatchable, InteractsWithSockets, SerializesModels;
     public $user;
@@ -44,16 +43,16 @@ class DileveredBySeller implements ShouldBroadcast
 
     public function broadcastWith()
     {
-        $seller = User::find($this->item->user_id);
+        $buyer = $this->item->order->cart->user;
         return [
             'type' => "order",
-            'to' => 'buyer',
+            'to' => 'seller',
             'notifications_count' => $this->user->unreadNotifications->count(),
-            'title' =>  " قام " . $seller->profile->full_name . "  بتسليم العمل ",
+            'title' =>  " قام " . $buyer->profile->full_name . " بطلب تعديل ",
             'user_sender' => [
-                'full_name' => $seller->profile->full_name,
-                'username' => $seller->username,
-                'avatar_url' => $seller->profile->avatar_url
+                'full_name' => $buyer->profile->full_name,
+                'username' => $buyer->username,
+                'avatar_url' => $buyer->profile->avatar_url
             ],
             'content' => [
                 'item_id' => $this->item->id,

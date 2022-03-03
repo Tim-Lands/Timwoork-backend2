@@ -8,8 +8,9 @@ use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
 use Illuminate\Support\Facades\Auth;
 
-class CanceledOrderByBuyer extends Notification
+class RejectModifiedRequestBySeller extends Notification
 {
+    use Queueable;
     use Queueable;
     public $user;
     public $item;
@@ -45,16 +46,13 @@ class CanceledOrderByBuyer extends Notification
     {
         return (new MailMessage)
             ->from('support@timlands.com')
-            ->subject('قبول الطلبية')
-            ->view('emails.orders.canceled_order_by_buyer', [
+            ->subject('رفض إلغاء الطلبية')
+            ->view('emails.orders.reject_modified_request_by_seller', [
                 'type' => "order",
-                'to' => "seller",
-                'title' =>  " قام " . Auth::user()->profile->full_name . " بإلغاء عملية الشراء التي قام بها",
-                'user_sender' => [
-                    'full_name' => Auth::user()->profile->full_name,
-                    'username' => Auth::user()->username,
-                    'avatar_url' => Auth::user()->profile->avatar_url
-                ],                'content' => [
+                'to' => "buyer",
+                'title' =>  " لم يقبل " . Auth::user()->profile->full_name . " برفض طلب التعديلات ",
+                'user_sender' => Auth::user()->profile,
+                'content' => [
                     'item_id' => $this->item->id,
                     'title' => $this->item->title,
                 ],
@@ -72,12 +70,8 @@ class CanceledOrderByBuyer extends Notification
         return [
             'type' => "order",
             'to' => "buyer",
-            'title' =>  " قام " . Auth::user()->profile->full_name . " بإلغاء عملية الشراء التي قام بها",
-            'user_sender' => [
-                'full_name' => Auth::user()->profile->full_name,
-                'username' => Auth::user()->username,
-                'avatar_url' => Auth::user()->profile->avatar_url
-            ],
+            'title' =>  " لم يقبل " . Auth::user()->profile->full_name . " برفض طلب التعديلات ",
+            'user_sender' => Auth::user()->profile,
             'content' => [
                 'item_id' => $this->item->id,
                 'title' => $this->item->title,
