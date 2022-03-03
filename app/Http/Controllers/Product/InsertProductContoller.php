@@ -36,7 +36,7 @@ class InsertProductContoller extends Controller
             // جلب عدد المطلبوب من انشاء الخدمة من المستوى
             $number_of_products_seller = Auth::user()->profile->profile_seller->level->products_number_max;
             // شرط اضافة خدمة
-            if ($count_products_seller >= $number_of_products_seller) {
+            if ($count_products_seller > $number_of_products_seller) {
                 return response()->error(__("messages.product.number_of_products_seller"), 422);
             }
 
@@ -194,14 +194,14 @@ class InsertProductContoller extends Controller
             (object)$developments = [];
             // شرط اذا كانت هناك توجد تطورات
             if ($request->only('developments') != null) {
-                if (count($request->developments) >= $number_developments_max) {
+                if (count($request->developments) > $number_developments_max) {
                     return response()->error(__("messages.product.number_developments_max"), 422);
                 }
                 // جلب المرسلات من العميل و وضعهم فالمصفوفة الجديدة
                 foreach ($request->only('developments')['developments'] as $key => $value) {
                     $developments[] = $value;
                     // اذا كان السعر اكبر
-                    if ($value['price'] >= $price_development_max) {
+                    if ($value['price'] > $price_development_max) {
                         return response()->error(__("messages.product.price_development_max"), 422);
                     }
                 }
@@ -212,9 +212,9 @@ class InsertProductContoller extends Controller
             // عملية انشاء المرحلة الثانية
             $product->update($data);
             // شرط اذا كانت هناط تطويرات من قبل
-            if ($product->develpments) {
+            if ($product->developments) {
                 // حدف كل التطويرات
-                $product->developments()->delete();
+                $product->developments()->forceDelete();
             }
 
             // اضافة تطويرات جديدة
@@ -222,7 +222,7 @@ class InsertProductContoller extends Controller
             // انهاء المعاملة بشكل جيد :
             DB::commit();
             // رسالة نجاح عملية الاضافة:
-            return response()->success(__("messages.product.success_step_two"), $product);
+            return response()->success(__("messages.product.success_step_two"), $product->load('developments'));
         } catch (Exception $ex) {
             return $ex;
             // لم تتم المعاملة بشكل نهائي و لن يتم ادخال اي بيانات لقاعدة البيانات
