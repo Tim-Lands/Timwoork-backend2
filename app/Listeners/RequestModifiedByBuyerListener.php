@@ -2,6 +2,8 @@
 
 namespace App\Listeners;
 
+use App\Events\RequestModifiedBuBuyer;
+use App\Notifications\RequestModifiedByBuyer;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Queue\InteractsWithQueue;
 
@@ -23,8 +25,8 @@ class RequestModifiedByBuyerListener
      * @param  object  $event
      * @return void
      */
-    public function handle($event)
+    public function handle(RequestModifiedBuBuyer $event)
     {
-        //
+        $event->user->notify(new RequestModifiedByBuyer($event->user, $event->item));
     }
 }

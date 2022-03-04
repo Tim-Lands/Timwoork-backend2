@@ -120,6 +120,7 @@ class ItemController extends Controller
             return response()
                 ->success(__("messages.item.accept_item_by_seller"));
         } catch (Exception $ex) {
+            return $ex;
             // رسالة خطأ
             return response()->error(__("messages.errors.error_database"), Response::HTTP_FORBIDDEN);
         }
@@ -169,6 +170,8 @@ class ItemController extends Controller
                 ]);
                 // تحويله الى محفظة المشتري
                 $wallet->amounts()->save($amount);
+                $wallet->withdrawable_amount += $item_amount;
+                $wallet->save();
                 $wallet->refresh();
                 // تحديث بيانات المشتري
                 $profile->withdrawable_amount += $item_amount;
@@ -208,6 +211,7 @@ class ItemController extends Controller
             }
             // جلب بيانات المشتري
             $buyer = $item->order->cart->user;
+
             $profile = $buyer->profile;
             $wallet = $buyer->profile->wallet;
             $item_amount = $item->price_product;
@@ -225,7 +229,6 @@ class ItemController extends Controller
                 $item->save();
 
                 // تحويل مبلغ الطلبية الى محفظة المشتري
-
                 // انشاء مبلغ جديد
                 $amount = Amount::create([
                     'amount' => $item_amount,
@@ -235,6 +238,8 @@ class ItemController extends Controller
                 ]);
                 // تحويله الى محفظة المشتري
                 $wallet->amounts()->save($amount);
+                $wallet->withdrawable_amount += $item_amount;
+                $wallet->save();
                 $wallet->refresh();
                 // تحديث بيانات المشتري
                 $profile->withdrawable_amount += $item_amount;
@@ -249,6 +254,7 @@ class ItemController extends Controller
             // رسالة نجاح
             return response()->success(__("messages.item.reject_item_by_buyer"));
         } catch (Exception $ex) {
+            return $ex;
             // رسالة خطأ
             return response()->error(__("messages.errors.error_database"), Response::HTTP_FORBIDDEN);
         }
@@ -286,6 +292,7 @@ class ItemController extends Controller
                 ]);
                 // تحويل الطلبية من حالة الابتدائية الى حالة الرفض
                 $item->status = Item::STATUS_CANCELLED_BY_SELLER;
+                $item->status = true;
                 $item->save();
 
                 // تحويل مبلغ الطلبية الى محفظة المشتري
@@ -299,6 +306,8 @@ class ItemController extends Controller
                 ]);
                 // تحويله الى محفظة المشتري
                 $wallet->amounts()->save($amount);
+                $wallet->withdrawable_amount += $item_amount;
+                $wallet->save();
                 $wallet->refresh();
                 // تحديث بيانات المشتري
                 $profile->withdrawable_amount += $item_amount;
@@ -412,7 +421,8 @@ class ItemController extends Controller
             // جلب بيانات البائع
             $seller = User::find($item->user_id);
             $profile = $seller->profile;
-            $precent_deducation = $seller->precent_deducation;
+            $precent_deducation = $profile->profile_seller->precent_deducation;
+
             $wallet = $seller->profile->wallet;
             $item_amount = ($item->price_product * $precent_deducation) / 100;
             $final_amount = $item->price_product - $item_amount;
@@ -420,9 +430,11 @@ class ItemController extends Controller
             if ($item->status == Item::STATUS_DILEVERED) {
                 //  قبول المشروع اكتمال الطلبية
                 $item->status = Item::STATUS_FINISHED;
+                $item->is_rating = true;
+
                 $item->save();
 
-                // عبد الله ابعث الدراهم للسيد يرحم والديك و متنساش الاقتطاع
+            // عبد الله ابعث الدراهم للسيد يرحم والديك و متنساش الاقتطاع
             } else {
                 return response()->error(__("messages.item.not_may_this_operation"), Response::HTTP_NOT_FOUND);
             }
@@ -438,15 +450,18 @@ class ItemController extends Controller
             ]);
             // تحويله الى محفظة المشتري
             $wallet->amounts()->save($amount);
+            $wallet->amounts_pending += $final_amount;
+            $wallet->save();
             $wallet->refresh();
             // تحديث بيانات المشتري
-            $profile->withdrawable_amount += $item_amount;
+            $profile->pending_amount += $final_amount;
             $profile->save();
             // ارسال الاشعار
             event(new AcceptedDileveredByBuyer($seller, $item));
             // رسالة نجاح عملية تسليم المشروع:
             return response()->success(__('messages.item.resource_dilevered'));
         } catch (Exception $ex) {
+            return $ex;
             // رسالة خطأ
             return response()->error(__("messages.errors.error_database"), Response::HTTP_FORBIDDEN);
         }
@@ -561,6 +576,8 @@ class ItemController extends Controller
                     ]);
                     // تحويله الى محفظة المشتري
                     $wallet->amounts()->save($amount);
+                    $wallet->withdrawable_amount += $item_amount;
+                    $wallet->save();
                     $wallet->refresh();
                     // تحديث بيانات المشتري
                     $profile->withdrawable_amount += $item_amount;
@@ -663,7 +680,7 @@ class ItemController extends Controller
                     $item->save();
                     // ارسال الاشعار
                     event(new ResolveConflictBySeller($user, $item));
-                    //  event(new RejectRequestRejectOrder($user, $item)); // عبد الله
+                //  event(new RejectRequestRejectOrder($user, $item)); // عبد الله
                 } else {
                     return response()->error(__("messages.item.request_not_found"), Response::HTTP_FORBIDDEN);
                 }
@@ -674,6 +691,7 @@ class ItemController extends Controller
             // رسالة نجاح
             return response()->success(__("messages.item.resolve_the_conflict_between_them"));
         } catch (Exception $ex) {
+            return $ex;
             // رسالة خطأ
             return response()->error(__("messages.errors.error_database"), Response::HTTP_FORBIDDEN);
         }
@@ -723,7 +741,7 @@ class ItemController extends Controller
                 $item->status = Item::STATUS_MODIFIED_REQUEST_BUYER;
                 $item->save();
                 // ارسال الاشعار
-                event(new RequestModifiedBuBuyer($user, $item)); // تعديل في الاشعار لعبد الله
+                event(new RequestModifiedBuBuyer($user, $item));
             } else {
                 // رسالة خطأ
                 return response()->error(__("messages.item.not_may_this_operation"), Response::HTTP_NOT_FOUND);
@@ -731,6 +749,7 @@ class ItemController extends Controller
             // رسالة نجاح
             return response()->success(__("messages.item.re"));
         } catch (Exception $ex) {
+            return $ex;
             // رسالة خطأ
             return response()->error(__("messages.errors.error_database"), Response::HTTP_FORBIDDEN);
         }
@@ -844,6 +863,7 @@ class ItemController extends Controller
             // رسالة نجاح
             return response()->success(__("messages.item.reject_modified_by_seller"));
         } catch (Exception $ex) {
+            return  $ex;
             // رسالة خطأ
             return response()->error(__("messages.errors.error_database"), Response::HTTP_FORBIDDEN);
         }

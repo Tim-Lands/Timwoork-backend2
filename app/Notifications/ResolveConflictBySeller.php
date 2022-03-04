@@ -11,15 +11,17 @@ use Illuminate\Support\Facades\Auth;
 class ResolveConflictBySeller extends Notification
 {
     use Queueable;
-
+    public $user;
+    public $item;
     /**
      * Create a new notification instance.
      *
      * @return void
      */
-    public function __construct()
+    public function __construct($user, $item)
     {
-        //
+        $this->user = $user;
+        $this->item = $item;
     }
 
     /**
@@ -30,7 +32,7 @@ class ResolveConflictBySeller extends Notification
      */
     public function via($notifiable)
     {
-        return ['mail'];
+        return ['mail', 'database'];
     }
 
     /**

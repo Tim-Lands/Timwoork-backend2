@@ -15,6 +15,7 @@ use App\Http\Controllers\Dashboard\TagController;
 use App\Http\Controllers\FilterController;
 use App\Http\Controllers\FrontEndController;
 use App\Http\Controllers\NotificationController;
+use App\Http\Controllers\OrderTestController;
 use App\Http\Controllers\Product\InsertProductContoller;
 use App\Http\Controllers\Product\DeleteProductController;
 use App\Http\Controllers\Product\ShortenerController;
@@ -235,7 +236,7 @@ Route::prefix('cart')->group(function () {
 Route::prefix('order')->group(function () {
     // انشاء الطلبية و ارسال الطلبيات للبائعين
     //Route::post('/store', [OrderController::class, 'create_order_with_items']);
-    Route::post('/store', [OrderController::class, 'create_order_with_items']);
+    Route::post('/store', [OrderTestController::class, 'create_order_with_items']);
     /* ------------------ مسارات المعاملة بين البائع و المشتري ------------------ */
     Route::prefix('items')->group(function () {
         // اظهار الطلبية الواحدة
@@ -252,8 +253,6 @@ Route::prefix('order')->group(function () {
         Route::post('/{id}/dilevered_by_seller', [ItemController::class, 'dilevered_by_seller']);
         // قبول المشروع من قبل المشتري
         Route::post('/{id}/accepted_delivery_by_buyer', [ItemController::class, 'accepted_delivery_by_buyer']);
-        // رفض المشروع من قبل المشتري
-        Route::post('/{id}/rejected_dilevery_resources', [ItemController::class, 'rejected_delivery_resource_by_buyer']);
         // عرض الالغاء طلب الخدمة
         Route::get('/{id}/display_item_rejected', [ItemController::class, 'display_item_rejected']);
         // طلب الالغاء الخدمة من قبل المشتري

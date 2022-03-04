@@ -2,6 +2,8 @@
 
 namespace App\Listeners;
 
+use App\Events\AcceptedDileveredByBuyer;
+use App\Notifications\AcceptedDileveredByBuyer as NotificationsAcceptedDileveredByBuyer;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Queue\InteractsWithQueue;
 
@@ -23,8 +25,8 @@ class AcceptedDileveredByBuyerListener
      * @param  object  $event
      * @return void
      */
-    public function handle($event)
+    public function handle(AcceptedDileveredByBuyer $event)
     {
-        //
+        $event->user->notify(new NotificationsAcceptedDileveredByBuyer($event->user, $event->item));
     }
 }

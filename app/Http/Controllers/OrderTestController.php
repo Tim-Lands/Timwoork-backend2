@@ -98,7 +98,7 @@ class OrderTestController extends Controller
                 // انشاء توقيت انهاء الطلبية
                 ItemDateExpired::create([
                     'date_expired' => Carbon::now()
-                                        ->addDays(Item::EXPIRED_TIME_NNTIL_SOME_DAYS)
+                                        ->addMinutes(Item::EXPIRED_TIME_NNTIL_SOME_DAYS)
                                         ->toDateTimeString(),
                     'item_id'      => $item->id,
                 ]);

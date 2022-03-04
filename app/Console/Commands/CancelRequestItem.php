@@ -55,6 +55,7 @@ class CancelRequestItem extends Command
         foreach ($items as $item) {
             if ($item['item_date_expired']->date_expired != null && Carbon::now()->toDateTimeString() >= $item['item_date_expired']->date_expired) {
                 $item->status = Item::STATUS_CANCELED_BY_SITE;
+                $item->is_rating = true;
                 $item->save();
 
                 // ammount
