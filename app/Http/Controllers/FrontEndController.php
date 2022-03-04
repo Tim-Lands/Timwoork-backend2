@@ -84,7 +84,6 @@ class FrontEndController extends Controller
             ->whereSlug($slug)
             ->orWhere('id', $slug)
             ->withOnly([
-                'conversations',
                 'subcategory' => function ($q) {
                     $q->select('id', 'parent_id', 'name_ar', 'name_en', 'name_fr')
                         ->with('category', function ($q) {
@@ -97,7 +96,7 @@ class FrontEndController extends Controller
                 },
                 'product_tag',
                 'ratings' => function ($q) {
-                    $q->with('user.profile');
+                    $q->selection()->with('user.profile');
                 },
                 'galaries' => function ($q) {
                     $q->select('id', 'path', 'product_id');
@@ -124,6 +123,7 @@ class FrontEndController extends Controller
             ->where('is_completed', 1)
             ->withAvg('ratings', 'rating')
             ->withCount('ratings')
+
             ->first();
         // فحص اذا كان يوجد هذا العنصر
         if (!$product) {

@@ -15,16 +15,34 @@ class Rating extends Model
 
     // ===========================Contants =============================
     // code
+    // تقيم معلق
+    const RATING_SUSPEND = 0;
     // حالة التقييم مرفوض
-    const RATING_REJECT = 0;
-    // حالة التقييم مرفوض
+    const RATING_REJECT = 2;
+    // حالة التقييم مقبول
     const RATING_ACTIVE = 1;
 
     // ================== Accessor & Metators ==========================
     // code
     // ============================ Scopes =============================
 
-
+    /**
+        * scopeSelection => دالة من اجل جلب البيانات
+        *
+        * @param  mixed $query
+        * @return object
+        */
+    public function scopeSelection(mixed $query): ?object
+    {
+        return $query->select(
+            'id',
+            'comment',
+            'reply',
+            'status',
+            'rating',
+            'created_at'
+        )->whereStatus(self::RATING_ACTIVE);
+    }
     // ========================== Relations ============================
 
     /**
