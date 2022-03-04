@@ -37,11 +37,12 @@ class Rating extends Model
         return $query->select(
             'id',
             'comment',
+            'product_id',
             'reply',
             'status',
             'rating',
             'created_at'
-        )->whereStatus(self::RATING_ACTIVE);
+        );
     }
     // ========================== Relations ============================
 

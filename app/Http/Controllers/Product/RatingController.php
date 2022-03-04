@@ -4,6 +4,8 @@ namespace App\Http\Controllers\Product;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Products\RatingStoreRequest;
+use App\Http\Requests\ReplyRatingRequest;
+use App\Models\Item;
 use App\Models\Product;
 use App\Models\Rating;
 use Exception;
@@ -21,7 +23,9 @@ class RatingController extends Controller
     public function rate($id, RatingStoreRequest $request)
     {
         //id  جلب العنصر بواسطة
-        $product = Product::withAvg('ratings', 'rating')->find($id);
+        $item = Item::find($id);
+
+        $product = Product::withAvg('ratings', 'rating')->whereId($item->number_product)->first();
         // جلب المستخدم الحالي
         $user_id = Auth::id();
         // شرط اذا كان العنصر موجود
@@ -32,6 +36,9 @@ class RatingController extends Controller
         // قم بجلب تقييم الخدمة من طرف المستخدم الحالي
         $rate = Rating::where('user_id', $user_id)->where('product_id', $product->id)->first();
 
+        if(!$item->is_rating){
+            return response()->error('لا يمكنك التقييم', 403);
+        }
         // إذا كان التقييم موجود وغير فارغ يمكن التعديل عليه
         if ($rate) {
             return response()->error('لقد تمّ التقييم من قبلك بالفعل', 403);
@@ -54,20 +61,23 @@ class RatingController extends Controller
                 // حفظ التعديلات الجديدة على الخدمة
                 $product->save();
 
+                $item->is_rating = false;
+                $item->save();
+
                 DB::commit();
                 // إرسال رسالة النجاح
                 return response()->success('لقد تمّ إضافة  التقييم بنجاح', $rating);
             } catch (Exception $ex) {
                 // في حالة الخطأ يتم التراجع عن أي تغيير حدث في قاعدة البيانات
                 DB::rollback();
-                //return $ex;
+                return $ex;
                 // ثم إرسال رسالة الخطأ
                 return response()->error('هناك خطأ ما حدث في قاعدة بيانات , يرجى التأكد من ذلك', 403);
             }
         }
     }
 
-    public function reply($id, RatingStoreRequest $request)
+    public function reply($id, ReplyRatingRequest $request)
     {
 
         // قم بجلب تقييم الخدمة من طرف المستخدم الحالي
