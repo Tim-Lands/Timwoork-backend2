@@ -181,4 +181,34 @@ class OrderController extends Controller
             return $this->create_order_with_items();
         }
     }
+
+    /**
+     * stripe_charge
+     *
+     * @param  mixed $request
+     * @return void
+     */
+    public function wallet_charge(Request $request)
+    {
+        $cart = Cart::selection()
+            ->with(['cart_items' => function ($q) {
+                $q->with('cartItem_developments')->get();
+            }])
+            ->where('user_id', Auth::user()->id)
+            ->isnotbuying()
+            ->first();
+        $profile = Auth::user()->profile;
+        $wallet = Auth::user()->profile->wallet;
+        $withdrawable_amount = $wallet->withdrawable_amount;
+        if ($cart->total_price < $withdrawable_amount) {
+            $new_amount = $withdrawable_amount - $cart->total_price;
+            $wallet->withdrawable_amount = $new_amount;
+            $wallet->save();
+            $profile->withdrawable_amount = $new_amount;
+            $profile->save();
+            return $this->create_order_with_items();
+        } else {
+            return 'ytyt';
+        }
+    }
 }
