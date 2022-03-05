@@ -10,6 +10,7 @@ use App\Models\Order;
 use App\Models\Product;
 use App\Traits\Paypal;
 use App\Traits\Stripe;
+use App\Traits\WalletPaymentMethod;
 use Carbon\Carbon;
 use Exception;
 use Illuminate\Support\Facades\Auth;
@@ -20,7 +21,7 @@ use Illuminate\Http\Response;
 
 class OrderController extends Controller
 {
-    use Paypal, Stripe;
+    use Paypal, Stripe, WalletPaymentMethod;
 
     /**
      * __construct
@@ -103,8 +104,8 @@ class OrderController extends Controller
                 // انشاء توقيت انهاء الطلبية
                 ItemDateExpired::create([
                     'date_expired' => Carbon::now()
-                                        ->addDays(Item::EXPIRED_TIME_NNTIL_SOME_DAYS)
-                                        ->toDateTimeString(),
+                        ->addDays(Item::EXPIRED_TIME_NNTIL_SOME_DAYS)
+                        ->toDateTimeString(),
                     'item_id'      => $item->id,
                 ]);
             }
@@ -197,18 +198,9 @@ class OrderController extends Controller
             ->where('user_id', Auth::user()->id)
             ->isnotbuying()
             ->first();
-        $profile = Auth::user()->profile;
-        $wallet = Auth::user()->profile->wallet;
-        $withdrawable_amount = $wallet->withdrawable_amount;
-        if ($cart->total_price < $withdrawable_amount) {
-            $new_amount = $withdrawable_amount - $cart->total_price;
-            $wallet->withdrawable_amount = $new_amount;
-            $wallet->save();
-            $profile->withdrawable_amount = $new_amount;
-            $profile->save();
+        $pay = $this->wallet_purchase($cart);
+        if ($pay) {
             return $this->create_order_with_items();
-        } else {
-            return 'ytyt';
         }
     }
 }
