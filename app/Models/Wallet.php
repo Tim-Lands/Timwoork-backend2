@@ -12,6 +12,7 @@ class Wallet extends Model
     use HasFactory;
 
     protected $table = 'wallets';
+    protected $with = ['activities'];
 
     // ===========================Contants =============================
     // code
@@ -27,7 +28,7 @@ class Wallet extends Model
      */
     public function scopeSelection(mixed $query): ?object
     {
-        return $query->select('id', 'profile_id', 'amouts_total', 'amount_pending',  'created_at');
+        return $query->select('id', 'profile_id', 'amouts_total', 'amount_pending', 'created_at');
     }
 
     // ========================== Relations ============================

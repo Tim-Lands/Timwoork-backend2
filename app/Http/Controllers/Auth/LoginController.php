@@ -44,7 +44,8 @@ class LoginController extends Controller
             'profile.profile_seller.skills',
             'profile.badge',
             'profile.level',
-            'profile.country'
+            'profile.country',
+            'profile.wallet',
         ]);
 
         // make some columns hidden in response
