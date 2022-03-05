@@ -44,8 +44,8 @@ class CanceledOrderByBuyer extends Notification
     public function toMail($notifiable)
     {
         return (new MailMessage)
-            ->from('support@timlands.com')
-            ->subject('قبول الطلبية')
+        ->from(env('MAIL_FROM_ADDRESS'), config('mail.from.ar_name'))
+        ->subject('قبول الطلبية')
             ->view('emails.orders.canceled_order_by_buyer', [
                 'type' => "order",
                 'to' => "seller",

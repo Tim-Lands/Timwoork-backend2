@@ -42,8 +42,8 @@ class ForgetPassword extends Notification
     public function toMail($notifiable)
     {
         return (new MailMessage)
-            ->from('support@timlands.com')
-            ->subject('تفعيل حسابك على تيم وورك')
+        ->from(env('MAIL_FROM_ADDRESS'), config('mail.from.ar_name'))
+        ->subject('تفعيل حسابك على تيم وورك')
             ->view('emails.forget_password', ['user' => $this->user]);
     }
 

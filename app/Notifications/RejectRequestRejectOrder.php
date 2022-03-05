@@ -44,8 +44,8 @@ class RejectRequestRejectOrder extends Notification
     public function toMail($notifiable)
     {
         return (new MailMessage)
-            ->from('support@timlands.com')
-            ->subject('رفض إلغاء الطلبية')
+        ->from(env('MAIL_FROM_ADDRESS'), config('mail.from.ar_name'))
+        ->subject('رفض إلغاء الطلبية')
             ->view('emails.orders.reject_request_reject_order', [
                 'type' => "order",
                 'to' => "buyer",

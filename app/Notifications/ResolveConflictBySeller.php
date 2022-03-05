@@ -44,8 +44,8 @@ class ResolveConflictBySeller extends Notification
     public function toMail($notifiable)
     {
         return (new MailMessage)
-            ->from('support@timlands.com')
-            ->subject('حل نزاع')
+        ->from(env('MAIL_FROM_ADDRESS'), config('mail.from.ar_name'))
+        ->subject('حل نزاع')
             ->view('emails.orders.resolve_conflict_by_seller', [
                 'type' => "order",
                 'to' => "buyer",

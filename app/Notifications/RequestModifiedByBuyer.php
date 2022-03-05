@@ -44,8 +44,8 @@ class RequestModifiedByBuyer extends Notification
     public function toMail($notifiable)
     {
         return (new MailMessage)
-            ->from('support@timlands.com')
-            ->subject('طلب تعديلات')
+        ->from(env('MAIL_FROM_ADDRESS'), config('mail.from.ar_name'))
+        ->subject('طلب تعديلات')
             ->view('emails.orders.request_modified_by_buyer', [
                 'type' => "order",
                 'to' => "seller",

@@ -44,11 +44,9 @@ class NewOrder extends Notification implements ShouldQueue
      */
     public function toMail($notifiable)
     {
-        $seller = User::find($this->item->user_id);
-
         return (new MailMessage)
-            ->from('support@timlands.com')
-            ->subject('طلبية جديدة')
+        ->from(env('MAIL_FROM_ADDRESS'), config('mail.from.ar_name'))
+        ->subject('طلبية جديدة')
             ->view('emails.orders.new_order', [
                 'type' => "order",
                 'to' => "seller",
@@ -73,7 +71,6 @@ class NewOrder extends Notification implements ShouldQueue
      */
     public function toArray($notifiable)
     {
-        $seller = User::find($this->item->user_id);
         return [
             'type' => "order",
             'to' => "seller",

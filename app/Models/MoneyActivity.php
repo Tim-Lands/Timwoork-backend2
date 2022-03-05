@@ -14,10 +14,10 @@ class MoneyActivity extends Model
     ];
     // ===========================Contants =============================
     // code
-    const STATUS_BUYING         = 0;
-    const STATUS_EARNING        = 1;
-    const STATUS_WITHDRAW       = 2;
-    const STATUS_REFUND       = 2;
+    const STATUS_BUYING         = 0; // عملية شراء
+    const STATUS_EARNING        = 1; // عملية ربح
+    const STATUS_WITHDRAW       = 2; // عملية سحب
+    const STATUS_REFUND         = 3; // عملية استعادة مال
     // ========================== Relations ============================
     // code
 

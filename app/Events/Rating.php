@@ -15,16 +15,18 @@ class Rating implements ShouldBroadcast
 {
     use Dispatchable, InteractsWithSockets, SerializesModels;
     public $user;
-    public $product;
+    public $id;
+    public $title;
     /**
      * Create a new event instance.
      *
      * @return void
      */
-    public function __construct($user, $product)
+    public function __construct($user, $id, $title)
     {
         $this->user = $user;
-        $this->product = $product;
+        $this->id = $id;
+        $this->title = $title;
     }
 
     /**
@@ -46,7 +48,7 @@ class Rating implements ShouldBroadcast
     {
         $buyer = Auth::user();
         return [
-            'type' => "product",
+            'type' => "rating",
             'to' => 'seller',
             'notifications_count' => $this->user->unreadNotifications->count(),
             'title' =>  " قام " . $buyer->profile->full_name . " بتقييم خدمتك ",
@@ -56,8 +58,8 @@ class Rating implements ShouldBroadcast
                 'avatar_url' => $buyer->profile->avatar_url
             ],
             'content' => [
-                'item_id' => $this->product->id,
-                'title' => $this->product->title,
+                'item_id' => $this->id,
+                'title' => $this->title,
             ],
         ];
     }

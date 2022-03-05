@@ -13,16 +13,18 @@ class Rating extends Notification
 {
     use Queueable;
     public $user;
-    public $product;
+    public $id;
+    public $title;
     /**
-     * Create a new notification instance.
+     * Create a new event instance.
      *
      * @return void
      */
-    public function __construct($user, $product)
+    public function __construct($user, $id, $title)
     {
         $this->user = $user;
-        $this->product = $product;
+        $this->id = $id;
+        $this->title = $title;
     }
 
     /**
@@ -46,10 +48,10 @@ class Rating extends Notification
     public function toMail($notifiable)
     {
         return (new MailMessage)
-            ->from('support@timlands.com')
-            ->subject('قبول استلام العمل')
-            ->view('emails.orders.dilevered_by_seller', [
-                'type' => "product",
+        ->from(env('MAIL_FROM_ADDRESS'), config('mail.from.ar_name'))
+        ->subject('تقييم الخدمة')
+            ->view('emails.orders.rating', [
+                'type' => "rating",
                 'to' => "seller",
                 'title' =>  " قام " . Auth::user()->profile->full_name . " بتقييم خدمتك ",
                 'user_sender' => [
@@ -57,8 +59,8 @@ class Rating extends Notification
                     'username' => Auth::user()->username,
                     'avatar_url' => Auth::user()->profile->avatar_url
                 ],                'content' => [
-                    'item_id' => $this->item->id,
-                    'title' => $this->item->title,
+                    'item_id' => $this->id,
+                    'title' => $this->title,
                 ],
             ]);
     }
@@ -71,7 +73,6 @@ class Rating extends Notification
      */
     public function toArray($notifiable)
     {
-        $seller = User::find($this->rate->user_id);
         return [
             'type' => "order",
             'to' => "seller",
@@ -82,8 +83,8 @@ class Rating extends Notification
                 'avatar_url' => Auth::user()->profile->avatar_url
             ],
             'content' => [
-                'item_id' => $this->item->id,
-                'title' => $this->item->title,
+                'item_id' => $this->id,
+                'title' => $this->title,
             ],
         ];
     }

@@ -2,12 +2,14 @@
 
 namespace App\Http\Controllers\Product;
 
+use App\Events\Rating as EventsRating;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Products\RatingStoreRequest;
 use App\Http\Requests\ReplyRatingRequest;
 use App\Models\Item;
 use App\Models\Product;
 use App\Models\Rating;
+use App\Models\User;
 use Exception;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -26,17 +28,20 @@ class RatingController extends Controller
         $item = Item::find($id);
 
         $product = Product::withAvg('ratings', 'rating')->whereId($item->number_product)->first();
-        // جلب المستخدم الحالي
-        $user_id = Auth::id();
         // شرط اذا كان العنصر موجود
         if (!$product || !is_numeric($id)) {
             // رسالة خطأ
             return response()->error('هذا العنصر غير موجود', 403);
         }
+        // جلب البائع
+        $seller = User::find($item->user_id);
+        // جلب المستخدم الحالي
+        $user_id = Auth::id();
+
         // قم بجلب تقييم الخدمة من طرف المستخدم الحالي
         $rate = Rating::where('user_id', $user_id)->where('product_id', $product->id)->first();
 
-        if(!$item->is_rating){
+        if (!$item->is_rating) {
             return response()->error('لا يمكنك التقييم', 403);
         }
         // إذا كان التقييم موجود وغير فارغ يمكن التعديل عليه
@@ -63,7 +68,7 @@ class RatingController extends Controller
 
                 $item->is_rating = false;
                 $item->save();
-
+                event(new EventsRating($seller, $product->id, $product->title));
                 DB::commit();
                 // إرسال رسالة النجاح
                 return response()->success('لقد تمّ إضافة  التقييم بنجاح', $rating);
