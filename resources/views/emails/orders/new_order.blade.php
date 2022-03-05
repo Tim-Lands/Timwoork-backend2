@@ -1,17 +1,10 @@
-<!DOCTYPE html>
-<html lang="en">
+@component('mail::message')
+# {{ $title }}
 
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>Document</title>
-</head>
+@component('mail::button', ['url' => "{env('FRONTEND_URL').$content['item_id'] }}"])
+تفقد الطلبية
+@endcomponent
 
-<body>
-    <h1>{{ $type }}</h1>
-    <h6>{{ $title }}</h6>
-    <a href="https://forum-wazzefny-com/order/{{ $content['item_id'] }}">{{ $content['title'] }}</a>
-</body>
-
-</html>
+Thanks,<br>
+تيموورك
+@endcomponent

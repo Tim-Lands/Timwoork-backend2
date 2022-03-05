@@ -45,7 +45,7 @@ class CanceledOrderByBuyer extends Notification
     {
         return (new MailMessage)
         ->from(env('MAIL_FROM_ADDRESS'), config('mail.from.ar_name'))
-        ->subject('قبول الطلبية')
+        ->subject('الغاء الطلبية')
             ->view('emails.orders.canceled_order_by_buyer', [
                 'type' => "order",
                 'to' => "seller",

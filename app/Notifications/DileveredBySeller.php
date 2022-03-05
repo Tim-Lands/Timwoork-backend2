@@ -45,7 +45,7 @@ class DileveredBySeller extends Notification
     {
         return (new MailMessage)
         ->from(env('MAIL_FROM_ADDRESS'), config('mail.from.ar_name'))
-        ->subject('قبول الطلبية')
+        ->subject('تسليم العمل')
             ->view('emails.orders.dilevered_by_seller', [
                 'type' => "order",
                 'to' => "buyer",

@@ -43,7 +43,7 @@ class ForgetPassword extends Notification
     {
         return (new MailMessage)
         ->from(env('MAIL_FROM_ADDRESS'), config('mail.from.ar_name'))
-        ->subject('تفعيل حسابك على تيم وورك')
+        ->subject('استرجاع كلمة المرور حسابك')
             ->view('emails.forget_password', ['user' => $this->user]);
     }
 
