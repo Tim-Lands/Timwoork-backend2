@@ -20,9 +20,9 @@ class CreateMoneyActivitiesTable extends Migration
             $table->foreignId('wallet_id')->constrained()
                 ->onDelete('CASCADE')
                 ->onUpdate('CASCADE');
-
+            $table->json('payload')->nullable();
             $table->float('amount', 8, 2)->unsigned()->default(0);
-            $table->tinyInteger('status')->nullable()->default(0);
+            $table->tinyInteger('status')->nullable();
             $table->timestamps();
         });
     }

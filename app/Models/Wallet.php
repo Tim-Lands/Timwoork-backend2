@@ -46,9 +46,21 @@ class Wallet extends Model
 
 
     /**
-     * attachments
+     * amounts
      *
      * @return HasMany
+     */
+    public function activities(): HasMany
+    {
+        return $this->hasMany(MoneyActivity::class);
+    }
+
+
+
+    /**
+     * profile
+     *
+     * @return BelongsTo
      */
     public function profile(): BelongsTo
     {
