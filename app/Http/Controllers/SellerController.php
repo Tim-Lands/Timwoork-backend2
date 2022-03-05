@@ -31,6 +31,9 @@ class SellerController extends Controller
     public function store()
     {
         try {
+            if (!Auth::user()->profile->is_completed) {
+                return response()->error(__("messages.product.profile_not_complete"), 422);
+            }
             // إنشاء ملف شخصي للبائع
             $seller = Auth::user()->profile->profile_seller()->create([
                 'bio' => '',
@@ -61,12 +64,12 @@ class SellerController extends Controller
             $seller->portfolio = $request->portfolio;
             $seller->save();
             // تسجيل المهارات الخاصة للبائع
-            $skills = [];
-            // تهيئة المهارات بوضعها في مصفوفة
-            for ($i = 0; $i < count($request->skills); $i++) {
-                $skills[$request->skills[$i]["id"]]  = ["level" => $request->skills[$i]["level"]];
-            }
-            $seller->skills()->syncWithoutDetaching($skills);
+            /*             $skills = [];
+                        // تهيئة المهارات بوضعها في مصفوفة
+                        for ($i = 0; $i < count($request->skills); $i++) {
+                            $skills[$request->skills[$i]["id"]]  = ["level" => $request->skills[$i]["level"]];
+                        }
+                        $seller->skills()->syncWithoutDetaching($skills); */
             // تغيير حالة البروفايل إلى بائع
             $seller->profile->is_seller = true;
 

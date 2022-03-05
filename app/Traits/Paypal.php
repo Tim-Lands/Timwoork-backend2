@@ -2,6 +2,8 @@
 
 namespace App\Traits;
 
+use App\Models\MoneyActivity;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use PayPalCheckoutSdk\Orders\OrdersCaptureRequest;
 use PayPalCheckoutSdk\Orders\OrdersCreateRequest;
@@ -9,7 +11,6 @@ use PayPalHttp\HttpException;
 
 trait Paypal
 {
-
     public $return_url = 'http://localhost:3000/purchase/paypal?return=1';
     public $cancel_url = 'http://localhost:3000/purchase/paypal?return=0';
 
@@ -77,7 +78,6 @@ trait Paypal
         ];
 
         foreach ($cart->cart_items as $key => $value) {
-
             $request_body['purchase_units'][0]['items'][$key]['name'] = $value->product_title;
             $request_body['purchase_units'][0]['items'][$key]['unit_amount']['currency_code'] = 'USD';
             $request_body['purchase_units'][0]['items'][$key]['unit_amount']['value'] = $value->price_unit;
@@ -109,7 +109,6 @@ trait Paypal
 
     public function paypal_purchase($paypal_id, $cart)
     {
-
         if ($cart && $cart->is_buying) {
             return response()->error('السلة مباعة');
         }
@@ -119,11 +118,24 @@ trait Paypal
         try {
             $response = $client->execute($request);
             if ($response->statusCode == 201 && $response->result->status == 'COMPLETED') {
-                // حفظ البيانات القادمة من 
+                // حفظ البيانات القادمة من
                 DB::beginTransaction();
                 $payment = $cart->payments()->create([
                     'payment_type' => 'paypal',
                     'payload' => json_encode($response->result, JSON_PRETTY_PRINT)
+                ]);
+                $payload = [
+                    'title' => 'عملية شراء',
+                    'payment_method' => 'paypal',
+                    'total_price' => $cart->total_price,
+                    'price_with_tax' => $cart->price_with_tax,
+                    'tax' => $cart->tax,
+                ];
+                $activity = MoneyActivity::create([
+                    'wallet_id' => Auth::user()->profile->wallet->id,
+                    'amount' => $cart->price_with_tax,
+                    'status' => MoneyActivity::STATUS_BUYING,
+                    'payload' => json_encode($payload, JSON_PRETTY_PRINT)
                 ]);
 
                 DB::commit();

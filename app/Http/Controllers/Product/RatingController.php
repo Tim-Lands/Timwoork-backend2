@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Product;
 
 use App\Events\Rating as EventsRating;
+use App\Events\Reply;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Products\RatingStoreRequest;
 use App\Http\Requests\ReplyRatingRequest;
@@ -93,10 +94,16 @@ class RatingController extends Controller
         } else {
             // في حالة عدم وجود تقييم لهذه الخدمة من طرف المستخدم الحالي
             try {
+                $product = Product::withAvg('ratings', 'rating')->whereId($rate->product_id)->first();
+                $buyer = User::find($rate->user_id);
                 DB::beginTransaction();
+
                 // قم بإنشاء تقييم جديد
                 $rate->reply = $request->reply;
                 $rate->save();
+
+                event(new Reply($buyer, $product->id, $product->title));
+
                 DB::commit();
                 // إرسال رسالة النجاح
                 return response()->success('تمّ إضافة ردك بنجاح', $rate);

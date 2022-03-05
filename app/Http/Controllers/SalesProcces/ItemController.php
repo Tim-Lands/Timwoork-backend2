@@ -21,6 +21,7 @@ use App\Models\Amount;
 use App\Models\Item;
 use App\Models\ItemOrderModified;
 use App\Models\ItemOrderRejected;
+use App\Models\MoneyActivity;
 use App\Models\User;
 use Carbon\Carbon;
 use Exception;
@@ -120,12 +121,9 @@ class ItemController extends Controller
             $buyer = $item->order->cart->user;
             /* --------------------------- تغيير حالة الطلبية --------------------------- */
             DB::beginTransaction();
-            //الغاء وقت الانتهاء الطلبية
-            $item->item_date_expired->update([
-                    'date_expired' => Item::EXPIRED_ITEM_NULLABLE
-                ]);
             // تحويل الطلبية من حالة الابتدائية الى حالة القبول
             $item->status = Item::STATUS_ACCEPT;
+            $item->date_expired = Item::EXPIRED_ITEM_NULLABLE;
             $item->save();
             // ارسال اشعار
             event(new AcceptOrder($buyer, $item));
@@ -170,12 +168,10 @@ class ItemController extends Controller
             $item_amount = $item->price_product;
             /* --------------------------- تغيير حالة الطلبية --------------------------- */
             DB::beginTransaction();
-            //الغاء وقت الانتهاء الطلبية
-            $item->item_date_expired->update([
-                    'date_expired' => Item::EXPIRED_ITEM_NULLABLE
-                ]);
+
             // تحويل الطلبية من حالة الابتدائية الى حالة الرفض
             $item->status = Item::STATUS_REJECTED_BY_SELLER;
+            $item->date_expired = Item::EXPIRED_ITEM_NULLABLE;
             $item->save();
 
             // انشاء مبلغ جديد
@@ -194,6 +190,16 @@ class ItemController extends Controller
             $profile->withdrawable_amount += $item_amount;
             $profile->save();
 
+            $payload = [
+                'title' => 'استعادة مال',
+                'amount' => $item_amount,
+            ];
+            $activity = MoneyActivity::create([
+                'wallet_id' => $wallet->id,
+                'amount' => $item_amount,
+                'status' => MoneyActivity::STATUS_REFUND,
+                'payload' => json_encode($payload, JSON_PRETTY_PRINT)
+            ]);
             event(new RejectOrder($buyer, $item));
             DB::commit();
             // رسالة نجاح
@@ -237,12 +243,9 @@ class ItemController extends Controller
 
             /* --------------------------- تغيير حالة الطلبية --------------------------- */
             DB::beginTransaction();
-            //الغاء وقت الانتهاء الطلبية
-            $item->item_date_expired->update([
-                    'date_expired' => Item::EXPIRED_ITEM_NULLABLE
-                ]);
             // تحويل الطلبية من حالة الابتدائية الى حالة الرفض
             $item->status = Item::STATUS_CANCELLED_BY_BUYER;
+            $item->date_expired = Item::EXPIRED_ITEM_NULLABLE;
             $item->save();
 
             // تحويل مبلغ الطلبية الى محفظة المشتري
@@ -261,7 +264,16 @@ class ItemController extends Controller
             // تحديث بيانات المشتري
             $profile->withdrawable_amount += $item_amount;
             $profile->save();
-
+            $payload = [
+                'title' => 'استعادة مال',
+                'amount' => $item_amount,
+            ];
+            $activity = MoneyActivity::create([
+                'wallet_id' => $wallet->id,
+                'amount' => $item_amount,
+                'status' => MoneyActivity::STATUS_REFUND,
+                'payload' => json_encode($payload, JSON_PRETTY_PRINT)
+            ]);
             // إرسال إشعار
             event(new CanceledOrderByBuyer($user, $item));
             DB::commit();
@@ -305,13 +317,10 @@ class ItemController extends Controller
 
             /* --------------------------- تغيير حالة الطلبية --------------------------- */
             DB::beginTransaction();
-            //الغاء وقت الانتهاء الطلبية
-            $item->item_date_expired->update([
-                    'date_expired' => Item::EXPIRED_ITEM_NULLABLE
-                ]);
             // تحويل الطلبية من حالة الابتدائية الى حالة الرفض
             $item->status = Item::STATUS_CANCELLED_BY_SELLER;
-            $item->status = true;
+            $item->is_rating = true;
+            $item->date_expired = Item::EXPIRED_ITEM_NULLABLE;
             $item->save();
 
             // تحويل مبلغ الطلبية الى محفظة المشتري
@@ -332,6 +341,16 @@ class ItemController extends Controller
             $profile->withdrawable_amount += $item_amount;
             $profile->save();
 
+            $payload = [
+                'title' => 'استعادة مال',
+                'amount' => $item_amount,
+            ];
+            $activity = MoneyActivity::create([
+                'wallet_id' => $wallet->id,
+                'amount' => $item_amount,
+                'status' => MoneyActivity::STATUS_REFUND,
+                'payload' => json_encode($payload, JSON_PRETTY_PRINT)
+            ]);
             // إرسال إشعار
             event(new CanceledOrderBySeller($buyer, $item));
             DB::commit();
@@ -471,6 +490,17 @@ class ItemController extends Controller
             // تحديث بيانات المشتري
             $profile->pending_amount += $final_amount;
             $profile->save();
+
+            $payload = [
+                'title' => 'ربح مال',
+                'amount' => $final_amount,
+            ];
+            $activity = MoneyActivity::create([
+                'wallet_id' => $wallet->id,
+                'amount' => $final_amount,
+                'status' => MoneyActivity::STATUS_EARNING,
+                'payload' => json_encode($payload, JSON_PRETTY_PRINT)
+            ]);
             // ارسال الاشعار
             event(new AcceptedDileveredByBuyer($seller, $item));
             DB::commit();
@@ -523,11 +553,9 @@ class ItemController extends Controller
             /* --------------------------- تغيير حالة الطلبية --------------------------- */
             DB::beginTransaction();
             ItemOrderRejected::create($data_request_cancelled_by_buyer);
-            //وضع وقت طلب الغاء الطلبية 48 ساعة
-            $item->item_date_expired->update([
-                    'date_expired_request_canceled' => Carbon::now()->addDays(Item::EXPIRED_TIME_NNTIL_SOME_DAYS)->toDateTimeString(),
-                ]);
+
             $item->status = Item::STATUS_CANCELLED_REQUEST_BUYER;
+            $item->date_expired = Carbon::now()->addDays(Item::EXPIRED_TIME_NNTIL_SOME_DAYS)->toDateTimeString();
             $item->save();
             // ارسال الاشعار
             event(new RequestRejectOrder($user, $item));
@@ -588,12 +616,9 @@ class ItemController extends Controller
             $item_rejected->update($data_accept_request_by_seller);
 
             $item_rejected->delete();
-            //الغاء وقت طلب الغاء الطلبية 48 ساعة
-            $item->item_date_expired->update([
-                        'date_expired_request_canceled' => Item::EXPIRED_ITEM_NULLABLE,
-                    ]);
             // رفض الطلبية
             $item->status = Item::STATUS_CANCELLED_BY_BUYER;
+            $item->date_expired = Item::EXPIRED_ITEM_NULLABLE;
             $item->save();
             // انشاء مبلغ جديد
             $amount = Amount::create([
@@ -655,12 +680,10 @@ class ItemController extends Controller
             DB::beginTransaction();
             // عملية رفض طلب الغاء الطلبية
             $item_rejected->update(['status' =>  ItemOrderRejected::REJECTED]);
-            //الغاء وقت طلب الغاء الطلبية 48 ساعة
-            $item->item_date_expired->update([
-                        'date_expired_request_canceled' => Item::EXPIRED_ITEM_NULLABLE,
-                    ]);
             // عملية التعليق الطلبية
             $item->status = Item::STATUS_SUSPEND;
+            $item->date_expired = Item::EXPIRED_ITEM_NULLABLE;
+
             $item->save();
             // ارسال الاشعار
             event(new RejectRequestRejectOrder($user, $item));
@@ -760,14 +783,14 @@ class ItemController extends Controller
             /* --------------------------- تغيير حالة الطلبية --------------------------- */
             DB::beginTransaction();
             ItemOrderModified::create($data_request_modified_by_buyer);
-            //وضع وقت لطلب تعديل الطلبية 48 ساعة
-            $item->item_date_expired->update([
-                    'date_expired_request_modifier' => Carbon::now()
-                        ->addDays(Item::EXPIRED_TIME_NNTIL_SOME_DAYS)
-                        ->toDateTimeString(),
-                ]);
+            $item->date_expired = Carbon::now()
+            ->addDays(Item::EXPIRED_TIME_NNTIL_SOME_DAYS)
+               ->toDateTimeString();
 
             $item->status = Item::STATUS_MODIFIED_REQUEST_BUYER;
+            $item->date_expired = Carbon::now()
+                                 ->addDays(Item::EXPIRED_TIME_NNTIL_SOME_DAYS)
+                                    ->toDateTimeString();
             $item->save();
             // ارسال الاشعار
             event(new RequestModifiedBuBuyer($user, $item));
@@ -808,24 +831,16 @@ class ItemController extends Controller
             if (!$item_modified || $item_modified->status != ItemOrderModified::PENDING) {
                 return response()->error(__('messages.item.request_not_found'), Response::HTTP_FORBIDDEN);
             }
-            // وضع معلومات قبول الالغاء الطلبية في مصفوفة
-            $data_accept_request_by_seller = [
-                'status' => ItemOrderModified::ACCEPTED,
-                'item_id'         => $item->id
-            ];
             // جلب بيانات المشتري
             $buyer = $item->order->cart->user;
 
             /* --------------------------- تغيير حالة الطلبية --------------------------- */
             DB::beginTransaction();
-            //الغاء وقت لطلب تعديل الطلبية 48 ساعة
-            $item->item_date_expired->update([
-                        'date_expired_request_modifier' => Item::EXPIRED_ITEM_NULLABLE,
-                    ]);
 
             $item_modified->delete();
             //  الطلبية قيد التنفيذ
             $item->status = Item::STATUS_ACCEPT;
+            $item->date_expired = Item::EXPIRED_ITEM_NULLABLE;
             $item->save();
             // إرسال الاشعار
             event(new AcceptModifiedBySeller($buyer, $item));
@@ -872,15 +887,10 @@ class ItemController extends Controller
             // عملية رفض التعديل
             $item_modified->update(['status' =>  ItemOrderModified::REJECTED]);
 
-            //الغاء وقت لطلب تعديل الطلبية 48 ساعة
-            $item->item_date_expired->update([
-                        'date_expired_request_modifier' => Item::EXPIRED_ITEM_NULLABLE
-                    ]);
-
             // عملية التعليق الطلبية
             $item->status = Item::STATUS_SUSPEND_CAUSE_MODIFIED;
+            $item->date_expired = Item::EXPIRED_ITEM_NULLABLE;
             $item->save();
-
             // ارسال الاشعار
             event(new RejectModifiedRequestBySeller($user, $item));
             DB::commit();

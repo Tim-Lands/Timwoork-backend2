@@ -100,14 +100,19 @@ class OrderController extends Controller
                     'price_product' => $cart['cart_items'][$key]->price_product,
                     'duration' => $duration_total,
                     'status' => Item::STATUS_PENDING,
+                    'date_expired' => Carbon::now()
+                                        ->addDays(Item::EXPIRED_TIME_NNTIL_SOME_DAYS)
+                                        ->toDateTimeString(),
                 ]);
                 // انشاء توقيت انهاء الطلبية
+                /*
+                ! تصليحها فالمرحلة القادمة
                 ItemDateExpired::create([
                     'date_expired' => Carbon::now()
                         ->addDays(Item::EXPIRED_TIME_NNTIL_SOME_DAYS)
                         ->toDateTimeString(),
                     'item_id'      => $item->id,
-                ]);
+                ]);*/
             }
             // انهاء المعاملة بشكل جيد :
             DB::commit();

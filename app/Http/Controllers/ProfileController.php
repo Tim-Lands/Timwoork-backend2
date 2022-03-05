@@ -72,7 +72,6 @@ class ProfileController extends Controller
             $user->profile->gender = $request->gender;
             $user->profile->date_of_birth = $request->date_of_birth;
             $user->profile->country_id = $request->country_id;
-            $user->profile->steps = Profile::COMPLETED_SETP_ONE;
             $user->profile->save();
             // إرسال رسالة نجاح المرحلة اﻷولى
             return response()->success(__("messages.product.success_step_one"), $user);
@@ -103,7 +102,7 @@ class ProfileController extends Controller
             $avatarUrl = Storage::disk('avatars')->url($avatarName);
             $user->profile->avatar = $avatarName;
             $user->profile->avatar_url = $avatarUrl;
-            $user->profile->steps = Profile::COMPLETED_SETP_TWO;
+            $user->profile->is_completed = true;
             $user->profile->save();
             // إرسال رسالة نجاح المرحلة الثانية مع إرسال رابط الصورة كاملا
             return response()->success(__("messages.product.success_step_two"), $avatarUrl);
@@ -126,7 +125,6 @@ class ProfileController extends Controller
             $user = Auth::user();
             $user->phone = $request->phone_number;
             $user->save();
-            $user->profile->steps = Profile::COMPLETED_SETP_THREE;
             $user->profile->save();
             // إرسال رسالة نجاح المرحلة الثانية مع إرسال رابط الصورة كاملا
             return response()->success(__("messages.product.success_step_three"));

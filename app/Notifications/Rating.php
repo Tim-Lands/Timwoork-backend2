@@ -50,7 +50,7 @@ class Rating extends Notification
         return (new MailMessage)
         ->from(env('MAIL_FROM_ADDRESS'), config('mail.from.ar_name'))
         ->subject('تقييم الخدمة')
-            ->view('emails.orders.rating', [
+            ->view('emails.products.rating', [
                 'type' => "rating",
                 'to' => "seller",
                 'title' =>  " قام " . Auth::user()->profile->full_name . " بتقييم خدمتك ",

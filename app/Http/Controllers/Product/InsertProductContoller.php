@@ -31,6 +31,9 @@ class InsertProductContoller extends Controller
     public function store()
     {
         try {
+            if (!Auth::user()->profile->is_seller) {
+                return response()->error(__("messages.product.you_are_not_seller"), 422);
+            }
             //جلب عدد خدمات
             $count_products_seller =  Auth::user()->profile->profile_seller->products->where('is_vide', 0)->count();
             // جلب عدد المطلبوب من انشاء الخدمة من المستوى

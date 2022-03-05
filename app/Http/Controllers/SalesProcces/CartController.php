@@ -67,6 +67,9 @@ class CartController extends Controller
     public function store(CartRequest $request)
     {
         try {
+            if (!Auth::user()->profile->is_completed) {
+                return response()->error(__("messages.product.profile_not_complete"), 422);
+            }
             // جلب سلة المستخدم
             $cart = Cart::where('user_id', Auth::user()->id);
             // اذا كانت هناك سلة مباعة

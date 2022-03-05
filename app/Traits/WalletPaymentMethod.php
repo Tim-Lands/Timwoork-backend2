@@ -2,6 +2,7 @@
 
 namespace App\Traits;
 
+use App\Models\MoneyActivity;
 use App\Models\Payment;
 use App\Models\User;
 use Exception;
@@ -32,6 +33,21 @@ trait WalletPaymentMethod
                         'tax' => 0
                     ],
                 ]);
+
+                $payload = [
+                    'title' => 'عملية شراء',
+                    'payment_method' => 'paypal',
+                    'total_price' => $cart->total_price,
+                    'price_with_tax' => $cart->total_price,
+                    'tax' => 0,
+                ];
+                $activity = MoneyActivity::create([
+                    'wallet_id' => Auth::user()->profile->wallet->id,
+                    'amount' => $cart->price_with_tax,
+                    'status' => MoneyActivity::STATUS_BUYING,
+                    'payload' => json_encode($payload, JSON_PRETTY_PRINT)
+                ]);
+
                 if (!$payment) {
                     $wallet->withdrawable_amount += $cart->total_price;
                     $wallet->save();

@@ -2,6 +2,7 @@
 
 namespace App\Traits;
 
+use App\Models\MoneyActivity;
 use App\Models\Payment;
 use App\Models\User;
 use Exception;
@@ -22,6 +23,19 @@ trait Stripe
             $payment = $cart->payments()->create([
                 'payment_type' => 'stripe',
                 'payload' => $stripe_payment,
+            ]);
+            $payload = [
+                'title' => 'عملية شراء',
+                'payment_method' => 'stripe',
+                'total_price' => $cart->total_price,
+                'price_with_tax' => $cart->price_with_tax,
+                'tax' => $cart->tax,
+            ];
+            $activity = MoneyActivity::create([
+                'wallet_id' => Auth::user()->profile->wallet->id,
+                'amount' => $cart->price_with_tax,
+                'status' => MoneyActivity::STATUS_BUYING,
+                'payload' => json_encode($payload, JSON_PRETTY_PRINT)
             ]);
             if (!$payment) {
                 $user->refund($stripe_payment->id);

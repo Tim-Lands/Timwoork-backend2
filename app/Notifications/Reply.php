@@ -6,19 +6,24 @@ use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
+use Illuminate\Support\Facades\Auth;
 
 class Reply extends Notification
 {
     use Queueable;
-
+    public $user;
+    public $id;
+    public $title;
     /**
-     * Create a new notification instance.
+     * Create a new event instance.
      *
      * @return void
      */
-    public function __construct()
+    public function __construct($user, $id, $title)
     {
-        //
+        $this->user = $user;
+        $this->id = $id;
+        $this->title = $title;
     }
 
     /**
@@ -29,7 +34,7 @@ class Reply extends Notification
      */
     public function via($notifiable)
     {
-        return ['mail'];
+        return ['mail', 'database'];
     }
 
     /**
@@ -41,9 +46,21 @@ class Reply extends Notification
     public function toMail($notifiable)
     {
         return (new MailMessage)
-                    ->line('The introduction to the notification.')
-                    ->action('Notification Action', url('/'))
-                    ->line('Thank you for using our application!');
+        ->from(env('MAIL_FROM_ADDRESS'), config('mail.from.ar_name'))
+        ->subject('الرد على التعليق')
+            ->view('emails.products.reply', [
+                'type' => "rating",
+                'to' => "buyer",
+                'title' =>  " قام " . Auth::user()->profile->full_name . " بالرد على تعليقك ",
+                'user_sender' => [
+                    'full_name' => Auth::user()->profile->full_name,
+                    'username' => Auth::user()->username,
+                    'avatar_url' => Auth::user()->profile->avatar_url
+                ],                'content' => [
+                    'item_id' => $this->id,
+                    'title' => $this->title,
+                ],
+            ]);
     }
 
     /**
@@ -55,7 +72,18 @@ class Reply extends Notification
     public function toArray($notifiable)
     {
         return [
-            //
+            'type' => "order",
+            'to' => "buyer",
+            'title' =>  " قام " . Auth::user()->profile->full_name . " بالرد على تعليقك ",
+            'user_sender' =>  [
+                'full_name' => Auth::user()->profile->full_name,
+                'username' => Auth::user()->username,
+                'avatar_url' => Auth::user()->profile->avatar_url
+            ],
+            'content' => [
+                'item_id' => $this->id,
+                'title' => $this->title,
+            ],
         ];
     }
 }
