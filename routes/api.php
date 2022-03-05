@@ -234,7 +234,7 @@ Route::prefix('cart')->group(function () {
 Route::prefix('order')->group(function () {
     // انشاء الطلبية و ارسال الطلبيات للبائعين
     //Route::post('/store', [OrderController::class, 'create_order_with_items']);
-    Route::post('/store', [OrderTestController::class, 'create_order_with_items']);
+    Route::post('/store', [OrderController::class, 'create_order_with_items']);
     /* ------------------ مسارات المعاملة بين البائع و المشتري ------------------ */
     Route::prefix('items')->group(function () {
         // اظهار الطلبية الواحدة
