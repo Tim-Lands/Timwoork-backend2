@@ -69,14 +69,14 @@ class RatingController extends Controller
 
                 $item->is_rating = false;
                 $item->save();
-                event(new EventsRating($seller, $product->id, $product->title));
+                event(new EventsRating($seller, $product->slug, $product->title, $rating->id));
                 DB::commit();
                 // إرسال رسالة النجاح
                 return response()->success('لقد تمّ إضافة  التقييم بنجاح', $rating);
             } catch (Exception $ex) {
                 // في حالة الخطأ يتم التراجع عن أي تغيير حدث في قاعدة البيانات
                 DB::rollback();
-                return $ex;
+                //eturn $ex;
                 // ثم إرسال رسالة الخطأ
                 return response()->error('هناك خطأ ما حدث في قاعدة بيانات , يرجى التأكد من ذلك', 403);
             }
@@ -102,7 +102,7 @@ class RatingController extends Controller
                 $rate->reply = $request->reply;
                 $rate->save();
 
-                event(new Reply($buyer, $product->id, $product->title));
+                event(new Reply($buyer, $product->id, $product->title, $rate->id));
 
                 DB::commit();
                 // إرسال رسالة النجاح
@@ -124,7 +124,7 @@ class RatingController extends Controller
      */
     public function getRatedProduct($rating_id)
     {
-        return Product::select('id')->whereHas('ratings', function ($q) use ($rating_id) {
+        return Product::select('id', 'slug')->whereHas('ratings', function ($q) use ($rating_id) {
             $q->where('id', $rating_id);
         })
             ->withAvg('ratings', 'rating')

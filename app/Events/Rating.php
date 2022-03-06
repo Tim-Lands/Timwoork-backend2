@@ -15,18 +15,20 @@ class Rating implements ShouldBroadcast
 {
     use Dispatchable, InteractsWithSockets, SerializesModels;
     public $user;
-    public $id;
+    public $slug;
     public $title;
+    public $rating_id;
     /**
      * Create a new event instance.
      *
      * @return void
      */
-    public function __construct($user, $id, $title)
+    public function __construct($user, $slug, $title, $rating_id)
     {
         $this->user = $user;
-        $this->id = $id;
+        $this->slug = $slug;
         $this->title = $title;
+        $this->rating_id = $rating_id;
     }
 
     /**
@@ -58,8 +60,9 @@ class Rating implements ShouldBroadcast
                 'avatar_url' => $buyer->profile->avatar_url
             ],
             'content' => [
-                'item_id' => $this->id,
+                'item_id' => $this->slug,
                 'title' => $this->title,
+                'rating_id' => $this->rating_id,
             ],
         ];
     }
