@@ -41,6 +41,7 @@ class Rating extends Model
             'reply',
             'status',
             'rating',
+            'user_id',
             'created_at'
         );
     }
