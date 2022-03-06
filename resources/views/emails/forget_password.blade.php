@@ -210,7 +210,7 @@ a[x-apple-data-detectors='true'] {
       <td style="overflow-wrap:break-word;word-break:break-word;padding:10px;font-family:'Montserrat',sans-serif;" align="left">
 
   <div style="line-height: 140%; text-align: right; word-wrap: break-word;">
-    <p style="font-size: 14px; line-height: 140%;"><span style="font-size: 24px; line-height: 33.6px;">{{ انقر على هذا الرز من اجل استعادة كلمة مرورك</span></p>
+    <p style="font-size: 14px; line-height: 140%;"><span style="font-size: 24px; line-height: 33.6px;"> انقر على هذا الرز من اجل استعادة كلمة مرورك</span></p>
   </div>
 
       </td>
