@@ -61,9 +61,9 @@ class Reply implements ShouldBroadcast
                 'avatar_url' => $buyer->profile->avatar_url
             ],
             'content' => [
-                'item_id' => $this->id,
-                'title' => $this->title,
-                'rating_id' => $this->rating_id
+                'item_id'     => $this->id,
+                'title'       => $this->title,
+                'rating_id'   => $this->rating_id
             ],
         ];
     }

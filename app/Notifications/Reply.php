@@ -3,7 +3,6 @@
 namespace App\Notifications;
 
 use Illuminate\Bus\Queueable;
-use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
 use Illuminate\Support\Facades\Auth;
@@ -14,16 +13,18 @@ class Reply extends Notification
     public $user;
     public $id;
     public $title;
+    public $rating_id;
     /**
      * Create a new event instance.
      *
      * @return void
      */
-    public function __construct($user, $id, $title)
+    public function __construct($user, $id, $title, $rating_id)
     {
-        $this->user = $user;
-        $this->id = $id;
-        $this->title = $title;
+        $this->user       = $user;
+        $this->id         = $id;
+        $this->title      = $title;
+        $this->rating_id  = $rating_id;
     }
 
     /**
@@ -56,9 +57,10 @@ class Reply extends Notification
                     'full_name' => Auth::user()->profile->full_name,
                     'username' => Auth::user()->username,
                     'avatar_url' => Auth::user()->profile->avatar_url
-                ],                'content' => [
+                ],'content' => [
                     'item_id' => $this->id,
                     'title' => $this->title,
+                    'rating_id' => $this->rating_id,
                 ],
             ]);
     }

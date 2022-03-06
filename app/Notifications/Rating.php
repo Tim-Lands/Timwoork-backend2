@@ -13,18 +13,20 @@ class Rating extends Notification
 {
     use Queueable;
     public $user;
-    public $id;
+    public $slug;
     public $title;
+    public $rating_id;
     /**
      * Create a new event instance.
      *
      * @return void
      */
-    public function __construct($user, $id, $title)
+    public function __construct($user, $slug, $title, $rating_id)
     {
         $this->user = $user;
-        $this->id = $id;
+        $this->slug = $slug;
         $this->title = $title;
+        $this->$rating_id = $rating_id;
     }
 
     /**
@@ -59,8 +61,9 @@ class Rating extends Notification
                     'username' => Auth::user()->username,
                     'avatar_url' => Auth::user()->profile->avatar_url
                 ],                'content' => [
-                    'item_id' => $this->id,
+                    'item_id' => $this->slug,
                     'title' => $this->title,
+                    'rating_id' => $this->rating_id,
                 ],
             ]);
     }
@@ -76,15 +79,16 @@ class Rating extends Notification
         return [
             'type' => "order",
             'to' => "seller",
-            'title' =>  " قام " . Auth::user()->profile->full_name . " بشراء خدمة ",
+            'title' =>  " قام " . Auth::user()->profile->full_name . "بتقييم خدمتك",
             'user_sender' =>  [
                 'full_name' => Auth::user()->profile->full_name,
                 'username' => Auth::user()->username,
                 'avatar_url' => Auth::user()->profile->avatar_url
             ],
             'content' => [
-                'item_id' => $this->id,
+                'item_id' => $this->slug,
                 'title' => $this->title,
+                'rating_id' => $this->rating_id,
             ],
         ];
     }
