@@ -25,8 +25,8 @@ class DatabaseSeeder extends Seeder
             TagTableSeeder::class,
             CountryTableSeeder::class,
             AdminSeeder::class,
-            UserSeeder::class,
-            ProductTableSeeder::class,
+            //UserSeeder::class,
+            //ProductTableSeeder::class,
         ]);
     }
 }
