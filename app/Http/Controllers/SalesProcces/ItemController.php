@@ -501,6 +501,8 @@ class ItemController extends Controller
                 'status' => MoneyActivity::STATUS_EARNING,
                 'payload' => json_encode($payload, JSON_PRETTY_PRINT)
             ]);
+            // زيادة عدد المشتريات
+            DB::table('products')->increment('count_buying', 1);
             // ارسال الاشعار
             event(new AcceptedDileveredByBuyer($seller, $item));
             DB::commit();
