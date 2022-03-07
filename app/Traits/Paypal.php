@@ -11,8 +11,8 @@ use PayPalHttp\HttpException;
 
 trait Paypal
 {
-    public $return_url = 'http://localhost:3000/purchase/paypal?return=1';
-    public $cancel_url = 'http://localhost:3000/purchase/paypal?return=0';
+    public $return_url = 'https://timwoork.com/purchase/paypal?return=1';
+    public $cancel_url = 'https://timwoork.com/purchase/paypal?return=0';
 
     public function approve($cart)
     {
@@ -32,10 +32,10 @@ trait Paypal
             [
                 0 =>
                 [
-                    'reference_id' => 'PUHF',
-                    'description' => 'Sporting Goods',
-                    'custom_id' => 'CUST-HighFashions',
-                    'soft_descriptor' => 'HighFashions',
+                    'reference_id' => 'timwoork',
+                    'description' => 'timwoork timwoork',
+                    'custom_id' => 'timwoork',
+                    'soft_descriptor' => 'timwoork',
                     'amount' =>
                     [
                         'currency_code' => 'USD',
@@ -57,17 +57,17 @@ trait Paypal
                     ],
                     'shipping' =>
                     [
-                        'method' => 'United States Postal Service',
+                        'method' => 'timwoork',
                         'name' =>
                         [
-                            'full_name' => 'John Doe',
+                            'full_name' => 'timwoork',
                         ],
                         'address' =>
                         [
-                            'address_line_1' => '123 Townsend St',
-                            'address_line_2' => 'Floor 6',
-                            'admin_area_2' => 'San Francisco',
-                            'admin_area_1' => 'CA',
+                            'address_line_1' => 'timwoork',
+                            'address_line_2' => 'timwoork',
+                            'admin_area_2' => 'timwoork',
+                            'admin_area_1' => 'timwoork',
                             'postal_code' => '94107',
                             'country_code' => 'US',
                         ],

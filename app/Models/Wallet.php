@@ -67,4 +67,15 @@ class Wallet extends Model
     {
         return $this->belongsTo(profile::class);
     }
+
+
+    /**
+     * withdrawals
+     *
+     * @return HasMany
+     */
+    public function withdrawals(): HasMany
+    {
+        return $this->hasMany(Withdrawal::class);
+    }
 }

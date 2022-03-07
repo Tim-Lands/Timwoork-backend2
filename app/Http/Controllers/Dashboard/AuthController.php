@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Dashboard;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\AdminRequest;
+use Illuminate\Http\Request;
 
 class AuthController extends Controller
 {
@@ -17,7 +18,7 @@ class AuthController extends Controller
         return response()->success(__('messages.dashboard.get_login'), $token);
     }
 
-    public function me(AdminRequest $request)
+    public function me(Request $request)
     {
         return $request->user();
     }

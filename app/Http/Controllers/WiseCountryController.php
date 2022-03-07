@@ -2,12 +2,11 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\StoreWithdrawalRequest;
-use App\Http\Requests\UpdateWithdrawalRequest;
-use App\Models\Withdrawal;
-use Illuminate\Support\Facades\Auth;
+use App\Http\Requests\StoreWiseCountryRequest;
+use App\Http\Requests\UpdateWiseCountryRequest;
+use App\Models\WiseCountry;
 
-class WithdrawalController extends Controller
+class WiseCountryController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -32,21 +31,21 @@ class WithdrawalController extends Controller
     /**
      * Store a newly created resource in storage.
      *
-     * @param  \App\Http\Requests\StoreWithdrawalRequest  $request
+     * @param  \App\Http\Requests\StoreWiseCountryRequest  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(StoreWithdrawalRequest $request)
+    public function store(StoreWiseCountryRequest $request)
     {
-        $user = Auth::user();
+        //
     }
 
     /**
      * Display the specified resource.
      *
-     * @param  \App\Models\Withdrawal  $withdrawal
+     * @param  \App\Models\WiseCountry  $wiseCountry
      * @return \Illuminate\Http\Response
      */
-    public function show(Withdrawal $withdrawal)
+    public function show(WiseCountry $wiseCountry)
     {
         //
     }
@@ -54,10 +53,10 @@ class WithdrawalController extends Controller
     /**
      * Show the form for editing the specified resource.
      *
-     * @param  \App\Models\Withdrawal  $withdrawal
+     * @param  \App\Models\WiseCountry  $wiseCountry
      * @return \Illuminate\Http\Response
      */
-    public function edit(Withdrawal $withdrawal)
+    public function edit(WiseCountry $wiseCountry)
     {
         //
     }
@@ -65,11 +64,11 @@ class WithdrawalController extends Controller
     /**
      * Update the specified resource in storage.
      *
-     * @param  \App\Http\Requests\UpdateWithdrawalRequest  $request
-     * @param  \App\Models\Withdrawal  $withdrawal
+     * @param  \App\Http\Requests\UpdateWiseCountryRequest  $request
+     * @param  \App\Models\WiseCountry  $wiseCountry
      * @return \Illuminate\Http\Response
      */
-    public function update(UpdateWithdrawalRequest $request, Withdrawal $withdrawal)
+    public function update(UpdateWiseCountryRequest $request, WiseCountry $wiseCountry)
     {
         //
     }
@@ -77,10 +76,10 @@ class WithdrawalController extends Controller
     /**
      * Remove the specified resource from storage.
      *
-     * @param  \App\Models\Withdrawal  $withdrawal
+     * @param  \App\Models\WiseCountry  $wiseCountry
      * @return \Illuminate\Http\Response
      */
-    public function destroy(Withdrawal $withdrawal)
+    public function destroy(WiseCountry $wiseCountry)
     {
         //
     }
