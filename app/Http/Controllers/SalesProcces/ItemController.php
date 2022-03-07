@@ -502,7 +502,7 @@ class ItemController extends Controller
                 'payload' => json_encode($payload, JSON_PRETTY_PRINT)
             ]);
             // زيادة عدد المشتريات
-            DB::table('products')->increment('count_buying', 1);
+            DB::table('products')->where('id', $item->number_product)->increment('count_buying', 1);
             // ارسال الاشعار
             event(new AcceptedDileveredByBuyer($seller, $item));
             DB::commit();
