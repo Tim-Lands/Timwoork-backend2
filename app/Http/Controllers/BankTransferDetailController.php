@@ -2,12 +2,11 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\StoreWithdrawalRequest;
-use App\Http\Requests\UpdateWithdrawalRequest;
-use App\Models\Withdrawal;
-use Illuminate\Support\Facades\Auth;
+use App\Http\Requests\StoreBankTransferDetailRequest;
+use App\Http\Requests\UpdateBankTransferDetailRequest;
+use App\Models\BankTransferDetail;
 
-class WithdrawalController extends Controller
+class BankTransferDetailController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -32,21 +31,21 @@ class WithdrawalController extends Controller
     /**
      * Store a newly created resource in storage.
      *
-     * @param  \App\Http\Requests\StoreWithdrawalRequest  $request
+     * @param  \App\Http\Requests\StoreBankTransferDetailRequest  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(StoreWithdrawalRequest $request)
+    public function store(StoreBankTransferDetailRequest $request)
     {
-        $user = Auth::user();
+        //
     }
 
     /**
      * Display the specified resource.
      *
-     * @param  \App\Models\Withdrawal  $withdrawal
+     * @param  \App\Models\BankTransferDetail  $bankTransferDetail
      * @return \Illuminate\Http\Response
      */
-    public function show(Withdrawal $withdrawal)
+    public function show(BankTransferDetail $bankTransferDetail)
     {
         //
     }
@@ -54,10 +53,10 @@ class WithdrawalController extends Controller
     /**
      * Show the form for editing the specified resource.
      *
-     * @param  \App\Models\Withdrawal  $withdrawal
+     * @param  \App\Models\BankTransferDetail  $bankTransferDetail
      * @return \Illuminate\Http\Response
      */
-    public function edit(Withdrawal $withdrawal)
+    public function edit(BankTransferDetail $bankTransferDetail)
     {
         //
     }
@@ -65,11 +64,11 @@ class WithdrawalController extends Controller
     /**
      * Update the specified resource in storage.
      *
-     * @param  \App\Http\Requests\UpdateWithdrawalRequest  $request
-     * @param  \App\Models\Withdrawal  $withdrawal
+     * @param  \App\Http\Requests\UpdateBankTransferDetailRequest  $request
+     * @param  \App\Models\BankTransferDetail  $bankTransferDetail
      * @return \Illuminate\Http\Response
      */
-    public function update(UpdateWithdrawalRequest $request, Withdrawal $withdrawal)
+    public function update(UpdateBankTransferDetailRequest $request, BankTransferDetail $bankTransferDetail)
     {
         //
     }
@@ -77,10 +76,10 @@ class WithdrawalController extends Controller
     /**
      * Remove the specified resource from storage.
      *
-     * @param  \App\Models\Withdrawal  $withdrawal
+     * @param  \App\Models\BankTransferDetail  $bankTransferDetail
      * @return \Illuminate\Http\Response
      */
-    public function destroy(Withdrawal $withdrawal)
+    public function destroy(BankTransferDetail $bankTransferDetail)
     {
         //
     }

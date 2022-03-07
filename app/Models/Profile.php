@@ -98,4 +98,44 @@ class Profile extends Model
     {
         return $this->hasOne(Wallet::class);
     }
+
+    /**
+     * wise_account
+     *
+     * @return HasOne
+     */
+    public function wise_account(): HasOne
+    {
+        return $this->hasOne(WiseAccount::class);
+    }
+
+    /**
+     * paypal_account
+     *
+     * @return HasOne
+     */
+    public function paypal_account(): HasOne
+    {
+        return $this->hasOne(PaypalAccount::class);
+    }
+
+    /**
+     * bank_account
+     *
+     * @return HasOne
+     */
+    public function bank_account(): HasOne
+    {
+        return $this->hasOne(BankAccount::class);
+    }
+
+    /**
+     * bank_transfer_detail
+     *
+     * @return HasOne
+     */
+    public function bank_transfer_detail(): HasOne
+    {
+        return $this->hasOne(BankTransferDetail::class);
+    }
 }

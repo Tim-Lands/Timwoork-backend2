@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class AddIsRatingToItem extends Migration
+class CreatePaypalAccountsTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,8 +13,12 @@ class AddIsRatingToItem extends Migration
      */
     public function up()
     {
-        Schema::table('item', function (Blueprint $table) {
-            $table->boolean('is_rating')->default(0)->after('duration');
+        Schema::create('paypal_accounts', function (Blueprint $table) {
+            $table->id();
+            $table->foreignId('profile_id')->constrained();
+            $table->string('email')->unique()->nullable();
+
+            $table->timestamps();
         });
     }
 
@@ -25,8 +29,6 @@ class AddIsRatingToItem extends Migration
      */
     public function down()
     {
-        Schema::table('item', function (Blueprint $table) {
-            //
-        });
+        Schema::dropIfExists('paypal_accounts');
     }
 }

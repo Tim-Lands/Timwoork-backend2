@@ -46,6 +46,14 @@ class RegisterController extends Controller
 
             $user->profile->wallet()->create([]);
 
+            // إنشاء حساب بايبال
+            $user->profile->paypal_account()->create([]);
+            // إنشاء حساب وايز
+            $user->profile->wise_account()->create([]);
+            // إنشاء معلومات حساب بنكي
+            $user->profile->bank_account()->create([]);
+            // إنشاء معلومات حوالة بنكية
+            $user->profile->bank_transfer_detail()->create([]);
             // إنشاء رمز تفعيل البريد اﻹلكتروني
 
             $this->store_code_bin($user);
