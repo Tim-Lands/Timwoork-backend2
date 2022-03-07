@@ -22,7 +22,11 @@ class ProductController extends Controller
     {
         // جلب جميع الخدمات
         $products = Product::selection()->where('is_completed', 1)
-        ->with(['subcategory', 'profileSeller'])->get();
+        ->with(['subcategory', 'profileSeller' => function ($q) {
+            $q->select('id', 'profile_id')->with('profile', function ($q) {
+                $q->select('id', 'full_name', 'user_id')->with('user:id,username');
+            });
+        }])->get();
         // اظهار العناصر
         return response()->success(__("messages.oprations.get_all_data"), $products);
     }
