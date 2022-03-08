@@ -301,9 +301,12 @@ class InsertProductContoller extends Controller
                 // رسالة خطأ
                 return response()->error(__("messages.errors.element_not_found"), 403);
             }
-            if (count($product->galaries) == 0 && $product->thumbnail) {
+
+            if (count($product->galaries) == 0 || $product->thumbnail) {
                 // رسالة خطأ
                 return response()->error(__("messages.errors.upload_images"), 422);
+            } else {
+                return 'found';
             }
 
             $data = [];
@@ -422,7 +425,6 @@ class InsertProductContoller extends Controller
             //id  جلب العنصر بواسطة
             $product = Product::whereId($id)
                 ->where('profile_seller_id', Auth::user()->profile->profile_seller->id)->first();
-            ;
             // شرط اذا كان العنصر موجود
             if (!$product || !is_numeric($id)) {
                 // رسالة خطأ
