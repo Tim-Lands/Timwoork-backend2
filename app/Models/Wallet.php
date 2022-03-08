@@ -65,7 +65,7 @@ class Wallet extends Model
      */
     public function profile(): BelongsTo
     {
-        return $this->belongsTo(profile::class);
+        return $this->belongsTo(Profile::class);
     }
 
 
