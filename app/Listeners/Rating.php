@@ -27,6 +27,6 @@ class Rating
      */
     public function handle(EventsRating $event)
     {
-        $event->user->notify(new NotificationsRating($event->user, $event->status, $event->title, $event->rating_id));
+        $event->user->notify(new NotificationsRating($event->user, $event->slug, $event->title, $event->rating_id));
     }
 }
