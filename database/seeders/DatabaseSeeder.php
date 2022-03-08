@@ -22,7 +22,7 @@ class DatabaseSeeder extends Seeder
             SkillTableSeeder::class,
             LanguageTableSeeder::class,
             CategoryTableSeeder::class,
-            TagTableSeeder::class,
+            //TagTableSeeder::class,
             CountryTableSeeder::class,
             AdminSeeder::class,
             //UserSeeder::class,

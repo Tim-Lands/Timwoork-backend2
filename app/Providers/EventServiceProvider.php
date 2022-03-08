@@ -6,6 +6,7 @@ use App\Events\AcceptedDileveredByBuyer;
 use App\Events\AcceptModifiedBySeller;
 use App\Events\AcceptOrder;
 use App\Events\AcceptRequestRejectOrder;
+use App\Events\AcceptWithdrwal;
 use App\Events\CanceledOrderByBuyer;
 use App\Events\DileveredBySeller;
 use App\Events\ForgetPassword;
@@ -23,6 +24,7 @@ use App\Listeners\AcceptedDileveredByBuyerListener;
 use App\Listeners\AcceptModifiedBySellerListener;
 use App\Listeners\AcceptOrderListener;
 use App\Listeners\AcceptRequestRejectOrderListener;
+use App\Listeners\AcceptWithdrwalListener;
 use App\Listeners\CanceledOrderByBuyerListener;
 use App\Listeners\CanceledOrderListener;
 use App\Listeners\DileveredBySellerListener;
@@ -103,6 +105,9 @@ class EventServiceProvider extends ServiceProvider
         ],
         Reply::class => [
             ListenersReply::class,
+        ],
+        AcceptWithdrwal::class => [
+            AcceptWithdrwalListener::class,
         ],
 
     ];

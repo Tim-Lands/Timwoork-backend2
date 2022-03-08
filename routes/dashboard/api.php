@@ -17,6 +17,7 @@ use App\Http\Controllers\Dashboard\RejectProductController;
 use App\Http\Controllers\Dashboard\ContactController;
 use App\Http\Controllers\Dashboard\SellerBadgeController;
 use App\Http\Controllers\Dashboard\SellerLevelController;
+use App\Http\Controllers\WithdrawalController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -133,7 +134,7 @@ Route::prefix('products')->group(function () {
     // مسار العرض الخدمات التي تم تنشيطها
     Route::get('/reject/status', [ProductController::class, 'getProductsRejected']);
     // عرض الرسائل خدمات المرفوضة
-    Route::get('/messages_rejected', [ProductController::class,'get_all_messages_for_rejected_product']);
+    Route::get('/messages_rejected', [ProductController::class, 'get_all_messages_for_rejected_product']);
     // جلب الخدمات المحذوفة
     Route::get('/get_products_soft_deleted', [ProductController::class, 'get_products_soft_deleted']);
     // مسار جلب عنصر الواحد
@@ -227,4 +228,14 @@ Route::prefix('orders')->group(function () {
     Route::get('/{id}', [OrderController::class, 'show']);
     // عرض عنصر من عناصر الطلبية
     Route::get('item/{id}', [OrderController::class, 'get_order_item']);
+});
+
+/* ------------------------------- مسار طلبيات ------------------------------ */
+Route::prefix('withdrawals')->group(function () {
+    //  عرض كل الطلبيات
+    Route::get('/', [WithdrawalController::class, 'index']);
+    // عرض طلبية الواحدة
+    Route::get('/{id}', [WithdrawalController::class, 'show']);
+    // عرض عنصر من عناصر الطلبية
+    Route::post('/{id}/accept', [WithdrawalController::class, 'accept']);
 });

@@ -90,7 +90,7 @@ class ConversationController extends Controller
             DB::commit();
             return response()->success(__("messages.conversation.conversation_success"), $conversation->load('messages'));
         } catch (Exception $ex) {
-            return $ex;
+            //return $ex;
             DB::rollback();
             // رسالة خطأ
             return response()->error(__("messages.errors.error_database"), 403);

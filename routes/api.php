@@ -26,6 +26,8 @@ use App\Http\Controllers\SalesProcces\OrderController;
 use App\Http\Controllers\SalesProcces\ItemController;
 use App\Http\Controllers\SearchController;
 use App\Http\Controllers\Product\RatingController;
+use App\Http\Controllers\WithdrawalController;
+use App\Models\MoneyActivity;
 use Illuminate\Support\Facades\Broadcast;
 use Illuminate\Support\Facades\Route;
 
@@ -97,6 +99,24 @@ Route::middleware('auth:sanctum')->prefix('my_sales')->group(function () {
     Route::get('/{id}', [SellerOrderController::class, 'show']);
 });
 /******************************************************************** */
+
+/********************************************************************** */
+
+/**
+ * مسار طلبات السحب
+ */
+Route::middleware('auth:sanctum')->prefix('withdrawals')->group(function () {
+    Route::post('/paypal', [WithdrawalController::class, 'paypal']);
+    Route::post('/wise', [WithdrawalController::class, 'wise']);
+    Route::post('/bank', [WithdrawalController::class, 'bank']);
+    Route::post('/bank_transfer', [WithdrawalController::class, 'bank_transfer']);
+    Route::prefix('update')->group(function () {
+        Route::post('/paypal', [WithdrawalController::class, 'update_paypal']);
+        Route::post('/wise', [WithdrawalController::class, 'update_wise']);
+        Route::post('/bank', [WithdrawalController::class, 'update_bank']);
+        Route::post('/bank_transfer', [WithdrawalController::class, 'update_bank_transfer']);
+    });
+});
 
 /********************************************************************** */
 /**
@@ -338,3 +358,7 @@ Route::get('users', function () {
     }
 });
  */
+Route::get('testing', function () {
+    $data = MoneyActivity::first();
+    return response()->json($data, 200);
+});
