@@ -140,10 +140,12 @@ trait Paypal
 
                 DB::commit();
                 return true;
+            } else {
+                return false;
             }
         } catch (HttpException $ex) {
             DB::rollBack();
-            return response()->error('حدث خطأ أثناء عملية الدفع بواسطة بايبال');
+            return response()->error(__('messages.oprations.nothing_this_operation'));
         }
     }
 }
