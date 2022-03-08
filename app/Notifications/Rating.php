@@ -61,7 +61,7 @@ class Rating extends Notification
                     'username' => Auth::user()->username,
                     'avatar_url' => Auth::user()->profile->avatar_url
                 ],                'content' => [
-                    'item_id' => $this->slug,
+                    'slug' => $this->slug,
                     'title' => $this->title,
                     'rating_id' => $this->rating_id,
                 ],
