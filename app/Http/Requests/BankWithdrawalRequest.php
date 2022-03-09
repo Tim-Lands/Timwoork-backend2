@@ -33,7 +33,6 @@ class BankWithdrawalRequest extends FormRequest
             'bank_swift' => 'required',
             'bank_iban' => 'required',
             'bank_number_account' => 'required',
-            'country_code_phone' => 'required',
             'phone_number_without_code' => 'required',
             'city' => 'required',
             'address_line_one' => 'required',
