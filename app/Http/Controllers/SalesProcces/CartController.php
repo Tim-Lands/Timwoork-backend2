@@ -7,6 +7,8 @@ use App\Http\Requests\SalesProcces\CartRequest;
 use App\Models\Cart;
 use App\Models\Product;
 use App\Models\CartItem;
+use App\Models\Item;
+use App\Models\User;
 use App\Traits\Paypal;
 use App\Traits\Stripe;
 use Exception;
@@ -67,6 +69,30 @@ class CartController extends Controller
     public function store(CartRequest $request)
     {
         try {
+            // جلب عنصر الطلبية
+            $item = Item::select('id', 'number_product', 'profile_seller_id', 'status', 'order_id')
+                        ->with(['order' =>function ($q) {
+                            $q->select('id', 'cart_id')->with('cart', function ($q) {
+                                $q->where('user_id', Auth::id())->isbuying();
+                            });
+                        },'profileSeller' => function ($q) {
+                            $q->select('id', 'profile_id')->with('profile', function ($q) {
+                                $q->select('id', 'user_id')->with('user:id');
+                            });
+                        }])
+                        ->where('is_item_work', 1)
+                        ->where('number_product', $request->product_id)
+                        ->first();
+            // جلب المشتري
+            $user_buyer = $item->order->cart->user_id ?? null;
+            // جلب الخدمة
+            $product_in_item = $item->number_product ?? null;
+
+            if ($user_buyer == Auth::id() && $product_in_item == $request->product_id) {
+                if ($item) {
+                    return response()->error(__("messages.cart.product_work"), Response::HTTP_FORBIDDEN);
+                }
+            }
             // فحص اذا كان الحساب مفعل ام لا
             if (!Auth::user()->profile->is_completed) {
                 return response()->error(__("messages.product.profile_not_complete"), Response::HTTP_NOT_FOUND);
