@@ -37,7 +37,7 @@ trait WalletPaymentMethod
 
             $payload = [
                 'title' => 'عملية شراء',
-                'payment_method' => 'paypal',
+                'payment_method' => 'محفظة',
                 'total_price' => $cart->total_price,
                 'price_with_tax' => $cart->total_price,
                 'tax' => 0,

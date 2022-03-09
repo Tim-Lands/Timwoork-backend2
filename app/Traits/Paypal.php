@@ -126,7 +126,7 @@ trait Paypal
                 ]);
                 $payload = [
                     'title' => 'عملية شراء',
-                    'payment_method' => 'paypal',
+                    'payment_method' => 'بايبال',
                     'total_price' => $cart->total_price,
                     'price_with_tax' => $cart->price_with_tax,
                     'tax' => $cart->tax,

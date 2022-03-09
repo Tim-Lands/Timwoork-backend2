@@ -28,7 +28,7 @@ trait Stripe
             ]);
             $payload = [
                 'title' => 'عملية شراء',
-                'payment_method' => 'stripe',
+                'payment_method' => 'بطاقة بنكية',
                 'total_price' => $cart->total_price,
                 'price_with_tax' => $cart->price_with_tax,
                 'tax' => $cart->tax,
