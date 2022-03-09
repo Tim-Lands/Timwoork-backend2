@@ -181,7 +181,9 @@ return [
         "same_developments" =>"Developments that are not compatible with this service",
         "not_found_cartitem" => "No unsold cart, add a new cart please",
         "cart_not_found" => "there is no cart, please return the purchase",
-        "catitem_not_found" => "There are no items in the basket, please return the purchase"
+        "catitem_not_found" => "There are no items in the basket, please return the purchase",
+        "can_not_buying" => "You cannot buy this number of services, follow the instructions included on the purchase card",
+        "profile_not_complete" => "Cannot purchase, you must activate your account"
     ],
     // المعاملة بين البائع و المشتري
     "item" => [
