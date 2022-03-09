@@ -172,6 +172,7 @@ class ItemController extends Controller
             // تحويل الطلبية من حالة الابتدائية الى حالة الرفض
             $item->status = Item::STATUS_REJECTED_BY_SELLER;
             $item->date_expired = Item::EXPIRED_ITEM_NULLABLE;
+            $item->is_item_work = Item::IS_ITEM_NOT_WORk;
             $item->save();
 
             // انشاء مبلغ جديد
@@ -246,6 +247,7 @@ class ItemController extends Controller
             // تحويل الطلبية من حالة الابتدائية الى حالة الرفض
             $item->status = Item::STATUS_CANCELLED_BY_BUYER;
             $item->date_expired = Item::EXPIRED_ITEM_NULLABLE;
+            $item->is_item_work = Item::IS_ITEM_NOT_WORk;
             $item->save();
 
             // تحويل مبلغ الطلبية الى محفظة المشتري
@@ -321,6 +323,7 @@ class ItemController extends Controller
             $item->status = Item::STATUS_CANCELLED_BY_SELLER;
             $item->is_rating = true;
             $item->date_expired = Item::EXPIRED_ITEM_NULLABLE;
+            $item->is_item_work = Item::IS_ITEM_NOT_WORk;
             $item->save();
 
             // تحويل مبلغ الطلبية الى محفظة المشتري
@@ -473,6 +476,7 @@ class ItemController extends Controller
             //  قبول المشروع اكتمال الطلبية
             $item->status = Item::STATUS_FINISHED;
             $item->is_rating = true;
+            $item->is_item_work = Item::IS_ITEM_NOT_WORk;
             $item->save();
 
             // انشاء مبلغ جديد
@@ -621,6 +625,7 @@ class ItemController extends Controller
             // رفض الطلبية
             $item->status = Item::STATUS_CANCELLED_BY_BUYER;
             $item->date_expired = Item::EXPIRED_ITEM_NULLABLE;
+            $item->is_item_work = Item::IS_ITEM_NOT_WORk;
             $item->save();
             // انشاء مبلغ جديد
             $amount = Amount::create([

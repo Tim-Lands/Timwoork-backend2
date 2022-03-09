@@ -30,6 +30,9 @@ class Item extends Model
     // date_expired
     const EXPIRED_TIME_NNTIL_SOME_DAYS         = 2;
     const EXPIRED_ITEM_NULLABLE                = null;
+    // item work
+    const IS_ITEM_WORk = 1;
+    const IS_ITEM_NOT_WORk = 0;
     // ================== Acssesor & mutators ==========================
     // code
     public function getUserIdAttribute()

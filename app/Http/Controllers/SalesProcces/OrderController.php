@@ -99,6 +99,7 @@ class OrderController extends Controller
                     'price_product' => $cart['cart_items'][$key]->price_product,
                     'duration' => $duration_total,
                     'status' => Item::STATUS_PENDING,
+                    'is_item_work' => Item::IS_ITEM_WORk,
                     'date_expired' => Carbon::now()
                                         ->addDays(Item::EXPIRED_TIME_NNTIL_SOME_DAYS)
                                         ->toDateTimeString(),
