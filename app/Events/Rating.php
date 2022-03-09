@@ -48,7 +48,7 @@ class Rating implements ShouldBroadcast
     {
         $buyer = Auth::user();
         return [
-            'type' => "rating",
+            'type' => "order",
             'to' => 'seller',
             'notifications_count' => $this->user->unreadNotifications->count(),
             'title' =>  " قام " . $buyer->profile->full_name . " بتقييم خدمتك ",
@@ -58,7 +58,7 @@ class Rating implements ShouldBroadcast
                 'avatar_url' => $buyer->profile->avatar_url
             ],
             'content' => [
-                'item_id' => $this->slug,
+                'slug' => $this->slug,
                 'title' => $this->title,
                 'rating_id' => $this->rating_id,
             ],

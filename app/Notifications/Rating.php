@@ -53,7 +53,7 @@ class Rating extends Notification
         ->from(env('MAIL_FROM_ADDRESS'), config('mail.from.ar_name'))
         ->subject('تقييم الخدمة')
             ->view('emails.products.rating', [
-                'type' => "rating",
+                'type' => "order",
                 'to' => "seller",
                 'title' =>  " قام " . Auth::user()->profile->full_name . " بتقييم خدمتك ",
                 'user_sender' => [
@@ -86,7 +86,7 @@ class Rating extends Notification
                 'avatar_url' => Auth::user()->profile->avatar_url
             ],
             'content' => [
-                'item_id' => $this->slug,
+                'slug' => $this->slug,
                 'title' => $this->title,
                 'rating_id' => $this->rating_id,
             ],
