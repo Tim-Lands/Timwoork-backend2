@@ -42,6 +42,31 @@ if (!function_exists('calculate_price_with_tax')) {
         return $calculate;
     }
 }
+if (!function_exists('quantity_cheked')) {
+
+    /**
+     * quantity_cheked
+     *
+     * @param  mixed $quantity
+     * @param  mixed $price
+     * @return void
+     */
+    function quantity_cheked($quantity, $price)
+    {
+        switch ($price) {
+            case $price >= 5 && $price <= 100:
+                return $quantity <= 10;
+                break;
+
+            case $price >= 101 && $price <= 500:
+                return $quantity <= 2;
+                break;
+            default:
+                return $quantity == 1;
+                break;
+        }
+    }
+}
 // فحص التطويرات المدخلة من قبل المستخدم
 if (!function_exists('check_found_developments')) {
 }
