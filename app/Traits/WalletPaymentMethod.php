@@ -30,26 +30,26 @@ trait WalletPaymentMethod
             $profile->withdrawable_amount = $new_amount;
             $profile->save();
             $payment = $cart->payments()->create([
-                    'payment_type' => 'wallet',
-                    'payload' => [
-                        'price' => $cart->total_price,
-                        'tax' => 0
-                    ],
-                ]);
+                'payment_type' => 'wallet',
+                'payload' => [
+                    'price' => $cart->total_price,
+                    'tax' => 0
+                ],
+            ]);
 
             $payload = [
-                    'title' => 'عملية شراء',
-                    'payment_method' => 'paypal',
-                    'total_price' => $cart->total_price,
-                    'price_with_tax' => $cart->total_price,
-                    'tax' => 0,
-                ];
+                'title' => 'عملية شراء',
+                'payment_method' => 'paypal',
+                'total_price' => $cart->total_price,
+                'price_with_tax' => $cart->total_price,
+                'tax' => 0,
+            ];
             $activity = MoneyActivity::create([
-                    'wallet_id' => Auth::user()->profile->wallet->id,
-                    'amount' => $cart->price_with_tax,
-                    'status' => MoneyActivity::STATUS_BUYING,
-                    'payload' => json_encode($payload, JSON_PRETTY_PRINT)
-                ]);
+                'wallet_id' => Auth::user()->profile->wallet->id,
+                'amount' => $cart->price_with_tax,
+                'status' => MoneyActivity::STATUS_BUYING,
+                'payload' => $payload,
+            ]);
 
             if (!$payment) {
                 $wallet->withdrawable_amount += $cart->total_price;

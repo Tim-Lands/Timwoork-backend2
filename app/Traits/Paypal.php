@@ -135,7 +135,7 @@ trait Paypal
                     'wallet_id' => Auth::user()->profile->wallet->id,
                     'amount' => $cart->price_with_tax,
                     'status' => MoneyActivity::STATUS_BUYING,
-                    'payload' => json_encode($payload, JSON_PRETTY_PRINT)
+                    'payload' => $payload,
                 ]);
 
                 DB::commit();
