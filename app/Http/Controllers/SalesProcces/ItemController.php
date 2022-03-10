@@ -177,11 +177,11 @@ class ItemController extends Controller
 
             // انشاء مبلغ جديد
             $amount = Amount::create([
-                    'amount' => $item_amount,
-                    'wallet_id' => $wallet->id,
-                    'item_id' => $item->id,
-                    'status' => Amount::WITHDRAWABLE_AMOUNT
-                ]);
+                'amount' => $item_amount,
+                'wallet_id' => $wallet->id,
+                'item_id' => $item->id,
+                'status' => Amount::WITHDRAWABLE_AMOUNT
+            ]);
             // تحويله الى محفظة المشتري
             $wallet->amounts()->save($amount);
             $wallet->withdrawable_amount += $item_amount;
@@ -199,7 +199,7 @@ class ItemController extends Controller
                 'wallet_id' => $wallet->id,
                 'amount' => $item_amount,
                 'status' => MoneyActivity::STATUS_REFUND,
-                'payload' => json_encode($payload, JSON_PRETTY_PRINT)
+                'payload' => $payload,
             ]);
             event(new RejectOrder($buyer, $item));
             DB::commit();
@@ -253,11 +253,11 @@ class ItemController extends Controller
             // تحويل مبلغ الطلبية الى محفظة المشتري
             // انشاء مبلغ جديد
             $amount = Amount::create([
-                    'amount' => $item_amount,
-                    'wallet_id' => $wallet->id,
-                    'item_id' => $item->id,
-                    'status' => Amount::WITHDRAWABLE_AMOUNT
-                ]);
+                'amount' => $item_amount,
+                'wallet_id' => $wallet->id,
+                'item_id' => $item->id,
+                'status' => Amount::WITHDRAWABLE_AMOUNT
+            ]);
             // تحويله الى محفظة المشتري
             $wallet->amounts()->save($amount);
             $wallet->withdrawable_amount += $item_amount;
@@ -274,7 +274,7 @@ class ItemController extends Controller
                 'wallet_id' => $wallet->id,
                 'amount' => $item_amount,
                 'status' => MoneyActivity::STATUS_REFUND,
-                'payload' => json_encode($payload, JSON_PRETTY_PRINT)
+                'payload' => $payload,
             ]);
             // إرسال إشعار
             event(new CanceledOrderByBuyer($user, $item));
@@ -330,11 +330,11 @@ class ItemController extends Controller
 
             // انشاء مبلغ جديد
             $amount = Amount::create([
-                    'amount' => $item_amount,
-                    'wallet_id' => $wallet->id,
-                    'item_id' => $item->id,
-                    'status' => Amount::WITHDRAWABLE_AMOUNT
-                ]);
+                'amount' => $item_amount,
+                'wallet_id' => $wallet->id,
+                'item_id' => $item->id,
+                'status' => Amount::WITHDRAWABLE_AMOUNT
+            ]);
             // تحويله الى محفظة المشتري
             $wallet->amounts()->save($amount);
             $wallet->withdrawable_amount += $item_amount;
@@ -352,7 +352,7 @@ class ItemController extends Controller
                 'wallet_id' => $wallet->id,
                 'amount' => $item_amount,
                 'status' => MoneyActivity::STATUS_REFUND,
-                'payload' => json_encode($payload, JSON_PRETTY_PRINT)
+                'payload' => $payload,
             ]);
             // إرسال إشعار
             event(new CanceledOrderBySeller($buyer, $item));
@@ -405,12 +405,12 @@ class ItemController extends Controller
                     Storage::putFileAs('resources_files', $value, $file_attachment);
                     // وضع المشروع في المصفوفة
                     $data_resource[$key] = [
-                            'item_id'    => $item->id,
-                            'name'       => $file_attachment,
-                            'path'  => $value,
-                            'size'       => number_format($value->getSize() / 1048576, 3) . ' MB',
-                            'mime_type'  => $value->getClientOriginalExtension(),
-                        ];
+                        'item_id'    => $item->id,
+                        'name'       => $file_attachment,
+                        'path'  => $value,
+                        'size'       => number_format($value->getSize() / 1048576, 3) . ' MB',
+                        'mime_type'  => $value->getClientOriginalExtension(),
+                    ];
                 }
             }
 
@@ -503,7 +503,7 @@ class ItemController extends Controller
                 'wallet_id' => $wallet->id,
                 'amount' => $final_amount,
                 'status' => MoneyActivity::STATUS_EARNING,
-                'payload' => json_encode($payload, JSON_PRETTY_PRINT)
+                'payload' => $payload,
             ]);
             // زيادة عدد المشتريات
             DB::table('products')->where('id', $item->number_product)->increment('count_buying', 1);
@@ -629,11 +629,11 @@ class ItemController extends Controller
             $item->save();
             // انشاء مبلغ جديد
             $amount = Amount::create([
-                        'amount' => $item_amount,
-                        'wallet_id' => $wallet->id,
-                        'item_id' => $item->id,
-                        'status' => Amount::WITHDRAWABLE_AMOUNT
-                    ]);
+                'amount' => $item_amount,
+                'wallet_id' => $wallet->id,
+                'item_id' => $item->id,
+                'status' => Amount::WITHDRAWABLE_AMOUNT
+            ]);
             // تحويله الى محفظة المشتري
             $wallet->amounts()->save($amount);
             $wallet->withdrawable_amount += $item_amount;
@@ -642,6 +642,17 @@ class ItemController extends Controller
             // تحديث بيانات المشتري
             $profile->withdrawable_amount += $item_amount;
             $profile->save();
+
+            $payload = [
+                'title' => 'استعادة مال',
+                'amount' => $item_amount,
+            ];
+            $activity = MoneyActivity::create([
+                'wallet_id' => $wallet->id,
+                'amount' => $item_amount,
+                'status' => MoneyActivity::STATUS_REFUND,
+                'payload' => $payload,
+            ]);
             // إرسال الاشعار
             event(new AcceptRequestRejectOrder($buyer, $item));
             DB::commit();
@@ -791,13 +802,13 @@ class ItemController extends Controller
             DB::beginTransaction();
             ItemOrderModified::create($data_request_modified_by_buyer);
             $item->date_expired = Carbon::now()
-            ->addDays(Item::EXPIRED_TIME_NNTIL_SOME_DAYS)
-               ->toDateTimeString();
+                ->addDays(Item::EXPIRED_TIME_NNTIL_SOME_DAYS)
+                ->toDateTimeString();
 
             $item->status = Item::STATUS_MODIFIED_REQUEST_BUYER;
             $item->date_expired = Carbon::now()
-                                 ->addDays(Item::EXPIRED_TIME_NNTIL_SOME_DAYS)
-                                    ->toDateTimeString();
+                ->addDays(Item::EXPIRED_TIME_NNTIL_SOME_DAYS)
+                ->toDateTimeString();
             $item->save();
             // ارسال الاشعار
             event(new RequestModifiedBuBuyer($user, $item));

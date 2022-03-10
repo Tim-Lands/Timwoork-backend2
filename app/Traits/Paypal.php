@@ -126,7 +126,7 @@ trait Paypal
                 ]);
                 $payload = [
                     'title' => 'عملية شراء',
-                    'payment_method' => 'paypal',
+                    'payment_method' => 'بايبال',
                     'total_price' => $cart->total_price,
                     'price_with_tax' => $cart->price_with_tax,
                     'tax' => $cart->tax,
@@ -135,7 +135,7 @@ trait Paypal
                     'wallet_id' => Auth::user()->profile->wallet->id,
                     'amount' => $cart->price_with_tax,
                     'status' => MoneyActivity::STATUS_BUYING,
-                    'payload' => json_encode($payload, JSON_PRETTY_PRINT)
+                    'payload' => $payload,
                 ]);
 
                 DB::commit();

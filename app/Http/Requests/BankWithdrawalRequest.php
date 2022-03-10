@@ -25,15 +25,13 @@ class BankWithdrawalRequest extends FormRequest
     {
         return [
             'wise_country_id' => 'required',
-            'first_name' => 'required',
-            'last_name' => 'required',
+            'full_name' => 'required',
             'bank_name' => 'required',
             'bank_branch' => 'required',
             'bank_adress_line_one' => 'required',
             'bank_swift' => 'required',
             'bank_iban' => 'required',
             'bank_number_account' => 'required',
-            'country_code_phone' => 'required',
             'phone_number_without_code' => 'required',
             'city' => 'required',
             'address_line_one' => 'required',

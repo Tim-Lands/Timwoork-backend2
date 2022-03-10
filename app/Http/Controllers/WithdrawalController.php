@@ -181,8 +181,7 @@ class WithdrawalController extends Controller
 
             $bank_account->update([
                 'wise_country_id' => $request->wise_country_id,
-                'first_name' => $request->first_name,
-                'last_name' => $request->last_name,
+                'full_name' => $request->full_name,
                 'bank_name' => $request->bank_name,
                 'bank_branch' => $request->bank_branch,
                 'bank_adress_line_one' => $request->bank_adress_line_one,
@@ -191,7 +190,6 @@ class WithdrawalController extends Controller
 
                 'bank_iban' => $request->bank_iban,
                 'bank_number_account' => $request->bank_number_account,
-                'country_code_phone' => $request->country_code_phone,
                 'phone_number_without_code' => $request->phone_number_without_code,
                 'city' => $request->city,
                 'address_line_one' => $request->address_line_one,
@@ -244,11 +242,10 @@ class WithdrawalController extends Controller
 
             $bank_transfer_detail->update([
                 'country_id' => $request->country_id,
+                'full_name' => $request->full_name,
                 'city' => $request->city,
                 'state' => $request->state,
-                'country_code_phone' => $request->country_code_phone,
                 'phone_number_without_code' => $request->phone_number_without_code,
-                'country_code_whatsapp' => $request->country_code_whatsapp,
                 'whatsapp_without_code' => $request->whatsapp_without_code,
                 'address_line_one' => $request->address_line_one,
                 'address_line_two' => $request->address_line_two,
@@ -334,8 +331,7 @@ class WithdrawalController extends Controller
             DB::beginTransaction();
             $bank_account->update([
                 'wise_country_id' => $request->wise_country_id,
-                'first_name' => $request->first_name,
-                'last_name' => $request->last_name,
+                'full_name' => $request->full_name,
                 'bank_name' => $request->bank_name,
                 'bank_branch' => $request->bank_branch,
                 'bank_adress_line_one' => $request->bank_adress_line_one,
@@ -344,7 +340,6 @@ class WithdrawalController extends Controller
 
                 'bank_iban' => $request->bank_iban,
                 'bank_number_account' => $request->bank_number_account,
-                'country_code_phone' => $request->country_code_phone,
                 'phone_number_without_code' => $request->phone_number_without_code,
                 'city' => $request->city,
                 'address_line_one' => $request->address_line_one,
@@ -369,11 +364,10 @@ class WithdrawalController extends Controller
 
             $bank_transfer_detail->update([
                 'country_id' => $request->country_id,
+                'full_name' => $request->full_name,
                 'city' => $request->city,
                 'state' => $request->state,
-                'country_code_phone' => $request->country_code_phone,
                 'phone_number_without_code' => $request->phone_number_without_code,
-                'country_code_whatsapp' => $request->country_code_whatsapp,
                 'whatsapp_without_code' => $request->whatsapp_without_code,
                 'address_line_one' => $request->address_line_one,
                 'address_line_two' => $request->address_line_two,
