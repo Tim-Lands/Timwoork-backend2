@@ -28,7 +28,7 @@ class Product extends Model
      *
      * @var array
      */
-    protected $appends = ['full_path_thumbnail'];
+    protected $appends = ['full_path_thumbnail','ratings_avg_rating'];
 
 
     /**
@@ -169,6 +169,19 @@ class Product extends Model
     /* --------------------------- Accessor & Metators -------------------------- */
     // code
 
+
+    /**
+     * getRatingsAvgRatingAttribute
+     *
+     * @return void
+     */
+    public function getRatingsAvgRatingAttribute()
+    {
+        return $this->ratings->count() != 0 ? round(array_sum(array_map(function ($key) {
+            return $key['rating'];
+        }, $this->ratings->toArray()))/ $this->ratings->count()): 0;
+    }
+
     /**
      * getUrlVideoAttribute => جلب رابط الفيديو
      *
@@ -212,7 +225,8 @@ class Product extends Model
             'thumbnail',
             'buyer_instruct',
             'status',
-            'created_at'
+            'created_at',
+            'ratings_avg'
         );
     }
 

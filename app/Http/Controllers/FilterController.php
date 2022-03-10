@@ -11,7 +11,7 @@ class FilterController extends Controller
     public function __invoke(Request $request)
     {
         $paginate = $request->query('paginate') ? $request->query('paginate') : 12;
-        $res = Product::select('id', 'title', 'slug', 'price', 'count_buying', 'thumbnail', 'ratings_count', 'category_id', 'profile_seller_id', 'duration')
+        $res = Product::select('id', 'title', 'slug', 'price', 'ratings_avg', 'count_buying', 'thumbnail', 'ratings_count', 'category_id', 'profile_seller_id', 'duration')
             ->filter()
             ->productActive()
             ->where('is_active', 1)
@@ -32,7 +32,7 @@ class FilterController extends Controller
                                 ->without('subcategories');
                         })->withCount('products');
                 },
-            ])->withAvg('ratings', 'rating')
+            ])/*->withAvg('ratings', 'rating')*/
             ->withCount('ratings as rats_count')
             ->where('is_completed', 1)
             ->paginate($paginate);

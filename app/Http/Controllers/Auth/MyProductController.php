@@ -23,7 +23,7 @@ class MyProductController extends Controller
             ->paginate($paginate)
             ->makeHidden([
                 'buyer_instruct', 'content', 'profile_seller_id', 'category_id', 'duration','price','is_vide'
-                ,'updated_at','created_at','deleted_at','ratings_avg','current_step','thumbnail'
+                ,'updated_at','created_at','deleted_at','current_step','thumbnail'
             ]);
         return response()->success(__("messages.oprations.get_all_data"), $products);
     }
@@ -44,7 +44,7 @@ class MyProductController extends Controller
                     ->paginate($paginate)
             ->makeHidden([
                 'buyer_instruct', 'content', 'profile_seller_id', 'category_id', 'duration','price','is_vide'
-                ,'updated_at','created_at','deleted_at','ratings_avg','current_step','thumbnail'
+                ,'updated_at','created_at','deleted_at','current_step','thumbnail'
             ]);
         return response()->success(__("messages.oprations.get_all_data"), $products);
     }
@@ -63,7 +63,7 @@ class MyProductController extends Controller
                          ->where('is_vide', 0)
                          ->paginate($paginate)
                          ->makeHidden([
-                            'buyer_instruct', 'content', 'profile_seller_id', 'category_id', 'duration','price','is_vide','updated_at','created_at','deleted_at','ratings_avg','current_step','thumbnail'
+                            'buyer_instruct', 'content', 'profile_seller_id', 'category_id', 'duration','price','is_vide','updated_at','created_at','deleted_at','current_step','thumbnail'
                         ]);
 
         return response()->success(__("messages.oprations.get_all_data"), $products);
@@ -82,7 +82,7 @@ class MyProductController extends Controller
                     ->where('is_vide', 0)
                     ->paginate($paginate)
                     ->makeHidden([
-                        'buyer_instruct', 'content', 'profile_seller_id', 'category_id', 'duration','price','is_vide','updated_at','created_at','deleted_at','ratings_avg','current_step','thumbnail'
+                        'buyer_instruct', 'content', 'profile_seller_id', 'category_id', 'duration','price','is_vide','updated_at','created_at','deleted_at','current_step','thumbnail'
                     ]);
         return response()->success(__("messages.oprations.get_all_data"), $products);
     }
@@ -99,7 +99,7 @@ class MyProductController extends Controller
                     ->where('is_completed', 1)
                     ->whereNull('status')->paginate($paginate)
             ->makeHidden([
-                'buyer_instruct', 'content', 'profile_seller_id', 'category_id', 'duration','price','is_vide','updated_at','created_at','deleted_at','ratings_avg','current_step','thumbnail'
+                'buyer_instruct', 'content', 'profile_seller_id', 'category_id', 'duration','price','is_vide','updated_at','created_at','deleted_at','current_step','thumbnail'
             ]);
         return response()->success(__("messages.oprations.get_all_data"), $products);
     }
@@ -225,7 +225,7 @@ class MyProductController extends Controller
     public function review(mixed $slug)
     {
         // slug جلب الخدمة بواسطة
-        $product = Product::select('id', 'title', 'price', 'duration', 'content', 'category_id', 'profile_seller_id', 'count_buying', 'is_vide', 'thumbnail', 'is_completed', 'is_draft', 'status', 'buyer_instruct', 'ratings_count', 'is_active')
+        $product = Product::select('id', 'title', 'price', 'duration', 'content', 'category_id', 'profile_seller_id', 'count_buying', 'is_vide', 'thumbnail', 'is_completed', 'is_draft', 'status', 'buyer_instruct', 'ratings_count', 'ratings_avg', 'is_active')
             ->whereSlug($slug)
             ->where('is_vide', 0)
             ->where('profile_seller_id', Auth::user()->profile->profile_seller->id)
@@ -270,7 +270,7 @@ class MyProductController extends Controller
                         ]);
                 }
             ])
-            ->withAvg('ratings', 'rating')
+            //->withAvg('ratings', 'rating')
             ->withCount('ratings')
             ->first();
         // فحص اذا كان يوجد هذا العنصر

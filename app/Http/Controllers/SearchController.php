@@ -17,7 +17,7 @@ class SearchController extends Controller
     public function __invoke(Request $request)
     {
         $limit = $request->query('limit') ? $request->query('limit') : 5;
-        $res = Product::select('id', 'title', 'slug', 'price', 'count_buying', 'thumbnail', 'ratings_count', 'category_id', 'profile_seller_id', 'duration')
+        $res = Product::select('id', 'title', 'slug', 'price', 'count_buying', 'thumbnail', 'ratings_count', 'category_id', 'profile_seller_id', 'ratings_avg', 'duration')
             ->filter()
             ->productActive()
             ->with([
@@ -37,7 +37,7 @@ class SearchController extends Controller
                                 ->without('subcategories');
                         })->withCount('products');
                 },
-            ])->withAvg('ratings', 'rating')
+            ])/*->withAvg('ratings', 'rating')*/
             ->withCount('ratings')
             ->take($limit);
 
