@@ -45,7 +45,11 @@ class LoginController extends Controller
             'profile.badge',
             'profile.level',
             'profile.country',
-            'profile.wallet',
+            'profile.wallet' => function ($q) {
+                return $q->with(['activities' => function ($query) {
+                    $query->paginate(2);
+                }]);
+            },
         ]);
 
         // make some columns hidden in response
