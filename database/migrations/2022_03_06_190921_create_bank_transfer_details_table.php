@@ -17,7 +17,7 @@ class CreateBankTransferDetailsTable extends Migration
             $table->id();
             $table->foreignId('profile_id')->constrained();
             $table->foreignId('country_id')->nullable()->constrained();
-
+            $table->string('full_name')->nullable();
             $table->string('city')->nullable();
             $table->string('state')->nullable();
 

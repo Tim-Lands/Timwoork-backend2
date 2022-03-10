@@ -25,6 +25,7 @@ class BankTransferWithdrawalRequest extends FormRequest
     {
         return [
             'country_id' => 'required',
+            'full_name' => 'required',
             'city' => 'required',
             'state' => 'required',
             'phone_number_without_code' => 'required',
