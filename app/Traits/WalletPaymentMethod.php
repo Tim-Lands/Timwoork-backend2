@@ -25,8 +25,8 @@ trait WalletPaymentMethod
 
             DB::beginTransaction();
 
-            $wallet->decrement('withdrawable_amount', $new_amount);
-            $profile->decrement('withdrawable_amount', $new_amount);
+            $wallet->decrement('withdrawable_amount', $cart->total_price);
+            $profile->decrement('withdrawable_amount', $cart->total_price);
             $payment = $cart->payments()->create([
                 'payment_type' => 'wallet',
                 'payload' => [
@@ -37,7 +37,7 @@ trait WalletPaymentMethod
 
             $payload = [
                 'title' => 'عملية شراء',
-                'payment_method' => 'محفظة',
+                'payment_method' => 'المحفظة',
                 'total_price' => $cart->total_price,
                 'price_with_tax' => $cart->total_price,
                 'tax' => 0,

@@ -38,6 +38,7 @@ class LoginController extends Controller
 
     public function me(Request $request)
     {
+        $paginate = $request->query('paginate') ?? 10;
         $user =  $request->user()->load([
             'profile.profile_seller.badge',
             'profile.profile_seller.level',
@@ -45,7 +46,11 @@ class LoginController extends Controller
             'profile.badge',
             'profile.level',
             'profile.country',
-            'profile.wallet',
+            'profile.wallet' => function ($q) use ($paginate) {
+                return $q->with(['activities' => function ($query) use ($paginate) {
+                    $query->paginate($paginate);
+                }]);
+            },
         ]);
 
         // make some columns hidden in response

@@ -12,7 +12,6 @@ class Wallet extends Model
     use HasFactory;
 
     protected $table = 'wallets';
-    protected $with = ['activities'];
 
     // ===========================Contants =============================
     // code
@@ -53,7 +52,7 @@ class Wallet extends Model
      */
     public function activities(): HasMany
     {
-        return $this->hasMany(MoneyActivity::class);
+        return $this->hasMany(MoneyActivity::class)->orderBy('id', 'DESC');
     }
 
 
