@@ -65,6 +65,16 @@ class User extends Authenticatable
     }
     // ============================ Scopes =============================
     // code
+    /**
+      * scopeSelection => دالة من اجل جلب البيانات
+      *
+      * @param  mixed $query
+      * @return object
+      */
+    public function scopeSelection(mixed $query): ?object
+    {
+        return $query->select('id', 'username', 'email', 'phone', 'status', 'created_at');
+    }
     // ========================== Relations ============================
 
     /**
