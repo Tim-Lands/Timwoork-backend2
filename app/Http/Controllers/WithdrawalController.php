@@ -10,6 +10,7 @@ use App\Http\Requests\StoreWithdrawalRequest;
 use App\Http\Requests\UpdateWithdrawalRequest;
 use App\Http\Requests\WiseWithdrawalRequest;
 use App\Models\BankTransferDetailAttachment;
+use App\Models\MoneyActivity;
 use App\Models\Withdrawal;
 use Exception;
 use Illuminate\Support\Facades\Auth;
@@ -54,6 +55,9 @@ class WithdrawalController extends Controller
             $withdrawal->save();
             // send notification to user
             $user = $withdrawal->wallet->profile->user;
+            // اقتطاع مبلغ السحب
+            $withdrawal->wallet->decrement('withdrawable_amount', $withdrawal->amount);
+            $withdrawal->wallet->profile->decrement('withdrawable_amount', $withdrawal->amount);
             event(new AcceptWithdrwal($user, $withdrawal));
             DB::commit();
             return response()->success("لقد تم قبول طلب التحويل");
@@ -100,10 +104,18 @@ class WithdrawalController extends Controller
                 'amount' => $request->amount ?? $wallet->withdrawable_amount,
                 'status' => Withdrawal::PENDING_WITHDRAWAL,
             ]);
-            // اقتطاع مبلغ السحب
 
-            $wallet->decrement('withdrawable_amount', $withdrawal->amount);
-            Auth::user()->profile->decrement('withdrawable_amount', $withdrawal->amount);
+            $payload = [
+                'title' => 'عملية طلب سحب بواسطة بايبال',
+                'amount' => $withdrawal->amount,
+            ];
+            $activity = MoneyActivity::create([
+                'wallet_id' => $wallet->id,
+                'amount' =>  $withdrawal->amount,
+                'status' => MoneyActivity::STATUS_REFUND,
+                'payload' => $payload,
+            ]);
+
             DB::commit();
             return response()->success("لقد تمّ إضافة طلبك بنجاح", $withdrawal->load('withdrawalable'));
         } catch (Exception $ex) {
@@ -144,10 +156,16 @@ class WithdrawalController extends Controller
                 'status' => Withdrawal::PENDING_WITHDRAWAL,
             ]);
 
-            // اقتطاع مبلغ السحب
-
-            $wallet->decrement('withdrawable_amount', $withdrawal->amount);
-            Auth::user()->profile->decrement('withdrawable_amount', $withdrawal->amount);
+            $payload = [
+                'title' => 'عملية طلب سحب بواسطة وايز',
+                'amount' => $withdrawal->amount,
+            ];
+            $activity = MoneyActivity::create([
+                'wallet_id' => $wallet->id,
+                'amount' =>  $withdrawal->amount,
+                'status' => MoneyActivity::STATUS_REFUND,
+                'payload' => $payload,
+            ]);
 
             DB::commit();
             return response()->success("لقد تمّ إضافة طلبك بنجاح", $withdrawal->load('withdrawalable'));
@@ -203,10 +221,17 @@ class WithdrawalController extends Controller
                 'status' => Withdrawal::PENDING_WITHDRAWAL,
             ]);
 
-            // اقتطاع مبلغ السحب
+            $payload = [
+                'title' => 'عملية طلب سحب بواسطة حساب بنكي',
+                'amount' => $withdrawal->amount,
+            ];
+            $activity = MoneyActivity::create([
+                'wallet_id' => $wallet->id,
+                'amount' =>  $withdrawal->amount,
+                'status' => MoneyActivity::STATUS_REFUND,
+                'payload' => $payload,
+            ]);
 
-            $wallet->decrement('withdrawable_amount', $withdrawal->amount);
-            Auth::user()->profile->decrement('withdrawable_amount', $withdrawal->amount);
 
 
             DB::commit();
@@ -270,6 +295,17 @@ class WithdrawalController extends Controller
                 }
                 $bank_transfer_detail->attachments()->createMany($attachments);
             }
+
+            $payload = [
+                'title' => 'عملية طلب سحب بواسطة حوالة بنكية',
+                'amount' => $withdrawal->amount,
+            ];
+            $activity = MoneyActivity::create([
+                'wallet_id' => $wallet->id,
+                'amount' =>  $withdrawal->amount,
+                'status' => MoneyActivity::STATUS_REFUND,
+                'payload' => $payload,
+            ]);
             // اقتطاع مبلغ السحب
             $wallet->decrement('withdrawable_amount', $withdrawal->amount);
             Auth::user()->profile->decrement('withdrawable_amount', $withdrawal->amount);
