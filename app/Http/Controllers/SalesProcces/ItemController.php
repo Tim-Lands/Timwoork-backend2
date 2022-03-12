@@ -22,6 +22,7 @@ use App\Models\Item;
 use App\Models\ItemOrderModified;
 use App\Models\ItemOrderRejected;
 use App\Models\MoneyActivity;
+use App\Models\Product;
 use App\Models\User;
 use Carbon\Carbon;
 use Exception;
@@ -466,8 +467,13 @@ class ItemController extends Controller
             // جلب بيانات البائع
             $seller = User::find($item->user_id);
             $profile = $seller->profile;
-            $precent_deducation = $profile->profile_seller->precent_deducation;
-
+            //$precent_deducation = $profile->profile_seller->precent_deducation;
+            $is_women = DB::table('products')->where('id', $item->number_product)->subcategory->is_women;
+            if ($is_women) {
+                $precent_deducation = 12;
+            } else {
+                $precent_deducation = 15;
+            }
             $wallet = $seller->profile->wallet;
             $item_amount = ($item->price_product * $precent_deducation) / 100;
             $final_amount = $item->price_product - $item_amount;
