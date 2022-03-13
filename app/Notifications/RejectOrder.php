@@ -44,11 +44,12 @@ class RejectOrder extends Notification
     public function toMail($notifiable)
     {
         return (new MailMessage)
-        ->from(env('MAIL_FROM_ADDRESS'), config('mail.from.ar_name'))
-        ->subject('رفض الطلبية')
+            ->from(env('MAIL_FROM_ADDRESS'), config('mail.from.ar_name'))
+            ->subject('رفض الطلبية')
             ->view('emails.orders.reject_order', [
                 'type' => "order",
-                'title' =>  " قام " . Auth::user()->profile->full_name . " برفض الطلبية   ",
+                'to' => "buyer",
+                'title' =>  " قام " . Auth::user()->profile->full_name . " بإلغاء الطلبية   ",
                 'user_sender' => Auth::user()->profile,
                 'content' => [
                     'item_id' => $this->item->id,
@@ -67,8 +68,13 @@ class RejectOrder extends Notification
     {
         return [
             'type' => "order",
-            'title' =>  " قام " . Auth::user()->profile->full_name . " برفض الطلبية ",
-            'user_sender' => Auth::user()->profile,
+            'to' => "buyer",
+            'title' =>  " قام " . Auth::user()->profile->full_name . " بإلغاء عملية الشراء التي قام بها",
+            'user_sender' => [
+                'full_name' => Auth::user()->profile->full_name,
+                'username' => Auth::user()->username,
+                'avatar_url' => Auth::user()->profile->avatar_url
+            ],
             'content' => [
                 'item_id' => $this->item->id,
                 'title' => $this->item->title,
