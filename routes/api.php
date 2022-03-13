@@ -298,9 +298,10 @@ Route::prefix('order')->group(function () {
 /* -------------------------------------------------------------------------- */
 /*                            مسارات واجهة المستخدم                           */
 /* -------------------------------------------------------------------------- */
-
 // عرض التصنيفات الرئيسية
-Route::get('/get_categories', [FrontEndController::class, 'get_all_categories']);
+Route::get('/categories', [FrontEndController::class, 'get_all_categories']);
+// عرض التصنيفات الرئيسية
+Route::get('/get_categories', [FrontEndController::class, 'get_categories']);
 // عرض التصنيفات من اجل عملية الاضافة
 Route::get('/get_categories_for_add_product', [FrontEndController::class, 'get_categories_for_add_product'])
         ->middleware('auth:sanctum');
