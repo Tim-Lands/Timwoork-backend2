@@ -10,12 +10,14 @@ use Carbon\Carbon;
 use Exception;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Response;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 
 class FrontEndController extends Controller
 {
+
     /**
-     * get_categories => دالة اظهار التصنيفات الرئيسية
+     * get_categories
      *
      * @return void
      */
@@ -23,6 +25,39 @@ class FrontEndController extends Controller
     {
         // جلب التصنيفات الرئيسية
         $categories = Category::Selection()->with('subcategories', function ($q) {
+            $q->withCount('products');
+        })->parent()->get();
+        $data = [];
+        // عمل لووب من اجل فرز التصنيفات الرئيسية مع عدد الخدمات التابعة لها
+        foreach ($categories as $category) {
+            $data[] =
+                [
+                    'id'      => $category['id'],
+                    'name_ar' => $category['name_ar'],
+                    'name_en' => $category['name_en'],
+                    'name_fr' => $category['name_fr'],
+                    'parent_id' => $category['parent_id'],
+                    'icon'    => $category['icon'],
+                    'products_count' => $category['subcategories']->sum('products_count')
+                ];
+        }
+
+        // اظهار العناصر
+        return response()->success(__("messages.oprations.get_all_data"), $data);
+    }
+    /**
+     * get_categories_by_add_product
+     *
+     * @return void
+     */
+    public function get_categories_for_add_product()
+    {
+        // جلب التصنيفات الرئيسية
+        $categories = Category::Selection()->where(function ($q) {
+            if (auth()->user()->profile->gender == 1) {
+                $q->where('is_women', 0);
+            }
+        })->with('subcategories', function ($q) {
             $q->withCount('products');
         })->parent()->get();
         $data = [];
@@ -68,6 +103,32 @@ class FrontEndController extends Controller
             })->first();
         // اظهار العناصر
         return response()->success(__("messages.oprations.get_all_data"), $subcategories);
+    }
+
+    /**
+    * get_subcategories_for_add_product => دالة اظهار التصنيفات الفرعية من اجل اضافة خدمة
+    *
+    * @param  mixed $id
+    * @return void
+    */
+    public function get_subcategories_for_add_product(mixed $id): JsonResponse
+    {
+        //id  جلب العنصر بواسطة
+        $category = Category::selection()->whereId($id)->where(function ($q) {
+            if (auth()->user()->profile->gender == 1) {
+                $q->where('is_women', 0);
+            }
+        })->with(['subcategories' => function ($q) {
+            $q->select('id', 'name_ar', 'name_en', 'parent_id', 'icon');
+        }])->first();
+
+        // شرط اذا كان العنصر موجود
+        if (!$category) {
+            //رسالة خطأ
+            return response()->error(__("messages.errors.element_not_found"), Response::HTTP_NOT_FOUND);
+        }
+        // اظهار العناصر
+        return response()->success(__("messages.oprations.get_all_data"), $category);
     }
 
 
@@ -139,14 +200,41 @@ class FrontEndController extends Controller
      *
      * @return JsonResponse
      */
-    public function get_all_categories()
+    public function get_all_categories_for_add_product()
     {
         // جلب جميع الاصناف الرئيسة و الاصناف الفرعية عن طريق التصفح
-        $categories = Category::Selection()->with(['subcategories' => function ($q) {
+        $categories = Category::Selection()->where(function ($q) {
+            if (auth()->user()->profile->gender == 1) {
+                $q->where('is_women', 0);
+            }
+        })->with(['subcategories' => function ($q) {
             $q->select('id', 'name_ar', 'name_en', 'name_fr', 'parent_id', 'icon');
         }])->parent()->get();
 
         // اظهار العناصر
+        if (auth()->check() && auth()->user()->profile->gender == 1) {
+            return response()->success(__("messages.oprations.get_all_data"), $categories);
+        }
+        return response()->success(__("messages.oprations.get_all_data"), $categories);
+    }
+
+    /**
+     * get_all_categories => دالة عرض كل التصنيفات
+     *
+     * @return JsonResponse
+     */
+    public function get_all_categories()
+    {
+        // جلب جميع الاصناف الرئيسة و الاصناف الفرعية عن طريق التصفح
+        $categories = Category::Selection()
+        ->with(['subcategories' => function ($q) {
+            $q->select('id', 'name_ar', 'name_en', 'name_fr', 'parent_id', 'icon');
+        }])->parent()->get();
+
+        // اظهار العناصر
+        if (auth()->check() && auth()->user()->profile->gender == 1) {
+            return response()->success(__("messages.oprations.get_all_data"), $categories);
+        }
         return response()->success(__("messages.oprations.get_all_data"), $categories);
     }
 

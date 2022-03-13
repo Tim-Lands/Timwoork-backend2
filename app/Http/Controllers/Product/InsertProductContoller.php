@@ -302,7 +302,7 @@ class InsertProductContoller extends Controller
                 return response()->error(__("messages.errors.element_not_found"), 403);
             }
 
-            if (count($product->galaries) == 0 || $product->thumbnail) {
+            if (count($product->galaries) == 0 && $product->thumbnail) {
                 // رسالة خطأ
                 return response()->error(__("messages.errors.upload_images"), 422);
             } else {
