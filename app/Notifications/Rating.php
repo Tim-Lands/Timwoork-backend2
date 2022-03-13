@@ -53,7 +53,7 @@ class Rating extends Notification
         ->from(env('MAIL_FROM_ADDRESS'), config('mail.from.ar_name'))
         ->subject('تقييم الخدمة')
             ->view('emails.products.rating', [
-                'type' => "order",
+                'type' => "rating",
                 'to' => "seller",
                 'title' =>  " قام " . Auth::user()->profile->full_name . " بتقييم خدمتك ",
                 'user_sender' => [
@@ -77,7 +77,7 @@ class Rating extends Notification
     public function toArray($notifiable)
     {
         return [
-            'type' => "order",
+            'type' => "rating",
             'to' => "seller",
             'title' =>  " قام " . Auth::user()->profile->full_name . "بتقييم خدمتك",
             'user_sender' =>  [

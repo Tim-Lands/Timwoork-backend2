@@ -48,7 +48,7 @@ class Rating implements ShouldBroadcast
     {
         $buyer = Auth::user();
         return [
-            'type' => "order",
+            'type' => "rating",
             'to' => 'seller',
             'notifications_count' => $this->user->unreadNotifications->count(),
             'title' =>  " قام " . $buyer->profile->full_name . " بتقييم خدمتك ",
