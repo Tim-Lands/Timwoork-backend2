@@ -299,12 +299,20 @@ Route::prefix('order')->group(function () {
 /*                            مسارات واجهة المستخدم                           */
 /* -------------------------------------------------------------------------- */
 
-// عرض كل التصنيفات
-Route::get('/categories', [FrontEndController::class, 'get_all_categories']);
 // عرض التصنيفات الرئيسية
-Route::get('/get_categories', [FrontEndController::class, 'get_categories']);
+Route::get('/get_categories', [FrontEndController::class, 'get_all_categories']);
+// عرض التصنيفات من اجل عملية الاضافة
+Route::get('/get_categories_for_add_product', [FrontEndController::class, 'get_categories_for_add_product'])
+        ->middleware('auth:sanctum');
 // عرض التصنيفات الفرعية
 Route::get('/get_categories/{id}', [FrontEndController::class, 'get_subcategories']);
+
+// عرض التصنيفات الفرعية من اجل عملية الاضافة
+Route::get(
+    '/get_categories_for_add_product/{id}',
+    [FrontEndController::class, 'get_subcategories_for_add_product']
+)->middleware('auth:sanctum');
+
 // عرض التصنيف الفرعي مع خدماته
 Route::get('/get_products_subcategory/{id}', [FrontEndController::class, 'get_products_by_subcategory']);
 // عرض الخدمة الواحدة
