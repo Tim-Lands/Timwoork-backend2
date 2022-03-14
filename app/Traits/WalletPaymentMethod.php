@@ -36,7 +36,7 @@ trait WalletPaymentMethod
             ]);
 
             $payload = [
-                'title' => 'عملية شراء',
+                'title' => 'عملية شراء بواسطة المحفظة',
                 'payment_method' => 'المحفظة',
                 'total_price' => $cart->total_price,
                 'price_with_tax' => $cart->total_price,

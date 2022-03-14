@@ -193,7 +193,7 @@ class ItemController extends Controller
             $profile->save();
 
             $payload = [
-                'title' => 'استعادة مبلغ بعد رفض طلبية بعنوان ' . $item->title,
+                'title' => 'استعادة مبلغ بعد رفض طلبية',
                 'amount' => $item_amount,
             ];
             $activity = MoneyActivity::create([
@@ -268,7 +268,7 @@ class ItemController extends Controller
             $profile->withdrawable_amount += $item_amount;
             $profile->save();
             $payload = [
-                'title' => 'استعادة مبلغ بعد إلغاء طلبية بعنوان ' . $item->title,
+                'title' => 'استعادة مبلغ بعد إلغاء طلبية',
                 'amount' => $item_amount,
             ];
             $activity = MoneyActivity::create([
@@ -346,7 +346,7 @@ class ItemController extends Controller
             $profile->save();
 
             $payload = [
-                'title' => 'استعادة مبلغ بعد إلغاء طلبية بعنوان ' . $item->title,
+                'title' => 'استعادة مبلغ بعد إلغاء طلبية',
                 'amount' => $item_amount,
             ];
             $activity = MoneyActivity::create([
@@ -490,7 +490,10 @@ class ItemController extends Controller
                 'amount' => $final_amount,
                 'wallet_id' => $wallet->id,
                 'item_id' => $item->id,
-                'status' => Amount::PENDING_AMOUNT
+                'status' => Amount::PENDING_AMOUNT,
+                'transfered_at' => Carbon::now()
+                    ->addDays(3)
+                    ->toDateTimeString(),
             ]);
             // تحويله الى محفظة المشتري
             $wallet->amounts()->save($amount);
@@ -502,7 +505,7 @@ class ItemController extends Controller
             $profile->save();
 
             $payload = [
-                'title' => 'ربح المبلغ من طلبية بعنوان' . $item->title,
+                'title' => 'ربح المبلغ من طلبية',
                 'amount' => $final_amount,
             ];
             $activity = MoneyActivity::create([
@@ -650,7 +653,7 @@ class ItemController extends Controller
             $profile->save();
 
             $payload = [
-                'title' => 'استعادة مبلغ بعد إلغاء طلبية بعنوان ' . $item->title,
+                'title' => 'استعادة مبلغ بعد إلغاء طلبية',
                 'amount' => $item_amount,
             ];
             $activity = MoneyActivity::create([

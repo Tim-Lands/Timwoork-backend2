@@ -125,7 +125,7 @@ trait Paypal
                     'payload' => json_encode($response->result, JSON_PRETTY_PRINT)
                 ]);
                 $payload = [
-                    'title' => 'عملية شراء',
+                    'title' => 'عملية شراء بواسطة بايبال',
                     'payment_method' => 'البايبال',
                     'total_price' => $cart->total_price,
                     'price_with_tax' => $cart->price_with_tax,
