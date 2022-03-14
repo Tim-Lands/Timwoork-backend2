@@ -32,7 +32,6 @@ class BankTransferWithdrawalRequest extends FormRequest
             'address_line_one' => 'required',
             'code_postal' => 'required',
             'id_type' => 'required',
-            'attachments' => 'required',
             'attachments.*' => 'image|mimes:png,jpg,jpeg|max:2048',
 
         ];

@@ -95,7 +95,7 @@ class CartController extends Controller
             }
             // فحص اذا كان الحساب مفعل ام لا
             if (!Auth::user()->profile->is_completed) {
-                return response()->error(__("messages.product.profile_not_complete"), Response::HTTP_NOT_FOUND);
+                return response()->error(__("messages.product.profile_not_complete"), Response::HTTP_BAD_REQUEST);
             }
             // جلب سلة المستخدم
             $cart = Cart::where('user_id', Auth::user()->id);
@@ -147,7 +147,7 @@ class CartController extends Controller
             }
             // فحص عدد الخدمات المسموح الشراء به
             if (!quantity_cheked($request->quantity, $data_cart_items['price_unit'])) {
-                return response()->error(__('messages.cart.can_not_buying'), Response::HTTP_UNPROCESSABLE_ENTITY);
+                return response()->error(__('messages.cart.can_not_buying'), Response::HTTP_BAD_REQUEST);
             }
             /* ---------------------------- انشاء عنصر فالسلة --------------------------- */
             // بداية المعاملة مع البيانات المرسلة لقاعدة بيانات :
