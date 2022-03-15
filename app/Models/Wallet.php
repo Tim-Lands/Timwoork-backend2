@@ -12,11 +12,24 @@ class Wallet extends Model
     use HasFactory;
 
     protected $table = 'wallets';
+    protected $appends = ['is_withdrawable'];
 
     // ===========================Contants =============================
     // code
     // ================== Acssesor & mutators ==========================
     // code
+
+    public function getIsWithdrawableAttribute()
+    {
+        $count = $this->withdrawals()->where('status', Withdrawal::PENDING_WITHDRAWAL)->count();
+        if ($count > 0) {
+            return false;
+        }
+        if ($this->withdrawable_amount < 10) {
+            return false;
+        }
+        return true;
+    }
     // ============================ Scopes =============================
 
     /**
