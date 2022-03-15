@@ -36,4 +36,26 @@ class BankTransferWithdrawalRequest extends FormRequest
 
         ];
     }
+
+    /**
+    * messages
+    *
+    * @return void
+    */
+    public function messages()
+    {
+        return [
+            'country_id.required' => __("messages.validation.country_id"),
+            'full_name.required' => __("messages.validation.full_name_required"),
+            'city.required' => __("messages.bank.city_required"),
+            'state.required' => __("messages.bank.state_required"),
+            'phone_number_without_code.required' => __("messages.validation.phone_number_required"),
+            'address_line_one.required' => __("messages.bank.address_line_one_required"),
+            'code_postal.required' => __("messages.bank.code_postal_required"),
+            'id_type.required' => __("messages.bank.id_type_required"),
+            'attachments.image' => __("messages.bank.attachments_required"),
+            'attachments.max' => __("messages.validation.images_size"),
+
+        ];
+    }
 }
