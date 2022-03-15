@@ -14,7 +14,7 @@ class AddTransferedAtColumnToAmountsTables extends Migration
     public function up()
     {
         Schema::table('amounts', function (Blueprint $table) {
-            //
+            $table->datetime('transfered_at')->nullable();
         });
     }
 
@@ -26,7 +26,6 @@ class AddTransferedAtColumnToAmountsTables extends Migration
     public function down()
     {
         Schema::table('amounts', function (Blueprint $table) {
-            $table->datetime('transfered_at')->nullable();
         });
     }
 }
