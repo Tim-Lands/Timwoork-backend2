@@ -10,12 +10,14 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Auth;
+use Laravel\Cashier\Exceptions\IncompletePayment;
 
 trait Stripe
 {
     public function stripe_purchase(Request $request, $cart)
     {
         try {
+
             $user = User::find(Auth::id());
             $user->createOrGetStripeCustomer();
             $stripe_payment = $user->charge($cart->price_with_tax * 100, $request->payment_method_id);
@@ -45,10 +47,13 @@ trait Stripe
             }
             DB::commit();
             return true;
-        } catch (Exception $ex) {
+        } catch (IncompletePayment $exception) {
             DB::rollback();
-            // return $ex;
-            return response()->error(__('messages.errors.error_database'), Response::HTTP_FORBIDDEN);
+            return $exception->payment->status;
+            //return  $exception->payment->status;
+            //return response()->error(__('messages.errors.error_database'), Response::HTTP_FORBIDDEN);
+        } catch (\Stripe\Exception\CardException $e) {
+            // Too many requests made to the API too quickly
         }
     }
 }
