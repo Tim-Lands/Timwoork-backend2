@@ -238,6 +238,22 @@ return [
         "cannot_sent_before_48" => "You must wait after 48 hours to be able to send a new message",
         "failures_send_email" => "The email was not sent, please try again",
         "success_send_message_to_email" => "The message has been sent to the email successfully",
+     ],
+     "bank" =>[
+        "city_required" => "You must enter the province",
+        "state_required" => "You must enter a city",
+        "address_line_one_required" => "You must enter the address",
+        "code_postal_required" => "You must enter your postal code",
+        "id_type_required" => "You must enter the type of attachment",
+        "attachments_required" => "the attachment must be in the form of an image",
+        "bank_name_required" => "You must enter the name of the bank",
+        "bank_branch_required" => "You must enter the name of the branch of the bank",
+        "bank_swift_required" => "You must enter a bank transfer (swift)",
+        "bank_swift_required" => "You must enter a bank transfer (swift)",
+        "bank_swift_required" => "You must enter a bank transfer (swift)",
+        "bank_iban_required" => "You must enter IBAN Bank",
+        "bank_number_account_required" => "You must enter the bank number",
+        "bank_adress_line_one_required" => "You must enter the bank address"
      ]
 
 ];

@@ -28,6 +28,8 @@ class Kernel extends ConsoleKernel
         $schedule->command('cancel:request')->everyMinute();
         // حذف يومي للخدمات التي لم تتم تعبئتها
         $schedule->command('product:vide')->daily();
+        // تحويل الارصدة المعلقة
+        $schedule->command('amount:withdrawable')->everyFiveMinutes();
     }
 
     /**

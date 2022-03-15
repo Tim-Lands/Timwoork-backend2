@@ -28,4 +28,18 @@ class WiseWithdrawalRequest extends FormRequest
             'email' => 'required|email|unique:wise_accounts,email,' . Auth::id()
         ];
     }
+
+    /**
+    * messages
+    *
+    * @return void
+    */
+    public function messages()
+    {
+        return [
+            'email.required' => __("messages.validation.email_required"),
+            'email.email' => __("messages.validation.email"),
+            'unique.required' => __("messages.validation.unique"),
+        ];
+    }
 }
