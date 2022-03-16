@@ -22,6 +22,6 @@ class BankAccount extends Model
 
     public function country(): BelongsTo
     {
-        return $this->belongsTo(WiseCountry::class);
+        return $this->belongsTo(WiseCountry::class, 'wise_country_id', 'id');
     }
 }
