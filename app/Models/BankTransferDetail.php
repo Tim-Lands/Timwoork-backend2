@@ -35,6 +35,6 @@ class BankTransferDetail extends Model
 
     public function country(): BelongsTo
     {
-        return $this->belongsTo(WiseCountry::class, 'country_id', 'id');
+        return $this->belongsTo(Country::class, 'country_id', 'id');
     }
 }
