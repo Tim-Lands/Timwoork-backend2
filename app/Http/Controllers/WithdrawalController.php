@@ -87,7 +87,7 @@ class WithdrawalController extends Controller
         if ($withdrawable_amount < $request->amount) {
             return response()->error('رصيدك غير كاف لإجراء هذه العملية');
         }
-        if ($request->amount != 0 && $request->amount < 10) {
+        if ($request->amount < 10) {
             throw ValidationException::withMessages(['amount' => 'يجب أن يكون المبلغ 10 دولار فما فوق']);
         }
         try {
@@ -101,7 +101,7 @@ class WithdrawalController extends Controller
             $withdrawal = $paypal_account->withdrawal()->create([
                 'wallet_id' => $wallet->id,
                 'type' => Withdrawal::TYPE_PAYPAL,
-                'amount' => $request->amount ?? $wallet->withdrawable_amount,
+                'amount' => $request->amount,
                 'status' => Withdrawal::PENDING_WITHDRAWAL,
             ]);
 
@@ -137,9 +137,10 @@ class WithdrawalController extends Controller
             return response()->error('لديك عملية سحب معلّقة');
         }
         if ($withdrawable_amount < $request->amount) {
-            return response()->error('رصيدك غير كاف لإجراء هذه العملية');
+            return response()->error('رصيدك غير كاف لإجراء هذه العملية', 422);
         }
-        if ($request->amount != 0 && $request->amount < 10) {
+
+        if ($request->amount < 10) {
             throw ValidationException::withMessages(['amount' => 'يجب أن يكون المبلغ 10 دولار فما فوق']);
         }
         try {
@@ -152,7 +153,7 @@ class WithdrawalController extends Controller
             $withdrawal = $wise_account->withdrawal()->create([
                 'wallet_id' => $wallet->id,
                 'type' => Withdrawal::TYPE_WISE,
-                'amount' => $request->amount ?? $wallet->withdrawable_amount,
+                'amount' => $request->amount,
                 'status' => Withdrawal::PENDING_WITHDRAWAL,
             ]);
 
@@ -190,7 +191,7 @@ class WithdrawalController extends Controller
         if ($withdrawable_amount < $request->amount) {
             return response()->error('رصيدك غير كاف لإجراء هذه العملية');
         }
-        if ($request->amount != 0 && $request->amount < 10) {
+        if ($request->amount < 10) {
             throw ValidationException::withMessages(['amount' => 'يجب أن يكون المبلغ 10 دولار فما فوق']);
         }
         try {
@@ -217,7 +218,7 @@ class WithdrawalController extends Controller
             $withdrawal = $bank_account->withdrawal()->create([
                 'wallet_id' => $wallet->id,
                 'type' => Withdrawal::TYPE_BANK,
-                'amount' => $request->amount ?? $wallet->withdrawable_amount,
+                'amount' => $request->amount,
                 'status' => Withdrawal::PENDING_WITHDRAWAL,
             ]);
 
@@ -257,7 +258,7 @@ class WithdrawalController extends Controller
         if ($withdrawable_amount < $request->amount) {
             return response()->error('رصيدك غير كاف لإجراء هذه العملية');
         }
-        if ($request->amount != 0 && $request->amount < 10) {
+        if ($request->amount < 10) {
             throw ValidationException::withMessages(['amount' => 'يجب أن يكون المبلغ 10 دولار فما فوق']);
         }
 
@@ -280,7 +281,7 @@ class WithdrawalController extends Controller
             $withdrawal = $bank_transfer_detail->withdrawal()->create([
                 'wallet_id' => $wallet->id,
                 'type' => Withdrawal::TYPE_BANK_TRANSFER,
-                'amount' => $request->amount ?? $wallet->withdrawable_amount,
+                'amount' => $request->amount,
                 'status' => Withdrawal::PENDING_WITHDRAWAL,
             ]);
 
