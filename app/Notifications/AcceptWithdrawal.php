@@ -62,8 +62,12 @@ class AcceptWithdrawal extends Notification
             ->from(env('MAIL_FROM_ADDRESS'), config('mail.from.ar_name'))
             ->subject('قبول طلب السحب')
             ->view('emails.system.accept_withdrawal', [
-                'type' => "system",
-                'title' =>  "قبول طلب السحب",
+                'user_sender' => [
+                    'full_name' => 'اﻹدارة',
+                    'username' => null,
+                    'avatar_url' => null
+                ],
+                'title' =>  " لقد تم وصول المبلغ إلى " . $this->type,
                 'content' => [
                     'type' => $this->type,
                     'withdrawal' => $this->withdrawal,
@@ -81,6 +85,12 @@ class AcceptWithdrawal extends Notification
     {
         return [
             'type' => "system",
+            'to' => "user",
+            'user_sender' => [
+                'full_name' => 'اﻹدارة',
+                'username' => null,
+                'avatar_url' => null
+            ],
             'title' =>  " لقد تم وصول المبلغ إلى " . $this->type,
             'content' => [
                 'type' => $this->type,
