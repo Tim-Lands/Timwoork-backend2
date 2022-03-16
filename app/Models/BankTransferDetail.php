@@ -32,4 +32,9 @@ class BankTransferDetail extends Model
     {
         return $this->hasMany(BankTransferDetailAttachment::class);
     }
+
+    public function country(): BelongsTo
+    {
+        return $this->belongsTo(WiseCountry::class, 'country_id', 'id');
+    }
 }
