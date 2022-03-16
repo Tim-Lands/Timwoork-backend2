@@ -105,6 +105,7 @@ Route::middleware('auth:sanctum')->prefix('my_sales')->group(function () {
  * مسار طلبات السحب
  */
 Route::middleware('auth:sanctum')->prefix('withdrawals')->group(function () {
+    Route::get('/countries', [WithdrawalController::class, 'countries']);
     Route::post('/paypal', [WithdrawalController::class, 'paypal']);
     Route::post('/wise', [WithdrawalController::class, 'wise']);
     Route::post('/bank', [WithdrawalController::class, 'bank']);
@@ -304,7 +305,7 @@ Route::get('/categories', [FrontEndController::class, 'get_all_categories']);
 Route::get('/get_categories', [FrontEndController::class, 'get_categories']);
 // عرض التصنيفات من اجل عملية الاضافة
 Route::get('/get_categories_for_add_product', [FrontEndController::class, 'get_categories_for_add_product'])
-        ->middleware('auth:sanctum');
+    ->middleware('auth:sanctum');
 // عرض التصنيفات الفرعية
 Route::get('/get_categories/{id}', [FrontEndController::class, 'get_subcategories']);
 

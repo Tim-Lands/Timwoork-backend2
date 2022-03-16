@@ -11,6 +11,7 @@ use App\Http\Requests\UpdateWithdrawalRequest;
 use App\Http\Requests\WiseWithdrawalRequest;
 use App\Models\BankTransferDetailAttachment;
 use App\Models\MoneyActivity;
+use App\Models\WiseCountry;
 use App\Models\Withdrawal;
 use Exception;
 use Illuminate\Support\Facades\Auth;
@@ -22,6 +23,13 @@ use Illuminate\Http\Request;
 class WithdrawalController extends Controller
 {
 
+    // get countries wise
+
+    public  function countries()
+    {
+        $wise_countries = WiseCountry::all();
+        return response()->success("لقد تمّ جلب البيانات بنجاح", $wise_countries);
+    }
     // عرض جميع طلبات السحب
 
     public function index(Request $request)
