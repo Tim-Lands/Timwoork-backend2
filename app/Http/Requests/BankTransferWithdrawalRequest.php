@@ -24,6 +24,7 @@ class BankTransferWithdrawalRequest extends FormRequest
     public function rules()
     {
         return [
+            'amount' => 'numeric',
             'country_id' => 'required',
             'full_name' => 'required',
             'city' => 'required',
@@ -45,6 +46,7 @@ class BankTransferWithdrawalRequest extends FormRequest
     public function messages()
     {
         return [
+            'amount.numeric'      => __("messages.bank.amount_numeric"),
             'country_id.required' => __("messages.validation.country_id"),
             'full_name.required' => __("messages.validation.full_name_required"),
             'city.required' => __("messages.bank.city_required"),

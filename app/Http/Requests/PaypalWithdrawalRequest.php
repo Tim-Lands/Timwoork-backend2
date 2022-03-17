@@ -25,6 +25,7 @@ class PaypalWithdrawalRequest extends FormRequest
     public function rules()
     {
         return [
+            'amount' => 'numeric',
             'email' => 'required|email|unique:paypal_accounts,email,' . Auth::id()
         ];
     }
@@ -36,6 +37,7 @@ class PaypalWithdrawalRequest extends FormRequest
     public function messages()
     {
         return [
+            'amount.numeric'      => __("messages.bank.amount_numeric"),
             'email.required' => __("messages.validation.email_required"),
             'email.email' => __("messages.validation.email"),
             'unique.required' => __("messages.validation.unique"),

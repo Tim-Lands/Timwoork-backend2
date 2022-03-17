@@ -255,7 +255,8 @@ return [
         "bank_swift_required" => "يجب عليك ادخال تحويل بنكي (swift)",
         "bank_iban_required" => "يجب عليك ادخالبنك آيبان (iban)",
         "bank_number_account_required" => "يجب عليك ادخال الرقم البنكي",
-        "bank_adress_line_one_required" => "يجب عليك ادخال العنوان البنكي"
+        "bank_adress_line_one_required" => "يجب عليك ادخال العنوان البنكي",
+        "amount_numeric" => "يحب ان يكون الحساب المسحوب على شكل رقم"
     ]
 
 ];
