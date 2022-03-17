@@ -14,7 +14,7 @@ class Profile extends Model
     use HasFactory;
     protected $table = 'profiles';
 
-    protected $with = ['level', 'badge', 'wise_account', 'paypal_account', 'bank_account', 'bank_transfer_detail'];
+    protected $with = ['level', 'badge', 'wise_account', 'paypal_account', 'bank_account.country', 'bank_transfer_detail.country'];
 
     // ===========================Constants =============================
     public const COMPLETED_SETP_ONE = 1;

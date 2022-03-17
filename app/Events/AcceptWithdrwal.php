@@ -61,8 +61,17 @@ class AcceptWithdrwal implements ShouldBroadcast
     {
         return [
             'type' => "system",
-            'notifications_count' => $this->user->unreadNotifications->count(),
-            'title' =>  " لقد تم إرسال المبلغ إلى" . $this->type,
+            'to' => "user",
+            'user_sender' => [
+                'full_name' => 'اﻹدارة',
+                'username' => null,
+                'avatar_url' => null
+            ],
+            'title' =>  " لقد تم وصول المبلغ إلى " . $this->type,
+            'content' => [
+                'type' => $this->type,
+                'withdrawal' => $this->withdrawal,
+            ],
         ];
     }
 }
