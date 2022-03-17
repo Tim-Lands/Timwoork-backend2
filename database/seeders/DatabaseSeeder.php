@@ -2,7 +2,6 @@
 
 namespace Database\Seeders;
 
-
 use Illuminate\Database\Seeder;
 
 class DatabaseSeeder extends Seeder
@@ -15,16 +14,17 @@ class DatabaseSeeder extends Seeder
     public function run()
     {
         $this->call([
-            LevelSeeder::class,
+            /*LevelSeeder::class,
             BadgeSeeder::class,
             SellerBadgeSeeder::class,
             SellerLevelSeeder::class,
             SkillTableSeeder::class,
             LanguageTableSeeder::class,
-            CategoryTableSeeder::class,
+            CategoryTableSeeder::class,*/
             //TagTableSeeder::class,
-            CountryTableSeeder::class,
-            AdminSeeder::class,
+            //CountryTableSeeder::class,
+            WiseCountrySeeder::class,
+            //AdminSeeder::class,
             //UserSeeder::class,
             //ProductTableSeeder::class,
         ]);
