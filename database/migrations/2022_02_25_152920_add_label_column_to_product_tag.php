@@ -13,7 +13,9 @@ class AddLabelColumnToProductTag extends Migration
      */
     public function up()
     {
+        \Illuminate\Support\Facades\DB::statement('SET SESSION sql_require_primary_key=0');
         Schema::table('product_tag', function (Blueprint $table) {
+            $table->id();
             $table->string('label', 100)->nullable();
             $table->string('value', 100)->nullable();
         });
