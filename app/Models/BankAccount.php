@@ -9,7 +9,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 class BankAccount extends Model
 {
     use HasFactory;
-
+    protected $with = ['country'];
     public function withdrawal()
     {
         return $this->morphOne(Withdrawal::class, 'withdrawalable');
