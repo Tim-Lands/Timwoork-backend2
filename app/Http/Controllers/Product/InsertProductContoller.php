@@ -1,5 +1,7 @@
 <?php
 
+<?php
+
 namespace App\Http\Controllers\Product;
 
 use App\Http\Controllers\Controller;
@@ -302,11 +304,9 @@ class InsertProductContoller extends Controller
                 return response()->error(__("messages.errors.element_not_found"), 403);
             }
 
-            if (count($product->galaries) == 0 && $product->thumbnail) {
+            if (count($product->galaries) == 0 || $product->thumbnail == null) {
                 // رسالة خطأ
                 return response()->error(__("messages.errors.upload_images"), 422);
-            } else {
-                return 'found';
             }
 
             $data = [];
@@ -439,7 +439,7 @@ class InsertProductContoller extends Controller
                 // شرط في حالة ما اذا كانت الصورة مرسلة من المستخدم
                 if ($product->thumbnail) {
                     // شرط اذا قام المستخدم بأرسال صورة الامامية
-                    if ($request->has('thumbnail')) {
+                    if ($request->thumbnail) {
                         // حذف صورة السابقة
                         Storage::delete("products/thumbnails/{$product->thumbnail}");
                         // جلب الصورة من المرسلات
@@ -451,7 +451,7 @@ class InsertProductContoller extends Controller
                         // وضع اسم الصورة في المصفوفة
                         $data_thumbnail['thumbnail'] = $thumbnailName;
                     }
-                } elseif ($request->has('thumbnail')) {
+                } elseif ($request->thumbnail) {
                     // جلب الصورة من المرسلات
                     $thumbnailPath = $request->file('thumbnail');
                     // وضع اسم جديد للصورة
@@ -517,7 +517,7 @@ class InsertProductContoller extends Controller
                 // شرط اذا كانت هناك صورة مرسلة من قبل المستخدم
                 if (count($get_galaries_images) != 0) {
                     // شرط اذا كانت هناك صور ارسلت من قبل المستخدم
-                    if ($request->has('images')) {
+                    if ($request->images) {
                         foreach ($get_galaries_images as $image) {
                             Storage::has("products/galaries-images/{$image['path']}") ? Storage::delete("products/galaries-images/{$image['path']}") : '';
                         }
@@ -540,7 +540,7 @@ class InsertProductContoller extends Controller
                     }
                 } else {
                     // شرط اذا لم يجد الصور التي يرسلهم المستخدم في حالة الانشاء لاول مرة
-                    if (!$request->has('images')) {
+                    if (!$request->images) {
                         return response()->error(__("messages.product.count_galaries"), 403);
                     }
                     // عدد الصور التي تم رفعها
