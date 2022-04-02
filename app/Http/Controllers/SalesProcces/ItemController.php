@@ -468,7 +468,7 @@ class ItemController extends Controller
             $seller = User::find($item->user_id);
             $profile = $seller->profile;
             //$precent_deducation = $profile->profile_seller->precent_deducation;
-            $is_women = DB::table('products')->where('id', $item->number_product)->subcategory->is_women;
+            $is_women = Product::with('subcategory')->where('id', $item->number_product)->first()->is_women;
             if ($is_women) {
                 $precent_deducation = 12;
             } else {
