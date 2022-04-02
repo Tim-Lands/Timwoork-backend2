@@ -14,7 +14,7 @@ class AddIsItemWorkToItems extends Migration
     public function up()
     {
         Schema::table('items', function (Blueprint $table) {
-            $table->boolean('is_item_work')->default(1)->after('is_rating');
+            $table->boolean('is_item_work')->default(1);
         });
     }
 
