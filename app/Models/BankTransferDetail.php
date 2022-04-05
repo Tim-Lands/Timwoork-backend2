@@ -11,7 +11,7 @@ use Illuminate\Database\Eloquent\Relations\HasOne;
 class BankTransferDetail extends Model
 {
     use HasFactory;
-    protected $with = ['attachments'];
+    protected $with = ['attachments', 'country', 'profile'];
     public function withdrawal()
     {
         return $this->morphOne(Withdrawal::class, 'withdrawalable');

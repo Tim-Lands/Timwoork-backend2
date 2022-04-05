@@ -9,7 +9,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 class PaypalAccount extends Model
 {
     use HasFactory;
-
+    protected $with = ['profile'];
     public function withdrawal()
     {
         return $this->morphOne(Withdrawal::class, 'withdrawalable');
