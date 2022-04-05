@@ -26,8 +26,8 @@ use Illuminate\Support\Facades\Route;
 |--------------------------------------------------------------------------
 |
 */
- // مسار تسجيل الدخول
- Route::post('/login', [AuthController::class, 'login']);
+// مسار تسجيل الدخول
+Route::post('/login', [AuthController::class, 'login']);
 
 Route::middleware('auth:sanctum')->group(function () {
     // =======================  مسارات التسجيل و التسجيل دخول المدير ======================
@@ -243,5 +243,6 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::get('/{id}', [WithdrawalController::class, 'show']);
         // عرض عنصر من عناصر الطلبية
         Route::post('/{id}/accept', [WithdrawalController::class, 'accept']);
+        Route::post('/{id}/cancel', [WithdrawalController::class, 'cancel']);
     });
 });

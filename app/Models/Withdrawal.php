@@ -14,6 +14,7 @@ class Withdrawal extends Model
     // ===========================Contants =============================
     const PENDING_WITHDRAWAL            = 0;
     const COMPLETED_WITHDRAWAL          = 1;
+    const CANCELED_WITHDRAWAL          = 2;
 
     const TYPE_PAYPAL                   = 0;
     const TYPE_WISE                     = 1;

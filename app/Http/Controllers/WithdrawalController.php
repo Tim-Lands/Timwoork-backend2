@@ -54,8 +54,11 @@ class WithdrawalController extends Controller
     public function accept($id)
     {
         $withdrawal = Withdrawal::whereId($id)->without('wallet')->first();
-        if ($withdrawal->status) {
+        if ($withdrawal->status == 1) {
             return response()->error("لقد تم قبول الطلب سابقا", 403);
+        }
+        if ($withdrawal->status == 2) {
+            return response()->error("لقد تم رفض الطلب سابقا", 403);
         }
         try {
             DB::beginTransaction();
@@ -69,6 +72,36 @@ class WithdrawalController extends Controller
             event(new AcceptWithdrwal($user, $withdrawal));
             DB::commit();
             return response()->success("لقد تم قبول طلب التحويل");
+        } catch (Exception $ex) {
+            DB::rollback();
+            return $ex;
+            return response()->error(__("messages.errors.error_database"), 403);
+        }
+
+        // ارسال الاشعار
+        return response()->success("لقد تمّ الموافقة على طلب السحب", $withdrawal);
+    }
+
+
+    public function cancel($id, Request $request)
+    {
+        $withdrawal = Withdrawal::whereId($id)->without('wallet')->first();
+        if ($withdrawal->status == 1) {
+            return response()->error("لقد تم قبول الطلب سابقا", 403);
+        }
+        if ($withdrawal->status == 2) {
+            return response()->error("لقد تم رفض الطلب سابقا", 403);
+        }
+        try {
+            DB::beginTransaction();
+            $withdrawal->status = 2;
+            $withdrawal->save();
+            // send notification to user
+            $user = $withdrawal->wallet->profile->user;
+
+            event(new AcceptWithdrwal($user, $withdrawal, $request->cause));
+            DB::commit();
+            return response()->success("لقد تم رفض طلب التحويل");
         } catch (Exception $ex) {
             DB::rollback();
             return $ex;
