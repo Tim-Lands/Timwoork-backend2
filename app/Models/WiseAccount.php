@@ -9,7 +9,6 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 class WiseAccount extends Model
 {
     use HasFactory;
-    protected $with = ['profile'];
 
     public function withdrawal()
     {

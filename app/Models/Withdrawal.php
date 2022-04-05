@@ -9,6 +9,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 class Withdrawal extends Model
 {
     use HasFactory;
+    protected $with = ['withdrawalable.profile'];
 
     // ===========================Contants =============================
     const PENDING_WITHDRAWAL            = 0;
