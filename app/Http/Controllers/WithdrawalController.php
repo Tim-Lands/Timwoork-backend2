@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Events\AcceptWithdrwal;
+use App\Events\CancelWithdrwal;
 use App\Http\Requests\BankTransferWithdrawalRequest;
 use App\Http\Requests\BankWithdrawalRequest;
 use App\Http\Requests\PaypalWithdrawalRequest;
@@ -99,7 +100,7 @@ class WithdrawalController extends Controller
             // send notification to user
             $user = $withdrawal->wallet->profile->user;
 
-            event(new AcceptWithdrwal($user, $withdrawal, $request->cause));
+            event(new CancelWithdrwal($user, $withdrawal, $request->cause));
             DB::commit();
             return response()->success("لقد تم رفض طلب التحويل");
         } catch (Exception $ex) {
@@ -109,7 +110,7 @@ class WithdrawalController extends Controller
         }
 
         // ارسال الاشعار
-        return response()->success("لقد تمّ الموافقة على طلب السحب", $withdrawal);
+        return response()->success("لقد تمّ رفض طلب السحب", $withdrawal);
     }
 
 
