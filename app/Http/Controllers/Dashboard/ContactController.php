@@ -14,7 +14,7 @@ class ContactController extends Controller
 {
     public function index()
     {
-        $contacts = Contact::select('id', 'subject', 'full_name', 'email', 'created_at', 'type')->get();
+        $contacts = Contact::select('id', 'subject', 'full_name', 'email', 'created_at', 'type_message')->get();
 
         return response()->success(__("messages.oprations.get_all_data"), $contacts);
     }
