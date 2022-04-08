@@ -199,7 +199,7 @@ class Product extends Model
      */
     public function getFullPathThumbnailAttribute()
     {
-        return asset('products/thumbnails/' . $this->thumbnail);
+        return "https://timwoork-space.ams3.digitaloceanspaces.com/products/thumbnails/".$this->thumbnail;
     }
 
     /* --------------------------------- Scopes --------------------------------- */
