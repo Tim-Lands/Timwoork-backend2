@@ -17,8 +17,9 @@ class CreateProfileSellerSkillTable extends Migration
             $table->id();
             // relation model of ProfileSeller
             $table->foreignId('profile_seller_id')->constrained();
-            // relation model of Category
-            $table->foreignId('product_id')->constrained();
+            // relation model of Skill
+            $table->foreignId('skill_id')->constrained();
+            $table->tinyInteger('level')->default(0);
             $table->timestamps();
         });
     }

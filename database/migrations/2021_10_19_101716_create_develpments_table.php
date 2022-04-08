@@ -13,15 +13,19 @@ class CreateDevelpmentsTable extends Migration
      */
     public function up()
     {
-        Schema::create('develpments', function (Blueprint $table) {
+        Schema::create('developments', function (Blueprint $table) {
             $table->id();
             $table->string('title');
-            $table->string('duration')->nullable();
+            $table->tinyInteger('duration');
+            $table->float('price', 5, 2);
+
             // is_duration: 0 => have a time of product , 1 => no any time
-            $table->boolean('is_duration')->default(0);
+            //$table->boolean('is_duration')->default(0);
 
             // relation of Model Product
-            $table->foreignId('product_id')->constrained();
+            $table->foreignId('product_id')->constrained()
+                ->onDelete('CASCADE')
+                ->onUpdate('CASCADE');
 
             $table->timestamps();
         });

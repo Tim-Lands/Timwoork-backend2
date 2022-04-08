@@ -16,9 +16,7 @@ class CreateTagsTable extends Migration
         Schema::create('tags', function (Blueprint $table) {
             $table->id();
             // names of languages (arabic,english,french)
-            $table->string('name_ar');
-            $table->string('name_en');
-            $table->string('name_fr');
+            $table->string('name')->nullable();
             $table->timestamps();
         });
     }

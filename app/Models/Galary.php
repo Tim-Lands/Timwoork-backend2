@@ -9,12 +9,23 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 class Galary extends Model
 {
     use HasFactory;
+    /**
+     * table
+     *
+     * @var string
+     */
     protected $table = 'galaries';
+    protected $appends = ['data_url'];
 
     // ===========================Contants =============================
     // code
     // ================== Acssesor & mutators ==========================
     // code
+
+    public function getDataUrlAttribute()
+    {
+        return asset('products/galaries-images/' . $this->path);
+    }
     // ============================ Scopes =============================
     // code
     // ========================== Relations ============================

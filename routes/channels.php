@@ -1,5 +1,8 @@
 <?php
 
+use App\Models\Conversation;
+use Illuminate\Support\Arr;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Broadcast;
 
 /*
@@ -13,6 +16,22 @@ use Illuminate\Support\Facades\Broadcast;
 |
 */
 
+Broadcast::channel('chat', function ($user) {
+    return $user;
+});
+
 Broadcast::channel('App.Models.User.{id}', function ($user, $id) {
     return (int) $user->id === (int) $id;
+});
+
+Broadcast::channel('receiver.{id}', function ($user, $id) {
+    if ($user->id == $id) {
+        return $user;
+    }
+});
+
+Broadcast::channel('notify.{id}', function ($user, $id) {
+    if ($user->id == $id) {
+        return $user;
+    }
 });

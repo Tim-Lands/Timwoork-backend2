@@ -16,7 +16,17 @@ class Badge extends Model
     // ================== Acssesor & mutators ==========================
     // code
     // ============================ Scopes =============================
-    // code
+
+    /**
+     * scopeSelection => دالة من اجل جلب البيانات
+     *
+     * @param  mixed $query
+     * @return object
+     */
+    public function scopeSelection(mixed $query): ?object
+    {
+        return $query->select('id', 'name_ar', 'name_en', 'name_fr', 'created_at');
+    }
     // ========================== Relations ============================
 
     /**
@@ -27,15 +37,5 @@ class Badge extends Model
     public function profile(): HasOne
     {
         return $this->hasOne(Profile::class, 'badge_id');
-    }
-
-    /**
-     * profileSeller
-     *
-     * @return HasOne
-     */
-    public function profileSeller(): HasOne
-    {
-        return $this->hasOne(ProfileSeller::class, 'badge_id');
     }
 }

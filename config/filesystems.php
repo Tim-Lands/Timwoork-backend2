@@ -38,9 +38,37 @@ return [
         'public' => [
             'driver' => 'local',
             'root' => storage_path('app/public'),
-            'url' => env('APP_URL').'/storage',
+            'url' => env('APP_URL') . '/storage',
             'visibility' => 'public',
         ],
+
+        'avatars' => [
+            'driver' => 'local',
+            'root' => storage_path('app/avatars'),
+            'url' => env('APP_URL') . '/avatars',
+            'visibility' => 'public',
+        ],
+        'attachments' => [
+            'driver' => 'local',
+            'root' => storage_path('app/attachments'),
+            'url' => env('APP_URL') . '/attachments',
+            'visibility' => 'public',
+        ],
+
+        'products' => [
+            'driver' => 'local',
+            'root' => storage_path('app/products'),
+            'url' => env('APP_URL') . '/products',
+            'visibility' => 'public',
+        ],
+
+        'resources_files' => [
+            'driver' => 'local',
+            'root' => storage_path('app/resources_files'),
+            'url' => env('APP_URL') . '/resources_files',
+            'visibility' => 'public',
+        ],
+
 
         's3' => [
             'driver' => 's3',
@@ -67,7 +95,11 @@ return [
     */
 
     'links' => [
-        public_path('storage') => storage_path('app/public'),
+        //public_path('storage') => storage_path('app/public'),
+        public_path('avatars') => storage_path('app/avatars'),
+        public_path('products') => storage_path('app/products'),
+        public_path('attachments') => storage_path('app/attachments'),
+        public_path('resources_files') => storage_path('app/resources_files'),
     ],
 
 ];

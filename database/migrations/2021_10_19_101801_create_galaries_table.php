@@ -15,12 +15,14 @@ class CreateGalariesTable extends Migration
     {
         Schema::create('galaries', function (Blueprint $table) {
             $table->id();
-            $table->string('path');
-            $table->string('size');
-            // type file => pdf , photo , video
-            $table->string('type_file');
-            $table->string('mime_type');
-            $table->$table->timestamps();
+            $table->string('path')->nullable();
+            $table->string('full_path')->nullable();
+            $table->string('size')->nullable();
+            $table->string('mime_type')->nullable();
+            $table->foreignId('product_id')->constrained()
+                ->onDelete('CASCADE')
+                ->onUpdate('CASCADE');
+            $table->timestamps();
         });
     }
 

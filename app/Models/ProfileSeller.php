@@ -13,7 +13,11 @@ class ProfileSeller extends Model
     use HasFactory;
     protected $table = 'profile_sellers';
 
-    // ===========================Contants =============================
+    protected $with = ['level', 'badge'];
+
+    // ===========================Constants =============================
+    public const COMPLETED_SETP_ONE = 1;
+    public const COMPLETED_SETP_TWO = 2;
     // code
     // ================== Acssesor & mutators ==========================
     // code
@@ -22,15 +26,6 @@ class ProfileSeller extends Model
     // ========================== Relations ============================
     // code
 
-    /**
-     * profile_seller_skill
-     *
-     * @return BelongsToMany
-     */
-    public function profile_seller_skill(): BelongsToMany
-    {
-        return $this->belongsToMany(ProfileSeller::class, 'profile_seller_skill', 'product_id', 'tag_id');
-    }
 
 
     /**
@@ -40,7 +35,7 @@ class ProfileSeller extends Model
      */
     public function badge(): BelongsTo
     {
-        return $this->belongsTo(Badge::class, 'badge_id');
+        return $this->belongsTo(SellerBadge::class, 'seller_badge_id');
     }
 
     /**
@@ -50,7 +45,7 @@ class ProfileSeller extends Model
      */
     public function level(): BelongsTo
     {
-        return $this->belongsTo(Level::class, 'level_id');
+        return $this->belongsTo(SellerLevel::class, 'seller_level_id');
     }
 
     /**
@@ -64,13 +59,25 @@ class ProfileSeller extends Model
     }
 
     /**
+     * products
+     *
+     * @return HasMany
+     */
+    public function products(): HasMany
+    {
+        return $this->hasMany(Product::class);
+    }
+
+    /**
      * languages
      *
      * @return HasMany
      */
-    public function languages(): HasMany
+    public function languages(): belongsToMany
     {
-        return $this->hasMany(Language::class, 'profile_seller_id');
+        return $this->belongsToMany(Language::class)
+            ->withTimestamps()
+            ->withPivot('level');
     }
 
     /**
@@ -78,8 +85,28 @@ class ProfileSeller extends Model
      *
      * @return BelongsToMany
      */
-    public function profissions(): BelongsToMany
+    public function professions(): BelongsToMany
     {
-        return $this->belongsToMany(Category::class, 'profissions');
+        return $this->belongsToMany(Category::class, 'professions');
+    }
+
+    /**
+     * profile_seller_skills
+     *
+     * @return BelongsToMany
+     */
+    public function skills(): BelongsToMany
+    {
+        return $this->belongsToMany(Skill::class)->withPivot('level');
+    }
+
+    /**
+     * item
+     *
+     * @return BelongsTo
+     */
+    public function items(): HasMany
+    {
+        return $this->hasMany(Item::class);
     }
 }

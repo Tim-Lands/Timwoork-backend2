@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 class Language extends Model
 {
@@ -17,6 +18,18 @@ class Language extends Model
     // code
     // ============================ Scopes =============================
     // code
+
+    /**
+     * scopeSelection => دالة من اجل جلب البيانات
+     *
+     * @param  mixed $query
+     * @return object
+     */
+    public function scopeSelection(mixed $query): ?object
+    {
+        return $query->select('id', 'name_ar', 'name_en', 'name_fr', 'created_at');
+    }
+
     // ========================== Relations ============================
 
 
@@ -25,8 +38,10 @@ class Language extends Model
      *
      * @return BelongsTo
      */
-    public function profileSeller(): BelongsTo
+    public function profileSeller(): BelongsToMany
     {
-        return $this->belongsTo(ProfileSeller::class, 'profile_seller_id');
+        return $this->belongsToMany(ProfileSeller::class)
+            ->withTimestamps()
+            ->withPivot('level');
     }
 }
