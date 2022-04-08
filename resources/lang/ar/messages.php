@@ -257,6 +257,16 @@ return [
         "bank_number_account_required" => "يجب عليك ادخال الرقم البنكي",
         "bank_adress_line_one_required" => "يجب عليك ادخال العنوان البنكي",
         "amount_numeric" => "يحب ان يكون الحساب المسحوب على شكل رقم"
+    ],
+
+    "type_payment" => [
+        "active_payment" => "تم تنشيط البوابة بنجاح",
+        "disactive_payment" => "تم تعطيل البوابة بنجاح",
+        "precent_of_payment_required" => "يجب عليك ادخال نسبة البوابة",
+        "precent_of_payment_numeric" => "يجب ان تكون النسبة على شكل رقم",
+        "precent_of_payment_between" => "يجب ان تكون النسبة بين 0 و 100",
+        "value_of_cent_required" => "يجب عليك ادخال قيمة السنت",
+        "value_of_cent_numeric" => "يجب ان تكون قيمة السنت على شكل رقم"
     ]
 
 ];

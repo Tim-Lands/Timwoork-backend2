@@ -254,6 +254,16 @@ return [
         "bank_iban_required" => "You must enter IBAN Bank",
         "bank_number_account_required" => "You must enter the bank number",
         "bank_adress_line_one_required" => "You must enter the bank address"
-     ]
+     ],
+
+     "type_payment" => [
+        "active_payment" => "Portal has been activated successfully",
+        "disactive_payment" => "Portal has been disabled successfully",
+        "precent_of_payment_required" => "You must enter the gate percentage",
+        "precent_of_payment_numeric" => "the percentage must be in the form of a number",
+        "precent_of_payment_between" => "the ratio must be between 0 and 100",
+        "value_of_cent_required" => "You must enter the value of a cent",
+        "value_of_cent_numeric" => "the value of a cent must be in the form of a number"
+    ]
 
 ];

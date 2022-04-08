@@ -17,6 +17,7 @@ use App\Http\Controllers\Dashboard\RejectProductController;
 use App\Http\Controllers\Dashboard\ContactController;
 use App\Http\Controllers\Dashboard\SellerBadgeController;
 use App\Http\Controllers\Dashboard\SellerLevelController;
+use App\Http\Controllers\Dashboard\TypePaymentController;
 use App\Http\Controllers\WithdrawalController;
 use Illuminate\Support\Facades\Route;
 
@@ -244,5 +245,24 @@ Route::middleware('auth:sanctum')->group(function () {
         // عرض عنصر من عناصر الطلبية
         Route::post('/{id}/accept', [WithdrawalController::class, 'accept']);
         Route::post('/{id}/cancel', [WithdrawalController::class, 'cancel']);
+    });
+
+
+    /* ------------------------------ مسار البوابات ----------------------------- */
+    Route::prefix('types_payments')->group(function () {
+        // مسار العرض
+        Route::get('/', [TypePaymentController::class, 'index']);
+        // مسار انشاء عنصر جديد
+        Route::post('/store', [TypePaymentController::class, 'store']);
+        // مسار جلب عنصر الواحد
+        Route::get('/{id}', [TypePaymentController::class, 'show']);
+        // مسار التعديل على العنصر
+        Route::post('/{id}/update', [TypePaymentController::class, 'update']);
+        // مسار حذف العنصر
+        Route::post('/{id}/delete', [TypePaymentController::class, 'delete']);
+        // مسار تنشيط البوابة
+        Route::post('/{id}/active_payment', [TypePaymentController::class, 'active_payment']);
+        // مسار تعطيل البوابة
+        Route::post('/{id}/disactive_payment', [TypePaymentController::class, 'disactive_payment']);
     });
 });
