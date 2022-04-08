@@ -24,7 +24,7 @@ class Galary extends Model
 
     public function getDataUrlAttribute()
     {
-        return asset('products/galaries-images/' . $this->path);
+        return 'https://timwoork-space.ams3.digitaloceanspaces.com/products/galaries-images/' . $this->path;
     }
     // ============================ Scopes =============================
     // code
