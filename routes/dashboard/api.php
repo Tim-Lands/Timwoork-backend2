@@ -218,6 +218,8 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::prefix('contacts')->group(function () {
         //  مسار العرض كل الرسائل
         Route::get('/', [ContactController::class, 'index']);
+        // عرض الرسالة الواحدة
+        Route::get('/{id}', [ContactController::class, 'show']);
         // مسار انشاء عنصر جديد
         Route::post('/sent_to_client_by_email/{id}', [ContactController::class, 'sent_to_client_by_email']);
         // مسار الشكاوي
