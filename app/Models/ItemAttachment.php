@@ -18,7 +18,8 @@ class ItemAttachment extends Model
 
     public function getFullPathAttribute()
     {
-        return url("resources_files/{$this->name}");
+        //return url("resources_files/{$this->name}");
+        return 'https://timwoork-space.ams3.digitaloceanspaces.com/resources_files/' . $this->name;
     }
     /* -------------------------------- Relations ------------------------------- */
 
