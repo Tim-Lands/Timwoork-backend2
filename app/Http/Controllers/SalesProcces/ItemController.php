@@ -403,7 +403,8 @@ class ItemController extends Controller
                     $time = time();
                     $file_attachment = "tw-attachment-{$item->uuid}-{$time}.{$value->getClientOriginalExtension()}";
                     // رفع المشروع
-                    Storage::putFileAs('resources_files', $value, $file_attachment);
+                    //Storage::putFileAs('resources_files', $value, $file_attachment);
+                    $value->storePubliclyAs('resources_files', $file_attachment, 'do');
                     // وضع المشروع في المصفوفة
                     $data_resource[$key] = [
                         'item_id'    => $item->id,

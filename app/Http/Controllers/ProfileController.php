@@ -97,11 +97,14 @@ class ProfileController extends Controller
             $avatarPath = $request->file('avatar');
             $avatarName = 'tw-' . Auth::user()->id .  time() . '.' . $avatarPath->getClientOriginalExtension();
             // رفع الصورة
-            $path = Storage::putFileAs('avatars', $request->file('avatar'), $avatarName);
+            $$avatarPath->storePubliclyAs('avatars', $avatarName, 'do');
+            //$path = Storage::putFileAs('avatars', $request->file('avatar'), $avatarName);
             // تخزين اسم الصورة في قاعدة البيانات
             $user = Auth::user();
             // تغيير اسم المستخدم
-            $avatarUrl = Storage::disk('avatars')->url($avatarName);
+
+            $avatarUrl = 'https://timwoork-space.ams3.digitaloceanspaces.com/avatars/'.$avatarName;
+
             $user->profile->avatar = $avatarName;
             $user->profile->avatar_url = $avatarUrl;
             $user->profile->save();

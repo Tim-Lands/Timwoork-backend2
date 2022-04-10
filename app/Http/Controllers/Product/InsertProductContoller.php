@@ -440,14 +440,19 @@ class InsertProductContoller extends Controller
                     // شرط اذا قام المستخدم بأرسال صورة الامامية
                     if ($request->thumbnail) {
                         // حذف صورة السابقة
-                        Storage::delete("products/thumbnails/{$product->thumbnail}");
+                        if (Storage::disk('do')->exists("products/thumbnails/{$product->thumbnail}")) {
+                            Storage::disk('do')->delete("products/thumbnails/{$product->thumbnail}");
+                        }
+                        //Storage::delete("products/thumbnails/{$product->thumbnail}");
                         // جلب الصورة من المرسلات
                         $thumbnailPath = $request->file('thumbnail');
                         // وضع اسم جديد للصورة
                         $thumbnailName = "tw-thumbnail-{$id}-{$time}.{$thumbnailPath->getClientOriginalExtension()}";
                         // رفع الصورة الامامية للخدمة
-                        Storage::putFileAs('products/thumbnails', $request->file('thumbnail'), $thumbnailName);
+                        //Storage::putFileAs('products/thumbnails', $request->file('thumbnail'), $thumbnailName);
+                        $thumbnailPath->storePubliclyAs('products/thumbnails', $thumbnailName, 'do');
                         // وضع اسم الصورة في المصفوفة
+
                         $data_thumbnail['thumbnail'] = $thumbnailName;
                     }
                 } elseif ($request->thumbnail) {
@@ -456,7 +461,8 @@ class InsertProductContoller extends Controller
                     // وضع اسم جديد للصورة
                     $thumbnailName = "tw-thumbnail-{$id}-{$time}.{$thumbnailPath->getClientOriginalExtension()}";
                     // رفع الصورة الامامية للخدمة
-                    Storage::putFileAs('products/thumbnails', $request->file('thumbnail'), $thumbnailName);
+                    $thumbnailPath->storePubliclyAs('products/thumbnails', $thumbnailName, 'do');
+                    //Storage::putFileAs('products/thumbnails', $request->file('thumbnail'), $thumbnailName);
                     // وضع اسم الصورة في المصفوفة
                     $data_thumbnail['thumbnail'] = $thumbnailName;
                 } else {
@@ -518,7 +524,9 @@ class InsertProductContoller extends Controller
                     // شرط اذا كانت هناك صور ارسلت من قبل المستخدم
                     if ($request->images) {
                         foreach ($get_galaries_images as $image) {
-                            Storage::has("products/galaries-images/{$image['path']}") ? Storage::delete("products/galaries-images/{$image['path']}") : '';
+                            if (Storage::disk('do')->exists("products/galaries-images/{$image['path']}")) {
+                                Storage::disk('do')->delete("products/galaries-images/{$image['path']}");
+                            }
                         }
                         // عدد الصور التي تم رفعها
                         foreach ($request->file('images') as $key => $value) {
@@ -534,7 +542,7 @@ class InsertProductContoller extends Controller
                         // عملية رفع المفات
                         foreach ($galaries_images as $image) {
                             // رفع الصور
-                            Storage::putFileAs('products/galaries-images', $image['full_path'], $image['path']);
+                            $image['full_path']->storePubliclyAs('products/galaries-images', $image['path'], 'do');
                         }
                     }
                 } else {
@@ -560,7 +568,7 @@ class InsertProductContoller extends Controller
                         // عملية رفع المفات
                         foreach ($galaries_images as $image) {
                             // رفع الصور
-                            Storage::putFileAs('products/galaries-images', $image['full_path'], $image['path']);
+                            $image['full_path']->storePubliclyAs('products/galaries-images', $image['path'], 'do');
                         }
                     }
                 }

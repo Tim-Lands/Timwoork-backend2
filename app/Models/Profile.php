@@ -5,7 +5,6 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 
@@ -13,7 +12,7 @@ class Profile extends Model
 {
     use HasFactory;
     protected $table = 'profiles';
-
+    protected $appends = ['avatar_path'];
     protected $with = ['level', 'badge', 'wise_account', 'paypal_account', 'bank_account.country', 'bank_transfer_detail.country'];
 
     // ===========================Constants =============================
@@ -23,7 +22,10 @@ class Profile extends Model
     // code
     // ================== Acssesor & mutators ==========================
     // code
-
+    public function getAvatarPathAttribute()
+    {
+        return 'https://timwoork-space.ams3.digitaloceanspaces.com/avatars/' . $this->avatar;
+    }
 
     // ============================ Scopes =============================
     // code
