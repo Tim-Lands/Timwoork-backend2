@@ -38,7 +38,7 @@ class AuthController extends Controller
     public function get_users()
     {
         // جلب جميع المستخدمين
-        $users = User::selection()->with('profile')->get();
+        $users = User::selection()->with('profile')->latest()->get();
         // رسالة نجاح
         return response()->success(__('messages.oprations.get_all_data'), $users);
     }

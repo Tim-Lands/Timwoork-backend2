@@ -23,10 +23,11 @@ class DatabaseSeeder extends Seeder
             CategoryTableSeeder::class,*/
             //TagTableSeeder::class,
             //CountryTableSeeder::class,
-            WiseCountrySeeder::class,
+            //WiseCountrySeeder::class,
             //AdminSeeder::class,
             //UserSeeder::class,
             //ProductTableSeeder::class,
+            TypePaymentSeeder::class,
         ]);
     }
 }

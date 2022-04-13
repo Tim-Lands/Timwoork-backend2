@@ -26,7 +26,9 @@ class ProductController extends Controller
             $q->select('id', 'profile_id')->with('profile', function ($q) {
                 $q->select('id', 'full_name', 'user_id')->with('user:id,username');
             });
-        }])->get();
+        }])
+        ->latest()
+        ->get();
         // اظهار العناصر
         return response()->success(__("messages.oprations.get_all_data"), $products);
     }
@@ -135,7 +137,9 @@ class ProductController extends Controller
     public function getProductsActived(): JsonResponse
     {
         // جلب جميع الخدمات التي تم تنشيطها
-        $products_actived = Product::selection()->productActive()->with(['category', 'profileSeller'])->get();
+        $products_actived = Product::selection()->productActive()->with(['category', 'profileSeller'])
+        ->latest()
+        ->get();
         // اظهار العناصر
         return response()->success(__("messages.dashboard.get_product_actived"), $products_actived);
     }
@@ -148,7 +152,9 @@ class ProductController extends Controller
     public function getProductsRejected(): JsonResponse
     {
         // جلب جميع الخدمات التي تم رفضها
-        $products_rejected = Product::selection()->productReject()->with(['category', 'profileSeller'])->get();
+        $products_rejected = Product::selection()->productReject()->with(['category', 'profileSeller'])
+        ->latest()
+        ->get();
         // اظهار العناصر
         return response()->success(__("messages.dashboard.get_product_rejected"), $products_rejected);
     }
