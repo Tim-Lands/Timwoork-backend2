@@ -139,6 +139,10 @@ class OrderController extends Controller
         $cart = Cart::selection()
             ->with(['cart_items' => function ($q) {
                 $q->with('cartItem_developments', 'product:title')->get();
+            },'cart_payments' =>function ($q) {
+                $q->select('name_ar', 'name_en', 'status')
+                ->where('status', 1)
+                ->get();
             }])
             ->where('user_id', Auth::user()->id)
             ->isnotbuying()
@@ -157,6 +161,10 @@ class OrderController extends Controller
         $cart = Cart::selection()
             ->with(['cart_items' => function ($q) {
                 $q->with('cartItem_developments')->get();
+            },'cart_payments' =>function ($q) {
+                $q->select('name_ar', 'name_en', 'status')
+                ->where('status', 1)
+                ->get();
             }])
             ->where('user_id', Auth::user()->id)
             ->isnotbuying()
@@ -180,6 +188,10 @@ class OrderController extends Controller
         $cart = Cart::selection()
             ->with(['cart_items' => function ($q) {
                 $q->with('cartItem_developments')->get();
+            },'cart_payments' =>function ($q) {
+                $q->select('name_ar', 'name_en', 'status')
+                ->where('status', 1)
+                ->get();
             }])
             ->where('user_id', Auth::user()->id)
             ->isnotbuying()
