@@ -23,7 +23,6 @@ class ConversationController extends Controller
 {
     public function index(Request $request)
     {
-
         $paginate = $request->query('paginate') ? $request->query('paginate') : 10;
         $user = Auth::user();
         $conversations = $user->conversations()->with(['latestMessage', 'members' => function ($q) use ($user) {
@@ -146,12 +145,12 @@ class ConversationController extends Controller
             ]);
 
             if ($request->has('attachments')) {
-
                 foreach ($request->file('attachments') as $key => $value) {
                     $attachmentPath = $value;
                     $attachmentName = 'tw-attch-' . $key . $conversation_id . Auth::user()->id .  time() . '.' . $attachmentPath->getClientOriginalExtension();
                     $size = number_format($value->getSize() / 1048576, 3) . ' MB';
-                    $path = Storage::putFileAs('attachments', $value, $attachmentName);
+                    $attachmentPath->storePubliclyAs('attachments', $attachmentName, 'do');
+                    //$path = Storage::putFileAs('attachments', $value, $attachmentName);
                     // تخزين معلومات المرفق
                     $message->attachments()->create([
                         'name' => $attachmentName,

@@ -26,7 +26,7 @@ class MessageAttachment extends Model
 
     public function getFullPathAttribute()
     {
-        return url("attachments/{$this->name}");
+        return "https://timwoork-space.ams3.digitaloceanspaces.com/attachments/".$this->name;
     }
 
     // ========================== Relations ============================
