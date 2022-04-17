@@ -57,7 +57,6 @@ class AcceptWithdrawal extends Notification
      */
     public function toMail($notifiable)
     {
-
         return (new MailMessage)
             ->from(env('MAIL_FROM_ADDRESS'), config('mail.from.ar_name'))
             ->subject('قبول طلب السحب')

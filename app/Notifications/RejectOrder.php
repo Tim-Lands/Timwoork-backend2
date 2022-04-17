@@ -73,7 +73,7 @@ class RejectOrder extends Notification
             'user_sender' => [
                 'full_name' => Auth::user()->profile->full_name,
                 'username' => Auth::user()->username,
-                'avatar_url' => Auth::user()->profile->avatar_url
+                'avatar_url' => Auth::user()->profile->avatar_path
             ],
             'content' => [
                 'item_id' => $this->item->id,
