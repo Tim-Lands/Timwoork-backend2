@@ -39,19 +39,19 @@ trait Paypal
                     'amount' =>
                     [
                         'currency_code' => 'USD',
-                        'value' => $cart->price_with_tax,
+                        'value' => $cart->paypal()->total_with_tax,
                         'breakdown' =>
                         [
                             'item_total' =>
                             [
                                 'currency_code' => 'USD',
-                                'value' => $cart->total_price,
+                                'value' => $cart->paypal()->total,
                             ],
 
                             'tax_total' =>
                             [
                                 'currency_code' => 'USD',
-                                'value' => $cart->tax,
+                                'value' => $cart->paypal()->tax,
                             ],
                         ],
                     ],
@@ -127,13 +127,13 @@ trait Paypal
                 $payload = [
                     'title' => 'عملية شراء بواسطة بايبال',
                     'payment_method' => 'البايبال',
-                    'total_price' => $cart->total_price,
-                    'price_with_tax' => $cart->price_with_tax,
-                    'tax' => $cart->tax,
+                    'total_price' => $cart->paypal()->total,
+                    'price_with_tax' => $cart->paypal()->total_with_tax,
+                    'tax' => $cart->paypal()->tax,
                 ];
                 $activity = MoneyActivity::create([
                     'wallet_id' => Auth::user()->profile->wallet->id,
-                    'amount' => $cart->price_with_tax,
+                    'amount' => $cart->paypal()->total_with_tax,
                     'status' => MoneyActivity::STATUS_BUYING,
                     'payload' => $payload,
                 ]);

@@ -17,10 +17,9 @@ trait Stripe
     public function stripe_purchase(Request $request, $cart)
     {
         try {
-
             $user = User::find(Auth::id());
             $user->createOrGetStripeCustomer();
-            $stripe_payment = $user->charge($cart->price_with_tax * 100, $request->payment_method_id);
+            $stripe_payment = $user->charge($cart->stripe()->total_with_tax * 100, $request->payment_method_id);
             $stripe_payment = $stripe_payment->asStripePaymentIntent();
 
             DB::beginTransaction();
@@ -31,13 +30,13 @@ trait Stripe
             $payload = [
                 'title' => 'عملية شراء بواسطة بطاقة بنكية',
                 'payment_method' => 'البطاقة بنكية',
-                'total_price' => $cart->total_price,
-                'price_with_tax' => $cart->price_with_tax,
-                'tax' => $cart->tax,
+                'total_price' => $cart->stripe()->total,
+                'price_with_tax' => $cart->stripe()->total_with_tax,
+                'tax' => $cart->stripe()->tax,
             ];
             $activity = MoneyActivity::create([
                 'wallet_id' => Auth::user()->profile->wallet->id,
-                'amount' => $cart->price_with_tax,
+                'amount' => $cart->stripe()->total_with_tax,
                 'status' => MoneyActivity::STATUS_BUYING,
                 'payload' => $payload,
             ]);

@@ -8,6 +8,7 @@ use App\Models\Cart;
 use App\Models\Product;
 use App\Models\CartItem;
 use App\Models\Item;
+use App\Models\TypePayment;
 use App\Models\User;
 use App\Traits\Paypal;
 use App\Traits\Stripe;
@@ -39,6 +40,10 @@ class CartController extends Controller
                     ->with(['cartItem_developments' => function ($q) {
                         $q->select('development_id', 'title', 'duration', 'price')->get();
                     }, 'product' => fn ($q) => $q->select('id', 'title', 'price', 'duration')]);
+            },'cart_payments' =>function ($q) {
+                $q->select('name_ar', 'name_en', 'status')
+                ->where('status', 1)
+                ->get();
             }])
             ->withCount('cart_items')
             ->where('user_id', Auth::user()->id)
@@ -49,9 +54,10 @@ class CartController extends Controller
             $cart = [
                 'cart_items_count' => 0,
                 'cart_items' => [],
+                'cart_payment' => [],
                 'is_buying' => 0,
-                'price_with_tax' => 0.00,
-                'tax' => 0.00,
+                //'price_with_tax' => 0.00,
+                //'tax' => 0.00,
                 'total_price' => 0.00,
                 'user_id' => auth()->user()->id,
             ];
@@ -168,6 +174,21 @@ class CartController extends Controller
                 $new_cart = Cart::where('user_id', Auth::user()->id)->isnotbuying();
                 // عمليات حساب السعر المتواجد في السلة
                 $this->calculate_price($new_cart, $cart_item, $data_cart_items['quantity']);
+                // جلب الانواع البوابات المتوفرة
+                $type_payments = TypePayment::selection()->get();
+                /* ---------------------- // عمليات حسابية على كل بوابة --------------------- */
+                $total = $new_cart->first()['total_price'];
+                // اضافة مصفوفة من اجل عمليات الحسابية
+                $calculate_with_payments = array_map(function ($key) use ($total) {
+                    return[
+                            'type_payment_id' => $key['id'],
+                            'total' => $total,
+                            'tax' => $total * $key['precent_of_payment'] / 100,
+                            'total_with_tax' => ($total + $total * $key['precent_of_payment'] / 100) + $key['value_of_cent'],
+                    ];
+                }, $type_payments->toArray());
+                //  عملية الاضافة
+                $new_cart->first()->cart_payments()->sync($calculate_with_payments);
             }
             // شرط اذا توجد سلة مباعة و سلة غير مباعة او توجد سلة غير مباعة و لا توجد سلة مباعة :
             elseif (($cart_found_buying && $cart_found_not_buying) || (!$cart_found_buying && $cart_found_not_buying)) {
@@ -184,7 +205,7 @@ class CartController extends Controller
                     return response()->error(__('messages.cart.cartitem_found'), Response::HTTP_NOT_FOUND);
                 }
                 // جلب السلة المستخدم الغير مباعة
-                $new_cart =  Cart::where('user_id', Auth::id())->isnotbuying();
+                $new_cart =  Cart::where('user_id', Auth::id())->with('cart_payments')->isnotbuying();
                 // وضع معرف السلة في مصفوفة العنصر
                 $data_cart_items['cart_id'] = $new_cart->first()->id;
                 // انشاء عنصر جديد
@@ -196,7 +217,29 @@ class CartController extends Controller
                 }
                 // عمليات حساب السعر المتواجد في السلة
                 $this->calculate_price($new_cart, $cart_item, $data_cart_items['quantity']);
-            // سعر العنصر الموجود فالسلة
+
+                // جلب الانواع البوابات المتوفرة
+                $type_payments = TypePayment::selection()->get();
+                /* ---------------------- // عمليات حسابية على كل بوابة --------------------- */
+                $total = $new_cart->first()['total_price'];
+                // اضافة مصفوفة من اجل عمليات الحسابية
+                $cart_payments = array_map(function ($key) use ($total) {
+                    return[
+                            'type_payment_id' => $key['id'],
+                            'total' => $total,
+                            'tax' => $total * $key['precent_of_payment'] / 100,
+                            'total_with_tax' => ($total + $total * $key['precent_of_payment'] / 100) + $key['value_of_cent'],
+                    ];
+                }, $type_payments->toArray());
+                //  عملية الاضافة
+                if ($new_cart->first()->cart_payments->count() > 0) {
+                    foreach ($cart_payments as $cart_payment) {
+                        $new_cart->first()->cart_payments()->updateExistingPivot($cart_payment['type_payment_id'], $cart_payment);
+                    }
+                } else {
+                    $new_cart->first()->cart_payments()->sync($cart_payments);
+                }
+                // سعر العنصر الموجود فالسلة
             } else {
                 // ارجاع فراغ
                 return;
@@ -308,7 +351,6 @@ class CartController extends Controller
             // جلب السلة
             $cart = Cart::where('user_id', Auth::user()->id)
                           ->isnotbuying();
-
             //id  جلب العنصر بواسطة
             $cart_item = CartItem::whereId($id)
                 ->where('cart_id', $cart->first()->id)->first();
@@ -317,15 +359,43 @@ class CartController extends Controller
                 // رسالة خطأ
                 return response()->error(__("messages.errors.element_not_found"), Response::HTTP_NOT_FOUND);
             }
+            DB::beginTransaction();
             // جلب العنصر من السلة
             /* ---------------------------- حذف عنصر من السلة --------------------------- */
             $this->calculate_price($cart, $cart_item, 0);
+            // جلب الانواع البوابات المتوفرة
+            $type_payments = TypePayment::selection()->get();
+            /* ---------------------- // عمليات حسابية على كل بوابة --------------------- */
+            $total = $cart->first()['total_price'];
+            // اضافة مصفوفة من اجل عمليات الحسابية
+            $cart_payments = array_map(function ($key) use ($total) {
+                return[
+                        'type_payment_id' => $key['id'],
+                        'total' => $total,
+                        'tax' => $total * $key['precent_of_payment'] / 100,
+                        'total_with_tax' => ($total + $total * $key['precent_of_payment'] / 100) + $key['value_of_cent'],
+                ];
+            }, $type_payments->toArray());
+
+            //  عملية الاضافة
+            foreach ($cart_payments as $cart_payment) {
+                $cart->first()->cart_payments()->updateExistingPivot($cart_payment['type_payment_id'], $cart_payment);
+            }
             // حذف العنصر من السلة
             $cart_item->delete();
+            // حذف كل الحسابات المتواجدة في كل بوابة
+            if ($cart->first()['total_price'] == 0) {
+                $cart->first()->cart_payments()->detach();
+            }
+            // انهاء المعاملة بشكل جيد :
+            DB::commit();
             /* -------------------------------------------------------------------------- */
             // رسالة نجاح عملية الحذف:
             return response()->success(__("messages.oprations.delete_success"), $cart_item);
         } catch (Exception $ex) {
+            return $ex;
+            // لم تتم المعاملة بشكل نهائي و لن يتم ادخال اي بيانات لقاعدة البيانات
+            DB::rollback();
             // رسالة خطأ
             return response()->error(__('messages.errors.error_database'), Response::HTTP_FORBIDDEN);
         }
@@ -414,7 +484,11 @@ class CartController extends Controller
         $cart = Cart::selection()
             ->with(['cart_items' => function ($q) {
                 $q->with('cartItem_developments', 'product:title')->get();
-            }])
+            },'cart_payments' =>function ($q) {
+                $q->select('name_ar', 'name_en', 'status')
+                ->where('status', 1)
+                ->get();
+            } ])
             ->where('user_id', Auth::user()->id)
             ->where('is_buying', 0)
             ->first();
@@ -432,7 +506,11 @@ class CartController extends Controller
         $cart = Cart::selection()
             ->with(['cart_items' => function ($q) {
                 $q->with('cartItem_developments')->get();
-            }])
+            },'cart_payments' =>function ($q) {
+                $q->select('name_ar', 'name_en', 'status')
+                ->where('status', 1)
+                ->get();
+            } ])
             ->where('user_id', Auth::user()->id)
             ->where('is_buying', 0)
             ->first();
@@ -450,6 +528,10 @@ class CartController extends Controller
         $cart = Cart::selection()
             ->with(['cart_items' => function ($q) {
                 $q->with('cartItem_developments')->get();
+            },'cart_payments' =>function ($q) {
+                $q->select('name_ar', 'name_en', 'status')
+                ->where('status', 1)
+                ->get();
             }])
             ->where('user_id', Auth::user()->id)
             ->where('is_buying', 0)

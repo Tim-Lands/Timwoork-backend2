@@ -40,15 +40,29 @@ class ChangeAmountWithDrawable extends Command
     public function handle()
     {
         // جلب الارصدة المعلقة
-        Amount::select('id', 'status', 'transfered_at')
+        $amounts = Amount::with('wallet.profile')
+        ->where('transfered_at', '<=', Carbon::now())
         ->where('status', Amount::PENDING_AMOUNT)
-        ->get()->map(function ($amount) {
-            // عمل لووب من اجل فحص وقت تحويل الاموال
-            if (Carbon::now()->toDateTimeString() >= $amount->transfered_at) {
-                $amount->status = Amount::WITHDRAWABLE_AMOUNT;
-                $amount->save();
-            }
-        });
+            ->get();
+        //return $amount;
+        foreach ($amounts as $amount) {
+            $amount->status = Amount::WITHDRAWABLE_AMOUNT;
+            $amount->save();
+            // المحفظة
+            $pending_amount = $amount->wallet->amounts_pending - $amount->amount;
+            $withdrawable_amount =$amount->wallet->withdrawable_amount + $amount->amount;
+            // تعديل المحفظة
+            $amount->wallet->update([
+            'amounts_pending' => $pending_amount,
+            'withdrawable_amount' => $withdrawable_amount,
+        ]);
+            // تعديل المبلغ المستخدم
+            $amount->wallet->profile->update([
+            'pending_amount' => $pending_amount,
+            'withdrawable_amount' => $withdrawable_amount,
+        ]);
+        }
+
         return 0;
     }
 }
