@@ -29,7 +29,7 @@ class Amount extends Model
      */
     public function scopeSelection(mixed $query): ?object
     {
-        return $query->select('id', 'wallet_id', 'item_id', 'amount', 'amount_pending', 'duration_pending',  'created_at');
+        return $query->select('id', 'wallet_id', 'item_id', 'amount', 'amount_pending' /*'duration_pending'*/, 'created_at', 'transfered_at', 'status');
     }
 
     // ========================== Relations ============================
