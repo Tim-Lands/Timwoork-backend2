@@ -29,6 +29,14 @@ class TypePaymentSeeder extends Seeder
                 'value_of_cent' => 0.5,
                 'status' => 1,
             ]
+            ,
+            [
+                'name_ar' => 'محفظة',
+                'name_en' => 'Wallet',
+                'precent_of_payment' => 0,
+                'value_of_cent' => 0,
+                'status' => 1,
+            ]
         ];
         if (DB::table('type_payments')->count() == 0) {
             DB::table('type_payments')->insert($types);
