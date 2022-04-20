@@ -25,11 +25,11 @@ class Kernel extends ConsoleKernel
     protected function schedule(Schedule $schedule)
     {
         // الغاء الخدمات في حالة نفاذ وقتها
-        $schedule->command('cancel:request')->everyMinute();
-        // حذف يومي للخدمات التي لم تتم تعبئتها
-        $schedule->command('product:vide')->daily();
+        //$schedule->command('cancel:request')->everyMinute();
         // تحويل الارصدة المعلقة
         $schedule->command('amount:withdrawable')->everyFiveMinutes();
+        // حذف يومي للخدمات التي لم تتم تعبئتها
+        $schedule->command('product:vide')->daily();
     }
 
     /**
