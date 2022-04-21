@@ -194,8 +194,8 @@ class CartController extends Controller
                     return[
                             'type_payment_id' => $key['id'],
                             'total' => $total,
-                            'tax' => $tax,
-                            'total_with_tax' => ($total + $tax) + $key['value_of_cent'],
+                            'tax' => $tax + $key['value_of_cent'],
+                            'total_with_tax' => $total + $tax + $key['value_of_cent'],
                     ];
                 }, $type_payments->toArray());
                 //  عملية الاضافة
@@ -249,8 +249,8 @@ class CartController extends Controller
                     return[
                             'type_payment_id' => $key['id'],
                             'total' => $total,
-                            'tax' => $tax,
-                            'total_with_tax' => ($total + $tax) + $key['value_of_cent'],
+                            'tax' => $tax + $key['value_of_cent'],
+                            'total_with_tax' => $total + $tax + $key['value_of_cent'],
                     ];
                 }, $type_payments->toArray());
                 //  عملية الاضافة
