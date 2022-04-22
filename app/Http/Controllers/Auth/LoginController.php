@@ -43,6 +43,7 @@ class LoginController extends Controller
             'profile.profile_seller.badge',
             'profile.profile_seller.level',
             'profile.profile_seller.skills',
+            'profile.profile_seller.products',
             'profile.badge',
             'profile.level',
             'profile.country',

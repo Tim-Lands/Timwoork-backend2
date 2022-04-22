@@ -391,11 +391,22 @@ class CartController extends Controller
             $total = $cart->first()['total_price'];
             // اضافة مصفوفة من اجل عمليات الحسابية
             $cart_payments = array_map(function ($key) use ($total) {
+                // متغير الرسوم
+                $tax = 0;
+                // اذا كانت النسبة فوق 1
+                if ($key['precent_of_payment'] >= 1) {
+                    // اذا كانت الرسوم فوق 1
+                    if (($total * $key['precent_of_payment'] / 100) >= 1) {
+                        $tax = $total * $key['precent_of_payment'] / 100;
+                    } else {
+                        $tax = 1;
+                    }
+                }
                 return[
-                        'type_payment_id' => $key['id'],
-                        'total' => $total,
-                        'tax' => $total * $key['precent_of_payment'] / 100,
-                        'total_with_tax' => ($total + $total * $key['precent_of_payment'] / 100) + $key['value_of_cent'],
+                    'type_payment_id' => $key['id'],
+                    'total' => $total,
+                    'tax' => $tax + $key['value_of_cent'],
+                    'total_with_tax' => $total + $tax + $key['value_of_cent'],
                 ];
             }, $type_payments->toArray());
 
