@@ -65,7 +65,7 @@ class AcceptWithdrwal implements ShouldBroadcast
             'user_sender' => [
                 'full_name' => 'اﻹدارة',
                 'username' => null,
-                'avatar_url' => null
+                'avatar_path' => null
             ],
             'title' =>  " لقد تم وصول المبلغ إلى " . $this->type,
             'content' => [

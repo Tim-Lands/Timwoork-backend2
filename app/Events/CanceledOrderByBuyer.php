@@ -53,7 +53,7 @@ class CanceledOrderByBuyer implements ShouldBroadcast
             'user_sender' => [
                 'full_name' => $buyer->profile->full_name,
                 'username' => $buyer->username,
-                'avatar_url' => $buyer->profile->avatar_path
+                'avatar_path' => $buyer->profile->avatar_path
             ],
             'content' => [
                 'item_id' => $this->item->id,

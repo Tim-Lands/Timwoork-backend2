@@ -93,11 +93,12 @@ class ProfileController extends Controller
     public function step_two(ProfileStepTwoRequest $request)
     {
         try {
+
             // إنشاء اسم للصورة الشخصية
             $avatarPath = $request->file('avatar');
             $avatarName = 'tw-' . Auth::user()->id .  time() . '.' . $avatarPath->getClientOriginalExtension();
             // رفع الصورة
-            $$avatarPath->storePubliclyAs('avatars', $avatarName, 'do');
+            $avatarPath->storePubliclyAs('avatars', $avatarName, 'do');
             //$path = Storage::putFileAs('avatars', $request->file('avatar'), $avatarName);
             // تخزين اسم الصورة في قاعدة البيانات
             $user = Auth::user();
@@ -111,7 +112,7 @@ class ProfileController extends Controller
             // إرسال رسالة نجاح المرحلة الثانية مع إرسال رابط الصورة كاملا
             return response()->success(__("messages.product.success_step_two"), $avatarUrl);
         } catch (Exception $ex) {
-            //return $ex;
+            return $ex;
             return response()->error(__("messages.errors.error_database"));
         }
     }

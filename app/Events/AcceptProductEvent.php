@@ -5,25 +5,23 @@ namespace App\Events;
 use Illuminate\Broadcasting\Channel;
 use Illuminate\Broadcasting\InteractsWithSockets;
 use Illuminate\Broadcasting\PresenceChannel;
-use Illuminate\Broadcasting\PrivateChannel;
-use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Queue\SerializesModels;
 
-class AcceptedDileveredByBuyer implements ShouldBroadcast
+class AcceptProductEvent
 {
     use Dispatchable, InteractsWithSockets, SerializesModels;
     public $user;
-    public $item;
+    public $product;
     /**
      * Create a new event instance.
      *
      * @return void
      */
-    public function __construct($user, $item)
+    public function __construct($user, $product)
     {
         $this->user = $user;
-        $this->item = $item;
+        $this->product = $product;
     }
 
     /**
@@ -43,20 +41,16 @@ class AcceptedDileveredByBuyer implements ShouldBroadcast
 
     public function broadcastWith()
     {
-        $buyer = $this->item->order->cart->user;
         return [
-            'type' => "order",
-            'to' => 'seller',
-            'notifications_count' => $this->user->unreadNotifications->count(),
-            'title' =>  " قام " . $buyer->profile->full_name . " باستلام العمل ",
+            'type' => "system",
+            'to' => "user",
             'user_sender' => [
-                'full_name' => $buyer->profile->full_name,
-                'username' => $buyer->username,
-                'avatar_path' => $buyer->profile->avatar_path
+                'full_name' => 'اﻹدارة',
             ],
+            'title' =>  " لقد تم قبول خدمتك : " . $this->product->title,
             'content' => [
-                'item_id' => $this->item->id,
-                'title' => $this->item->title,
+                'product_id' => $this->product->id,
+                'title' => $this->product->title,
             ],
         ];
     }

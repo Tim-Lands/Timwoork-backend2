@@ -53,7 +53,7 @@ class RefundAmount implements ShouldBroadcast
                 'notifications_count' => $seller->unreadNotifications->count(),
                 'full_name' => $seller->profile->full_name,
                 'username' => $seller->username,
-                'avatar_url' => $seller->profile->avatar_path
+                'avatar_path' => $seller->profile->avatar_path
             ],
             'content' => [
                 'item_id' => $this->item->id,

@@ -66,7 +66,7 @@ class CancelWithdrwal implements ShouldBroadcast
             'user_sender' => [
                 'full_name' => 'اﻹدارة',
                 'username' => null,
-                'avatar_url' => null
+                'avatar_path' => null
             ],
             'title' =>  " لقد تم رفض طلب السحب الخاص بك في  " . $this->type,
             'content' => [
