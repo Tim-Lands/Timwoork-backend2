@@ -36,6 +36,15 @@ class ProfileController extends Controller
             ->with([
                 'profile.profile_seller.badge',
                 'profile.profile_seller.level',
+                'profile' => function ($query) {
+                    $query->with('profile_seller', function ($query) {
+                        $query->with('products', function ($query) {
+                            $query->selection()
+                            ->where('status', 1)
+                            ->where('is_active', 1);
+                        });
+                    });
+                },
                 'profile.badge',
                 'profile.level',
                 'profile.country'
