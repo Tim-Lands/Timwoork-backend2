@@ -308,7 +308,8 @@ Route::get('/get_categories_for_add_product', [FrontEndController::class, 'get_c
     ->middleware('auth:sanctum');
 // عرض التصنيفات الفرعية
 Route::get('/get_categories/{id}', [FrontEndController::class, 'get_subcategories']);
-
+// تحويل الاموال من المعلقة الى قابلة للسحب
+Route::get('withdrawal/change_amount', [FrontEndController::class, 'chage_amount_withdrawal']);
 // عرض التصنيفات الفرعية من اجل عملية الاضافة
 Route::get(
     '/get_categories_for_add_product/{id}',

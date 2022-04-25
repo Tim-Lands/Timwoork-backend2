@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\ContactRequest;
+use App\Models\Amount;
 use App\Models\Category;
 use App\Models\Contact;
 use App\Models\Product;
@@ -330,6 +331,38 @@ class FrontEndController extends Controller
             return $ex;
             DB::rollBack();
             return response()->error(__("messages.errors.error_database"), Response::HTTP_FORBIDDEN);
+        }
+    }
+
+    /**
+     * chage_amount_withdrawal => تغيير المبلغ المستحق السحب
+     *
+     * @return void
+     */
+    public function chage_amount_withdrawal()
+    {
+        // جلب الارصدة المعلقة
+        $amounts = Amount::with('wallet.profile')
+        ->where('transfered_at', '<=', Carbon::now())
+        ->where('status', Amount::PENDING_AMOUNT)
+            ->get();
+        //return $amount;
+        foreach ($amounts as $amount) {
+            $amount->status = Amount::WITHDRAWABLE_AMOUNT;
+            $amount->save();
+            // المحفظة
+            $pending_amount = $amount->wallet->amounts_pending - $amount->amount;
+            $withdrawable_amount =$amount->wallet->withdrawable_amount + $amount->amount;
+            // تعديل المحفظة
+            $amount->wallet->update([
+            'amounts_pending' => $pending_amount,
+            'withdrawable_amount' => $withdrawable_amount,
+        ]);
+            // تعديل المبلغ المستخدم
+            $amount->wallet->profile->update([
+            'pending_amount' => $pending_amount,
+            'withdrawable_amount' => $withdrawable_amount,
+        ]);
         }
     }
 }
