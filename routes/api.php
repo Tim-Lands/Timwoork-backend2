@@ -304,12 +304,12 @@ Route::get('/categories', [FrontEndController::class, 'get_all_categories']);
 // عرض التصنيفات الرئيسية
 Route::get('/get_categories', [FrontEndController::class, 'get_categories']);
 // عرض التصنيفات من اجل عملية الاضافة
-Route::get('/get_categories_for_add_product', [FrontEndController::class, 'get_categories_for_add_product'])
-    ->middleware('auth:sanctum');
-// عرض التصنيفات الفرعية
-Route::get('/get_categories/{id}', [FrontEndController::class, 'get_subcategories']);
+Route::get('/get_categories_for_add_product', [FrontEndController::class, 'get_categories_for_add_product'])->middleware('auth:sanctum');
 // تحويل الاموال من المعلقة الى قابلة للسحب
 Route::get('withdrawal/change_amount', [FrontEndController::class, 'chage_amount_withdrawal']);
+// عرض التصنيفات الفرعية
+Route::get('/get_categories/{id}', [FrontEndController::class, 'get_subcategories']);
+
 // عرض التصنيفات الفرعية من اجل عملية الاضافة
 Route::get(
     '/get_categories_for_add_product/{id}',
@@ -368,7 +368,7 @@ Route::get('users', function () {
     }
 });
  */
-Route::get('testing', function () {
+/*Route::get('testing', function () {
     $data = MoneyActivity::first();
     return response()->json($data, 200);
-});
+});*/
