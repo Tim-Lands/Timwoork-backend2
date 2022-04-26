@@ -346,6 +346,7 @@ class FrontEndController extends Controller
         ->where('transfered_at', '<=', Carbon::now())
         ->where('status', Amount::PENDING_AMOUNT)
             ->get();
+        return $amounts;
         //return $amount;
         foreach ($amounts as $amount) {
             $amount->status = Amount::WITHDRAWABLE_AMOUNT;
@@ -364,5 +365,8 @@ class FrontEndController extends Controller
             'withdrawable_amount' => $withdrawable_amount,
         ]);
         }
+
+        return response()->success(__("تمت عملية التحوليات بنجاح"));
+        ;
     }
 }
