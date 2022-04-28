@@ -49,7 +49,8 @@ Route::post('/login', [LoginController::class, 'login']);
 /* -------------------------------------------------------------------------- */
 Route::middleware('auth:sanctum')->group(function () {
     Route::get('/me', [LoginController::class, 'me']);
-    Route::post('/logout', [LoginController::class, 'logout']);
+    Route::post('/logout_user', [LoginController::class, 'logout_user']);
+    Route::post('/logout_all', [LoginController::class, 'logout_all']);
     Route::post('/{user}/online', [UserStatusController::class, 'online']);
     Route::post('/{user}/offline', [UserStatusController::class, 'offline']);
     Route::post('/mode', DarkModeController::class);

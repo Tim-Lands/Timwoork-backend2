@@ -65,7 +65,12 @@ class LoginController extends Controller
         ];
         return response()->json($data, Response::HTTP_OK);
     }
-    public function logout()
+    /**
+     * logout_all => تسجيل الخروج من جميع جلسات المستخدم
+     *
+     * @return void
+     */
+    public function logout_all()
     {
         // get current user
         $user = Auth::user();
@@ -76,6 +81,22 @@ class LoginController extends Controller
         $user->save();
         // send success message to frontend
         return response()->success(__("messages.user.logout"));
+    }
+
+    /**
+     * logout_user => تسجيل الخروج للمستخدم
+     *
+     * @return void
+     */
+    public function logout_user()
+    {
+        $user = Auth::user(); //or Auth::user()
+        // Revoke current user token
+        $user->tokens()->where('id', $user->currentAccessToken()->id)->delete();
+        // تغيير حالة المستخدم الى اوفلاين
+        $user->status = false;
+        $user->save();
+        return response()->success(__('messages.user.logout'));
     }
 
     /**
@@ -142,7 +163,7 @@ class LoginController extends Controller
                     ]);
 
                     // انشاء محفظة للمستخدم
-
+                    /*
                     $user->profile->wallet()->create([]);
                     // إنشاء حساب بايبال
                     $user->profile->paypal_account()->create([]);
@@ -151,7 +172,7 @@ class LoginController extends Controller
                     // إنشاء معلومات حساب بنكي
                     $user->profile->bank_account()->create([]);
                     // إنشاء معلومات حوالة بنكية
-                    $user->profile->bank_transfer_detail()->create([]);
+                    $user->profile->bank_transfer_detail()->create([]);*/
                     // إنشاء رمز تفعيل البريد اﻹلكتروني
                     // تسجيل اسم المزوّد و المعرّف الخاص بالمستخدم في المزود الخاص به
                     $user->providers()->create([
