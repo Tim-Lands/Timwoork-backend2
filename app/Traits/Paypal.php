@@ -57,17 +57,18 @@ trait Paypal
                     ],
                     'shipping' =>
                     [
-                        'method' => 'timwoork',
+                        'method' => 'Timwoork',
                         'name' =>
                         [
-                            'full_name' => 'timwoork',
+                            'full_name' => 'Timwoork',
                         ],
                         'address' =>
                         [
-                            'address_line_1' => 'timwoork',
-                            'address_line_2' => 'timwoork',
-                            'admin_area_2' => 'timwoork',
-                            'admin_area_1' => 'timwoork',
+                            'address_line_1' => '71-75',
+                            'address_line_2' => 'Shelton Street, Covent Garden, London, WC2H 9JQ, UNITED KINGDOM
+                            Registered in UNITED KINGDOM, Number 13640104',
+                            'admin_area_2' => '',
+                            'admin_area_1' => '',
                             'postal_code' => '94107',
                             'country_code' => 'US',
                         ],

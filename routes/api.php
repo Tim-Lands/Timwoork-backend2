@@ -107,16 +107,16 @@ Route::middleware('auth:sanctum')->prefix('my_sales')->group(function () {
  */
 Route::middleware('auth:sanctum')->prefix('withdrawals')->group(function () {
     Route::get('/countries', [WithdrawalController::class, 'countries']);
-    Route::post('/paypal', [WithdrawalController::class, 'paypal']);
-    Route::post('/wise', [WithdrawalController::class, 'wise']);
-    Route::post('/bank', [WithdrawalController::class, 'bank']);
-    Route::post('/bank_transfer', [WithdrawalController::class, 'bank_transfer']);
-    Route::prefix('update')->group(function () {
-        Route::post('/paypal', [WithdrawalController::class, 'update_paypal']);
-        Route::post('/wise', [WithdrawalController::class, 'update_wise']);
-        Route::post('/bank', [WithdrawalController::class, 'update_bank']);
-        Route::post('/bank_transfer', [WithdrawalController::class, 'update_bank_transfer']);
-    });
+    // حفظ حسابات البنكية
+    Route::post('/store_paypal', [WithdrawalController::class, 'store_paypal']);
+    Route::post('/store_wise', [WithdrawalController::class, 'store_wise']);
+    Route::post('/store_bank', [WithdrawalController::class, 'store_bank']);
+    Route::post('/store_bank_transfer', [WithdrawalController::class, 'store_bank_transfer']);
+    // تعديل على حسابات البنكية
+    Route::post('/update_paypal', [WithdrawalController::class, 'update_paypal']);
+    Route::post('/update_wise', [WithdrawalController::class, 'update_wise']);
+    Route::post('/update_bank', [WithdrawalController::class, 'update_bank']);
+    Route::post('/update_bank_transfer', [WithdrawalController::class, 'update_bank_transfer']);
 });
 
 /********************************************************************** */

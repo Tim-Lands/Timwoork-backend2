@@ -100,7 +100,8 @@ return [
         "subject_required" => "يجب عليك ادخال موضوع الرسالة",
         "full_name_required" => "يجب عليك ادخال الاسم الكامل",
         "type_message_required" =>"يجب عليك ادخال نوع الرسالة",
-        "message_required" => "يجب عليك ادخال النص الرسالة"
+        "message_required" => "يجب عليك ادخال النص الرسالة",
+        "email_unique" => "الايميل موجود مسبقا",
     ],
 
     /* --------------------------------- الرسائل -------------------------------- */
@@ -247,7 +248,9 @@ return [
         "address_line_one_required" => "يجب عليك ادخال العنوان",
         "code_postal_required" => "يجب عليك ادخال الرمز البريدي",
         "id_type_required" => "يجب عليك ادخال نوع المرفق",
-        "attachments_required" => "يجب ان يكون المرفق على شكل صورة",
+        "attachments_required" => "يجب عليك رفع المرفقات",
+        "attachments_size" => " 2 MB يجب ان يكون الملف اقل من",
+        "attachments_image" =>"يجب ان تكون المفرقات على شكل صور",
         "bank_name_required" => "يجب عليك ادخال اسم البنك",
         "bank_branch_required" => "يجب عليك ادخال اسم الفرعي للبنك",
         "bank_swift_required" => "يجب عليك ادخال تحويل بنكي (swift)",
@@ -256,7 +259,7 @@ return [
         "bank_iban_required" => "يجب عليك ادخالبنك آيبان (iban)",
         "bank_number_account_required" => "يجب عليك ادخال الرقم البنكي",
         "bank_adress_line_one_required" => "يجب عليك ادخال العنوان البنكي",
-        "amount_numeric" => "يحب ان يكون الحساب المسحوب على شكل رقم"
+        "amount_numeric" => "يحب ان يكون الحساب المسحوب على شكل رقم",
     ],
 
     "type_payment" => [

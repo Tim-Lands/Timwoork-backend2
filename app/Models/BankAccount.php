@@ -20,8 +20,13 @@ class BankAccount extends Model
         return $this->belongsTo(Profile::class);
     }
 
+    /**
+     * country
+     *
+     * @return BelongsTo
+     */
     public function country(): BelongsTo
     {
-        return $this->belongsTo(WiseCountry::class, 'wise_country_id', 'id');
+        return $this->belongsTo(WiseCountry::class);
     }
 }

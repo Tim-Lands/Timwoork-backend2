@@ -98,7 +98,8 @@ return [
         "subject_required" => "You must enter the subject of the message",
         "full_name_required" => "You must enter your full name",
         "type_message_required" =>"You must enter a message type",
-        "message_required" => "You must enter the message text"
+        "message_required" => "You must enter the message text",
+        "email_unique" => "email already exists",
     ],
 
     /* --------------------------------- الرسائل -------------------------------- */
