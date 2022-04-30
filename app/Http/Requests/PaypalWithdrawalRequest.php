@@ -25,8 +25,7 @@ class PaypalWithdrawalRequest extends FormRequest
     public function rules()
     {
         return [
-            'amount' => 'numeric',
-            'email' => 'required|email|unique:paypal_accounts,email,' . Auth::id()
+            'amount' => 'required|numeric|gte:10',
         ];
     }
     /**
@@ -37,10 +36,9 @@ class PaypalWithdrawalRequest extends FormRequest
     public function messages()
     {
         return [
+            'amount.required' =>  __("messages.bank.amount_required"),
             'amount.numeric'      => __("messages.bank.amount_numeric"),
-            'email.required' => __("messages.validation.email_required"),
-            'email.email' => __("messages.validation.email"),
-            'unique.required' => __("messages.validation.unique"),
+            'amount.gte' => __("messages.bank.amount_paypal_gte"),
         ];
     }
 }

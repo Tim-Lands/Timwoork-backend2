@@ -117,6 +117,11 @@ Route::middleware('auth:sanctum')->prefix('withdrawals')->group(function () {
     Route::post('/update_wise', [WithdrawalController::class, 'update_wise']);
     Route::post('/update_bank', [WithdrawalController::class, 'update_bank']);
     Route::post('/update_bank_transfer', [WithdrawalController::class, 'update_bank_transfer']);
+    // عمليات السحب
+    Route::post('/withdrawal_paypal', [WithdrawalController::class, 'withdrawal_paypal']);
+    Route::post('/withdrawal_wise', [WithdrawalController::class, 'withdrawal_wise']);
+    Route::post('/withdrawal_bank', [WithdrawalController::class, 'withdrawal_bank']);
+    Route::post('/withdrawal_bank_transfer', [WithdrawalController::class, 'withdrawal_bank_transfer']);
 });
 
 /********************************************************************** */

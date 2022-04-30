@@ -260,6 +260,19 @@ return [
         "bank_number_account_required" => "يجب عليك ادخال الرقم البنكي",
         "bank_adress_line_one_required" => "يجب عليك ادخال العنوان البنكي",
         "amount_numeric" => "يحب ان يكون الحساب المسحوب على شكل رقم",
+        "amount_required" => "يجب عليك ادخال المبلغ",
+        "amount_paypal_gte" => "يجب ان يكون المبلغ المسحوب من بايبال يكون اكبر او يساوي 10",
+        "amount_wise_gte" => "يجب ان يكون المبلغ المسحوب من وايز يكون اكبر او يساوي 10",
+        "amount_bank_gte" => "يجب ان يكون المبلغ المسحوب من بنك يكون اكبر او يساوي 50",
+        "amount_bank_transfer_gte" => "يجب ان يكون المبلغ المسحوب من حوالة بنكية يكون اكبر او يساوي 50",
+        "pending_withdrawal" => "لديك عملية سحب معلّقة",
+        "success_paypal_withdrawal" => "تم تسجيل عملية السحب الى بايبال بنجاح",
+        "success_wise_withdrawal" => "تم تسجيل عملية السحب الى وايز بنجاح",
+        "success_bank_withdrawal" => "تم تسجيل عملية السحب الى بنك بنجاح",
+        "success_bank_transfer_withdrawal" => "تم تسجيل عملية السحب الى حوالة بنكية بنجاح",
+        "not_enough_balance" =>  'رصيدك غير كاف لإجراء هذه العملية',
+
+
     ],
 
     "type_payment" => [
