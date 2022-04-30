@@ -46,10 +46,8 @@ class LoginController extends Controller
             'profile.badge',
             'profile.level',
             'profile.country',
-            'profile.wallet' => function ($q) use ($paginate) {
-                return $q->with(['activities' => function ($query) use ($paginate) {
-                    $query->paginate($paginate);
-                }]);
+            'profile.wallet' => function ($q) {
+                return $q->with('activities');
             },
         ]);
 
