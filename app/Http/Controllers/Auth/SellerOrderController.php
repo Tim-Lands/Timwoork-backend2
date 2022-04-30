@@ -13,10 +13,10 @@ class SellerOrderController extends Controller
 {
     public function index(Request $request)
     {
-        $paginate = $request->query('paginate') ? $request->query('paginate') : 10;
+        //$paginate = $request->query('paginate') ? $request->query('paginate') : 10;
         $seller = Auth::user()->profile->profile_seller->id;
         $items = Item::where('profile_seller_id', $seller)->with(['order.cart.user.profile'])
-            ->withCount('item_rejected')->orderBy('created_at', 'DESC')->paginate($paginate);
+            ->withCount('item_rejected')->orderBy('created_at', 'DESC')->get();
         return response()->success(__("messages.oprations.get_all_data"), $items);
     }
 
