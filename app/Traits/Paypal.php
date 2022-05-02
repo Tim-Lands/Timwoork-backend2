@@ -65,8 +65,7 @@ trait Paypal
                         'address' =>
                         [
                             'address_line_1' => '71-75',
-                            'address_line_2' => 'Shelton Street, Covent Garden, London, WC2H 9JQ, UNITED KINGDOM
-                            Registered in UNITED KINGDOM, Number 13640104',
+                            'address_line_2' => 'Shelton Street, Covent Garden, London, WC2H 9JQ, UNITED KINGDOM Registered in UNITED KINGDOM, Number 13640104',
                             'admin_area_2' => '',
                             'admin_area_1' => '',
                             'postal_code' => '94107',
@@ -103,9 +102,9 @@ trait Paypal
                 }
             }
         } catch (HttpException $ex) {
-
+            return $ex;
             //return response()->error('حدث خطأ أثناء التحضير لعملية الدفع بواسطة بايبال');
-            return response()->json($ex);
+            //return response()->json($ex);
         }
     }
 
