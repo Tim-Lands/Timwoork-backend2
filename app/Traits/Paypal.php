@@ -103,8 +103,9 @@ trait Paypal
                 }
             }
         } catch (HttpException $ex) {
-            return response()->error('حدث خطأ أثناء التحضير لعملية الدفع بواسطة بايبال');
-            //return response()->json($ex);
+
+            //return response()->error('حدث خطأ أثناء التحضير لعملية الدفع بواسطة بايبال');
+            return response()->json($ex);
         }
     }
 
