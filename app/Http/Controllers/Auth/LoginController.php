@@ -70,13 +70,12 @@ class LoginController extends Controller
      */
     public function logout_all()
     {
+
         // get current user
         $user = Auth::user();
         // delete all user tokens
-        $user->tokens()->delete();
-        // تغيير حالة المستخدم الى اوفلاين
-        $user->status = false;
-        $user->save();
+        $user->tokens()->where('id', '!=', $user->current_token_id)->delete();
+
         // send success message to frontend
         return response()->success(__("messages.user.logout"));
     }

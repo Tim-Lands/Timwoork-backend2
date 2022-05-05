@@ -57,17 +57,17 @@ trait Paypal
                     ],
                     'shipping' =>
                     [
-                        'method' => 'Timwoork',
+                        'method' => 'timwoork',
                         'name' =>
                         [
-                            'full_name' => 'Timwoork',
+                            'full_name' => 'timwoork',
                         ],
                         'address' =>
                         [
-                            'address_line_1' => 'Timwoork',
-                            'address_line_2' => '71-75',
-                            'admin_area_2' => '',
-                            'admin_area_1' => '',
+                            'address_line_1' => 'timwoork',
+                            'address_line_2' => 'timwoork',
+                            'admin_area_2' => 'timwoork',
+                            'admin_area_1' => 'timwoork',
                             'postal_code' => '94107',
                             'country_code' => 'US',
                         ],
