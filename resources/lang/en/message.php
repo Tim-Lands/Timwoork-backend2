@@ -128,6 +128,8 @@ return [
         "fieled_operation" => "the operation failed",
         "error_login" => "The information you entered is wrong",
         "email_already" => "This email already exists",
+        "logout_all" => "all devices are logged out",
+        "logout" => "You have been logged out",
     ],
     // البائع
     "seller" => [
