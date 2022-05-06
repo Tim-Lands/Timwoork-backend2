@@ -2,10 +2,13 @@
 
 namespace App\Http\Controllers\Dashboard;
 
+use App\Events\AcceptProductEvent;
+use App\Events\RejectProductEvent;
 use App\Http\Controllers\Controller;
 use App\Models\Product;
 use Exception;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\DB;
 
@@ -17,7 +20,7 @@ class ActivedProductController extends Controller
      * @param  mixed $id => id المعرف
      * @return void
      */
-    public function activeProduct(mixed $id): JsonResponse
+    public function activeProduct(mixed $id)
     {
         try {
             $product = Product::find($id);
@@ -32,6 +35,10 @@ class ActivedProductController extends Controller
             // عملية تنشيط الخدمة :
             $product->status = Product::PRODUCT_ACTIVE;
             $product->save();
+            // جلب المستخدم من اجل ارسال الاشعار
+            $user = $product->profileSeller->profile->user;
+            // ارسال اشعار للمستخدم
+            event(new AcceptProductEvent($user, $product));
             // انهاء المعاملة بشكل جيد :
             DB::commit();
             // رسالة نجاح عملية التنشيط:
@@ -50,7 +57,7 @@ class ActivedProductController extends Controller
      * @param  mixed $id => id المعرف
      * @return void
      */
-    public function rejectProduct(mixed $id): JsonResponse
+    public function rejectProduct(mixed $id, Request $request): JsonResponse
     {
         try {
             $product = Product::find($id);
@@ -65,6 +72,10 @@ class ActivedProductController extends Controller
             // عملية رفض الخدمة :
             $product->status = Product::PRODUCT_REJECT;
             $product->save();
+            // جلب المستخدم من اجل ارسال الاشعار
+            $user = $product->profileSeller->profile->user;
+            // ارسال اشعار للمستخدم
+            event(new RejectProductEvent($user, $product, $request->cause));
             // انهاء المعاملة بشكل جيد :
             DB::commit();
             // رسالة نجاح عملية الرفض:

@@ -212,8 +212,7 @@ a[x-apple-data-detectors='true'] {
   <div style="line-height: 140%; text-align: right; word-wrap: break-word;">
     <p style="font-size: 14px; line-height: 140%;"><span style="font-size: 24px; line-height: 33.6px;">
         {{ $title }} <br>
-        تم رفض الخدمة <strong>{{ $content['title'] }}</strong></span>
-        و السبب : <strong>{{ $content['cause'] }}</strong>
+        تم قبول الخدمة <strong>{{ $content['title'] }}</strong></span>
     </p>
   </div>
 

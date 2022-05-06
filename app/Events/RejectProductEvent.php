@@ -10,44 +10,29 @@ use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Queue\SerializesModels;
 
-class CancelWithdrwal implements ShouldBroadcast
+class RejectProductEvent
 {
     use Dispatchable, InteractsWithSockets, SerializesModels;
     public $user;
-    public $withdrawal;
+    public $product;
     public $cause;
-    public $type;
     /**
      * Create a new event instance.
      *
      * @return void
      */
-    public function __construct($user, $withdrawal, $cause)
+    public function __construct($user, $product, $cause)
     {
         $this->user = $user;
-        $this->withdrawal = $withdrawal;
+        $this->product = $product;
         $this->cause = $cause;
-        switch ($this->withdrawal->type) {
-            case 0:
-                $this->type = ' حسابك في بايبال';
-                break;
-            case 1:
-                $this->type = 'حسابك في وايز';
-                break;
-            case 2:
-                $this->type = 'حسابك البنكي';
-                break;
-            case 3:
-                $this->type = 'الحوالة البنكية';
-                break;
-        }
     }
 
     /**
-     * Get the channels the event should broadcast on.
-     *
-     * @return \Illuminate\Broadcasting\Channel|array
-     */
+    * Get the channels the event should broadcast on.
+    *
+    * @return \Illuminate\Broadcasting\Channel|array
+    */
     public function broadcastOn()
     {
         return new PresenceChannel('notify.' . $this->user->id);
@@ -65,13 +50,11 @@ class CancelWithdrwal implements ShouldBroadcast
             'to' => "user",
             'user_sender' => [
                 'full_name' => 'اﻹدارة',
-                'username' => null,
-                'avatar_path' => null
             ],
-            'title' =>  " لقد تم رفض طلب السحب الخاص بك في  " . $this->type ." و السبب هو : ".$this->cause,
+            'title' =>  " لقد تم رفض خدمتك : " . $this->product->title ." و السبب هو : ".$this->cause,
             'content' => [
-                'type' => $this->type,
-                'withdrawal' => $this->withdrawal,
+                'product_id' => $this->product->id,
+                'title' => $this->product->title,
                 'cause' => $this->cause,
             ],
         ];

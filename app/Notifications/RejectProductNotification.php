@@ -7,20 +7,22 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
 
-class AcceptProductNotification extends Notification
+class RejectProductNotification extends Notification
 {
     use Queueable;
     public $user;
     public $product;
+    public $cause;
     /**
      * Create a new notification instance.
      *
      * @return void
      */
-    public function __construct($user, $product)
+    public function __construct($user, $product, $cause)
     {
         $this->user = $user;
         $this->product = $product;
+        $this->cause = $cause;
     }
 
     /**
@@ -31,30 +33,29 @@ class AcceptProductNotification extends Notification
      */
     public function via($notifiable)
     {
-        return ['mail','database'];
+        return ['mail'];
     }
 
     /**
-     * Get the mail representation of the notification.
-     *
-     * @param  mixed  $notifiable
-     * @return \Illuminate\Notifications\Messages\MailMessage
-     */
+      * Get the mail representation of the notification.
+      *
+      * @param  mixed  $notifiable
+      * @return \Illuminate\Notifications\Messages\MailMessage
+      */
     public function toMail($notifiable)
     {
         return (new MailMessage)
         ->from(env('MAIL_FROM_ADDRESS'), config('mail.from.ar_name'))
-        ->subject('قبول الخدمة')
-        ->view('emails.products.accept_product', [
+        ->subject('رفض الخدمة')
+        ->view('emails.products.reject_product', [
             'user_sender' => [
                 'full_name' => 'اﻹدارة',
-                'username' => null,
-                'avatar_url' => null
             ],
-            'title' =>  "لقد تم قبول خدمتك : " . $this->product->title,
+            'title' =>  "لقد تم رفض خدمتك : " . $this->product->title . " و السبب هو :".$this->cause,
             'content' => [
                 'product_id' => $this->product->id,
                 'title' => $this->product->title,
+                "cause" => $this->product->cause
             ],
         ]);
     }
@@ -75,10 +76,11 @@ class AcceptProductNotification extends Notification
                 'username' => null,
                 'avatar_url' => null
             ],
-            'title' =>  " لقد تم قبول خدمتك : " . $this->product->title,
+            'title' =>  "لقد تم رفض خدمتك : " . $this->product->title . " و السبب هو :".$this->cause,
             'content' => [
                 'product_id' => $this->product->id,
                 'title' => $this->product->title,
+                "cause" => $this->product->cause
             ],
         ];
     }
