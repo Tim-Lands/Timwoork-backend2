@@ -118,6 +118,7 @@ trait Paypal
         $request->prefer('return=representation');
         try {
             $response = $client->execute($request);
+            return $response;
             if ($response->statusCode == 201 && $response->result->status == 'COMPLETED') {
                 // حفظ البيانات القادمة من
                 DB::beginTransaction();
