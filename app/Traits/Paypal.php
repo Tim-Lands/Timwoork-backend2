@@ -57,19 +57,19 @@ trait Paypal
                     ],
                     'shipping' =>
                     [
-                        'method' => 'timwoork',
+                        'method' => 'Timwoork',
                         'name' =>
                         [
-                            'full_name' => 'timwoork',
+                            'full_name' => 'Timlands LTD',
                         ],
                         'address' =>
                         [
-                            'address_line_1' => 'timwoork',
-                            'address_line_2' => 'timwoork',
-                            'admin_area_2' => 'timwoork',
-                            'admin_area_1' => 'timwoork',
-                            'postal_code' => '94107',
-                            'country_code' => 'US',
+                            'address_line_1' => '71-75, Shelton Street',
+                            'address_line_2' => 'London',
+                            'admin_area_1' => 'Covent Garden',
+                            'admin_area_2' => 'United Kingdom',
+                            'postal_code' => 'WC2H 9JQ',
+                            'country_code' => 'GB',
                         ],
                     ],
                 ],
