@@ -146,6 +146,7 @@ trait Paypal
                 return false;
             }
         } catch (HttpException $ex) {
+            return $ex;
             DB::rollBack();
             return response()->error(__('messages.oprations.nothing_this_operation'));
         }
