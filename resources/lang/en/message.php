@@ -155,7 +155,8 @@ return [
         "thumbnail_required" => "You must upload the foreground image",
         "count_galaries" => "the number of images uploaded must be no more than 5 and not less than 1",
         "success_upload_galaries" => "The display images have been uploaded successfully",
-        "upload_images" => "You must upload images"
+        "upload_images" => "You must upload images",
+        "delete_galary" => "photo has been deleted from gallery"
     ],
 
     /* ------------------------------ رسائل الأخطاء ----------------------------- */

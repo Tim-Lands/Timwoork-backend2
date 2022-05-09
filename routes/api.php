@@ -197,6 +197,8 @@ Route::prefix('sellers')->group(function () {
 Route::prefix('product')->middleware('auth:sanctum')->group(function () {
     // انشاء الخدمة
     Route::get('/store', [InsertProductContoller::class, 'store']);
+    // حذف الصورة الواحدة من المعرض
+    Route::post('/{id}/delete_galary', [InsertProductContoller::class, 'delete_one_galary']);
     // المحلة الاولى
     Route::post('{id}/product-step-one', [InsertProductContoller::class, 'storeStepOne']);
     // المحلة الثانية

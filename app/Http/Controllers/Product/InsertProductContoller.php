@@ -11,12 +11,14 @@ use App\Http\Requests\Products\ProductStepThreeRequest;
 use App\Http\Requests\Products\ProductStepTwoRequest;
 use App\Http\Requests\Products\ThumbnailRequest;
 use App\Models\Category;
+use App\Models\Galary;
 use App\Models\Product;
 use App\Models\Shortener;
 use App\Models\Tag;
 use App\Models\Video;
 use Exception;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\DB;
@@ -523,11 +525,6 @@ class InsertProductContoller extends Controller
                 if (count($get_galaries_images) != 0) {
                     // شرط اذا كانت هناك صور ارسلت من قبل المستخدم
                     if ($request->images) {
-                        foreach ($get_galaries_images as $image) {
-                            if (Storage::disk('do')->exists("products/galaries-images/{$image['path']}")) {
-                                Storage::disk('do')->delete("products/galaries-images/{$image['path']}");
-                            }
-                        }
                         // عدد الصور التي تم رفعها
                         foreach ($request->file('images') as $key => $value) {
                             $imagelName = "tw-galary-image-{$key}-{$time}.{$value->getClientOriginalExtension()}";
@@ -581,11 +578,6 @@ class InsertProductContoller extends Controller
             DB::beginTransaction();
             // شرط اذا كانت توجد بيانات الصور في المصفوفة
             if (count($galaries_images) != 0) {
-                // شرط اذا كانت توجد بيانات الصور من قبل
-                if ($get_galaries_images) {
-                    // حذف كل الصور القديمة
-                    $product->galaries()->delete();
-                }
                 // انشاء صور جديدة
                 $product->galaries()->createMany($galaries_images);
             }
@@ -594,6 +586,65 @@ class InsertProductContoller extends Controller
             // ================================================================
             // رسالة نجاح عملية الاضافة:
             return response()->success(__("messages.product.success_upload_galaries"), $product->load('galaries'));
+        } catch (Exception $ex) {
+            return $ex;
+            // لم تتم المعاملة بشكل نهائي و لن يتم ادخال اي بيانات لقاعدة البيانات
+            DB::rollback();
+            // رسالة خطأ
+            return response()->error(__("messages.errors.error_database"), 403);
+        }
+    }
+
+
+    /**
+     * delete_one_galary
+     *
+     * @param  mixed $id
+     * @return void
+     */
+    public function delete_one_galary($id, Request $request)
+    {
+        try {
+            //id  جلب العنصر بواسطة
+            $product = Product::whereId($id)
+                ->where('profile_seller_id', Auth::user()->profile->profile_seller->id)
+                ->with('galaries')
+                ->first();
+
+            // شرط اذا كان العنصر موجود
+            if (!$product || !is_numeric($id)) {
+                // رسالة خطأ
+                return response()->error(__("messages.errors.element_not_found"), 403);
+            }
+            // جلب الصورة من المعرض
+            $galary = Galary::whereId($request->id)->where('product_id', $id)->first();
+            // تحقق من صورة موجودة
+            if (!$galary || !is_numeric($id)) {
+                // رسالة خطأ
+                return response()->error(__("messages.errors.element_not_found"), 403);
+            }
+            /* ---------------- معالجة الصور و الملفات و روابط الفيديوهات --------------- */
+
+            if ($product->current_step >= Product::PRODUCT_STEP_THREE) {
+                // حذف صورة السابقة
+                if (Storage::disk('do')->exists("products/galaries-images/{$galary->path}")) {
+                    Storage::disk('do')->delete("products/galaries-images/{$galary->path}");
+                }
+
+                // بداية المعاملة مع البيانات المرسلة لقاعدة بيانات :
+                DB::beginTransaction();
+                // حذف الصورة المعرض
+                $galary->delete();
+                // انهاء المعاملة بشكل جيد :
+                DB::commit();
+                // رسالة نجاح عملية الاضافة:
+                return response()->success(__("messages.product.delete_galary"), $galary);
+            } else {
+                return response()->error(__("messages.oprations.nothing_this_operation"), 403);
+            }
+            /* -------------------- رفع الصور العرض في قواعد البيانات ------------------- */
+
+            // ================================================================
         } catch (Exception $ex) {
             return $ex;
             // لم تتم المعاملة بشكل نهائي و لن يتم ادخال اي بيانات لقاعدة البيانات
