@@ -24,7 +24,7 @@ class ThumbnailRequest extends FormRequest
     public function rules()
     {
         return [
-            'thumbnail'      => 'image|mimes:png,jpg,jpeg|max:2048',
+            'thumbnail'      => 'required|image|mimes:png,jpg,jpeg|max:2048',
         ];
     }
 
@@ -36,8 +36,8 @@ class ThumbnailRequest extends FormRequest
     public function messages()
     {
         return [
-            'thumbnail.image' =>__("messages.validation.thumbnail_image"),
             'thumbnail.required' =>__("messages.validation.thumbnail_required"),
+            'thumbnail.image' =>__("messages.validation.thumbnail_image"),
             'thumbnail.mimes' =>__("messages.validation.thumbnail_mimes"),
             'thumbnail.size' =>__("messages.validation.thumbnail_size"),
         ];

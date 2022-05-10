@@ -24,7 +24,7 @@ class ProductStepOneRequest extends FormRequest
     public function rules()
     {
         return [
-            'title'               => 'required|string|min:20|max:55',
+            'title'               => 'required|string|min:20|max:60',
             'subcategory'         => 'required|exists:categories,id',
             'tags'              => 'required',
             'tags.*.value'        => 'required',

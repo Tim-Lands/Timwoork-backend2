@@ -24,7 +24,7 @@ class ImagesRequest extends FormRequest
     public function rules()
     {
         return [
-            'images'         => 'sometimes',
+            'images'         => 'required',
             'images.*'       => 'image|mimes:png,jpg,jpeg|max:2048',
         ];
     }
@@ -37,6 +37,7 @@ class ImagesRequest extends FormRequest
     public function messages()
     {
         return [
+            "images.required" =>__("messages.product.galaries_required"),
             'images.*.image' => __("messages.validation.images_mimes"),
             'images.*.mimes' => __("messages.validation.images_mimes"),
             'images.*.max' => __("messages.validation.images_size"),
