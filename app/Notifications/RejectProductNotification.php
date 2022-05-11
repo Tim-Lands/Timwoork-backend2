@@ -33,7 +33,7 @@ class RejectProductNotification extends Notification
      */
     public function via($notifiable)
     {
-        return ['mail'];
+        return ['database'];
     }
 
     /**
@@ -50,6 +50,8 @@ class RejectProductNotification extends Notification
         ->view('emails.products.reject_product', [
             'user_sender' => [
                 'full_name' => 'اﻹدارة',
+                'username' => null,
+                'avatar_url' => null
             ],
             'title' =>  "لقد تم رفض خدمتك : " . $this->product->title . " و السبب هو :".$this->cause,
             'content' => [
@@ -80,7 +82,7 @@ class RejectProductNotification extends Notification
             'content' => [
                 'product_id' => $this->product->id,
                 'title' => $this->product->title,
-                "cause" => $this->product->cause
+                "cause" => $this->cause
             ],
         ];
     }

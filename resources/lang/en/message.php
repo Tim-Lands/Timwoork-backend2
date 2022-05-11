@@ -159,6 +159,7 @@ return [
         "delete_galary" => "photo has been deleted from gallery",
         "thumbnail_required" => "You must upload the foreground image",
          "galaries_required" => "You must upload a display image",
+         "cause_required" => "You must enter the reason for rejection",
     ],
 
     /* ------------------------------ رسائل الأخطاء ----------------------------- */

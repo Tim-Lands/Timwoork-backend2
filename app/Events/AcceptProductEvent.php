@@ -5,10 +5,11 @@ namespace App\Events;
 use Illuminate\Broadcasting\Channel;
 use Illuminate\Broadcasting\InteractsWithSockets;
 use Illuminate\Broadcasting\PresenceChannel;
+use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Queue\SerializesModels;
 
-class AcceptProductEvent
+class AcceptProductEvent implements ShouldBroadcast
 {
     use Dispatchable, InteractsWithSockets, SerializesModels;
     public $user;
@@ -44,6 +45,7 @@ class AcceptProductEvent
         return [
             'type' => "system",
             'to' => "user",
+            'notifications_count' => $this->user->unreadNotifications->count(),
             'user_sender' => [
                 'full_name' => 'اﻹدارة',
             ],

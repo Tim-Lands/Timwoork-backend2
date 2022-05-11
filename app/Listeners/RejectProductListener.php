@@ -3,6 +3,7 @@
 namespace App\Listeners;
 
 use App\Events\RejectProductEvent;
+use App\Notifications\RejectProductNotification;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Queue\InteractsWithQueue;
 
@@ -26,6 +27,6 @@ class RejectProductListener
      */
     public function handle(RejectProductEvent $event)
     {
-        $event->user->notify(new RejectProductEvent($event->user, $event->product, $this->cause));
+        $event->user->notify(new RejectProductNotification($event->user, $event->product, $event->cause));
     }
 }

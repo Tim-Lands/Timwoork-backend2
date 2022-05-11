@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Dashboard;
 use App\Events\AcceptProductEvent;
 use App\Events\RejectProductEvent;
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Products\CauseRejectProductRequest;
 use App\Models\Product;
 use Exception;
 use Illuminate\Http\JsonResponse;
@@ -23,12 +24,18 @@ class ActivedProductController extends Controller
     public function activeProduct(mixed $id)
     {
         try {
+            // تحديد الخدمة
             $product = Product::find($id);
+            // فحص العنصر موجود ام لا
             if (!$product) {
                 // رسالة خطأ
                 return response()->error(__('messages.errors.element_not_found'), Response::HTTP_NOT_FOUND);
             }
-
+            // شرط اذا كانت الخدمة مقبولة
+            if ($product->status == Product::PRODUCT_ACTIVE) {
+                // رسالة خطأ
+                return response()->error(__('messages.product.accepted_product'), Response::HTTP_NOT_FOUND);
+            }
             // ============= تنشيط الخدمة  ================:
             // بداية المعاملة مع البيانات المرسلة لقاعدة بيانات :
             DB::beginTransaction();
@@ -57,7 +64,7 @@ class ActivedProductController extends Controller
      * @param  mixed $id => id المعرف
      * @return void
      */
-    public function rejectProduct(mixed $id, Request $request): JsonResponse
+    public function rejectProduct(mixed $id, CauseRejectProductRequest $request): JsonResponse
     {
         try {
             $product = Product::find($id);
@@ -65,7 +72,11 @@ class ActivedProductController extends Controller
                 // رسالة خطأ
                 return response()->error(__('messages.errors.element_not_found'), Response::HTTP_NOT_FOUND);
             }
-
+            // شرط اذا كانت الخدمة مرفوضة
+            if ($product->status == Product::PRODUCT_REJECT) {
+                // رسالة خطأ
+                return response()->error(__('messages.product.rejected_product'), Response::HTTP_NOT_FOUND);
+            }
             // ============= رفض الخدمة  ================:
             // بداية المعاملة مع البيانات المرسلة لقاعدة بيانات :
             DB::beginTransaction();

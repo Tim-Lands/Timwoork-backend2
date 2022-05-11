@@ -3,6 +3,7 @@
 namespace App\Listeners;
 
 use App\Events\AcceptProductEvent;
+use App\Notifications\AcceptProductNotification;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Queue\InteractsWithQueue;
 
@@ -26,6 +27,6 @@ class AcceptProductListener
      */
     public function handle(AcceptProductEvent $event)
     {
-        $event->user->notify(new AcceptProductEvent($event->user, $event->product));
+        $event->user->notify(new AcceptProductNotification($event->user, $event->product));
     }
 }
