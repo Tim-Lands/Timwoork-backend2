@@ -72,11 +72,6 @@ class ActivedProductController extends Controller
                 // رسالة خطأ
                 return response()->error(__('messages.errors.element_not_found'), Response::HTTP_NOT_FOUND);
             }
-            // شرط اذا كانت الخدمة مرفوضة
-            if ($product->status == Product::PRODUCT_REJECT) {
-                // رسالة خطأ
-                return response()->error(__('messages.product.rejected_product'), Response::HTTP_NOT_FOUND);
-            }
             // ============= رفض الخدمة  ================:
             // بداية المعاملة مع البيانات المرسلة لقاعدة بيانات :
             DB::beginTransaction();
