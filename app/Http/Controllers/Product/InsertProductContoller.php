@@ -317,18 +317,21 @@ class InsertProductContoller extends Controller
             } else {
                 $data['current_step'] = Product::PRODUCT_STEP_FOUR;
             }
+
             // جلب رابط الفيديو
             $get_galaries_url_video =  $product->video;
+
 
             // ====================== انشاء المرحلة الرابعة في الخدمة =====================================:
             // بداية المعاملة مع البيانات المرسلة لقاعدة بيانات :
             DB::beginTransaction();
             // تعديل على الخدمة
-            $product->update($data);
+            //$product->update($data);
             // شرط اذا كانت هناك ارسال رابط في فيديو من قبل المستخدم
             if ($request->has('url_video')) {
+                //return 1;
                 // شرط اذا كانت توجد بيانات رابط الفيديو من قبل
-                if ($get_galaries_url_video) {
+                if ($get_galaries_url_video != null) {
                     // عملية التعديل على رابط الفيديو
                     $product->video()->update([
                         'url_video' => $request->url_video
@@ -344,7 +347,7 @@ class InsertProductContoller extends Controller
             // انهاء المعاملة بشكل جيد :
             DB::commit();
             // رسالة نجاح عملية الاضافة:
-            return response()->success(__("messages.product.success_step_four"), $product);
+            return response()->success(__("messages.product.success_step_four"), $product->load('video'));
             // ========================================================
         } catch (Exception $ex) {
             // لم تتم المعاملة بشكل نهائي و لن يتم ادخال اي بيانات لقاعدة البيانات

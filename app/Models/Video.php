@@ -16,7 +16,7 @@ class Video extends Model
     /* --------------------------------- Scopes --------------------------------- */
 
     /* -------------------------------- Relations ------------------------------- */
-    
+
     /**
      * Item
      *
@@ -24,6 +24,6 @@ class Video extends Model
      */
     public function Product(): BelongsTo
     {
-        return $this->belongsTo(Product::class);
+        return $this->belongsTo(Product::class, 'product_id');
     }
 }
