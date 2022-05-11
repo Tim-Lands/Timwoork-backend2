@@ -325,6 +325,10 @@ class WithdrawalController extends Controller
             }
             // جلب بيانات الحساب البايبال
             $paypal_account = PaypalAccount::where('profile_id', Auth::user()->profile->id)->first();
+            // فحص ان كان لا يوجد حساب
+            if (!$paypal_account) {
+                return response()->error(__("messages.bank.account_paypal_not_found"), 404);
+            }
             DB::beginTransaction();
             // انشاء عملية سحب من حساب بايبال
             $withdrawal = $paypal_account->withdrawal()->create([
@@ -386,7 +390,10 @@ class WithdrawalController extends Controller
             }
             // جلب بيانات الحساب الوايز
             $wise_account = WiseAccount::where('profile_id', Auth::user()->profile->id)->first();
-
+            // فحص ان كان لا يوجد حساب
+            if (!$wise_account) {
+                return response()->error(__("messages.bank.account_wise_not_found"), 404);
+            }
             DB::beginTransaction();
             // انشاء عملية سحب من حساب وايز
             $withdrawal = $wise_account->withdrawal()->create([
@@ -448,6 +455,10 @@ class WithdrawalController extends Controller
             }
             // جلب بيانات الحساب البنكي
             $bank_account = BankAccount::where('profile_id', Auth::user()->profile->id)->first();
+            // فحص ان كان لا يوجد حساب
+            if (!$bank_account) {
+                return response()->error(__("messages.bank.account_bank_not_found"), 404);
+            }
             DB::beginTransaction();
             // انشاء عملية سحب من حساب بنكي
             $withdrawal = $bank_account->withdrawal()->create([
@@ -510,6 +521,10 @@ class WithdrawalController extends Controller
             }
             // جلب بيانات الحساب البنكي
             $bank_transfer_detail = BankTransferDetail::where('profile_id', Auth::user()->profile->id)->first();
+            // فحص ان كان لا يوجد حساب
+            if (!$bank_transfer_detail) {
+                return response()->error(__("messages.bank.account_bank_transfer_detail_not_found"), 404);
+            }
             DB::beginTransaction();
 
             $withdrawal = $bank_transfer_detail->withdrawal()->create([

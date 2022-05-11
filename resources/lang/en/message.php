@@ -260,7 +260,11 @@ return [
         "bank_swift_required" => "You must enter a bank transfer (swift)",
         "bank_iban_required" => "You must enter IBAN Bank",
         "bank_number_account_required" => "You must enter the bank number",
-        "bank_adress_line_one_required" => "You must enter the bank address"
+        "bank_adress_line_one_required" => "You must enter the bank address",
+        "account_paypal_not_found" => "You must add a PayPal account to be able to withdraw",
+         "account_wise_not_found" => "You must add a WISE account to be able to withdraw",
+         "account_bank_not_found" => "You must add a bank account to be able to withdraw",
+         "account_bank_transfer_detail_not_found" => "You must add a bank transfer to be able to withdraw",
      ],
 
      "type_payment" => [

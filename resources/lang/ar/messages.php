@@ -278,6 +278,10 @@ return [
         "success_bank_withdrawal" => "تم تسجيل عملية السحب الى بنك بنجاح",
         "success_bank_transfer_withdrawal" => "تم تسجيل عملية السحب الى حوالة بنكية بنجاح",
         "not_enough_balance" =>  'رصيدك غير كاف لإجراء هذه العملية',
+        "account_paypal_not_found" => "يجب عليك اضافة حساب بيبال كي تتمكن من عملية السحب",
+        "account_wise_not_found" => "يجب عليك اضافة حساب وايز كي تتمكن من عملية السحب",
+        "account_bank_not_found" => "يجب عليك اضافة حساب بنكي كي تتمكن من عملية السحب",
+        "account_bank_transfer_detail_not_found" => "يجب عليك اضافة حوالة بنكية كي تتمكن من عملية السحب",
 
 
     ],
