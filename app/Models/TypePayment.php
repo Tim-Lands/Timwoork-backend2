@@ -24,7 +24,7 @@ class TypePayment extends Model
      */
     public function scopeSelection(mixed $query): ?object
     {
-        return $query->select('id', 'name_ar', 'name_en', 'precent_of_payment', 'value_of_cent', 'created_at');
+        return $query->select('id', 'name_ar', 'name_en', 'precent_of_payment', 'status', 'value_of_cent', 'created_at');
     }
 
     /**

@@ -26,6 +26,19 @@ class LoginController extends Controller
             ->orWhere('email', $request->username)
             ->orWhere('phone', $request->username)
             ->first();
+        if ($user->isBanned()) {
+            $expired_at = $user->bans->first()->expired_at;
+            $comment = $user->bans->first()->comment;
+
+            if ($expired_at == null && $comment == null) {
+                return response()->error("تم حضرك من قبل الادارة لسبب ما , يمكنك الاتصال بالادارة للحصول على التفاصيل", Response::HTTP_UNAUTHORIZED);
+            }
+
+            if ($expired_at != null && $comment == null) {
+                return response()->error("تم حضرك من قبل الادارة لسبب ما لمدة {$expired_at} , يمكنك الاتصال بالادارة للحصول على التفاصيل", Response::HTTP_UNAUTHORIZED);
+            }
+            return response()->error("تم حضرك من قبل الادارة لسبب :{$comment} لمدة {$expired_at} , يمكنك الاتصال بالادارة للحصول على التفاصيل", Response::HTTP_UNAUTHORIZED);
+        }
         // في حالة عدم وجود المستخدم في قاعدة البيانات أو عدم تطابق كلمة المرور المحفوظة مع كلمة المرور المرسلة
         // يتم إرسال رسالة عدم صحة البيانات
         if (!$user || !Hash::check($request->password, $user->password)) {

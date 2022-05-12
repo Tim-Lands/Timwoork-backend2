@@ -166,7 +166,9 @@ return [
          * Package Service Providers...
          */
 
-        /*
+        Cog\Laravel\Ban\Providers\BanServiceProvider::class,
+
+         /*
          * Application Service Providers...
          */
         App\Providers\AppServiceProvider::class,

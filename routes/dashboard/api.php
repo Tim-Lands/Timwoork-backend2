@@ -18,6 +18,7 @@ use App\Http\Controllers\Dashboard\ContactController;
 use App\Http\Controllers\Dashboard\SellerBadgeController;
 use App\Http\Controllers\Dashboard\SellerLevelController;
 use App\Http\Controllers\Dashboard\TypePaymentController;
+use App\Http\Controllers\Dashboard\UserContoller;
 use App\Http\Controllers\WithdrawalController;
 use Illuminate\Support\Facades\Route;
 
@@ -53,9 +54,17 @@ Route::middleware('auth:sanctum')->group(function () {
     // ================================ مسارات المستخدمين ====================================
     Route::prefix('users')->group(function () {
         // مسار العرض
-        Route::get('/', [AuthController::class, 'get_users']);
+        Route::get('/', [UserContoller::class, 'get_users']);
+        // عرض المستخدمين المحظورين
+        Route::get('/get_users_banned', [UserContoller::class, 'get_user_banned']);
+        // عرض المستخدمين الغير المحظورين
+        Route::get('/get_users_unbanned', [UserContoller::class, 'get_user_unbanned']);
         // مسار انشاء عنصر جديد
-        Route::get('/{id}', [AuthController::class, 'show']);
+        Route::get('/{id}', [UserContoller::class, 'show']);
+        // حظر المستخدم
+        Route::post('/{id}/ban', [UserContoller::class, 'user_ban']);
+        // فك حظر المستخدم
+        Route::post('/{id}/unban', [UserContoller::class, 'user_unban']);
     });
 
     // =============================== مسارات التصنيف الفرعي ====================================
