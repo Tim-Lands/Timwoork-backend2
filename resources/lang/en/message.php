@@ -130,6 +130,10 @@ return [
         "email_already" => "This email already exists",
         "logout_all" => "all devices are logged out",
         "logout" => "You have been logged out",
+        "unban_success" => "The user has been unbanned successfully",
+        "ban_success" => "The user has been banned successfully",
+        "user_banned" => "The user has been banned",
+        "user_unbanned" => "The user has been unbanned",
     ],
     // البائع
     "seller" => [
