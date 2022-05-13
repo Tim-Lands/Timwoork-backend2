@@ -27,6 +27,7 @@ class ProductController extends Controller
                 $q->select('id', 'full_name', 'user_id')->with('user:id,username');
             });
         }])
+        ->filter('status', 'is_active')
         ->latest()
         ->get();
         // اظهار العناصر

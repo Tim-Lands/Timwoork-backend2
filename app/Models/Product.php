@@ -52,7 +52,9 @@ class Product extends Model
         'title',
         'subCat',
         'category',
-        'count_buying'
+        'count_buying',
+        'status',
+        'is_active',
     ];
 
 
@@ -149,6 +151,34 @@ class Product extends Model
         return $query->orderBy('ratings_avg', 'desc')
             ->orderBy('ratings_count', 'desc');
     }
+
+    /**
+     * status
+     *
+     * @param  mixed $query
+     * @param  mixed $value
+     * @return void
+     */
+    public function status($query, $value)
+    {
+        if ($value == 2) {
+            return $query->whereNull('status');
+        }
+        return $query->where('status', $value);
+    }
+
+    /**
+     * is_active
+     *
+     * @param  mixed $query
+     * @param  mixed $value
+     * @return void
+     */
+    public function is_active($query, $value)
+    {
+        return $query->where('is_active', $value);
+    }
+
     /* -------------------------------- Constants ------------------------------- */
     // code
     //حالة الخدمة مرفوضة او معطلة
