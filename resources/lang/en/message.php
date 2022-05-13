@@ -37,7 +37,7 @@ return [
         "file_size" => "The file must be no more than 2MB",
         "url" => "URL - This field must be a link",
         "title_required" => "The title of the service is required",
-        "title_size" =>"The title should not be less than 20 characters and cannot be greater than 55 characters",
+        "title_size" =>"The title should not be less than 20 characters and cannot be greater than 60 characters",
         "title_required" => "The title of the service is required",
         "subcategory_required" => "subcategory is required",
         "tags_required" => "tags are required",
