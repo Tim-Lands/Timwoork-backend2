@@ -26,6 +26,12 @@ class LoginController extends Controller
             ->orWhere('email', $request->username)
             ->orWhere('phone', $request->username)
             ->first();
+
+        // في حالة عدم وجود المستخدم في قاعدة البيانات أو عدم تطابق كلمة المرور المحفوظة مع كلمة المرور المرسلة
+        // يتم إرسال رسالة عدم صحة البيانات
+        if (!$user || !Hash::check($request->password, $user->password)) {
+            return response()->error(__("messages.user.error_login"), Response::HTTP_UNAUTHORIZED);
+        }
         if ($user->isBanned()) {
             $expired_at = $user->bans->first()->expired_at;
             $comment = $user->bans->first()->comment;
@@ -39,11 +45,7 @@ class LoginController extends Controller
             }
             return response()->error("تم حضرك من قبل الادارة لسبب :{$comment} لمدة {$expired_at} , يمكنك الاتصال بالادارة للحصول على التفاصيل", Response::HTTP_UNAUTHORIZED);
         }
-        // في حالة عدم وجود المستخدم في قاعدة البيانات أو عدم تطابق كلمة المرور المحفوظة مع كلمة المرور المرسلة
-        // يتم إرسال رسالة عدم صحة البيانات
-        if (!$user || !Hash::check($request->password, $user->password)) {
-            return response()->error(__("messages.user.error_login"), Response::HTTP_UNAUTHORIZED);
-        }
+
         Auth::login($user);
         // في حالة صحة البيانات سيتم إنشاء توكن وتخزينه في جلسة كوكي وإرساله مع كل طلب
         return $this->login_with_token($user);
