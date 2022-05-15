@@ -146,9 +146,9 @@ class Product extends Model
      */
     public function subcategories($query, $value)
     {
-        $cat_ids = explode(',', $value);
-        return $query->whereHas('subcategory', function ($query) use ($cat_ids) {
-            $query->whereIn('id', $cat_ids);
+        $subcat_ids = explode(',', $value);
+        return $query->whereHas('subcategory', function ($query) use ($subcat_ids) {
+            $query->whereIn('id', $subcat_ids);
         });
     }
 
