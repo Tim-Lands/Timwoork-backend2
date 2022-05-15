@@ -17,12 +17,11 @@ class FilterController extends Controller
             ->where('is_active', 1)
             ->with([
                 'profileSeller' => function ($q) {
-                    $q->select('id', 'profile_id')->with('profile', function ($q) {
+                    $q->with(['profile'=> function ($q) {
                         $q->select('id', 'user_id', 'first_name', 'last_name')
-                            ->with('user:id,username')
-                            ->without('level', 'badge');
-                    })
-                    ->without('languages', 'skills', 'professions', 'level', 'badge');
+                            ->with('user:id,username');
+                    }])
+                    ->without('languages', 'skills', 'professions');
                 },
                 'ratings',
                 'subcategory' => function ($q) {

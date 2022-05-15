@@ -50,9 +50,13 @@ class Product extends Model
         'popular',
         'price',
         'title',
-        'subCat',
+        'subcategories',
         'category',
         'count_buying',
+        'seller_level',
+        'ratings_avg',
+        'badge',
+        "user_status",
         'status',
         'is_active',
     ];
@@ -95,7 +99,7 @@ class Product extends Model
     }
 
     /**
-     * tags
+     * tags => الوسوم
      *
      * @param  mixed $query
      * @param  mixed $value
@@ -104,13 +108,22 @@ class Product extends Model
     public function tags($query, $value)
     {
         $tag_ids = explode(',', $value);
+
         return $query->whereHas('product_tag', function ($q) use ($tag_ids) {
             $q->whereIn('tag_id', $tag_ids);
         });
     }
 
+    // badges => الباقات
+    public function badge($query, $value)
+    {
+        return $query->whereHas('seller_level', function ($q) use ($value) {
+            $q->whereIn('id', $value);
+        });
+    }
+
     /**
-     * category
+     * category => الاقسام الرئيسية
      *
      * @param  mixed $query
      * @param  mixed $value
@@ -125,13 +138,13 @@ class Product extends Model
     }
 
     /**
-     * subCat
+     * subcategories
      *
      * @param  mixed $query
      * @param  mixed $value
      * @return Object
      */
-    public function subCat($query, $value)
+    public function subcategories($query, $value)
     {
         $cat_ids = explode(',', $value);
         return $query->whereHas('subcategory', function ($query) use ($cat_ids) {
@@ -153,7 +166,48 @@ class Product extends Model
     }
 
     /**
-     * status
+     * ratings_avg => التقييم المتوسط
+     *
+     * @param  mixed $query
+     * @param  mixed $value
+     * @return Object
+     */
+    public function ratings_avg($query, $value)
+    {
+        $ratings = explode(',', $value);
+        return $query->whereIn('ratings_avg', $ratings)
+        ->orderBy('ratings_avg', 'desc');
+    }
+
+
+    /**
+     * user_status => الحالة
+     *
+     * @param  mixed $query
+     * @param  mixed $value
+     * @return void
+     */
+    public function user_status($query, $value)
+    {
+        return $query->whereHas('profileSeller', function ($query) use ($value) {
+            $query->whereHas('profile', function ($query) use ($value) {
+                $query->whereHas('user', function ($query) use ($value) {
+                    $query->where('status', $value);
+                });
+            });
+        });
+    }
+
+    // filter by level of seller
+    public function seller_level($query, $value)
+    {
+        return $query->whereHas('profileSeller', function ($query) use ($value) {
+            $query->where('seller_level_id', $value);
+        });
+    }
+
+    /**
+     * status => الحالة الخدمة
      *
      * @param  mixed $query
      * @param  mixed $value
