@@ -59,6 +59,8 @@ class Product extends Model
         "user_status",
         'status',
         'is_active',
+        'most_selling',
+        'most_most_recent'
     ];
 
 
@@ -164,6 +166,31 @@ class Product extends Model
         return $query->orderBy('ratings_avg', 'desc')
             ->orderBy('ratings_count', 'desc');
     }
+
+    /**
+     * most_selling
+     *
+     * @param  mixed $query
+     * @param  mixed $value
+     * @return void
+     */
+    public function most_selling($query, $value)
+    {
+        return $query->orderBy('count_buying', 'desc');
+    }
+
+    /**
+     * most_recent => اخر المنتجات
+     *
+     * @param  mixed $query
+     * @param  mixed $value
+     * @return void
+     */
+    public function most_recent($query, $value)
+    {
+        return $query->orderBy('created_at', 'desc');
+    }
+
 
     /**
      * ratings_avg => التقييم المتوسط
