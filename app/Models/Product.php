@@ -175,8 +175,12 @@ class Product extends Model
     public function ratings_avg($query, $value)
     {
         $ratings = explode(',', $value);
+        if ($value == 1) {
+            return $query->whereIn('ratings_avg', [0,1])
+            ->orderBy('ratings_avg', 'desc');
+        }
         return $query->whereIn('ratings_avg', $ratings)
-        ->orderBy('ratings_avg', 'desc');
+            ->orderBy('ratings_avg', 'desc');
     }
 
 
