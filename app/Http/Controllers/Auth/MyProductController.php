@@ -23,7 +23,7 @@ class MyProductController extends Controller
             ->paginate($paginate)
             ->makeHidden([
                 'buyer_instruct', 'content', 'profile_seller_id', 'category_id', 'duration','price','is_vide'
-                ,'updated_at','created_at','deleted_at','current_step','thumbnail'
+                ,'updated_at','created_at','deleted_at','thumbnail'
             ]);
         return response()->success(__("messages.oprations.get_all_data"), $products);
     }
