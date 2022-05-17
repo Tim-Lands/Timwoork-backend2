@@ -225,7 +225,7 @@ class MyProductController extends Controller
     public function review(mixed $slug)
     {
         // slug جلب الخدمة بواسطة
-        $product = Product::select('id', 'title', 'price', 'duration', 'content', 'category_id', 'profile_seller_id', 'count_buying', 'is_vide', 'thumbnail', 'is_completed', 'is_draft', 'status', 'buyer_instruct', 'ratings_count', 'ratings_avg', 'is_active')
+        $product = Product::select('id', 'title', 'price', 'duration', 'content', 'category_id', 'profile_seller_id', 'count_buying', 'is_vide', 'thumbnail', 'is_completed', 'is_draft', 'status', 'buyer_instruct', 'ratings_count', 'ratings_avg', 'is_active', 'current_step')
             ->whereSlug($slug)
             ->where('is_vide', 0)
             ->where('profile_seller_id', Auth::user()->profile->profile_seller->id)
