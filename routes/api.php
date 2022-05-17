@@ -12,6 +12,7 @@ use App\Http\Controllers\Auth\UserStatusController;
 use App\Http\Controllers\Auth\WalletController;
 use App\Http\Controllers\ConversationController;
 use App\Http\Controllers\Dashboard\TagController;
+use App\Http\Controllers\Dashboard\UserContoller;
 use App\Http\Controllers\ExternalAccountRatingController;
 use App\Http\Controllers\ExternalRatingController;
 use App\Http\Controllers\FilterController;
@@ -319,6 +320,8 @@ Route::group(['middleware' => ['XSS']], function () {
     Route::get('/get_categories_for_add_product', [FrontEndController::class, 'get_categories_for_add_product'])->middleware('auth:sanctum');
     // تحويل الاموال من المعلقة الى قابلة للسحب
     Route::get('withdrawal/change_amount', [FrontEndController::class, 'chage_amount_withdrawal']);
+    // فتح الحسابات المحظورة عند انتهاء من وقت الحظر
+    Route::get('/expired_unban_users', [UserContoller::class, 'expired_unban_users']);
     // عرض التصنيفات الفرعية
     Route::get('/get_categories/{id}', [FrontEndController::class, 'get_subcategories']);
 

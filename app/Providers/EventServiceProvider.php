@@ -22,6 +22,7 @@ use App\Events\Reply;
 use App\Events\RequestModifiedBuBuyer;
 use App\Events\RequestRejectOrder;
 use App\Events\ResolveConflictBySeller;
+use App\Events\UnbanAccountEvent;
 use App\Events\VerifyEmail;
 use App\Listeners\AcceptedDileveredByBuyerListener;
 use App\Listeners\AcceptModifiedBySellerListener;
@@ -44,6 +45,7 @@ use App\Listeners\Reply as ListenersReply;
 use App\Listeners\RequestModifiedByBuyerListener;
 use App\Listeners\RequestRejectOrderListener;
 use App\Listeners\ResolveConflictListener;
+use App\Listeners\UnbanAccountListener;
 use App\Listeners\VerifyEmailListener;
 use App\Models\Item;
 use App\Observers\ItemObserver;
@@ -124,6 +126,9 @@ class EventServiceProvider extends ServiceProvider
         RejectProductEvent::class => [
             RejectProductListener::class,
         ],
+        UnbanAccountEvent::class => [
+            UnbanAccountListener::class,
+        ]
 
 
     ];

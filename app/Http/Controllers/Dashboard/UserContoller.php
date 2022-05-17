@@ -2,9 +2,12 @@
 
 namespace App\Http\Controllers\Dashboard;
 
+use App\Events\UnbanAccountEvent;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\BanRequest;
 use App\Models\User;
+use Carbon\Carbon;
+use Cog\Laravel\Ban\Models\Ban;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
@@ -139,12 +142,34 @@ class UserContoller extends Controller
             DB::beginTransaction();
             // حظر المستخدم
             $user->unban();
-
+            // ارسال اشعاؤ للمستخدم
+            event(new UnbanAccountEvent($user));
             DB::commit();
             // رسالة نجاح
             return response()->success(__("messages.user.unban_success"), $user);
         } catch (Exception $ex) {
             return response()->error(__("messages.errors.error_database"), Response::HTTP_FORBIDDEN);
+        }
+    }
+
+
+    /**
+     * expired_unban_users => تحديث حظر المستخدمين المنتهي الصلاحية
+     *
+     * @return void
+     */
+    public function expired_unban_users()
+    {
+        // جلب المستخدمين المحظورين
+        $bans = Ban::query()
+        ->with('bannable')
+        ->where('expired_at', '<=', Carbon::now()->format('Y-m-d H:i:s'))
+        ->get();
+
+        // حذف كل الحسابات المحظورة المنتهية الصلاحية
+        foreach ($bans as $ban) {
+            $ban->delete();
+            event(new UnbanAccountEvent($ban->bannable));
         }
     }
 }
