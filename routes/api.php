@@ -12,6 +12,8 @@ use App\Http\Controllers\Auth\UserStatusController;
 use App\Http\Controllers\Auth\WalletController;
 use App\Http\Controllers\ConversationController;
 use App\Http\Controllers\Dashboard\TagController;
+use App\Http\Controllers\ExternalAccountRatingController;
+use App\Http\Controllers\ExternalRatingController;
 use App\Http\Controllers\FilterController;
 use App\Http\Controllers\FrontEndController;
 use App\Http\Controllers\NotificationController;
@@ -351,6 +353,16 @@ Route::group(['middleware' => ['XSS']], function () {
 
     Route::prefix('rating')->group(function () {
         Route::post('/{id}/reply', [RatingController::class, 'reply']);
+    });
+
+    Route::prefix('external_rating')->group(function () {
+        Route::post('/store', [ExternalRatingController::class, 'store']);
+        Route::post('/{id}/update', [ExternalRatingController::class, 'update']);
+    });
+
+    Route::prefix('external_account_rating')->group(function () {
+        Route::post('/store', [ExternalAccountRatingController::class, 'store']);
+        Route::post('/{id}/update', [ExternalAccountRatingController::class, 'update']);
     });
     /* -------------------------------------------------------------------------- */
 

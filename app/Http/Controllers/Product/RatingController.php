@@ -40,14 +40,45 @@ class RatingController extends Controller
         $user_id = Auth::id();
 
         // قم بجلب تقييم الخدمة من طرف المستخدم الحالي
-        $rate = Rating::where('user_id', $user_id)->where('product_id', $product->id)->first();
+        $rate = Rating::where('user_id', $user_id)
+            ->where('item_id', $item->id)
+            ->where('product_id', $product->id)
+            ->first();
 
         if (!$item->is_rating) {
             return response()->error('لا يمكنك التقييم', 403);
         }
         // إذا كان التقييم موجود وغير فارغ يمكن التعديل عليه
         if ($rate) {
-            return response()->error('لقد تمّ التقييم من قبلك بالفعل', 403);
+
+            try {
+                DB::beginTransaction();
+                // قم بإنشاء تقييم جديد
+                $rate->update([
+                    'rating' => $request->rating,
+                    'comment' => $request->comment,
+                    'status' => Rating::RATING_SUSPEND
+                ]);
+                // ثم جلب الخدمة من جديد لتعديل الحقلين : عدد التقييمات ومعدل التقييمات
+                $product = $this->getRatedProduct($rate->id);
+                //$product->increment('ratings_count');
+                $product->ratings_avg = $product->ratings_avg_rating;
+                // حفظ التعديلات الجديدة على الخدمة
+                $product->save();
+
+                $item->is_rating = false;
+                $item->save();
+                event(new EventsRating($seller, $product->slug, $product->title, $rate->id));
+                DB::commit();
+                // إرسال رسالة النجاح
+                return response()->success('لقد تمّ التعديل التقييم بنجاح', $rate);
+            } catch (Exception $ex) {
+                // في حالة الخطأ يتم التراجع عن أي تغيير حدث في قاعدة البيانات
+                DB::rollback();
+                //eturn $ex;
+                // ثم إرسال رسالة الخطأ
+                return response()->error('هناك خطأ ما حدث في قاعدة بيانات , يرجى التأكد من ذلك', 403);
+            }
         } else {
             // في حالة عدم وجود تقييم لهذه الخدمة من طرف المستخدم الحالي
             try {
@@ -56,6 +87,7 @@ class RatingController extends Controller
                 $rating = Rating::create([
                     'user_id' => $user_id,
                     'product_id' => $product->id,
+                    'item_id' => $item->id,
                     'rating' => $request->rating,
                     'comment' => $request->comment,
                     'status' => Rating::RATING_SUSPEND

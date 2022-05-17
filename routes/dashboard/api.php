@@ -19,6 +19,8 @@ use App\Http\Controllers\Dashboard\SellerBadgeController;
 use App\Http\Controllers\Dashboard\SellerLevelController;
 use App\Http\Controllers\Dashboard\TypePaymentController;
 use App\Http\Controllers\Dashboard\UserContoller;
+use App\Http\Controllers\ExternalAccountRatingController;
+use App\Http\Controllers\ExternalRatingController;
 use App\Http\Controllers\WithdrawalController;
 use Illuminate\Support\Facades\Route;
 
@@ -28,6 +30,7 @@ use Illuminate\Support\Facades\Route;
 |--------------------------------------------------------------------------
 |
 */
+
 Route::group(['middleware' => ['XSS']], function () {
 
     // مسار تسجيل الدخول
@@ -277,6 +280,26 @@ Route::group(['middleware' => ['XSS']], function () {
             Route::post('/{id}/active_payment', [TypePaymentController::class, 'active_payment']);
             // مسار تعطيل البوابة
             Route::post('/{id}/disactive_payment', [TypePaymentController::class, 'disactive_payment']);
+        });
+
+        Route::prefix('external_rating')->group(function () {
+            //  عرض كل الطلبيات
+            Route::get('/', [ExternalRatingController::class, 'index']);
+            // عرض طلبية الواحدة
+            Route::get('/{id}', [ExternalRatingController::class, 'show']);
+            // عرض عنصر من عناصر الطلبية
+            Route::post('/{id}/accept', [ExternalRatingController::class, 'accept']);
+            Route::post('/{id}/cancel', [ExternalRatingController::class, 'cancel']);
+        });
+
+        Route::prefix('external_account_rating')->group(function () {
+            //  عرض كل الطلبيات
+            Route::get('/', [ExternalAccountRatingController::class, 'index']);
+            // عرض طلبية الواحدة
+            Route::get('/{id}', [ExternalAccountRatingController::class, 'show']);
+            // عرض عنصر من عناصر الطلبية
+            Route::post('/{id}/accept', [ExternalAccountRatingController::class, 'accept']);
+            Route::post('/{id}/cancel', [ExternalAccountRatingController::class, 'cancel']);
         });
     });
 });

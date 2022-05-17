@@ -14,7 +14,7 @@ use Mehradsadeghi\FilterQueryString\FilterQueryString;
 
 class Product extends Model
 {
-    use HasFactory, FilterQueryString,SoftDeletes;
+    use HasFactory, FilterQueryString, SoftDeletes;
 
     /**
      * table
@@ -28,7 +28,7 @@ class Product extends Model
      *
      * @var array
      */
-    protected $appends = ['full_path_thumbnail','ratings_avg_rating'];
+    protected $appends = ['full_path_thumbnail', 'ratings_avg_rating'];
 
 
     /**
@@ -203,8 +203,8 @@ class Product extends Model
     {
         $ratings = explode(',', $value);
         if ($value == 1) {
-            return $query->whereIn('ratings_avg', [0,1])
-            ->orderBy('ratings_avg', 'desc');
+            return $query->whereIn('ratings_avg', [0, 1])
+                ->orderBy('ratings_avg', 'desc');
         }
         return $query->whereIn('ratings_avg', $ratings)
             ->orderBy('ratings_avg', 'desc');
@@ -294,7 +294,7 @@ class Product extends Model
     {
         return $this->ratings->count() != 0 ? round(array_sum(array_map(function ($key) {
             return $key['rating'];
-        }, $this->ratings->toArray()))/ $this->ratings->count()): 0;
+        }, $this->ratings->toArray())) / $this->ratings->count()) : 0;
     }
 
     /**
@@ -314,7 +314,7 @@ class Product extends Model
      */
     public function getFullPathThumbnailAttribute()
     {
-        return "https://timwoork-space.ams3.digitaloceanspaces.com/products/thumbnails/".$this->thumbnail;
+        return "https://timwoork-space.ams3.digitaloceanspaces.com/products/thumbnails/" . $this->thumbnail;
     }
 
     /* --------------------------------- Scopes --------------------------------- */
@@ -482,13 +482,23 @@ class Product extends Model
     }
 
     /**
-    * reject_product
-    *
-    * @return HasOne
-    */
-    public function reject_product():HasOne
+     * reject_product
+     *
+     * @return HasOne
+     */
+    public function reject_product(): HasOne
     {
         return $this->hasOne(RejectProduct::class, 'product_id');
+    }
+
+    /**
+     * external_rating
+     *
+     * @return HasOne
+     */
+    public function external_rating(): HasOne
+    {
+        return $this->hasOne(ExternalRating::class);
     }
 
     /* -------------------------------------------------------------------------- */

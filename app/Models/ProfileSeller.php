@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 
 class ProfileSeller extends Model
 {
@@ -108,5 +109,16 @@ class ProfileSeller extends Model
     public function items(): HasMany
     {
         return $this->hasMany(Item::class);
+    }
+
+
+    /**
+     * item
+     *
+     * @return HasOne
+     */
+    public function external_rating(): HasOne
+    {
+        return $this->hasOne(ExternalAccountRating::class);
     }
 }
