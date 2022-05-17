@@ -11,7 +11,7 @@ class FilterController extends Controller
     public function __invoke(Request $request)
     {
         $paginate = $request->query('paginate') ? $request->query('paginate') : 12;
-        $res = Product::select('id', 'title', 'slug', 'price', 'ratings_avg', 'count_buying', 'thumbnail', 'ratings_count', 'category_id', 'profile_seller_id', 'duration', 'content')
+        $res = Product::select('id', 'title', 'slug', 'price', 'ratings_avg', 'count_buying', 'thumbnail', 'ratings_count', 'category_id', 'profile_seller_id', 'duration', 'content', 'created_at')
             ->filter()
             ->productActive()
             ->where('is_active', 1)
@@ -35,6 +35,9 @@ class FilterController extends Controller
             ->withCount('ratings as rats_count')
             ->where('is_completed', 1)
             ->paginate($paginate);
+
+
+
         if (!$res->isEmpty()) {
             return response()->success(__("messages.filter.filter_success"), $res);
         } else {

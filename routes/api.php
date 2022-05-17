@@ -42,7 +42,7 @@ Route::group(['middleware' => ['XSS']], function () {
 
     // مسار الرابط
     Route::fallback(function () {
-        return response()->json('هذا الرابط غير موجود ', 200);
+        return abort(403);
     });
     // مسار التسجيل الدخول
     Route::post('/login', [LoginController::class, 'login']);
