@@ -60,7 +60,7 @@ class Product extends Model
         'status',
         'is_active',
         'most_selling',
-        'most_most_recent'
+        'most_recent'
     ];
 
 
