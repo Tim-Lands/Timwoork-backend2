@@ -15,7 +15,7 @@ class AddOrderIdToRatingsTable extends Migration
     {
         
         Schema::table('ratings', function (Blueprint $table) {
-            $table->foreignId('item_id')->constrained();
+            $table->foreignId('item_id')->nullable()->constrained();
         });
     }
 
