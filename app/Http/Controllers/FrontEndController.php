@@ -39,6 +39,7 @@ class FrontEndController extends Controller
                     'name_fr' => $category['name_fr'],
                     'parent_id' => $category['parent_id'],
                     'icon'    => $category['icon'],
+                    "image"   => $category['image'],
                     'products_count' => $category['subcategories']->sum('products_count')
                 ];
         }
@@ -72,6 +73,7 @@ class FrontEndController extends Controller
                     'name_fr' => $category['name_fr'],
                     'parent_id' => $category['parent_id'],
                     'icon'    => $category['icon'],
+                    "image"   => $category['image'],
                     'products_count' => $category['subcategories']->sum('products_count')
                 ];
         }
