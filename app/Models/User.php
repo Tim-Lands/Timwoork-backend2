@@ -14,10 +14,11 @@ use Laravel\Cashier\Billable;
 use Laravel\Sanctum\HasApiTokens;
 use Cog\Contracts\Ban\Bannable as BannableContract;
 use Cog\Laravel\Ban\Traits\Bannable;
+use Mehradsadeghi\FilterQueryString\FilterQueryString;
 
 class User extends Authenticatable implements BannableContract
 {
-    use HasApiTokens, HasFactory, Notifiable, Billable,Bannable;
+    use HasApiTokens, HasFactory, Notifiable, Billable,Bannable,FilterQueryString;
 
     /**
      * appends
@@ -48,10 +49,22 @@ class User extends Authenticatable implements BannableContract
     protected $casts = [
         'email_verified_at' => 'datetime',
     ];
-
+    /* -------------------------------- filtering ------------------------------- */
     /**
-     * The attributes that should be appends.
+     * filters
+     *
+     * @var array
      */
+    protected $filters = [
+        'sort',
+        'greater',
+        'greater_or_equal',
+        'less',
+        'less_or_equal',
+        'between',
+        'not_between',
+        'like',
+    ];
     // ===========================Contants =============================
     // code
     // ================== Acssesor & mutators ==========================

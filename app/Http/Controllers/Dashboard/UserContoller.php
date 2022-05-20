@@ -20,10 +20,17 @@ class UserContoller extends Controller
     *
     * @return void
     */
-    public function get_users()
+    public function get_users(Request $request)
     {
+        // تصفح المستخدمين
+        $paginate = $request->query('paginate') ? $request->query('paginate') : 10;
+
         // جلب جميع المستخدمين
-        $users = User::selection()->with('profile')->latest()->get();
+        $users = User::selection()
+                                ->filter()
+                                ->with('profile')
+                                ->latest()
+                                ->paginate($paginate);
         // رسالة نجاح
         return response()->success(__('messages.oprations.get_all_data'), $users);
     }
@@ -55,10 +62,15 @@ class UserContoller extends Controller
      *
      * @return void
      */
-    public function get_user_banned()
+    public function get_user_banned(Request $request)
     {
+        // تصفح المستخدمين
+        $paginate = $request->query('paginate') ? $request->query('paginate') : 10;
         // جلب المستخدمين المحظورين
-        $users_banned = User::selection()->with('bans:bannable_id,comment,expired_at')->onlyBanned()->get();
+        $users_banned = User::selection()->with(['profile','bans:bannable_id,comment,expired_at'])
+                                ->filter()
+                                ->onlyBanned()
+                                ->paginate($paginate);
         // اظهار العناصر
         return response()->success(__('messages.oprations.get_all_data'), $users_banned);
     }
@@ -68,10 +80,16 @@ class UserContoller extends Controller
      *
      * @return void
      */
-    public function get_user_unbanned()
+    public function get_user_unbanned(Request $request)
     {
+        // تصفح المستخدمين
+        $paginate = $request->query('paginate') ? $request->query('paginate') : 10;
         // جلب المستخدمين الغير المحظورين
-        $users_unbanned = User::selection()->withoutBanned()->get();
+        $users_unbanned = User::selection()
+                                ->filter()
+                                ->with('profile')
+                                ->withoutBanned()
+                                ->paginate($paginate);
         // اظهار العناصر
         return response()->success(__('messages.oprations.get_all_data'), $users_unbanned);
     }
