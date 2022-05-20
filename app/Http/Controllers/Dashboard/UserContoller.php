@@ -117,7 +117,7 @@ class UserContoller extends Controller
             }
 
             if ($request->expired_at) {
-                $data['expired_at'] = $request->expired_at;
+                $data['expired_at'] = Carbon::now()->addDays($request->expired_at);
             }
             if ($request->comment) {
                 $data['comment'] = $request->comment;
