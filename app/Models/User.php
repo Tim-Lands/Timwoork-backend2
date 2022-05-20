@@ -64,7 +64,18 @@ class User extends Authenticatable implements BannableContract
         'between',
         'not_between',
         'like',
+        'full_name'
     ];
+
+    public function full_name($query, $value)
+    {
+        // get the user's full name
+        $query->whereHas('profile', function ($query) use ($value) {
+            $query->where('full_name', 'like', '%' . $value . '%');
+        });
+    }
+
+
     // ===========================Contants =============================
     // code
     // ================== Acssesor & mutators ==========================
