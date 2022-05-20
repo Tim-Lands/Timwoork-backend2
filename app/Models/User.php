@@ -64,14 +64,51 @@ class User extends Authenticatable implements BannableContract
         'between',
         'not_between',
         'like',
-        'full_name'
+        'full_name',
+        'ban_tamporary',
+        'ban_permanent',
     ];
 
+    /**
+     * full_name => فلترة حسب الاسم الكامل
+     *
+     * @param  mixed $query
+     * @param  mixed $value
+     * @return void
+     */
     public function full_name($query, $value)
     {
         // get the user's full name
         $query->whereHas('profile', function ($query) use ($value) {
             $query->where('full_name', 'like', '%' . $value . '%');
+        });
+    }
+
+    /**
+     * ban_tamporary => فلترة حسب الحظر المؤقت
+     *
+     * @param  mixed $query
+     * @param  mixed $value
+     * @return void
+     */
+    public function ban_tamporary($query, $value)
+    {
+        $query->whereHas('bans', function ($query) use ($value) {
+            $query->whereNotNull('expired_at');
+        });
+    }
+
+    /**
+     * ban_permanent => فلترة حسب الحظر الدائم
+     *
+     * @param  mixed $query
+     * @param  mixed $value
+     * @return void
+     */
+    public function ban_permanent($query, $value)
+    {
+        $query->whereHas('bans', function ($query) use ($value) {
+            $query->whereNull('expired_at');
         });
     }
 
