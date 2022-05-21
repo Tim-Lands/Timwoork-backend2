@@ -28,7 +28,7 @@ class Conversation extends Model
      */
     public function scopeSelection(mixed $query): ?object
     {
-        return $query->select('id', 'title',  'created_at');
+        return $query->select('id', 'title', 'created_at');
     }
     // ========================== Relations ============================
     // code

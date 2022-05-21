@@ -13,7 +13,6 @@ class AddOrderIdToRatingsTable extends Migration
      */
     public function up()
     {
-        
         Schema::table('ratings', function (Blueprint $table) {
             $table->foreignId('item_id')->nullable()->constrained();
         });
@@ -27,7 +26,8 @@ class AddOrderIdToRatingsTable extends Migration
     public function down()
     {
         Schema::table('ratings', function (Blueprint $table) {
-            //
+            $table->dropForeign(['item_id']);
+            $table->dropColumn('item_id');
         });
     }
 }

@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Dashboard\ActivedProductController;
+use App\Http\Controllers\Dashboard\ActivityController;
 use App\Http\Controllers\Dashboard\AuthController;
 use App\Http\Controllers\Dashboard\CategoryController;
 use App\Http\Controllers\Dashboard\CountryController;
@@ -280,6 +281,20 @@ Route::group(['middleware' => ['XSS']], function () {
             Route::post('/{id}/active_payment', [TypePaymentController::class, 'active_payment']);
             // مسار تعطيل البوابة
             Route::post('/{id}/disactive_payment', [TypePaymentController::class, 'disactive_payment']);
+        });
+        Route::prefix('activities')->group(function () {
+            // مسار العرض جميع الاشعارات
+            Route::get('/get_all_notifications', [ActivityController::class, 'get_all_notifications']);
+            //  مسار جلب جميع المحادثات
+            Route::get('/get_all_conversations', [ActivityController::class, 'get_all_conversations']);
+            // مسار جلب المحادثة الواحدة
+            Route::get('/{id}/conversation', [ActivityController::class, 'get_conversation']);
+            // حذف المحادثة
+            Route::post('conversation/{id}/delete', [ActivityController::class, 'get_conversation']);
+            // التعديل على الرسالة
+            Route::post('/message/{id}/update', [ActivityController::class, 'update_message']);
+            // مسار تنشيط البوابة
+            Route::post('/message/{id}/delete', [ActivityController::class, 'delete_message']);
         });
 
         Route::prefix('external_rating')->group(function () {

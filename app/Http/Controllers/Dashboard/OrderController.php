@@ -16,19 +16,18 @@ class OrderController extends Controller
      */
     public function index()
     {
+        // التصفح
+        $paginate = request()->query('paginate') ? request()->query('paginate') : 10;
         // جلب كل الطلبيات
         $orders = Order::selection()->with('cart', function ($q) {
-            $q->select('id', 'user_id', 'total_price')
+            $q->select('id', 'user_id')
                 ->with('user', function ($q) {
                     $q->select('id', 'username')->with('profile', function ($q) {
-                        $q->select('id', 'first_name', 'last_name', 'credit', 'user_id', 'withdrawable_amount', 'pending_amount', 'badge_id', 'level_id')
-                    ->with([
-                        'badge:id,name_ar,name_en',
-                        'level:id,name_ar,name_en'
-                    ]);
+                        $q->select('id', 'first_name', 'last_name', 'user_id', 'full_name')
+                        ->without(['wise_account','paypal_account','bank_account','bank_transfer_detail','counrty']);
                     });
                 });
-        })->get();
+        })->latest()->paginate($paginate);
         // رسالة نجاح
         return response()->success(__('messages.oprations.get_all_data'), $orders);
     }
@@ -43,19 +42,15 @@ class OrderController extends Controller
     {
         // جلب الطلبية مع عناصرها
         $order = Order::selection()->whereId($id)
-                                   ->with(['cart' => function ($q) {
-                                       $q->select('id', 'user_id', 'total_price')->with('user', function ($q) {
-                                           $q->select('id', 'username')->with('profile', function ($q) {
-                                               $q->select('id', 'first_name', 'last_name', 'user_id', 'badge_id', 'level_id')->with(['badge:id,name_ar,name_en','level:id,name_ar,name_en'])->get();
-                                           });
-                                       });
-                                   },'items' => function ($q) {
-                                       $q->select('id', 'order_id', 'uuid', 'title', 'price_product', 'profile_seller_id', 'duration', 'status')
+                                   ->with(['items' => function ($q) {
+                                       $q->select('id', 'order_id', 'uuid', 'title', 'duration', 'status', 'profile_seller_id')
                                        ->with('profileSeller', function ($q) {
                                            $q->select('id', 'profile_id')->with('profile', function ($q) {
-                                               $q->select('id', 'user_id', 'first_name', 'last_name', 'level_id', 'badge_id')->with(['user:id,username','badge:id,name_ar,name_en','level:id,name_ar,name_en'])->get();
-                                           })->get();
-                                       })->get();
+                                               $q->select('id', 'user_id', 'first_name', 'last_name')->with(['user:id,username'])
+                                               ->without(['wise_account','paypal_account','bank_account','bank_transfer_detail','level','badge','counrty'])
+                                               ;
+                                           })->without('level', 'badge');
+                                       });
                                    }])->first();
 
         if (!$order) {
@@ -76,34 +71,31 @@ class OrderController extends Controller
     {
         // جلب الطلبية
         $product_id = Item::whereId($id)->first()->number_product;
-        $item = Item::select('id', 'order_id', 'uuid', 'title', 'price_product', 'profile_seller_id', 'duration', 'status')
+        //return $product_id;
+        $item = Item::select('id', 'order_id', 'uuid', 'title', 'number_product', 'price_product', 'profile_seller_id', 'duration', 'status')
             ->whereId($id)
             ->with(['order' =>function ($q) {
                 $q->select('id', 'cart_id')->with(['cart' => function ($q) {
-                    $q->select('id', 'user_id', 'total_price')
+                    $q->select('id', 'user_id')
                       ->with('user', function ($q) {
                           $q->select('id', 'username')->with('profile', function ($q) {
-                              $q->select('id', 'first_name', 'last_name', 'user_id', 'badge_id', 'level_id')->with([
-                                  'badge:id,name_ar,name_en',
-                                  'level:id,name_ar,name_en'])
+                              $q->select('id', 'first_name', 'last_name', 'user_id', 'badge_id', 'level_id')->with(['badge:id,name_ar,name_en','level:id,name_ar,name_en'])
+                                ->without(['wise_account','paypal_account','bank_account','bank_transfer_detail','counrty'])
                               ->get();
                           });
                       });
                 }]);
             },
-                'profileSeller' => function ($q) use ($product_id) {
-                    $q->select('id', 'profile_id', 'seller_level_id', 'seller_badge_id')
-                        ->with(['profile' => function ($q) {
-                            $q->select('id', 'first_name', 'last_name', 'user_id', 'level_id', 'badge_id')
-                            ->with([
-                                'user:id,username',
-                                'badge:id,name_ar,name_en',
-                                'level:id,name_ar,name_en'
-                            ]);
-                        },'products' => function ($q) use ($product_id) {
-                            $q->select('id', 'profile_seller_id', 'price', 'count_buying')->where('id', $product_id);
-                        },'badge:id,name_ar,name_en','level:id,name_ar,name_en']);
-                },
+            'profileSeller' => function ($q) use ($product_id) {
+                $q->select('id', 'profile_id', 'seller_level_id', 'seller_badge_id')
+                    ->with(['profile' => function ($q) {
+                        $q->select('id', 'first_name', 'last_name', 'user_id', 'level_id', 'badge_id')
+                        ->with(['user:id,username','badge:id,name_ar,name_en','level:id,name_ar,name_en'])
+                        ->without(['wise_account','paypal_account','bank_account','bank_transfer_detail','counrty']);
+                    },'products' => function ($q) use ($product_id) {
+                        $q->select('id', 'profile_seller_id', 'price', 'count_buying')->where('id', $product_id);
+                    },'badge:id,name_ar,name_en','level:id,name_ar,name_en']);
+            },
                 'item_rejected',
                 'item_modified',
                 'attachments',
