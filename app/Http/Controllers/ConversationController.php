@@ -30,7 +30,9 @@ class ConversationController extends Controller
         }])->withCount(['messages' => function (Builder $query) use ($user) {
             $query->where('user_id', '<>', $user->id)
                 ->whereNull('read_at');
-        }])->paginate($paginate);
+        }])
+        ->latest()
+        ->paginate($paginate);
         return response()->success('ok', $conversations);
     }
 

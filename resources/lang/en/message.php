@@ -89,7 +89,7 @@ return [
         "code_size" => "The confirmation number must contain a minimum of 6 digits and a maximum of 8",
         "professions" => "professional required",
         "skills" => "skills required",
-        "price_between" => "price must be between $5 and $5000",
+        "price_between" => "price must be between $5 and $1000",
         "duration_required" => "You must enter the duration",
         "tags_min" => "The tag must contain at least 1 character",
         "password_min" => "The password must contain at least 8 letters and numbers",

@@ -24,7 +24,7 @@ class ProductStepTwoRequest extends FormRequest
     public function rules()
     {
         return [
-            'price' => 'required|numeric|between:5,5000',
+            'price' => 'required|numeric|between:5,1000',
             'duration' => 'required|gt:0.99',
             'developments.*' => 'sometimes',
             'developments.*.title' => 'required|string|max:255',
