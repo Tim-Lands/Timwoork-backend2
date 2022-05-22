@@ -11,6 +11,7 @@ use App\Events\AcceptWithdrwal;
 use App\Events\BanAccountEvent;
 use App\Events\CanceledOrderByBuyer;
 use App\Events\CancelWithdrwal;
+use App\Events\DeleteMessageEvent;
 use App\Events\DileveredBySeller;
 use App\Events\ForgetPassword;
 use App\Events\NewOrder;
@@ -35,6 +36,7 @@ use App\Listeners\BanAccountListener;
 use App\Listeners\CanceledOrderByBuyerListener;
 use App\Listeners\CanceledOrderListener;
 use App\Listeners\CancelWithdrwalListener;
+use App\Listeners\DeleteMessageListener;
 use App\Listeners\DileveredBySellerListener;
 use App\Listeners\ForgetPasswordListener;
 use App\Listeners\NewOrderListener;
@@ -133,6 +135,9 @@ class EventServiceProvider extends ServiceProvider
         ],
         BanAccountEvent::class => [
             BanAccountListener::class,
+        ],
+        DeleteMessageEvent::class => [
+            DeleteMessageListener::class,
         ],
 
 

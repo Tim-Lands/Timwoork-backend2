@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Dashboard;
 
+use App\Events\DeleteMessageEvent;
 use App\Http\Controllers\Controller;
 use App\Models\Conversation;
 use App\Models\Message;
@@ -130,7 +131,7 @@ class ActivityController extends Controller
      * @param  mixed $id
      * @return void
      */
-    public function delete_message($id)
+    public function delete_message($id, Request $request)
     {
         try {
             // جلب المحادثة الواحدة
@@ -140,9 +141,14 @@ class ActivityController extends Controller
                 // رسالة خطأ
                 return response()->error(__("messages.errors.element_not_found"), Response::HTTP_NOT_FOUND);
             }
+            // get the user for this message
+            $user = $message->user;
+
             DB::beginTransaction();
             // حذف الرسالة
             $message->delete();
+            // ارسال اشعاؤ للمستخدم
+            event(new DeleteMessageEvent($user, $request->comment));
             DB::commit();
             // اظهار العناصر
             return response()->success(__('messages.oprations.delete_success'), $message);
