@@ -8,6 +8,7 @@ use App\Events\AcceptOrder;
 use App\Events\AcceptProductEvent;
 use App\Events\AcceptRequestRejectOrder;
 use App\Events\AcceptWithdrwal;
+use App\Events\BanAccountEvent;
 use App\Events\CanceledOrderByBuyer;
 use App\Events\CancelWithdrwal;
 use App\Events\DileveredBySeller;
@@ -30,6 +31,7 @@ use App\Listeners\AcceptOrderListener;
 use App\Listeners\AcceptProductListener;
 use App\Listeners\AcceptRequestRejectOrderListener;
 use App\Listeners\AcceptWithdrwalListener;
+use App\Listeners\BanAccountListener;
 use App\Listeners\CanceledOrderByBuyerListener;
 use App\Listeners\CanceledOrderListener;
 use App\Listeners\CancelWithdrwalListener;
@@ -128,7 +130,10 @@ class EventServiceProvider extends ServiceProvider
         ],
         UnbanAccountEvent::class => [
             UnbanAccountListener::class,
-        ]
+        ],
+        BanAccountEvent::class => [
+            BanAccountListener::class,
+        ],
 
 
     ];

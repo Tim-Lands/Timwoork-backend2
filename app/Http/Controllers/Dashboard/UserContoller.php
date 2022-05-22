@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Dashboard;
 
+use App\Events\BanAccountEvent;
 use App\Events\UnbanAccountEvent;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\BanRequest;
@@ -128,6 +129,8 @@ class UserContoller extends Controller
             $user->ban($data);
             // عمل تسجيل خروج لكل الحسابات
             $user->tokens()->delete();
+            // ارسال اشعاؤ للمستخدم
+            event(new BanAccountEvent($user, $request->comment, $request->expired_at));
             DB::commit();
             // رسالة نجاح
             return response()->success(__("messages.user.ban_success"), $user->load('bans'));
