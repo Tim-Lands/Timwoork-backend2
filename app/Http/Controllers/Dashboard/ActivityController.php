@@ -67,7 +67,13 @@ class ActivityController extends Controller
     public function get_conversation($id)
     {
         // جلب المحادثة الواحدة
-        $conversation = Message::selection()->where('conversation_id', $id)->get();
+        $conversation = Message::selection()
+                ->where('conversation_id', $id)
+                ->with('user', function ($query) {
+                    $query->select('id', 'username', 'email');
+                })
+                ->latest()
+                ->get();
         // اظهار العناصر
         return response()->success(__('messages.oprations.get_data'), $conversation);
     }
