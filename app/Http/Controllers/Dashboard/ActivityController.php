@@ -72,7 +72,6 @@ class ActivityController extends Controller
                 ->with('user', function ($query) {
                     $query->select('id', 'username', 'email');
                 })
-                ->latest()
                 ->get();
         // اظهار العناصر
         return response()->success(__('messages.oprations.get_data'), $conversation);
