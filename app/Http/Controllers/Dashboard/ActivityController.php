@@ -27,12 +27,16 @@ class ActivityController extends Controller
         // تصفح المستخدمين
         $paginate = $request->query('paginate') ? $request->query('paginate') : 10;
 
+        $notifications = DB::table('notifications')
+            ->select('data')
+            ->orderBy('created_at', 'desc')
+            ->paginate($paginate);
         // جلب جميع الاشعارات
-        $notifications = User::selection()->with(['notifications' => function ($query) {
+        /*$notifications = User::selection()->with(['notifications' => function ($query) {
             $query->orderBy('created_at', 'desc');
         }])->paginate($paginate)->map(function ($notification) {
             return $notification->notifications;
-        })->flatten();
+        })->flatten()*/;
 
         // اظهار العناصر
         return response()->success(__('messages.oprations.get_all_data'), $notifications);
