@@ -28,8 +28,8 @@ class ActivityController extends Controller
         $paginate = $request->query('paginate') ? $request->query('paginate') : 10;
 
         $notifications = DB::table('notifications')
-            ->select('data')
-            ->orderBy('created_at', 'desc')
+            ->join('users', 'users.id', '=', 'notifications.notifiable_id')
+            ->select('notifications.*', 'users.id as user_id', 'users.email', 'users.username')
             ->paginate($paginate);
         // جلب جميع الاشعارات
         /*$notifications = User::selection()->with(['notifications' => function ($query) {
