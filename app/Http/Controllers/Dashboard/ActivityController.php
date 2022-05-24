@@ -174,6 +174,7 @@ class ActivityController extends Controller
             return response()->success(__('messages.oprations.delete_success'), $message);
         } catch (Exception $ex) {
             DB::rollBack();
+            return $ex;
             return response()->error(__("messages.errors.error_database"), Response::HTTP_FORBIDDEN);
         }
     }
