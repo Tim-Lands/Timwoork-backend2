@@ -168,13 +168,13 @@ class ActivityController extends Controller
             // حذف الرسالة
             $message->delete();
             // ارسال اشعاؤ للمستخدم
-            event(new DeleteMessageEvent($user, $request->comment));
+            event(new DeleteMessageEvent($user, $request->cause));
             DB::commit();
             // اظهار العناصر
             return response()->success(__('messages.oprations.delete_success'), $message);
         } catch (Exception $ex) {
-            DB::rollBack();
             return $ex;
+            DB::rollBack();
             return response()->error(__("messages.errors.error_database"), Response::HTTP_FORBIDDEN);
         }
     }
