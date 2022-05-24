@@ -71,10 +71,21 @@ class ActivityController extends Controller
                 ->where('conversation_id', $id)
                 ->with('user', function ($query) {
                     $query->select('id', 'username', 'email');
-                })
-                ->get();
+                })->get();
+        // get conversation members
+        $conversation_members = Conversation::selection()
+            ->where('id', $id)
+            ->with('members', function ($query) {
+                $query->select('username', 'email', 'user_id');
+            })
+            ->first()
+            ->members;
+        $data = [
+            'conversation' => $conversation,
+            'members' => $conversation_members
+        ];
         // اظهار العناصر
-        return response()->success(__('messages.oprations.get_data'), $conversation);
+        return response()->success(__('messages.oprations.get_data'), $data);
     }
 
     /**
