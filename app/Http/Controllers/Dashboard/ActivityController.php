@@ -6,7 +6,7 @@ use App\Events\DeleteMessageEvent;
 use App\Http\Controllers\Controller;
 use App\Models\Conversation;
 use App\Models\Message;
-use App\Models\User;
+use App\Models\MoneyActivity;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
@@ -24,19 +24,43 @@ class ActivityController extends Controller
      */
     public function get_all_notifications(Request $request)
     {
-        // تصفح المستخدمين
+        // تصفح
         $paginate = $request->query('paginate') ? $request->query('paginate') : 10;
-
+        // جلب كل النشاطات
         $notifications = DB::table('notifications')
             ->join('users', 'users.id', '=', 'notifications.notifiable_id')
             ->join('profiles', 'profiles.user_id', '=', 'users.id')
-            ->select('notifications.*', 'users.id as user_id', 'users.email', 'users.username', 'profiles.full_name', 'profiles.avatar_url')
+            ->select('data->content', 'users.id as user_id', 'users.email', 'users.username', 'profiles.full_name', 'profiles.avatar_url')
             ->paginate($paginate);
         // اظهار العناصر
         return response()->success(__('messages.oprations.get_all_data'), $notifications);
     }
 
+    /**
+     * all_financial_transactions => جلب كل الحركات المالية
+     *
+     * @return void
+     */
+    public function all_financial_transactions(Request $request)
+    {
+        // تصفح
+        $paginate = $request->query('paginate') ? $request->query('paginate') : 10;
+        // جلب كل الحركات المالية
+        $activities = MoneyActivity::with(['wallet'=> function ($q) {
+            $q->select('id', 'profile_id', 'created_at')->with(['profile' => function ($q) {
+                $q->select('id', 'user_id', 'full_name', 'avatar_url')
+                ->with(['user' => function ($q) {
+                    $q->select('id', 'email', 'username');
+                }])->without(['level','badge','wise_account','paypal_account','bank_account','bank_transfer_detail','country']);
+            }]);
+        }])
+        ->filter()
+        ->latest()
+        ->paginate($paginate);
 
+        // اظهار العناصر
+        return response()->success(__('messages.oprations.get_all_data'), $activities);
+    }
     /**
      * get_all_conversations => جلب جميع المحادثات
      *
@@ -47,7 +71,9 @@ class ActivityController extends Controller
         // تصفح المستخدمين
         $paginate = $request->query('paginate') ? $request->query('paginate') : 10;
         // جلب جميع المحادثات الموقع الحالي
-        $conversations = Conversation::selection()->with('members')->latest()->paginate($paginate);
+        $conversations = Conversation::selection()->filter()->with('members')
+        ->latest()
+        ->paginate($paginate);
         // اظهار العناصر
         return response()->success(__('messages.oprations.get_all_data'), $conversations);
     }

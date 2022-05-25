@@ -7,10 +7,11 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Support\Facades\Auth;
+use Mehradsadeghi\FilterQueryString\FilterQueryString;
 
 class Conversation extends Model
 {
-    use HasFactory;
+    use HasFactory,FilterQueryString;
 
     protected $table = 'conversations';
 
@@ -18,8 +19,72 @@ class Conversation extends Model
     // code
     // ================== Acssesor & mutators ==========================
     // code
-    // ============================ Scopes =============================
+    // ============================ filtering =============================
+    /**
+    * filters
+    *
+    * @var array
+    */
+    protected $filters = [
+        'sort',
+        'greater',
+        'greater_or_equal',
+        'less',
+        'less_or_equal',
+        'between',
+        'not_between',
+        'like',
+        'username',
+        'email',
+        'full_name',
+    ];
 
+    /**
+     * username
+     *
+     * @param  mixed $query
+     * @param  mixed $value
+     * @return void
+     */
+    public function username($query, $value)
+    {
+        $query->whereHas('members', function ($query) use ($value) {
+            $query->where('username', 'like', '%' . $value . '%');
+        });
+    }
+
+    /**
+     * email
+     *
+     * @param  mixed $query
+     * @param  mixed $value
+     * @return void
+     */
+    public function email($query, $value)
+    {
+        $query->whereHas('members', function ($query) use ($value) {
+            $query->where('email', 'like', '%' . $value . '%');
+        });
+    }
+
+
+    public function full_name($query, $value)
+    {
+        // filter by full name from profile
+
+        $query->whereHas('messages', function ($query) use ($value) {
+            $query->whereHas('user', function ($query) use ($value) {
+                // filter by full name from profile
+                $query->whereHas('profile', function ($query) use ($value) {
+                    // filter by full name from profile
+                    $query->where('full_name', 'like', '%' . $value . '%');
+                });
+            });
+            // filter by full name from profile
+        });
+    }
+
+    // ============================ scopes =============================
     /**
      * scopeSelection => دالة من اجل جلب البيانات
      *

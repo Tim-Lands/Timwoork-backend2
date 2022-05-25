@@ -287,6 +287,8 @@ Route::group(['middleware' => ['XSS']], function () {
             Route::get('/get_all_notifications', [ActivityController::class, 'get_all_notifications']);
             //  مسار جلب جميع المحادثات
             Route::get('/get_all_conversations', [ActivityController::class, 'get_all_conversations']);
+            // مسار جلب المعاملات المالية
+            Route::get('/all_financial_transactions', [ActivityController::class, 'all_financial_transactions']);
             // مسار جلب المحادثة الواحدة
             Route::get('/{id}/conversation', [ActivityController::class, 'get_conversation']);
             // حذف المحادثة

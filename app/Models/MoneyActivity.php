@@ -5,13 +5,87 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Mehradsadeghi\FilterQueryString\FilterQueryString;
 
 class MoneyActivity extends Model
 {
-    use HasFactory;
+    use HasFactory, FilterQueryString;
     protected $casts = [
         'payload' => 'array',
     ];
+    /* -------------------------------- filtering ------------------------------- */
+    /**
+     * filters
+     *
+     * @var array
+     */
+    protected $filters = [
+        'sort',
+        'greater',
+        'greater_or_equal',
+        'less',
+        'less_or_equal',
+        'between',
+        'not_between',
+        'like',
+        'username',
+        'email',
+        'full_name',
+    ];
+
+    /**
+     * username
+     *
+     * @param  mixed $query
+     * @param  mixed $value
+     * @return void
+     */
+    public function username($query, $value)
+    {
+        $query->whereHas('wallet', function ($query) use ($value) {
+            $query->whereHas('profile', function ($query) use ($value) {
+                $query->whereHas('user', function ($query) use ($value) {
+                    $query->where('username', 'like', '%' . $value . '%');
+                });
+            });
+        });
+    }
+
+    /**
+     * email
+     *
+     * @param  mixed $query
+     * @param  mixed $value
+     * @return void
+     */
+    public function email($query, $value)
+    {
+        $query->whereHas('wallet', function ($query) use ($value) {
+            $query->whereHas('profile', function ($query) use ($value) {
+                $query->whereHas('user', function ($query) use ($value) {
+                    $query->where('email', 'like', '%' . $value . '%');
+                });
+            });
+        });
+    }
+
+    /**
+     * full_name
+     *
+     * @param  mixed $query
+     * @param  mixed $value
+     * @return void
+     */
+    public function full_name($query, $value)
+    {
+        $query->whereHas('wallet', function ($query) use ($value) {
+            $query->whereHas('profile', function ($query) use ($value) {
+                $query->where('full_name', 'like', '%' . $value . '%');
+            });
+        });
+    }
+
+
     // ===========================Contants =============================
     // code
     const STATUS_BUYING         = 0; // عملية شراء
