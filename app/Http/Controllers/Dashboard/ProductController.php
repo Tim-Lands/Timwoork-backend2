@@ -20,6 +20,8 @@ class ProductController extends Controller
      */
     public function index(): JsonResponse
     {
+        // تصفح
+        $paginate = request()->query('paginate') ? request()->query('paginate') : 10;
         // جلب جميع الخدمات
         $products = Product::selection()->where('is_completed', 1)
         ->with(['subcategory', 'profileSeller' => function ($q) {
@@ -29,7 +31,7 @@ class ProductController extends Controller
         }])
         ->filter('status', 'is_active')
         ->latest()
-        ->get();
+        ->paginate($paginate);
         // اظهار العناصر
         return response()->success(__("messages.oprations.get_all_data"), $products);
     }
