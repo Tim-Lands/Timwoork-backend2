@@ -30,7 +30,7 @@ class ActivityController extends Controller
         $notifications = DB::table('notifications')
             ->join('users', 'users.id', '=', 'notifications.notifiable_id')
             ->join('profiles', 'profiles.user_id', '=', 'users.id')
-            ->select('data->content', 'users.id as user_id', 'users.email', 'users.username', 'profiles.full_name', 'profiles.avatar_url')
+            ->select('notifications.*', 'users.id as user_id', 'users.email', 'users.username', 'profiles.full_name', 'profiles.avatar_url')
             ->paginate($paginate);
         // اظهار العناصر
         return response()->success(__('messages.oprations.get_all_data'), $notifications);
