@@ -619,6 +619,10 @@ class InsertProductContoller extends Controller
                 // رسالة خطأ
                 return response()->error(__("messages.errors.element_not_found"), 403);
             }
+            // galaries is count 1
+            if ($product->galaries->count() == 1) {
+                return response()->error(__("messages.product.count_galaries"), 403);
+            }
             // جلب الصورة من المعرض
             $galary = Galary::whereId($request->id)->where('product_id', $id)->first();
             // تحقق من صورة موجودة

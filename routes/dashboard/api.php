@@ -172,6 +172,20 @@ Route::group(['middleware' => ['XSS']], function () {
             Route::post('/{id}/restore_product_deleted', [ProductController::class, 'restore_product_deleted']);
             // حذف الخدمة نهائيا
             Route::post('/{id}/force_delete_product', [ProductController::class, 'force_delete_product']);
+            // مسار التعديل المرحلة الاولى
+            Route::post('/{id}/step_one', [ProductController::class,'product_step_one']);
+            // مسار التعديل المرحلة الثانية
+            Route::post('/{id}/step_two', [ProductController::class,'product_step_two']);
+            // مسار التعديل المرحلة الثالثة
+            Route::post('/{id}/step_three', [ProductController::class,'product_step_three']);
+            // مسار التعديل المرحلة الرابعة
+            Route::post('/{id}/step_four', [ProductController::class,'product_step_four']);
+            // مسار التعديل على الصورة البارزة
+            Route::post('/{id}/upload_thumbnail', [ProductController::class,'upload_thumbnail']);
+            // مسار التعديل المعرض
+            Route::post('/{id}/delete_galary', [ProductController::class,'delete_one_galary']);
+            // مسار حذف الصورة من المعرض
+            Route::post('/{id}/upload_galaries', [ProductController::class,'upload_galaries']);
         });
 
         // =============================== مسارات الوسم ====================================
