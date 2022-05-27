@@ -25,6 +25,7 @@ use App\Events\RequestModifiedBuBuyer;
 use App\Events\RequestRejectOrder;
 use App\Events\ResolveConflictBySeller;
 use App\Events\UnbanAccountEvent;
+use App\Events\UpdateMessageEvent;
 use App\Events\VerifyEmail;
 use App\Listeners\AcceptedDileveredByBuyerListener;
 use App\Listeners\AcceptModifiedBySellerListener;
@@ -50,6 +51,7 @@ use App\Listeners\RequestModifiedByBuyerListener;
 use App\Listeners\RequestRejectOrderListener;
 use App\Listeners\ResolveConflictListener;
 use App\Listeners\UnbanAccountListener;
+use App\Listeners\UpdateMessageListener;
 use App\Listeners\VerifyEmailListener;
 use App\Models\Item;
 use App\Observers\ItemObserver;
@@ -138,6 +140,9 @@ class EventServiceProvider extends ServiceProvider
         ],
         DeleteMessageEvent::class => [
             DeleteMessageListener::class,
+        ],
+        UpdateMessageEvent::class => [
+            UpdateMessageListener::class,
         ],
 
 

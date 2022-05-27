@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Dashboard;
 
 use App\Events\DeleteMessageEvent;
+use App\Events\UpdateMessageEvent;
 use App\Http\Controllers\Controller;
 use App\Models\Conversation;
 use App\Models\Message;
@@ -26,12 +27,27 @@ class ActivityController extends Controller
     {
         // تصفح
         $paginate = $request->query('paginate') ? $request->query('paginate') : 10;
-        // جلب كل النشاطات
-        $notifications = DB::table('notifications')
+
+        // بحث بواسطة اسم المستخدم او الايميل او الاسم الكامل
+        $search = $request->query('search');
+        if ($search) {
+            $notifications = DB::table('notifications')
+                    ->join('users', 'users.id', '=', 'notifications.notifiable_id')
+                    ->join('profiles', 'profiles.user_id', '=', 'users.id')
+                    ->select('notifications.*', 'users.id as user_id', 'users.email', 'users.username', 'profiles.full_name', 'profiles.avatar_url', 'notifications.created_at')
+                    ->where('users.username', 'like', '%' . $search . '%')
+                    ->orWhere('users.email', 'like', '%' . $search . '%')
+                    ->orWhere('profiles.full_name', 'like', '%' . $search . '%')
+                    ->orderBy('notifications.created_at', 'desc')
+                    ->paginate($paginate);
+        } else {
+            $notifications = DB::table('notifications')
             ->join('users', 'users.id', '=', 'notifications.notifiable_id')
             ->join('profiles', 'profiles.user_id', '=', 'users.id')
             ->select('notifications.*', 'users.id as user_id', 'users.email', 'users.username', 'profiles.full_name', 'profiles.avatar_url')
+            ->orderBy('notifications.created_at', 'desc')
             ->paginate($paginate);
+        }
         // اظهار العناصر
         return response()->success(__('messages.oprations.get_all_data'), $notifications);
     }
@@ -153,9 +169,15 @@ class ActivityController extends Controller
                 // رسالة خطأ
                 return response()->error(__("messages.errors.element_not_found"), Response::HTTP_NOT_FOUND);
             }
+            // جلب المستخدم
+            $user = $message->user;
             DB::beginTransaction();
             // تحديث الرسالة
             $message->update(['message' => $request->message]);
+            // اﻻرسال اشعار للمستخدم
+            if ($message->wasChanged()) {
+                event(new UpdateMessageEvent($user, $request->cause));
+            }
             DB::commit();
             // اظهار العناصر
             return response()->success(__('messages.oprations.update_success'), $message);
@@ -181,7 +203,7 @@ class ActivityController extends Controller
                 // رسالة خطأ
                 return response()->error(__("messages.errors.element_not_found"), Response::HTTP_NOT_FOUND);
             }
-            // get the user for this message
+            // جلب المستخدم
             $user = $message->user;
 
             DB::beginTransaction();
