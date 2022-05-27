@@ -28,9 +28,7 @@ class MoneyActivity extends Model
         'between',
         'not_between',
         'like',
-        'username',
-        'email',
-        'full_name',
+        'search'
     ];
 
     /**
@@ -81,6 +79,23 @@ class MoneyActivity extends Model
         $query->whereHas('wallet', function ($query) use ($value) {
             $query->whereHas('profile', function ($query) use ($value) {
                 $query->where('full_name', 'like', '%' . $value . '%');
+            });
+        });
+    }
+
+    public function search($query, $value)
+    {
+        $query->whereHas('wallet', function ($query) use ($value) {
+            $query->whereHas('profile', function ($query) use ($value) {
+                $query->where('full_name', 'like', '%' . $value . '%');
+            })
+            ->orWhereHas('profile', function ($query) use ($value) {
+                $query->whereHas('user', function ($query) use ($value) {
+                    $query->where('email', 'like', '%' . $value . '%');
+                })
+                ->orWhereHas('user', function ($query) use ($value) {
+                    $query->where('username', 'like', '%' . $value . '%');
+                });
             });
         });
     }
