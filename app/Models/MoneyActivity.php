@@ -31,58 +31,15 @@ class MoneyActivity extends Model
         'search'
     ];
 
+
+
     /**
-     * username
+     * search => بحث عن عملية مالية بواسطة الايميل او الاسم الكامل او اسم المستخدم
      *
      * @param  mixed $query
      * @param  mixed $value
      * @return void
      */
-    public function username($query, $value)
-    {
-        $query->whereHas('wallet', function ($query) use ($value) {
-            $query->whereHas('profile', function ($query) use ($value) {
-                $query->whereHas('user', function ($query) use ($value) {
-                    $query->where('username', 'like', '%' . $value . '%');
-                });
-            });
-        });
-    }
-
-    /**
-     * email
-     *
-     * @param  mixed $query
-     * @param  mixed $value
-     * @return void
-     */
-    public function email($query, $value)
-    {
-        $query->whereHas('wallet', function ($query) use ($value) {
-            $query->whereHas('profile', function ($query) use ($value) {
-                $query->whereHas('user', function ($query) use ($value) {
-                    $query->where('email', 'like', '%' . $value . '%');
-                });
-            });
-        });
-    }
-
-    /**
-     * full_name
-     *
-     * @param  mixed $query
-     * @param  mixed $value
-     * @return void
-     */
-    public function full_name($query, $value)
-    {
-        $query->whereHas('wallet', function ($query) use ($value) {
-            $query->whereHas('profile', function ($query) use ($value) {
-                $query->where('full_name', 'like', '%' . $value . '%');
-            });
-        });
-    }
-
     public function search($query, $value)
     {
         $query->whereHas('wallet', function ($query) use ($value) {
@@ -99,7 +56,6 @@ class MoneyActivity extends Model
             });
         });
     }
-
 
     // ===========================Contants =============================
     // code
