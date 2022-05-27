@@ -36,10 +36,11 @@ class ProductController extends Controller
         $paginate = request()->query('paginate') ? request()->query('paginate') : 10;
         // جلب جميع الخدمات
         $products = Product::selection()->where('is_completed', 1)
-        ->with(['subcategory', 'profileSeller' => function ($q) {
-            $q->select('id', 'profile_id')->with('profile', function ($q) {
-                $q->select('id', 'full_name', 'user_id')->with('user:id,username');
-            });
+        ->with(['subcategory','galaries','product_tag','video','developments',
+                 'profileSeller' => function ($q) {
+                    $q->select('id', 'profile_id')->with('profile', function ($q) {
+                        $q->select('id', 'full_name', 'user_id')->with('user:id,username');
+                });
         }])
         ->filter('status', 'is_active')
         ->latest()
