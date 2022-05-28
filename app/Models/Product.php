@@ -334,6 +334,7 @@ class Product extends Model
             'content',
             'price',
             'duration',
+            'current_step',
             'category_id',
             'profile_seller_id',
             'count_buying',
