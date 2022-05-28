@@ -19,7 +19,8 @@ class StatisticContoller extends Controller
             'badges_sellers'                  => DB::table('seller_badges')->count(),
             'badges'                          => DB::table('badges')->count(),
             'tags'                            => DB::table('tags')->count(),
-            'products_wainting_actived'       => DB::table('products')->whereNull('status')->count(),
+            'products_wainting_actived'       => DB::table('products')->where('status', '!=', 0)->where('status', '!=', 1)->count(),
+
             'products_actived'                => DB::table('products')->where('status', 1)->count(),
             'products_rejected'               => DB::table('products')->where('status', 0)->count(),
             'five_last_users'                 => DB::table('users')->take(5)->latest()->count(),
