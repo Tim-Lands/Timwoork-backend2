@@ -291,8 +291,7 @@ class ProductController extends Controller
     {
         try {
             //id  جلب العنصر بواسطة
-            $product = Product::whereId($id)
-                ->where('profile_seller_id', Auth::user()->profile->profile_seller->id)->first();
+            $product = Product::whereId($id)->first();
             // شرط اذا كان العنصر موجود
             if (!$product || !is_numeric($id)) {
                 // رسالة خطأ
