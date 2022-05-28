@@ -485,10 +485,10 @@ class ProductController extends Controller
                 return response()->error(__("messages.errors.element_not_found"), 403);
             }
 
-            if (count($product->galaries) == 0 || $product->thumbnail == null) {
+            /*if (count($product->galaries) == 0 || $product->thumbnail == null) {
                 // رسالة خطأ
                 return response()->error(__("messages.errors.upload_images"), 422);
-            }
+            }*/
 
             // جلب رابط الفيديو
             $get_galaries_url_video =  $product->video;
