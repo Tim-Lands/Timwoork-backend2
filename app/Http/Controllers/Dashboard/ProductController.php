@@ -38,10 +38,10 @@ class ProductController extends Controller
         $products = Product::selection()->where('is_completed', 1)
         ->with(['subcategory','galaries','product_tag','video','developments',
                  'profileSeller' => function ($q) {
-                    $q->select('id', 'profile_id')->with('profile', function ($q) {
-                        $q->select('id', 'full_name', 'user_id')->with('user:id,username');
-                });
-        }])
+                     $q->select('id', 'profile_id')->with('profile', function ($q) {
+                         $q->select('id', 'full_name', 'user_id')->with('user:id,username');
+                     });
+                 }])
         ->filter('status', 'is_active')
         ->latest()
         ->paginate($paginate);
@@ -71,7 +71,8 @@ class ProductController extends Controller
         $product = Product::Selection()
                     ->where('is_completed', 1)
                     ->whereId($id)
-                    ->with(['subcategory', 'profileSeller'])->first();
+                    ->with(['subcategory', 'profileSeller','galaries','product_tag','video','developments'])
+                    ->first();
         // شرط اذا كان العنصر موجود
         if (!$product) {
             // رسالة خطأ
