@@ -67,19 +67,57 @@ class ProductController extends Controller
      */
     public function show(mixed $id)
     {
-        //slug  جلب العنصر بواسطة
-        $product = Product::Selection()
-                    ->where('is_completed', 1)
-                    ->whereId($id)
-                    ->with(['subcategory', 'profileSeller','galaries','product_tag','video','developments'])
-                    ->first();
-        // شرط اذا كان العنصر موجود
+        $product = Product::selection()
+            ->whereSlug($id)
+            ->orWhere('id', $id)
+            ->withOnly([
+                'subcategory' => function ($q) {
+                    $q->select('id', 'parent_id', 'name_ar', 'name_en', 'name_fr')
+                        ->with('category', function ($q) {
+                            $q->select('id', 'name_ar')
+                                ->without('subcategories');
+                        })->withCount('products');
+                },
+                'developments' => function ($q) {
+                    $q->select('id', 'title', 'price', 'duration', 'product_id');
+                },
+                'product_tag',
+                'ratings' => function ($q) {
+                    $q->selection()->with('user.profile');
+                },
+                'galaries' => function ($q) {
+                    $q->select('id', 'path', 'product_id');
+                },
+                'video' => function ($q) {
+                    $q->select('id', 'product_id', 'url_video');
+                },
+                'profileSeller' => function ($q) {
+                    $q->select('id', 'profile_id', 'number_of_sales', 'portfolio', 'profile_id', 'seller_badge_id', 'seller_level_id')
+                        ->with([
+                            'profile' =>
+                            function ($q) {
+                                $q->select('id', 'user_id', 'first_name', 'last_name', 'avatar', 'avatar_url', 'precent_rating')
+                                    ->with(['user' => function ($q) {
+                                        $q->select('id', 'username', 'email', 'phone');
+                                    }, 'badge:id,name_ar,name_en,name_fr', 'level:id,name_ar,name_en,name_fr', 'country'])
+                                    ->without('profile_seller');
+                            },
+                            'level:id,name_ar,name_en,name_fr',
+                            'badge:id,name_ar,name_en,name_fr'
+                        ]);
+                }
+            ])
+            ->where('is_completed', 1)
+            //->withAvg('ratings', 'rating')
+            ->withCount('ratings')
+
+            ->first();
+        // فحص اذا كان يوجد هذا العنصر
         if (!$product) {
             // رسالة خطأ
-            return response()->error(__("messages.errors.element_not_found"), Response::HTTP_FORBIDDEN);
+            return response()->error(__("messages.errors.element_not_found"), 403);
         }
-
-        // اظهار العنصر
+        // اظهار العناصر
         return response()->success(__("messages.oprations.get_data"), $product);
     }
 
