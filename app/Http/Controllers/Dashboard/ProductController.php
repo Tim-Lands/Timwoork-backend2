@@ -39,7 +39,7 @@ class ProductController extends Controller
         ->with(['subcategory','galaries','product_tag','video','developments',
                  'profileSeller' => function ($q) {
                      $q->select('id', 'profile_id')->with('profile', function ($q) {
-                         $q->select('id', 'full_name', 'user_id')->with('user:id,username');
+                         $q->select('id', 'full_name', 'user_id')->with('user:id,username,email');
                      });
                  }])
         ->filter('status', 'is_active', 'like')
