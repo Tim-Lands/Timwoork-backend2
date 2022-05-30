@@ -342,6 +342,7 @@ class Product extends Model
             'buyer_instruct',
             'status',
             'created_at',
+            'deleted_at',
             'ratings_avg'
         );
     }

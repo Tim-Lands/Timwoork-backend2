@@ -261,7 +261,7 @@ class ProductController extends Controller
         // تصفح
         $paginate = request()->query('paginate') ? request()->query('paginate') : 10;
         //استعلام جلب الخدمات المحذوفة
-        $products = Product::selection()->with(['profileSeller'=> function ($q) {
+        $products = Product::selection()->onlyTrashed()->with(['profileSeller'=> function ($q) {
             $q->select('id', 'profile_id')
             ->with('profile', function ($q) {
                 $q->select('id', 'first_name', 'last_name', 'user_id')
@@ -273,7 +273,8 @@ class ProductController extends Controller
             $q->select('id', 'name_ar', 'name_en', 'name_fr')
             ->with('category:name_ar,name_en,name_fr');
         }])
-        ->onlyTrashed()
+        ->where('is_completed', 1)
+        ->latest()
         ->paginate($paginate);
 
         // اظهار العناصر
