@@ -214,6 +214,43 @@ class ProductController extends Controller
         return response()->success(__("messages.dashboard.get_product_rejected"), $products_rejected);
     }
 
+
+    /**
+     * delete => حذف الخدمة
+     *
+     * @param  mixed $id
+     * @return void
+     */
+    public function delete($id)
+    {
+        try {
+            //id  جلب العنصر بواسطة
+            $product = Product::find($id);
+            // شرط اذا كان العنصر موجود
+            if (!$product || !is_numeric($id)) {
+                // رسالة خطأ
+                return response()->error(__("messages.errors.element_not_found"), 403);
+            }
+
+            // ============================== حذف الخدمة ====================================:
+            // بداية المعاملة مع البيانات المرسلة لقاعدة بيانات :
+            DB::beginTransaction();
+            // عملية حذف الخدمة
+            $product->delete();
+            // انهاء المعاملة بشكل جيد :
+            DB::commit();
+            // ==============================================================================
+            // رسالة نجاح عملية الاضافة:
+            return response()->success(__("messages.oprations.delete_success"), $product);
+        } catch (Exception $ex) {
+            return $ex;
+            // لم تتم المعاملة بشكل نهائي و لن يتم ادخال اي بيانات لقاعدة البيانات
+            DB::rollback();
+            // رسالة خطأ
+            return response()->error(__("messages.errors.error_database"), 403);
+        }
+    }
+
     /**
      * products_soft_deleted => جلب الخدمات المحذوفة
      *
@@ -221,6 +258,8 @@ class ProductController extends Controller
      */
     public function get_products_soft_deleted()
     {
+        // تصفح
+        $paginate = request()->query('paginate') ? request()->query('paginate') : 10;
         //استعلام جلب الخدمات المحذوفة
         $products = Product::selection()->with(['profileSeller'=> function ($q) {
             $q->select('id', 'profile_id')
@@ -235,7 +274,7 @@ class ProductController extends Controller
             ->with('category:name_ar,name_en,name_fr');
         }])
         ->onlyTrashed()
-        ->get();
+        ->paginate($paginate);
 
         // اظهار العناصر
         return response()->success(__("messages.oprations.get_all_data"), $products);

@@ -37,8 +37,8 @@ Route::group(['middleware' => ['XSS']], function () {
     // مسار تسجيل الدخول
     Route::post('/login', [AuthController::class, 'login']);
 
-    Route::middleware('auth:sanctum')->group(function () {
-        // =======================  مسارات التسجيل و التسجيل دخول المدير ======================
+    Route::middleware(['auth:sanctum'])->group(function () {
+        // =======================  مسارات التسجيل و التسجيل دخول الtype.adminمدير ======================
         Route::get('/me', [AuthController::class, 'me']);
         Route::post('/logout', [AuthController::class, 'logout']);
 
@@ -170,6 +170,8 @@ Route::group(['middleware' => ['XSS']], function () {
             Route::post('/{id}/send_reject_product', RejectProductController::class);
             // استرجاع الخدمة المحذوفة
             Route::post('/{id}/restore_product_deleted', [ProductController::class, 'restore_product_deleted']);
+            // حذف الخدمة
+            Route::post('/{id}/delete', [ProductController::class, 'delete']);
             // حذف الخدمة نهائيا
             Route::post('/{id}/force_delete_product', [ProductController::class, 'force_delete_product']);
             // مسار التعديل المرحلة الاولى
