@@ -42,7 +42,7 @@ class ProductController extends Controller
                          $q->select('id', 'full_name', 'user_id')->with('user:id,username');
                      });
                  }])
-        ->filter('status', 'is_active')
+        ->filter('status', 'is_active', 'like')
         ->latest()
         ->paginate($paginate);
         // اظهار العناصر
@@ -274,6 +274,7 @@ class ProductController extends Controller
             ->with('category:name_ar,name_en,name_fr');
         }])
         ->where('is_completed', 1)
+        ->filter('like')
         ->latest()
         ->paginate($paginate);
 
