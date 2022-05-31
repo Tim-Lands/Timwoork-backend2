@@ -57,7 +57,7 @@ class RejectProductNotification extends Notification
             'content' => [
                 'product_id' => $this->product->id,
                 'title' => $this->product->title,
-                "cause" => $this->product->cause
+                "cause" => $this->cause
             ],
         ]);
     }

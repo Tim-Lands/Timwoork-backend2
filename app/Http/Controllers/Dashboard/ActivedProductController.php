@@ -88,6 +88,7 @@ class ActivedProductController extends Controller
             return response()->success(__('messages.dashboard.reject_status_product'), $product);
             // =================================================
         } catch (Exception $ex) {
+            return $ex;
             // لم تتم المعاملة بشكل نهائي و لن يتم ادخال اي بيانات لقاعدة البيانات
             DB::rollback();
             // رسالة خطأ :
