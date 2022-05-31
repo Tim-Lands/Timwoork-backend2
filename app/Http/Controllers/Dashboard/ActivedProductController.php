@@ -64,7 +64,7 @@ class ActivedProductController extends Controller
      * @param  mixed $id => id المعرف
      * @return void
      */
-    public function rejectProduct(mixed $id, CauseRejectProductRequest $request): JsonResponse
+    public function rejectProduct(mixed $id, CauseRejectProductRequest $request)
     {
         try {
             $product = Product::find($id);
