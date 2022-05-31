@@ -177,7 +177,7 @@ class FrontEndController extends Controller
                                     ->with(['user' => function ($q) {
                                         $q->select('id', 'username', 'email', 'phone');
                                     }, 'badge:id,name_ar,name_en,name_fr', 'level:id,name_ar,name_en,name_fr', 'country'])
-                                    ->without('profile_seller');
+                                    ->without('bank_account', 'bank_transfer_detail', 'paypal_account', 'wise_account', 'badge', 'level', 'profile_seller');
                             },
                             'level:id,name_ar,name_en,name_fr',
                             'badge:id,name_ar,name_en,name_fr'
@@ -264,7 +264,7 @@ class FrontEndController extends Controller
                         $q->select('id', 'profile_id')->without('level', 'badge')
                             ->with('profile', function ($q) {
                                 $q->select('id', 'first_name', 'last_name', 'user_id')
-                                    ->with('user:id,username')->without('level', 'badge');
+                                    ->with('user:id,username')->without('bank_account', 'bank_transfer_detail', 'paypal_account', 'wise_account', 'badge', 'level');
                             });
                     });
             }])->first();
