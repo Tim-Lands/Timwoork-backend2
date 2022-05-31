@@ -19,7 +19,8 @@ class FilterController extends Controller
                 'profileSeller' => function ($q) {
                     $q->with(['profile'=> function ($q) {
                         $q->select('id', 'user_id', 'first_name', 'last_name')
-                            ->with('user:id,username');
+                            ->with('user:id,username')
+                            ->without('bank_account', 'bank_transfer_detail', 'paypal_account', 'wise_account', 'badge', 'level');
                     }])
                     ->without('languages', 'skills', 'professions');
                 },
