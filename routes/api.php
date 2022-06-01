@@ -11,6 +11,8 @@ use App\Http\Controllers\Auth\SellerOrderController;
 use App\Http\Controllers\Auth\UserStatusController;
 use App\Http\Controllers\Auth\WalletController;
 use App\Http\Controllers\ConversationController;
+use App\Http\Controllers\CountryController;
+use App\Http\Controllers\CurrencyController;
 use App\Http\Controllers\Dashboard\TagController;
 use App\Http\Controllers\Dashboard\UserContoller;
 use App\Http\Controllers\ExternalAccountRatingController;
@@ -38,6 +40,8 @@ use Illuminate\Support\Facades\Route;
 | API Routes
 |--------------------------------------------------------------------------
 */
+Route::get('/currency', [CurrencyController::class, 'index']);
+Route::get('/get_countries', [CountryController::class, 'index']);
 
 Route::group(['middleware' => ['XSS']], function () {
     # code...
