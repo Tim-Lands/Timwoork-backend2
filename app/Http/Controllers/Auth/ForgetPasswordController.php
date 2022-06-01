@@ -51,8 +51,9 @@ class ForgetPasswordController extends Controller
 
     public function reset_password(ForgetPasswordResetRequest $request)
     {
-        $token = ForgetPasswordToken::whereEmail($request->email)->first();
-
+        $token = ForgetPasswordToken::whereEmail($request->email)
+                                      ->where('token', $request->token)
+                                      ->first();
         if ($token) {
             $user = $token->user;
             $user->password = bcrypt($request->password);
