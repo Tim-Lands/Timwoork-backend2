@@ -1,0 +1,6 @@
+*
+!public/
+!products/
+!resources_files/
+!attachments/
+!.gitignore
