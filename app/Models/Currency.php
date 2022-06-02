@@ -9,5 +9,8 @@ class Currency extends Model
 {
     use HasFactory;
     protected $table = 'currencies';
+    protected $primaryKey = 'code';
+    public $keyType = 'string';
     public $incrementing = false;
+
 }
