@@ -24,10 +24,10 @@ class CountrySeeder extends Seeder
                 continue;
             $country_code = $value->countryCode;
             $currency = Currency::where("code", $value->currencyCode)
-            ->first();
-            if(is_null($currency))
+                ->first();
+            if (is_null($currency))
                 continue;
-            $currency_id =$currency->id;
+            $currency_id = $currency->id;
             Country::where('id', $value->id)->update([
                 'name_en' => $value->name_en,
                 'country_code' => $country_code,

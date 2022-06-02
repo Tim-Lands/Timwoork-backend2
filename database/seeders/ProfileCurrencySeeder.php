@@ -17,10 +17,12 @@ class ProfileCurrencySeeder extends Seeder
         //
         $profiles = Profile::with('country')->get()->all();
         foreach ($profiles as $key => $value) {
-            if (!property_exists($value, 'country'))
+            $country =  $value->country;
+            if(is_null($country))
                 continue;
-            $value->currency_id = $value->country->currency_id;
+            $value->currency_id = $country->currency_id;
             $value->save();
+
         }
     }
 }
