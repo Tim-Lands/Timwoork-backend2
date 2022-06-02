@@ -60,7 +60,10 @@ class Profile extends Model
     {
         return $this->belongsTo(Country::class, "country_id");
     }
-
+    public function currency():BelongsTo
+    {
+        return $this->BelongsTo(Currency::class,'currency_id', 'id');
+    }
     /**
      * badge
      *
