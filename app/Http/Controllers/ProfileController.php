@@ -5,12 +5,12 @@ namespace App\Http\Controllers;
 use App\Http\Requests\ProfileStepOneRequest;
 use App\Http\Requests\ProfileStepThreeRequest;
 use App\Http\Requests\ProfileStepTwoRequest;
+use App\Models\Country;
 use App\Models\Profile;
 use App\Models\User;
 use Exception;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
-use App\Models\Country;
 
 class ProfileController extends Controller
 {
@@ -41,8 +41,8 @@ class ProfileController extends Controller
                     $query->with('profile_seller', function ($query) {
                         $query->with('products', function ($query) {
                             $query->selection()
-                                ->where('status', 1)
-                                ->where('is_active', 1);
+                            ->where('status', 1)
+                            ->where('is_active', 1);
                         });
                     });
                 },
@@ -70,7 +70,6 @@ class ProfileController extends Controller
 
     public function step_one(ProfileStepOneRequest $request)
     {
-
         try {
             $country = Country::where('id', $request->country_id)->first();
             $user = Auth::user();
@@ -91,7 +90,7 @@ class ProfileController extends Controller
             // إرسال رسالة نجاح المرحلة اﻷولى
             return response()->success(__("messages.product.success_step_one"), $user);
         } catch (Exception $ex) {
-            //return $ex;
+            return $ex;
             return response()->error(__("messages.errors.error_database"));
         }
     }
@@ -117,7 +116,7 @@ class ProfileController extends Controller
             $user = Auth::user();
             // تغيير اسم المستخدم
 
-            $avatarUrl = 'https://timwoork-space.ams3.digitaloceanspaces.com/avatars/' . $avatarName;
+            $avatarUrl = 'https://timwoork-space.ams3.digitaloceanspaces.com/avatars/'.$avatarName;
 
             $user->profile->avatar = $avatarName;
             $user->profile->avatar_url = $avatarUrl;
