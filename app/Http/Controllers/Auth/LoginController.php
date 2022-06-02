@@ -61,7 +61,6 @@ class LoginController extends Controller
             'profile.badge',
             'profile.level',
             'profile.country',
-            'profile.currency',
             'profile.wallet' => function ($q) {
                 return $q->with('activities');
             },

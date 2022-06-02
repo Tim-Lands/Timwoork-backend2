@@ -60,10 +60,7 @@ class Profile extends Model
     {
         return $this->belongsTo(Country::class, "country_id");
     }
-    public function currency():HasOne
-    {
-        return $this->hasOne(Currency::class,'currency_id');
-    }
+
     /**
      * badge
      *
