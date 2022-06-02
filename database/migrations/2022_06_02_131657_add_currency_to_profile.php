@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class AddCurrencyCodeToCountriesTable extends Migration
+class AddCurrencyToProfile extends Migration
 {
     /**
      * Run the migrations.
@@ -13,8 +13,8 @@ class AddCurrencyCodeToCountriesTable extends Migration
      */
     public function up()
     {
-        Schema::table('countries', function (Blueprint $table) {
-            $table->foreignId('currency_id')->nullable()->constrained();
+        Schema::table('profiles', function (Blueprint $table) {
+            $table->foreignId('currency_id')->nullable(true)->constrained();
             //
         });
     }
@@ -26,10 +26,8 @@ class AddCurrencyCodeToCountriesTable extends Migration
      */
     public function down()
     {
-        Schema::table('countries', function (Blueprint $table) {
+        Schema::table('profiles', function (Blueprint $table) {
             //
-            $table->dropForeign(['currency_id']);
-            $table->dropColumn('currency_id');
         });
     }
 }
