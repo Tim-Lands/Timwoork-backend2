@@ -14,8 +14,8 @@ class AddCurrencyCodeToCountriesTable extends Migration
     public function up()
     {
         Schema::table('countries', function (Blueprint $table) {
-            $table->char('currency_code', 5);
-            $table->foreign('currency_code')->references('code')->on('currencies');
+            $table->string('currency_code', 5);
+            $table->foreign('currency_code')->references('id')->on('currencies');
             //
         });
     }
