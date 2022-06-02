@@ -40,10 +40,11 @@ use Illuminate\Support\Facades\Route;
 | API Routes
 |--------------------------------------------------------------------------
 */
-Route::get('/currency', [CurrencyController::class, 'index']);
-Route::get('/get_countries', [CountryController::class, 'index']);
+
 
 Route::group(['middleware' => ['XSS']], function () {
+    Route::get('/currency', [CurrencyController::class, 'index']);
+    Route::get('/get_countries', [CountryController::class, 'index']);
     # code...
     Broadcast::routes(['middleware' => ['auth:sanctum']]);
 
