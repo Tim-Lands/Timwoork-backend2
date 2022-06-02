@@ -27,7 +27,10 @@ class DatabaseSeeder extends Seeder
             //AdminSeeder::class,
             //UserSeeder::class,
             //ProductTableSeeder::class,
-            TypePaymentSeeder::class,
+            //TypePaymentSeeder::class,
+            CurrencySeeder::class,
+            CountrySeeder::class,
+            ProfileCurrencySeeder::class
         ]);
     }
 }
