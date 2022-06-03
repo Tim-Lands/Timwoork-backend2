@@ -31,7 +31,7 @@ class ConversationController extends Controller
             $query->where('user_id', '<>', $user->id)
                 ->whereNull('read_at');
         }])
-        ->whereHas('messages', function (Builder $query) use ($user) {
+        ->whereHas('messages', function ($query) {
             $query->latest();
         })
         //->latest()
