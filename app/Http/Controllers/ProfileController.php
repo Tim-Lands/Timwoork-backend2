@@ -5,12 +5,12 @@ namespace App\Http\Controllers;
 use App\Http\Requests\ProfileStepOneRequest;
 use App\Http\Requests\ProfileStepThreeRequest;
 use App\Http\Requests\ProfileStepTwoRequest;
+use App\Models\Country;
 use App\Models\Profile;
 use App\Models\User;
 use Exception;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
-use App\Models\Country;
 
 class ProfileController extends Controller
 {
@@ -41,8 +41,8 @@ class ProfileController extends Controller
                     $query->with('profile_seller', function ($query) {
                         $query->with('products', function ($query) {
                             $query->selection()
-                                ->where('status', 1)
-                                ->where('is_active', 1);
+                            ->where('status', 1)
+                            ->where('is_active', 1);
                         });
                     });
                 },
@@ -70,14 +70,19 @@ class ProfileController extends Controller
 
     public function step_one(ProfileStepOneRequest $request)
     {
-
         try {
-            $country = Country::where('id', $request->country_id)->first();
+            if(!is_null($request->currency_id))
+                $currency_id = $request->currency_id;
+            else{
+                $country = Country::where('id', $request->country_id)->first();
+                $currency_id = $country->currency_id;
+            }
             $user = Auth::user();
             // تغيير اسم المستخدم
             $user->username = $request->username;
             $user->save();
             // تغيير المعلومات الشخصية
+
             $user->profile->first_name = $request->first_name;
             $user->profile->last_name = $request->last_name;
             $user->profile->full_name = $request->first_name . ' ' . $request->last_name;
@@ -86,12 +91,12 @@ class ProfileController extends Controller
             $user->profile->country_id = $request->country_id;
             $user->profile->steps = Profile::COMPLETED_SETP_THREE;
             $user->profile->is_completed = true;
-            $user->profile->currency_id = $country->curency_id;
+            $user->profile->currency_id = $currency_id;
             $user->profile->save();
             // إرسال رسالة نجاح المرحلة اﻷولى
             return response()->success(__("messages.product.success_step_one"), $user);
         } catch (Exception $ex) {
-            //return $ex;
+            return $ex;
             return response()->error(__("messages.errors.error_database"));
         }
     }
@@ -117,7 +122,7 @@ class ProfileController extends Controller
             $user = Auth::user();
             // تغيير اسم المستخدم
 
-            $avatarUrl = 'https://timwoork-space.ams3.digitaloceanspaces.com/avatars/' . $avatarName;
+            $avatarUrl = 'https://timwoork-space.ams3.digitaloceanspaces.com/avatars/'.$avatarName;
 
             $user->profile->avatar = $avatarName;
             $user->profile->avatar_url = $avatarUrl;

@@ -38,6 +38,7 @@ class ProfileStepOneRequest extends FormRequest
             'date_of_birth' => 'required|date_format:Y-m-d|before_or_equal:' . $before . '|after_or_equal:' . $after,
             'gender' => 'required',
             'country_id' => 'required',
+            'currency_id'=>'sometimes'
         ];
     }
 
