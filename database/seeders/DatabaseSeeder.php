@@ -30,7 +30,8 @@ class DatabaseSeeder extends Seeder
             //TypePaymentSeeder::class,
             //CurrencySeeder::class,
             //CountrySeeder::class,
-            ProfileCurrencySeeder::class
+            //ProfileCurrencySeeder::class,
+            CountryPhoneCodeSeeder::class
         ]);
     }
 }
