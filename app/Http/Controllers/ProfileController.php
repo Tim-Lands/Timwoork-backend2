@@ -71,12 +71,18 @@ class ProfileController extends Controller
     public function step_one(ProfileStepOneRequest $request)
     {
         try {
-            $country = Country::where('id', $request->country_id)->first();
+            if(!is_null($request->currency_id))
+                $currency_id = $request->currency_id;
+            else{
+                $country = Country::where('id', $request->country_id)->first();
+                $currency_id = $country->currency_id;
+            }
             $user = Auth::user();
             // تغيير اسم المستخدم
             $user->username = $request->username;
             $user->save();
             // تغيير المعلومات الشخصية
+
             $user->profile->first_name = $request->first_name;
             $user->profile->last_name = $request->last_name;
             $user->profile->full_name = $request->first_name . ' ' . $request->last_name;
@@ -85,7 +91,7 @@ class ProfileController extends Controller
             $user->profile->country_id = $request->country_id;
             $user->profile->steps = Profile::COMPLETED_SETP_THREE;
             $user->profile->is_completed = true;
-            $user->profile->currency_id = $country->curency_id;
+            $user->profile->currency_id = $currency_id;
             $user->profile->save();
             // إرسال رسالة نجاح المرحلة اﻷولى
             return response()->success(__("messages.product.success_step_one"), $user);

@@ -33,7 +33,6 @@ class RegisterController extends Controller
                 'username' => $request->username,
                 'password' => bcrypt($request->password)
             ]);
-
             // انشاء مستخدم جديد
             $user->profile()->create([
                 'avatar' => url('avatars/avatar.png'),
@@ -41,7 +40,6 @@ class RegisterController extends Controller
                 'badge_id' => 1,
                 'level_id' => 1,
             ]);
-
             // انشاء محفظة للمستخدم
 
             $user->profile->wallet()->create([]);
