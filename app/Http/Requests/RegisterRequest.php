@@ -29,6 +29,7 @@ class RegisterRequest extends FormRequest
             'email' => 'required|email|unique:users',
             'username' => ['required', "unique:users,username," . Auth::id(), 'regex:/(^([a-zA-Z]+)(\d+)?$)/u'],
             'password' => ['required', 'confirmed', Password::min(8)->mixedCase()->letters()->numbers()],
+            'phone' => ['required', 'unique:users,phone,' . Auth::id(), 'regex:/(^([0-9]+)(\d+)?$)/u', 'min:8', 'max:12'],
         ];
     }
 
@@ -48,6 +49,13 @@ class RegisterRequest extends FormRequest
             'username.unique' => __("messages.validation.unique"),
             'password.required' => __("messages.validation.password_required"),
             'password.confirmed' => __("messages.validation.password_confirmed"),
+            'phone.required' => __("messages.validation.phone_number_required"),
+            'phone.unique' => __("messages.validation.phone_unique"),
+            'phone.regex' => __("messages.validation.phone_regex"),
+            'phone.min' => __("messages.validation.phone_min"),
+            'phone.max' => __("messages.validation.phone_max"),
+
+
         ];
     }
 }
