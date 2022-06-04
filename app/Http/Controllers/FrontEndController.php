@@ -22,6 +22,21 @@ class FrontEndController extends Controller
      *
      * @return void
      */
+
+    public function get_top_categories()
+    {
+        $top_categories = DB::table('products')->join('categories', 'products.category_id', '=', 'categories.id')
+            ->selectRaw('count(count_buying) as category_buying, categories.*')
+            ->groupBy('categories.id')
+            ->orderByDesc('category_buying')
+            ->get();
+
+        /* Product::groupBy('category_id')->
+        selectRaw('sum(count_buying) as category_count_buying')->
+        pluck('category_count_buying'); */
+        return $top_categories;
+    }
+
     public function get_categories()
     {
         // جلب التصنيفات الرئيسية
@@ -109,11 +124,11 @@ class FrontEndController extends Controller
     }
 
     /**
-    * get_subcategories_for_add_product => دالة اظهار التصنيفات الفرعية من اجل اضافة خدمة
-    *
-    * @param  mixed $id
-    * @return void
-    */
+     * get_subcategories_for_add_product => دالة اظهار التصنيفات الفرعية من اجل اضافة خدمة
+     *
+     * @param  mixed $id
+     * @return void
+     */
     public function get_subcategories_for_add_product(mixed $id): JsonResponse
     {
         //id  جلب العنصر بواسطة
@@ -230,9 +245,9 @@ class FrontEndController extends Controller
     {
         // جلب جميع الاصناف الرئيسة و الاصناف الفرعية عن طريق التصفح
         $categories = Category::Selection()
-        ->with(['subcategories' => function ($q) {
-            $q->select('id', 'name_ar', 'name_en', 'name_fr', 'parent_id', 'icon');
-        }])->parent()->get();
+            ->with(['subcategories' => function ($q) {
+                $q->select('id', 'name_ar', 'name_en', 'name_fr', 'parent_id', 'icon');
+            }])->parent()->get();
 
         // اظهار العناصر
         if (auth()->check() && auth()->user()->profile->gender == 1) {
@@ -345,8 +360,8 @@ class FrontEndController extends Controller
     {
         // جلب الارصدة المعلقة
         $amounts = Amount::with('wallet.profile')
-        ->where('transfered_at', '<=', Carbon::now())
-        ->where('status', Amount::PENDING_AMOUNT)
+            ->where('transfered_at', '<=', Carbon::now())
+            ->where('status', Amount::PENDING_AMOUNT)
             ->get();
         //return $amount;
         foreach ($amounts as $amount) {
@@ -354,20 +369,19 @@ class FrontEndController extends Controller
             $amount->save();
             // المحفظة
             $pending_amount = $amount->wallet->amounts_pending - $amount->amount;
-            $withdrawable_amount =$amount->wallet->withdrawable_amount + $amount->amount;
+            $withdrawable_amount = $amount->wallet->withdrawable_amount + $amount->amount;
             // تعديل المحفظة
             $amount->wallet->update([
-            'amounts_pending' => $pending_amount,
-            'withdrawable_amount' => $withdrawable_amount,
-        ]);
+                'amounts_pending' => $pending_amount,
+                'withdrawable_amount' => $withdrawable_amount,
+            ]);
             // تعديل المبلغ المستخدم
             $amount->wallet->profile->update([
-            'pending_amount' => $pending_amount,
-            'withdrawable_amount' => $withdrawable_amount,
-        ]);
+                'pending_amount' => $pending_amount,
+                'withdrawable_amount' => $withdrawable_amount,
+            ]);
         }
 
-        return response()->success(__("تمت عملية التحوليات بنجاح"));
-        ;
+        return response()->success(__("تمت عملية التحوليات بنجاح"));;
     }
 }
