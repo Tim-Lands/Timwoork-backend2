@@ -22,6 +22,19 @@ class FrontEndController extends Controller
      *
      * @return void
      */
+    public function get_top_categories()
+    {
+        $top_categories = DB::table('products')->join('categories', 'products.category_id', '=', 'categories.id')
+            ->selectRaw('count(count_buying) as category_buying, categories.*')
+            ->groupBy('categories.id')
+            ->orderByDesc('category_buying')
+            ->get();
+
+        /* Product::groupBy('category_id')->
+        selectRaw('sum(count_buying) as category_count_buying')->
+        pluck('category_count_buying'); */
+        return $top_categories;
+    }
     public function get_categories()
     {
         // جلب التصنيفات الرئيسية
