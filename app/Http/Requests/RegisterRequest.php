@@ -29,7 +29,9 @@ class RegisterRequest extends FormRequest
             'email' => 'required|email|unique:users',
             'username' => ['required', "unique:users,username," . Auth::id(), 'regex:/(^([a-zA-Z]+)(\d+)?$)/u'],
             'password' => ['required', 'confirmed', Password::min(8)->mixedCase()->letters()->numbers()],
-            'phone' => ['required', 'unique:users,phone,' . Auth::id(), 'regex:/(^([0-9]+)(\d+)?$)/u', 'min:8', 'max:12'],
+            //'phone' => ['required', 'unique:users,phone,' . Auth::id(), 'min:8', 'max:12'],
+            // phone required, unique, digits, min:8, max:12
+            'phone' => ['required', 'unique:users,phone,' . Auth::id(), 'digits:8,15'],
         ];
     }
 
