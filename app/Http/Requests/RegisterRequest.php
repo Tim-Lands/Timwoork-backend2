@@ -31,7 +31,8 @@ class RegisterRequest extends FormRequest
             'password' => ['required', 'confirmed', Password::min(8)->mixedCase()->letters()->numbers()],
             //'phone' => ['required', 'unique:users,phone,' . Auth::id(), 'min:8', 'max:12'],
             // phone required, unique, digits, min:8, max:12
-            'phone' => ['required', 'unique:users,phone,' . Auth::id(), 'digits:8,15'],
+
+            'phone' => ['required', 'unique:users,phone,' . Auth::id(),'numeric'],
         ];
     }
 
@@ -53,9 +54,7 @@ class RegisterRequest extends FormRequest
             'password.confirmed' => __("messages.validation.password_confirmed"),
             'phone.required' => __("messages.validation.phone_number_required"),
             'phone.unique' => __("messages.validation.phone_unique"),
-            'phone.regex' => __("messages.validation.phone_regex"),
-            'phone.min' => __("messages.validation.phone_min"),
-            'phone.max' => __("messages.validation.phone_max"),
+            'phone.numeric' => __("messages.validation.phone_number_numeric"),
 
 
         ];
