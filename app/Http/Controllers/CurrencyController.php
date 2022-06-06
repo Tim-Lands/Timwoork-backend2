@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Events\SendCurrency;
 use App\Models\Currency;
+use Exception;
+use Illuminate\Support\Facades\DB;
 
 class CurrencyController extends Controller
 {
@@ -14,8 +16,12 @@ class CurrencyController extends Controller
      */
     public function index()
     {
-        $currencies = Currency::all();
-        return response()->success(_('success'), $currencies);
+        try {
+            $currencies = DB::table('currencies')->select('*')->groupBy('code')->get();
+            return response()->success('success', $currencies);
+        } catch (Exception $e) {
+            return response()->setStatusCode(500);
+        }
         //
     }
 

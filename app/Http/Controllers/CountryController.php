@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Country;
+use Exception;
 use Illuminate\Http\Request;
 
 class CountryController extends Controller
@@ -19,6 +20,20 @@ class CountryController extends Controller
         //
     }
 
+    public function get_phone_codes()
+    {
+        try {
+            $data = Country::distinct('code_phone')->orderBy('code_phone')->get()->all();
+            usort($data, function($a, $b){
+                return substr($a->code_phone,1)-substr($b->code_phone,1);
+            });
+
+            return response()->success('success', $data);
+        } catch (Exception $e) {
+            echo $e;
+            return response()->json("err", 500);
+        }
+    }
     /**
      * Show the form for creating a new resource.
      *
