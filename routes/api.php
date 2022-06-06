@@ -47,7 +47,8 @@ Route::group(['middleware' => ['XSS']], function () {
     Route::get('/get_countries', [CountryController::class, 'index']);
     # code...
     Broadcast::routes(['middleware' => ['auth:sanctum']]);
-
+    // send data currency to frontend in pusher
+    Route::get('/send_currency', [CurrencyController::class, 'send_currency']);
     // مسار الرابط
     Route::fallback(function () {
         return abort(403);
@@ -318,7 +319,7 @@ Route::group(['middleware' => ['XSS']], function () {
     /*                            مسارات واجهة المستخدم                           */
     /* -------------------------------------------------------------------------- */
     // عرض التصنيفات الرئيسية
-    Route::get('/top_categories',[FrontEndController::class,'get_top_categories']);
+    Route::get('/top_categories', [FrontEndController::class,'get_top_categories']);
     Route::get('/categories', [FrontEndController::class, 'get_all_categories']);
     // عرض التصنيفات الرئيسية
     Route::get('/get_categories', [FrontEndController::class, 'get_categories']);

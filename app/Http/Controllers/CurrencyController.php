@@ -2,9 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Events\SendCurrency;
 use App\Models\Currency;
-use Illuminate\Http\Request;
-use Illuminate\Http\Response;
 
 class CurrencyController extends Controller
 {
@@ -16,73 +15,34 @@ class CurrencyController extends Controller
     public function index()
     {
         $currencies = Currency::all();
-        return response()->success(_('success'),$currencies);
+        return response()->success(_('success'), $currencies);
         //
     }
 
     /**
-     * Show the form for creating a new resource.
+     * send_currency => ارسال البيانات العملات الى البوشر
      *
-     * @return \Illuminate\Http\Response
+     * @param  mixed $request
+     * @return void
      */
-    public function create()
+    public function send_currency()
     {
-        //
-    }
+        $url = "https://api.currencyapi.com/v3/latest?apikey="
+            . env('CURRENCY_API_KEY');
+        $curl = curl_init($url);
+        curl_setopt($curl, CURLOPT_URL, $url);
+        curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($curl, CURLOPT_SSL_VERIFYHOST, false);
+        curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, false);
 
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
-    public function store(Request $request)
-    {
-        //
-    }
+        $data_currency = curl_exec($curl);
+        curl_close($curl);
+        $data_currency = json_decode($data_currency, true);
 
-    /**
-     * Display the specified resource.
-     *
-     * @param  \App\Models\Currency  $currency
-     * @return \Illuminate\Http\Response
-     */
-    public function show(Currency $currency)
-    {
-        //
-    }
+        // ارسال البيانات الى البوشر
+        event(new SendCurrency($data_currency));
 
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  \App\Models\Currency  $currency
-     * @return \Illuminate\Http\Response
-     */
-    public function edit(Currency $currency)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Models\Currency  $currency
-     * @return \Illuminate\Http\Response
-     */
-    public function update(Request $request, Currency $currency)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  \App\Models\Currency  $currency
-     * @return \Illuminate\Http\Response
-     */
-    public function destroy(Currency $currency)
-    {
-        //
+        // ارسال رسالة نجاح
+        return response()->success('success', $data_currency);
     }
 }
