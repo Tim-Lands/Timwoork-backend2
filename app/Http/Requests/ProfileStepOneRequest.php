@@ -38,7 +38,10 @@ class ProfileStepOneRequest extends FormRequest
             'date_of_birth' => 'required|date_format:Y-m-d|before_or_equal:' . $before . '|after_or_equal:' . $after,
             'gender' => 'required',
             'country_id' => 'required',
-            'currency_id'=>'sometimes'
+            'currency_id'=>'sometimes',
+            // phone with code phone
+
+            'phone' => ['required', 'unique:users,phone,' . Auth::id(),'numeric'],
         ];
     }
 
@@ -59,6 +62,9 @@ class ProfileStepOneRequest extends FormRequest
             'date_of_birth.required' => __("messages.validation.date_of_birth_required"),
             'gender.required' => __("messages.validation.gender_required"),
             'country_id.required' => __("messages.validation.country_id"),
+            'phone.required' => __("messages.validation.phone_number_required"),
+            'phone.unique' => __("messages.validation.phone_unique"),
+            'phone.numeric' => __("messages.validation.phone_number_numeric"),
         ];
     }
 }
