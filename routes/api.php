@@ -41,7 +41,7 @@ use Illuminate\Support\Facades\Route;
 |--------------------------------------------------------------------------
 */
 
-
+Route::get('phone_codes', [CountryController::class, 'get_phone_codes']);
 Route::group(['middleware' => ['XSS']], function () {
     Route::get('/currency', [CurrencyController::class, 'index']);
     Route::get('/get_countries', [CountryController::class, 'index']);
@@ -319,7 +319,7 @@ Route::group(['middleware' => ['XSS']], function () {
     /*                            مسارات واجهة المستخدم                           */
     /* -------------------------------------------------------------------------- */
     // عرض التصنيفات الرئيسية
-    Route::get('/top_categories', [FrontEndController::class,'get_top_categories']);
+    Route::get('/top_categories', [FrontEndController::class, 'get_top_categories']);
     Route::get('/categories', [FrontEndController::class, 'get_all_categories']);
     // عرض التصنيفات الرئيسية
     Route::get('/get_categories', [FrontEndController::class, 'get_categories']);
