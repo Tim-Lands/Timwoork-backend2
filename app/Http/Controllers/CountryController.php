@@ -23,11 +23,17 @@ class CountryController extends Controller
     public function get_phone_codes()
     {
         try {
-            $data = Country::distinct('code_phone')->orderBy('code_phone')->get()->all();
-            usort($data, function($a, $b){
-                return substr($a->code_phone,1)-substr($b->code_phone,1);
+            $data = Country::all()->groupBy('code_phone')->values()->toArray();
+            $temp_arr = array();
+            $data = array_merge(...array_values($data));
+            usort($data, function ($a, $b) {
+                return substr($a['code_phone'], 1) - substr($b['code_phone'], 1);
             });
-
+            $data = array_filter($data, function ($val) use (&$temp_arr) {
+                $is_unique = !in_array($val['code_phone'], $temp_arr);
+                $temp_arr[] = $val['code_phone'];
+                return $is_unique;
+            });
             return response()->success('success', $data);
         } catch (Exception $e) {
             echo $e;

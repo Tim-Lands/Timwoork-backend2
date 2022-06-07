@@ -11,6 +11,7 @@ use App\Models\User;
 use Exception;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Cache;
 
 class ProfileController extends Controller
 {
@@ -77,6 +78,19 @@ class ProfileController extends Controller
                 $country = Country::where('id', $request->country_id)->first();
                 $currency_id = $country->currency_id;
             }
+            $code_phones = array();
+            if (Cache::has('code_phones')) {
+                echo "cache found";
+                $code_phones = Cache::get('code_phones');
+            } else {
+                echo "cache not found";
+                $temp_arr = array();
+                $data = Country::all()->groupBy('code_phone');
+                $code_phones = $data;
+                Cache::add('code_phones', $code_phones);
+            }
+            if (!isset($code_phones[$request->code_phone]))
+                throw new Exception("يجب إختيار كود هاتف متاح");
             $user = Auth::user();
             // تغيير اسم المستخدم
             $user->username = $request->username;
@@ -93,6 +107,8 @@ class ProfileController extends Controller
             $user->profile->steps = Profile::COMPLETED_SETP_THREE;
             $user->profile->is_completed = true;
             $user->profile->currency_id = $currency_id;
+            $user->phone = $request->phone;
+            $user->code_phone=$request->code_phone;
             $user->profile->save();
             // إرسال رسالة نجاح المرحلة اﻷولى
             return response()->success(__("messages.product.success_step_one"), $user);

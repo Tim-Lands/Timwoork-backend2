@@ -39,9 +39,8 @@ class ProfileStepOneRequest extends FormRequest
             'gender' => 'required',
             'country_id' => 'required',
             'currency_id'=>'sometimes',
-            // phone with code phone
-
-            'phone' => ['required', 'unique:users,phone,' . Auth::id(),'numeric'],
+            'phone' => ['required', 'numeric', 'unique:users,phone,' . Auth::id(), 'digits_between:4,16'],
+            'code_phone' => ['required']
         ];
     }
 
@@ -63,8 +62,11 @@ class ProfileStepOneRequest extends FormRequest
             'gender.required' => __("messages.validation.gender_required"),
             'country_id.required' => __("messages.validation.country_id"),
             'phone.required' => __("messages.validation.phone_number_required"),
-            'phone.unique' => __("messages.validation.phone_unique"),
             'phone.numeric' => __("messages.validation.phone_number_numeric"),
-        ];
+            'phone.digits_between' => __("messages.validation.phone_digits_between"),
+            'code_phone.required' => __('messages.validation.code_phone_required'),
+            'phone.unique' => __("messages.validation.phone_unique"),
+
+           ];
     }
 }

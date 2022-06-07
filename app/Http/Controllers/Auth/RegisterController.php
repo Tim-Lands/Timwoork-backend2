@@ -11,6 +11,7 @@ use App\Http\Requests\ResendVerifyRequest;
 use App\Http\Requests\VerifyEmailRequest;
 
 use App\Models\User;
+use App\Models\Country;
 
 use App\Events\VerifyEmail;
 use App\Traits\LoginUser;
@@ -18,6 +19,7 @@ use Exception;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Cache;
 
 class RegisterController extends Controller
 {
@@ -28,6 +30,19 @@ class RegisterController extends Controller
         // تسجيل مستخدم جديد
         try {
             DB::beginTransaction();
+            $code_phones = array();
+            if (Cache::has('code_phones')) {
+                echo "cache found";
+                $code_phones = Cache::get('code_phones');
+            } else {
+                echo "cache not found";
+                $temp_arr = array();
+                $data = Country::all()->groupBy('code_phone');
+                $code_phones = $data;
+                Cache::add('code_phones', $code_phones);
+            }
+            if (!isset($code_phones[$request->code_phone]))
+                throw new Exception("يجب إختيار كود هاتف متاح");
             $user = User::create([
                 'email' => $request->email,
                 'username' => $request->username,
