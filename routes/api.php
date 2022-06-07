@@ -42,7 +42,7 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::get('phone_codes', [CountryController::class, 'get_phone_codes']);
-Route::group(['middleware' => ['filterXSS']], function () {
+Route::group(['middleware' => ['XSS']], function () {
     Route::get('/currency', [CurrencyController::class, 'index']);
     Route::get('/get_countries', [CountryController::class, 'index']);
     # code...
