@@ -25,9 +25,6 @@ class CountryController extends Controller
         try {
             $data = Country::all()->groupBy('code_phone')->values()->toArray();
             $temp_arr = array();
-            /*  $data->sort(function($a, $b){
-                return substr($a->code_phone,1)-substr($b->code_phone,1);
-            }); */
             $data = array_merge(...array_values($data));
             usort($data, function ($a, $b) {
                 return substr($a['code_phone'], 1) - substr($b['code_phone'], 1);
