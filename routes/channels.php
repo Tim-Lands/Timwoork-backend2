@@ -35,3 +35,7 @@ Broadcast::channel('notify.{id}', function ($user, $id) {
         return $user;
     }
 });
+
+Broadcast::channel('currency', function () {
+    return true;
+});

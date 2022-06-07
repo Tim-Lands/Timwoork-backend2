@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "2c1bce5daed58a263e9d1acd7c2d9ced",
+    "content-hash": "4968b1d3cd448abb16f2614a6117df58",
     "packages": [
         {
             "name": "asm89/stack-cors",
@@ -2677,6 +2677,66 @@
                 "source": "https://github.com/thephpleague/oauth1-client/tree/v1.10.0"
             },
             "time": "2021-08-15T23:05:49+00:00"
+        },
+        {
+            "name": "masterro/laravel-xss-filter",
+            "version": "v1.5.1",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/MasterRO94/laravel-xss-filter.git",
+                "reference": "8b66901e22c71f4112485eeb4a63e7fefa7fc4c4"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/MasterRO94/laravel-xss-filter/zipball/8b66901e22c71f4112485eeb4a63e7fefa7fc4c4",
+                "reference": "8b66901e22c71f4112485eeb4a63e7fefa7fc4c4",
+                "shasum": ""
+            },
+            "require": {
+                "laravel/framework": "^6.20.26|^7.30.6|^8.0|^9.0",
+                "php": ">=7.4"
+            },
+            "require-dev": {
+                "orchestra/testbench": "^v4.0|^v5.0|^v6.0"
+            },
+            "type": "library",
+            "extra": {
+                "laravel": {
+                    "providers": [
+                        "MasterRO\\LaravelXSSFilter\\XSSFilterServiceProvider"
+                    ],
+                    "aliases": {
+                        "XSSCleaner": "MasterRO\\LaravelXSSFilter\\XSSCleanerFacade"
+                    }
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "MasterRO\\LaravelXSSFilter\\": "src/",
+                    "MasterRO\\LaravelXSSFilter\\Tests\\": "tests/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Roman Ihoshyn",
+                    "email": "igoshin18@gmail.com"
+                }
+            ],
+            "description": "Filter user input for XSS but don't touch other html",
+            "keywords": [
+                "laravel",
+                "middleware",
+                "xss"
+            ],
+            "support": {
+                "issues": "https://github.com/MasterRO94/laravel-xss-filter/issues",
+                "source": "https://github.com/MasterRO94/laravel-xss-filter/tree/v1.5.1"
+            },
+            "time": "2022-03-15T13:56:11+00:00"
         },
         {
             "name": "mehradsadeghi/laravel-filter-querystring",

@@ -72,9 +72,9 @@ class ProfileController extends Controller
     public function step_one(ProfileStepOneRequest $request)
     {
         try {
-            if(!is_null($request->currency_id))
+            if (!is_null($request->currency_id)) {
                 $currency_id = $request->currency_id;
-            else{
+            } else {
                 $country = Country::where('id', $request->country_id)->first();
                 $currency_id = $country->currency_id;
             }
@@ -94,6 +94,7 @@ class ProfileController extends Controller
             $user = Auth::user();
             // تغيير اسم المستخدم
             $user->username = $request->username;
+            $user->phone = $request->phone;
             $user->save();
             // تغيير المعلومات الشخصية
 

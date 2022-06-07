@@ -17,6 +17,7 @@
         "laravel/socialite": "^5.2",
         "laravel/tinker": "^2.5",
         "league/flysystem-aws-s3-v3": "^1.0",
+        "masterro/laravel-xss-filter": "^1.5",
         "mehradsadeghi/laravel-filter-querystring": "^1.1",
         "nexmo/laravel": "^2.4",
         "paypal/paypal-checkout-sdk": "^1.0",
