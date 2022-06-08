@@ -174,10 +174,10 @@ class LoginController extends Controller
                     ]);
 
                     // انشاء محفظة للمستخدم
-                    /*
+
                     $user->profile->wallet()->create([]);
                     // إنشاء حساب بايبال
-                    $user->profile->paypal_account()->create([]);
+                    /*$user->profile->paypal_account()->create([]);
                     // إنشاء حساب وايز
                     $user->profile->wise_account()->create([]);
                     // إنشاء معلومات حساب بنكي
