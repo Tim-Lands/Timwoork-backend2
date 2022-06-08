@@ -108,7 +108,7 @@ class ProfileController extends Controller
             $user->profile->is_completed = true;
             $user->profile->currency_id = $currency_id;
             $user->phone = $request->phone;
-            $user->code_phone=$request->code_phone;
+            $user->profile->code_phone=$request->code_phone;
             $user->profile->save();
             // إرسال رسالة نجاح المرحلة اﻷولى
             return response()->success(__("messages.product.success_step_one"), $user);
