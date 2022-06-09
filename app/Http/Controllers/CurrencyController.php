@@ -6,6 +6,7 @@ use App\Events\SendCurrency;
 use App\Models\Currency;
 use Exception;
 use Illuminate\Support\Facades\DB;
+use Pusher\Pusher;
 
 class CurrencyController extends Controller
 {
@@ -46,7 +47,21 @@ class CurrencyController extends Controller
         $data_currency = json_decode($data_currency, true);
 
         // ارسال البيانات الى البوشر
-        event(new SendCurrency($data_currency));
+        //event(new SendCurrency($data_currency));
+        // send data to currency to pusher channel currency channel
+        /*$pusher = new Pusher(
+            env('PUSHER_APP_KEY'),
+            env('PUSHER_APP_SECRET'),
+            env('PUSHER_APP_ID'),
+            [
+                 'cluster' => env('PUSHER_APP_CLUSTER'),
+                 'encrypted' => true
+             ]
+        );
+        $pusher->trigger('currency', 'send_currency', $data_currency);*/
+
+        SendCurrency::dispatch($data_currency);
+
 
         // ارسال رسالة نجاح
         return response()->success('success', $data_currency);
