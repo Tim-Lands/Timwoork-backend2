@@ -49,7 +49,7 @@ class CurrencyController extends Controller
         // ارسال البيانات الى البوشر
         //event(new SendCurrency($data_currency));
         // send data to currency to pusher channel currency channel
-        /*$pusher = new Pusher(
+        $pusher = new Pusher(
             env('PUSHER_APP_KEY'),
             env('PUSHER_APP_SECRET'),
             env('PUSHER_APP_ID'),
@@ -58,9 +58,9 @@ class CurrencyController extends Controller
                  'encrypted' => true
              ]
         );
-        $pusher->trigger('currency', 'send_currency', $data_currency);*/
+        $pusher->trigger('currency', 'send_currency', $data_currency);
 
-        SendCurrency::dispatch($data_currency);
+        //SendCurrency::dispatch($data_currency);
 
 
         // ارسال رسالة نجاح
