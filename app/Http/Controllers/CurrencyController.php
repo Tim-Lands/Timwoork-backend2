@@ -7,6 +7,7 @@ use App\Models\Currency;
 use Exception;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
+use Pusher\Pusher;
 
 class CurrencyController extends Controller
 {
@@ -60,7 +61,11 @@ class CurrencyController extends Controller
         Cache::put('api_currency_data', $data_currency);
         // ارسال البيانات الى البوشر
 
-        event(new SendCurrency(array_values($data_currency)));
+        //event(new SendCurrency($data_currency));
+        // send data to currency to pusher channel currency channel
+
+        SendCurrency::dispatch($data_currency);
+
 
         // ارسال رسالة نجاح
         return response()->success('success', array_values($data_currency));
