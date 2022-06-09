@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Events\SendCurrency;
 use App\Models\Currency;
 use Exception;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
 use Pusher\Pusher;
 
@@ -18,12 +19,24 @@ class CurrencyController extends Controller
     public function index()
     {
         try {
-            $currencies = DB::table('currencies')->select('*')->groupBy('code')->get();
+            if (Cache::has('api_currency_data')) {
+                $currency_data_api = Cache::get('api_currency_data');
+                $currency_keys = array_keys($currency_data_api);
+                $currencies = DB::table('currencies')->select('*')->whereIn('code', $currency_keys)->groupBy('code')->get();
+            } else
+                $currencies = DB::table('currencies')->select('*')->groupBy('code')->get();
+
             return response()->success('success', $currencies);
         } catch (Exception $e) {
             return response()->setStatusCode(500);
         }
         //
+    }
+
+    public function send_currency_values()
+    {
+        $data = Cache::get('api_currency_data');
+        return response()->success('success', array_values($data));
     }
 
     /**
@@ -44,9 +57,10 @@ class CurrencyController extends Controller
 
         $data_currency = curl_exec($curl);
         curl_close($curl);
-        $data_currency = json_decode($data_currency, true);
-
+        $data_currency = json_decode($data_currency, true)['data'];
+        Cache::put('api_currency_data', $data_currency);
         // ارسال البيانات الى البوشر
+
         //event(new SendCurrency($data_currency));
         // send data to currency to pusher channel currency channel
 
@@ -54,6 +68,6 @@ class CurrencyController extends Controller
 
 
         // ارسال رسالة نجاح
-        return response()->success('success', $data_currency);
+        return response()->success('success', array_values($data_currency));
     }
 }
