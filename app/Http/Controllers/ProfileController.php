@@ -6,6 +6,7 @@ use App\Http\Requests\ProfileStepOneRequest;
 use App\Http\Requests\ProfileStepThreeRequest;
 use App\Http\Requests\ProfileStepTwoRequest;
 use App\Models\Country;
+use App\Models\Currency;
 use App\Models\Profile;
 use App\Models\User;
 use Exception;
@@ -42,8 +43,8 @@ class ProfileController extends Controller
                     $query->with('profile_seller', function ($query) {
                         $query->with('products', function ($query) {
                             $query->selection()
-                            ->where('status', 1)
-                            ->where('is_active', 1);
+                                ->where('status', 1)
+                                ->where('is_active', 1);
                         });
                     });
                 },
@@ -72,18 +73,11 @@ class ProfileController extends Controller
     public function step_one(ProfileStepOneRequest $request)
     {
         try {
-            if (!is_null($request->currency_id)) {
-                $currency_id = $request->currency_id;
-            } else {
-                $country = Country::where('id', $request->country_id)->first();
-                $currency_id = $country->currency_id;
-            }
+            $api_data = Cache::get('api_currency_data');
             $code_phones = array();
             if (Cache::has('code_phones')) {
-                echo "cache found";
                 $code_phones = Cache::get('code_phones');
             } else {
-                echo "cache not found";
                 $temp_arr = array();
                 $data = Country::all()->groupBy('code_phone');
                 $code_phones = $data;
@@ -95,8 +89,17 @@ class ProfileController extends Controller
             // تغيير اسم المستخدم
             $user->username = $request->username;
             $user->phone = $request->phone;
-            $user->code_phone=$request->code_phone;
+            $user->code_phone = $request->code_phone;
             $user->save();
+            if (!is_null($request->currency_id)) {
+                $currency = Currency::where('id', $request->currency_id)->get();
+                if (count($currency) > 0 && isset($api_data[$currency->code]))
+                        $user->profile->currency_id = $request->currency_id;
+            } else {
+                $country = Country::with('currency')->where('id', $request->country_id)->first();
+                if (isset($api_data[$country->currency->code]))
+                    $user->profile->currency_id = $country->currency_id;
+            }
             // تغيير المعلومات الشخصية
 
             $user->profile->first_name = $request->first_name;
@@ -107,7 +110,6 @@ class ProfileController extends Controller
             $user->profile->country_id = $request->country_id;
             $user->profile->steps = Profile::COMPLETED_SETP_THREE;
             $user->profile->is_completed = true;
-            $user->profile->currency_id = $currency_id;
             $user->phone = $request->phone;
             $user->profile->save();
             // إرسال رسالة نجاح المرحلة اﻷولى
@@ -139,7 +141,7 @@ class ProfileController extends Controller
             $user = Auth::user();
             // تغيير اسم المستخدم
 
-            $avatarUrl = 'https://timwoork-space.ams3.digitaloceanspaces.com/avatars/'.$avatarName;
+            $avatarUrl = 'https://timwoork-space.ams3.digitaloceanspaces.com/avatars/' . $avatarName;
 
             $user->profile->avatar = $avatarName;
             $user->profile->avatar_url = $avatarUrl;

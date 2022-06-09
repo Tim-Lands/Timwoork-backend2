@@ -32,10 +32,8 @@ class RegisterController extends Controller
             DB::beginTransaction();
             $code_phones = array();
             if (Cache::has('code_phones')) {
-                echo "cache found";
                 $code_phones = Cache::get('code_phones');
             } else {
-                echo "cache not found";
                 $temp_arr = array();
                 $data = Country::all()->groupBy('code_phone');
                 $code_phones = $data;

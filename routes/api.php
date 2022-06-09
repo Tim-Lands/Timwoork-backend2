@@ -40,7 +40,7 @@ use Illuminate\Support\Facades\Route;
 | API Routes
 |--------------------------------------------------------------------------
 */
-
+Route::get('/currency_values',[CurrencyController::class,'send_currency_values']);
 Route::get('phone_codes', [CountryController::class, 'get_phone_codes']);
 Route::group(['middleware' => ['XSS']], function () {
     Route::get('/currency', [CurrencyController::class, 'index']);
