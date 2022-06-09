@@ -23,13 +23,14 @@ class RegisterRequest extends FormRequest
      *
      * @return array
      */
+
     public function rules()
     {
         return [
             'email' => 'required|email|unique:users',
             'username' => ['required', "unique:users,username," . Auth::id(), 'regex:/(^([a-zA-Z]+)(\d+)?$)/u'],
             'password' => ['required', 'confirmed', Password::min(8)->mixedCase()->letters()->numbers()],
-            'phone' => ['required', 'numeric','unique:users,phone,' . Auth::id(),  'digits_between:4,16'],
+            'phone' => ['required', 'numeric', 'unique:users,phone,' . Auth::id(),  'digits_between:4,16'],
             'code_phone' => ['required']
             //'phone' => ['required', 'unique:users,phone,' . Auth::id(), 'min:8', 'max:12'],
             // phone required, unique, digits, min:8, max:12
@@ -59,6 +60,12 @@ class RegisterRequest extends FormRequest
             'phone.digits_between' => __("messages.validation.phone_digits_between"),
             'code_phone.required' => __('messages.validation.code_phone_required')
 
+        ];
+    }
+    public function attributes()
+    {
+        return [
+            'code_phone' => 'phone',
         ];
     }
 }

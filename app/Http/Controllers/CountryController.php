@@ -34,7 +34,7 @@ class CountryController extends Controller
                 $temp_arr[] = $val['code_phone'];
                 return $is_unique;
             });
-            return response()->success('success', $data);
+            return response()->success('success', array_values($data));
         } catch (Exception $e) {
             echo $e;
             return response()->json("err", 500);
