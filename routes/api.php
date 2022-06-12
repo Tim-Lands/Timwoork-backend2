@@ -319,6 +319,7 @@ Route::group(['middleware' => ['XSS']], function () {
     /*                            مسارات واجهة المستخدم                           */
     /* -------------------------------------------------------------------------- */
     // عرض التصنيفات الرئيسية
+    Route::get('/top_main_categories',[FrontEndController::class,'get_top_main_categories']);
     Route::get('/top_categories', [FrontEndController::class, 'get_top_categories']);
     Route::get('/categories', [FrontEndController::class, 'get_all_categories']);
     // عرض التصنيفات الرئيسية
