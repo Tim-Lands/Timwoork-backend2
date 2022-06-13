@@ -166,6 +166,8 @@ Route::group(['middleware' => ['XSS']], function () {
             Route::post('/{id}/activeProduct', [ActivedProductController::class, 'activeProduct']);
             // مسار رفض الخدمة
             Route::post('/{id}/rejectProduct', [ActivedProductController::class, 'rejectProduct']);
+            Route::post('/{id}/disactive_product', [ActivedProductController::class, 'disactiveProduct']);
+
             // مسار ارسال رسالة رفض الخدمة
             Route::post('/{id}/send_reject_product', RejectProductController::class);
             // استرجاع الخدمة المحذوفة

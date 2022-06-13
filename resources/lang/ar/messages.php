@@ -190,6 +190,7 @@ return [
         // تنشيط الخدمة
         "active_status_product" => "تم تنشيط الخدمة بنجاح",
         "reject_status_product" => "تم رفض الخدمة ",
+        "disactive_status_product" => "تم تعطيل الخدمة ",
         // المدير
         "get_login" => "تم تسجيل الدخول بنجاح",
         "get_logout" => "تم تسجيل الخروج بنجاح",
