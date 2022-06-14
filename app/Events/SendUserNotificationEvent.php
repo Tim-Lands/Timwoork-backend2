@@ -51,6 +51,7 @@ class SendUserNotificationEvent implements ShouldBroadcast
             ],
             'title' =>  "لقد تم إرسال إشعار لك من قِبل الإدارة",
             'content' => [
+                'user' => $this->user,
                 'cause' => $this->cause,
             ],
         ];
