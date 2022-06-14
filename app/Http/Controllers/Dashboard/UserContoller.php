@@ -7,6 +7,8 @@ use App\Events\UnbanAccountEvent;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\BanRequest;
 use App\Models\User;
+use App\Events\SendUserNotificationEvent;
+use App\Http\Requests\Products\CauseRejectProductRequest;
 use Carbon\Carbon;
 use Cog\Laravel\Ban\Models\Ban;
 use Exception;
@@ -17,10 +19,10 @@ use Illuminate\Support\Facades\DB;
 class UserContoller extends Controller
 {
     /**
-    * get_users => جلب جميع المستخدمين
-    *
-    * @return void
-    */
+     * get_users => جلب جميع المستخدمين
+     *
+     * @return void
+     */
     public function get_users(Request $request)
     {
         // تصفح المستخدمين
@@ -28,10 +30,10 @@ class UserContoller extends Controller
 
         // جلب جميع المستخدمين
         $users = User::selection()
-                                ->filter()
-                                ->with('profile')
-                                ->latest()
-                                ->paginate($paginate);
+            ->filter()
+            ->with('profile')
+            ->latest()
+            ->paginate($paginate);
         // رسالة نجاح
         return response()->success(__('messages.oprations.get_all_data'), $users);
     }
@@ -43,10 +45,20 @@ class UserContoller extends Controller
      * @param  mixed $id
      * @return void
      */
+    public function sendNotification(mixed $id, CauseRejectProductRequest $request)
+    {
+        $user = User::find($id);
+        if (!$user) {
+            // رسالة خطأ
+            return response()->error(__('messages.errors.element_not_found'), Response::HTTP_NOT_FOUND);
+        }
+        event(new SendUserNotificationEvent ($user, $request->cause));
+        return response()->success("تم إرسال الإشعار بنجاح إلى المستخدم");
+    }
     public function show($id)
     {
         // جلب المستخدم الواحد
-        $user = User::selection()->whereId($id)->with(['profile','ratings','favorites'])->first();
+        $user = User::selection()->whereId($id)->with(['profile', 'ratings', 'favorites'])->first();
         // اذا لم يجد المستخدم
         if (!$user) {
             // رسالة خطأ
@@ -68,10 +80,10 @@ class UserContoller extends Controller
         // تصفح المستخدمين
         $paginate = $request->query('paginate') ? $request->query('paginate') : 10;
         // جلب المستخدمين المحظورين
-        $users_banned = User::selection()->with(['profile','bans:bannable_id,comment,expired_at'])
-                                ->filter()
-                                ->onlyBanned()
-                                ->paginate($paginate);
+        $users_banned = User::selection()->with(['profile', 'bans:bannable_id,comment,expired_at'])
+            ->filter()
+            ->onlyBanned()
+            ->paginate($paginate);
         // اظهار العناصر
         return response()->success(__('messages.oprations.get_all_data'), $users_banned);
     }
@@ -87,10 +99,10 @@ class UserContoller extends Controller
         $paginate = $request->query('paginate') ? $request->query('paginate') : 10;
         // جلب المستخدمين الغير المحظورين
         $users_unbanned = User::selection()
-                                ->filter()
-                                ->with('profile')
-                                ->withoutBanned()
-                                ->paginate($paginate);
+            ->filter()
+            ->with('profile')
+            ->withoutBanned()
+            ->paginate($paginate);
         // اظهار العناصر
         return response()->success(__('messages.oprations.get_all_data'), $users_unbanned);
     }
@@ -183,9 +195,9 @@ class UserContoller extends Controller
     {
         // جلب المستخدمين المحظورين
         $bans = Ban::query()
-        ->with('bannable')
-        ->where('expired_at', '<=', Carbon::now()->format('Y-m-d H:i:s'))
-        ->get();
+            ->with('bannable')
+            ->where('expired_at', '<=', Carbon::now()->format('Y-m-d H:i:s'))
+            ->get();
 
         // حذف كل الحسابات المحظورة المنتهية الصلاحية
         foreach ($bans as $ban) {

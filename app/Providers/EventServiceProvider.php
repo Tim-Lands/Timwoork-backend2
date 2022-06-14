@@ -52,10 +52,12 @@ use App\Listeners\Reply as ListenersReply;
 use App\Listeners\RequestModifiedByBuyerListener;
 use App\Listeners\RequestRejectOrderListener;
 use App\Listeners\ResolveConflictListener;
+use App\Listeners\SendUserNotificationListener;
 use App\Listeners\UnbanAccountListener;
 use App\Listeners\UpdateMessageListener;
 use App\Listeners\VerifyEmailListener;
 use App\Models\Item;
+use App\Notifications\SendUserNotificationEvent;
 use App\Observers\ItemObserver;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Auth\Listeners\SendEmailVerificationNotification;
@@ -148,6 +150,9 @@ class EventServiceProvider extends ServiceProvider
         ],
         DisactiveProductEvent::class => [
             DisactiveProductListener::class,
+        ],
+        SendUserNotificationEvent::class => [
+            SendUserNotificationListener::class,
         ]
 
 

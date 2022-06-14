@@ -67,6 +67,8 @@ Route::group(['middleware' => ['XSS']], function () {
             Route::get('/get_users_unbanned', [UserContoller::class, 'get_user_unbanned']);
             // مسار انشاء عنصر جديد
             Route::get('/{id}', [UserContoller::class, 'show']);
+            //إرسال إشعار للمستخدم
+            Route::post('/{id}/send_notification', [UserContoller::class, 'sendNotification']);
             // حظر المستخدم
             Route::post('/{id}/ban', [UserContoller::class, 'user_ban']);
             // فك حظر المستخدم
