@@ -102,7 +102,7 @@ class ActivedProductController extends Controller
     {
         try {
 
-            $product = Product::where('id',$id)->first();
+            $product = Product::find($id);
             if (!$product) {
                 // رسالة خطأ
                 return response()->error(__('messages.errors.element_not_found'), Response::HTTP_NOT_FOUND);
