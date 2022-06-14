@@ -13,6 +13,7 @@ use App\Events\CanceledOrderByBuyer;
 use App\Events\CancelWithdrwal;
 use App\Events\DeleteMessageEvent;
 use App\Events\DileveredBySeller;
+use App\Events\DisactiveProductEvent;
 use App\Events\ForgetPassword;
 use App\Events\NewOrder;
 use App\Events\Rating;
@@ -39,6 +40,7 @@ use App\Listeners\CanceledOrderListener;
 use App\Listeners\CancelWithdrwalListener;
 use App\Listeners\DeleteMessageListener;
 use App\Listeners\DileveredBySellerListener;
+use App\Listeners\DisactiveProductListener;
 use App\Listeners\ForgetPasswordListener;
 use App\Listeners\NewOrderListener;
 use App\Listeners\Rating as ListenersRating;
@@ -144,6 +146,9 @@ class EventServiceProvider extends ServiceProvider
         UpdateMessageEvent::class => [
             UpdateMessageListener::class,
         ],
+        DisactiveProductEvent::class => [
+            DisactiveProductListener::class,
+        ]
 
 
     ];
