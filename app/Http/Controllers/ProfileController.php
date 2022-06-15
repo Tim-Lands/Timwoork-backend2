@@ -102,6 +102,8 @@ class ProfileController extends Controller
                 }
                     else{
                     echo "api doesn't have that currency";
+                    echo $currency->code;
+                    var_dump($api_data);
                     echo $request->currency_id;
                 }
                 } else {
