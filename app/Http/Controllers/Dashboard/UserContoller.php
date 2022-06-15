@@ -40,7 +40,7 @@ class UserContoller extends Controller
 
 
     /**
-     * show => جلب المستخدم الواحد
+     * sendNotification => ارسال اشعار للمستخدم
      *
      * @param  mixed $id
      * @return void
@@ -52,9 +52,17 @@ class UserContoller extends Controller
             // رسالة خطأ
             return response()->error(__('messages.errors.element_not_found'), Response::HTTP_NOT_FOUND);
         }
-        event(new SendUserNotificationEvent ($user, $request->cause));
+        // جلب المستخدم من اجل ارسال الاشعار
+        event(new SendUserNotificationEvent($user, $request->cause));
         return response()->success("تم إرسال الإشعار بنجاح إلى المستخدم");
     }
+
+    /**
+     * show
+     *
+     * @param  mixed $id
+     * @return void
+     */
     public function show($id)
     {
         // جلب المستخدم الواحد

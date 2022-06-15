@@ -17,7 +17,7 @@ class SendUserNotification extends Notification
      *
      * @return void
      */
-    public function __construct($user,  $cause)
+    public function __construct($user, $cause)
     {
         $this->user = $user;
         $this->cause = $cause;
@@ -31,7 +31,7 @@ class SendUserNotification extends Notification
      */
     public function via($notifiable)
     {
-        return ['mail', 'database'];
+        return [/*'mail',*/ 'database'];
     }
 
     /**
@@ -76,7 +76,8 @@ class SendUserNotification extends Notification
             ],
             'title' =>  "لقد تم إرسال إشعار إليك من قِبل الإدارة",
             'content' => [
-                'title' => $this->cause
+                'user' => $this->user,
+                'cause' => $this->cause
             ],
         ];
     }

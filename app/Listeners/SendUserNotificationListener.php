@@ -2,10 +2,6 @@
 
 namespace App\Listeners;
 
-use App\Events\DisactiveProductEvent;
-use App\Events\RejectProductEvent;
-use App\Notifications\DisactiveProductNotification;
-use App\Notifications\RejectProductNotification;
 use App\Events\SendUserNotificationEvent;
 use App\Notifications\SendUserNotification;
 use Illuminate\Contracts\Queue\ShouldQueue;

@@ -25,6 +25,7 @@ use App\Events\Reply;
 use App\Events\RequestModifiedBuBuyer;
 use App\Events\RequestRejectOrder;
 use App\Events\ResolveConflictBySeller;
+use App\Events\SendUserNotificationEvent as EventsSendUserNotificationEvent;
 use App\Events\UnbanAccountEvent;
 use App\Events\UpdateMessageEvent;
 use App\Events\VerifyEmail;
@@ -151,7 +152,7 @@ class EventServiceProvider extends ServiceProvider
         DisactiveProductEvent::class => [
             DisactiveProductListener::class,
         ],
-        SendUserNotificationEvent::class => [
+        EventsSendUserNotificationEvent::class => [
             SendUserNotificationListener::class,
         ]
 
