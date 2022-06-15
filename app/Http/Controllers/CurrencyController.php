@@ -58,7 +58,7 @@ class CurrencyController extends Controller
         $data_currency = curl_exec($curl);
         curl_close($curl);
         $data_currency = json_decode($data_currency, true)['data'];
-        Cache::put('api_currency_data', $data_currency);
+        Cache::put('api_currency_data', $data_currency,25);
         // ارسال البيانات الى البوشر
 
         //event(new SendCurrency($data_currency));
