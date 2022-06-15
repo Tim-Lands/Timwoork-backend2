@@ -92,11 +92,15 @@ class ProfileController extends Controller
             $user->code_phone = $request->code_phone;
             $user->save();
             if (!is_null($request->currency_id)) {
-                $currency = Currency::where('id', $request->currency_id)->get();
-                if (count($currency) > 0 && isset($api_data[$currency->code]))
-                        $user->profile->currency_id = $request->currency_id;
+                $currency = Currency::where('id', $request->currency_id)->first();
+                if (is_null($currency))
+                    return abort(404, 'تلك العملة غير موجودة');
+                if (isset($api_data[$currency->code]))
+                    $user->profile->currency_id = $request->currency_id;
             } else {
                 $country = Country::with('currency')->where('id', $request->country_id)->first();
+                if (is_null($country))
+                    return abort(404, 'تلك الدولة غير موجودة');
                 if (isset($api_data[$country->currency->code]))
                     $user->profile->currency_id = $country->currency_id;
             }
