@@ -28,11 +28,11 @@ class DatabaseSeeder extends Seeder
             //UserSeeder::class,
             //ProductTableSeeder::class,
             //TypePaymentSeeder::class,
-            //CurrencySeeder::class,
-            //CountrySeeder::class,
-            //ProfileCurrencySeeder::class,
-            //CountryPhoneCodeSeeder::class,
-            createWalletInProfilesSeeder::class
+            // CurrencySeeder::class,
+            // CountrySeeder::class,
+            // ProfileCurrencySeeder::class,
+            // CountryPhoneCodeSeeder::class,
+            // createWalletInProfilesSeeder::class
         ]);
     }
 }
