@@ -13,6 +13,7 @@ use Exception;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\DB;
 
 class ProfileController extends Controller
 {
@@ -73,17 +74,10 @@ class ProfileController extends Controller
     public function step_one(ProfileStepOneRequest $request)
     {
         try {
-            $api_data = Cache::get('api_currency_data');
-            $code_phones = array();
-            if (Cache::has('code_phones')) {
-                $code_phones = Cache::get('code_phones');
-            } else {
-                $temp_arr = array();
-                $data = Country::all()->groupBy('code_phone');
-                $code_phones = $data;
-                Cache::add('code_phones', $code_phones);
-            }
-            if (!isset($code_phones[$request->code_phone]))
+            $api_data = db::table('currencies')->join('api_currencies', 'currencies.code', '=', 'api_currencies.code')->select('currencies.*')
+                ->get();
+            $code_phones = Country::all()->groupBy('code_phone');
+            if (is_null($code_phones[$request->code_phone]))
                 throw new Exception("يجب إختيار كود هاتف متاح");
             $user = Auth::user();
             // تغيير اسم المستخدم
@@ -92,12 +86,18 @@ class ProfileController extends Controller
             $user->code_phone = $request->code_phone;
             $user->save();
             if (!is_null($request->currency_id)) {
-                $currency = Currency::where('id', $request->currency_id)->get();
-                if (count($currency) > 0 && isset($api_data[$currency->code]))
-                        $user->profile->currency_id = $request->currency_id;
+                echo "currency is there";
+                $currency = Currency::where('id', $request->currency_id)->first();
+                if (is_null($currency))
+                    return abort(404, 'تلك العملة غير موجودة');
+                if ($api_data->where('code', $currency->code)->count() != 0) {
+                    $user->profile->currency_id = $request->currency_id;
+                }
             } else {
                 $country = Country::with('currency')->where('id', $request->country_id)->first();
-                if (isset($api_data[$country->currency->code]))
+                if (is_null($country))
+                    return abort(404, 'تلك الدولة غير موجودة');
+                if ($api_data->where('code', $country->currency->code)->count() != 0)
                     $user->profile->currency_id = $country->currency_id;
             }
             // تغيير المعلومات الشخصية

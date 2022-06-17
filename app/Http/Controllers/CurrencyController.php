@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Events\SendCurrency;
+use App\Models\ApiCurrency;
 use App\Models\Currency;
 use Exception;
 use Illuminate\Support\Facades\Cache;
@@ -19,13 +20,8 @@ class CurrencyController extends Controller
     public function index()
     {
         try {
-            if (Cache::has('api_currency_data')) {
-                $currency_data_api = Cache::get('api_currency_data');
-                $currency_keys = array_keys($currency_data_api);
-                $currencies = DB::table('currencies')->select('*')->whereIn('code', $currency_keys)->groupBy('code')->get();
-            } else
-                $currencies = DB::table('currencies')->select('*')->groupBy('code')->get();
-
+            $currencies = db::table('currencies')->join('api_currencies', 'currencies.code', '=', 'api_currencies.code')->select('currencies.*')
+                ->get();
             return response()->success('success', $currencies);
         } catch (Exception $e) {
             return response()->setStatusCode(500);
@@ -35,8 +31,8 @@ class CurrencyController extends Controller
 
     public function send_currency_values()
     {
-        $data = Cache::get('api_currency_data');
-        return response()->success('success', array_values($data));
+        $data = ApiCurrency::all();
+        return response()->success('success', $data);
     }
 
     /**
@@ -58,7 +54,13 @@ class CurrencyController extends Controller
         $data_currency = curl_exec($curl);
         curl_close($curl);
         $data_currency = json_decode($data_currency, true)['data'];
-        Cache::put('api_currency_data', $data_currency);
+        foreach ($data_currency as $item) {
+            //ApiCurrency::where('code', $item['code'])->update(['value' => $item['value']]);
+            ApiCurrency::updateOrCreate(
+                ['code' => $item['code']],
+                ['value' => $item['value']]
+            );
+        }
         // ارسال البيانات الى البوشر
 
         //event(new SendCurrency($data_currency));
