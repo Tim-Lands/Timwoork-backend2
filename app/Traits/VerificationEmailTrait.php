@@ -28,7 +28,8 @@ trait VerificationEmailTrait
         return $verify = VerifyEmailCode::create([
             'user_id' => $user->id,
             'email' => $user->email,
-            'code' => $this->generateVerificationCode()
+            'code' => $this->generateVerificationCode(),
+            'date_expired' => Carbon::now()->addHour(1)
         ]);
     }
 
@@ -37,13 +38,15 @@ trait VerificationEmailTrait
         // تفعيل البريد الالكتروني بادخال البريد الالكتروني مع رمز التفعيل
         $verify = VerifyEmailCode::where('email', $email)
             ->where('code', $code)
+            ->where('date_expired', '<=', Carbon::now())
             ->first();
-        if (!$verify)
+        if (!$verify) {
             return response()->error('حدث خطأ ما لم يتم العثور على رمز التفعيل الخاص بك');
-        // التأكد من أن البريد الالكتروني مفعّل ام لا 
+        }
+        // التأكد من أن البريد الالكتروني مفعّل ام لا
 
         if (!$verify->user->email_verified_at) {
-            // حالة أنه غير مفعّل 
+            // حالة أنه غير مفعّل
 
             // يتم التعديل على حقل email_verified_at
             // ثم يتم حذف الرمز من قاعدة البيانات لعدم الحاجة إليه
@@ -51,10 +54,10 @@ trait VerificationEmailTrait
             $verify->user->save();
             $verify->delete();
 
-            // إرسال رسالة تفيد بنجاح العملية  
+            // إرسال رسالة تفيد بنجاح العملية
             return $this->success('لقد تم تفعيل حسابك بنجاح');
         } else {
-            // حالة البريد الالكتروني مفعّل 
+            // حالة البريد الالكتروني مفعّل
             //  يتم ارسال رسال مفادها أن البريد الالكتروني الذي تريد تفعيله، مفعّل سابقا
 
             return $this->error('البريد اﻹلكتروني مفعّل من قبل');
@@ -65,7 +68,8 @@ trait VerificationEmailTrait
     {
         // استخراج رمز التفعيل من قاعدة البيانات باستعمال البريد الالكتروني
         $verify = VerifyEmailCode::where('email', $email)
-            ->first();
+                ->where('date_expired', '<=', Carbon::now())
+                ->first();
         if ($verify) {
             // في الحالة وجود الرمز يتم إرساله مباشرة
             event(new VerifyEmail($verify->user));
@@ -76,13 +80,13 @@ trait VerificationEmailTrait
             // في حالة عدم وجوده يتم إرسال رسالة خطأ بعدم وجود الايميل في سجلاتنا
             $user = User::where('email', $email)
                 ->firstOrFail();
-            //  في حالة وجود مستخدم مسجل بالبريد الالكتروني يتم إنشاء  رمز تفعيل جديد له 
+            //  في حالة وجود مستخدم مسجل بالبريد الالكتروني يتم إنشاء  رمز تفعيل جديد له
             return $this->store_code_bin($user);
 
-            // بعد إنشاء رمز التفعيل الجديد يتم إرساله 
+            // بعد إنشاء رمز التفعيل الجديد يتم إرساله
             event(new VerifyEmail($user));
 
-            // مع إرسال رسالة نجاح العملية 
+            // مع إرسال رسالة نجاح العملية
 
             return $this->success('تم إرسال رمز التفعيل بنجاح إلى بريدك اﻹلكتروني');
         }

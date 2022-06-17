@@ -7,6 +7,7 @@ use App\Models\Amount;
 use App\Models\Category;
 use App\Models\Contact;
 use App\Models\Product;
+use App\Models\VerifyEmailCode;
 use Carbon\Carbon;
 use Exception;
 use Illuminate\Http\JsonResponse;
@@ -25,7 +26,7 @@ class FrontEndController extends Controller
     public function get_top_main_categories()
     {
         $categories = DB::table('products')->join('categories', 'products.category_id', '=', 'categories.id')
-            ->join('categories as parent_category','categories.parent_id','=','parent_category.id')
+            ->join('categories as parent_category', 'categories.parent_id', '=', 'parent_category.id')
             ->selectRaw('count(count_buying) as category_buying, parent_category.*')
             ->groupBy('parent_category.id')
             ->orderByDesc('category_buying')
@@ -389,6 +390,29 @@ class FrontEndController extends Controller
             ]);
         }
 
-        return response()->success(__("تمت عملية التحوليات بنجاح"));;
+        return response()->success(__("تمت عملية التحوليات بنجاح"));
+        ;
+    }
+
+    /**
+     * delete_product_vide
+     *
+     * @return void
+     */
+    public function delete_product_vide()
+    {
+        Product::select('id', 'is_vide')->where('is_vide', 1)->forceDelete();
+        return response()->success(__("تمت عملية الحذف بنجاح"));
+    }
+
+    /**
+     * delete_code_verify_email => حذف الكود الخاص بالايميل
+     *
+     * @return void
+     */
+    public function delete_code_verify_email()
+    {
+        VerifyEmailCode::where('date_expired', '<', Carbon::now()->toDateTimeString())->delete();
+        return response()->success(__("تمت عملية الحذف بنجاح"));
     }
 }
