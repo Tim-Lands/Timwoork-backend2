@@ -24,7 +24,7 @@ class ProfileController extends Controller
      */
     public function __construct()
     {
-        $this->middleware('auth:sanctum','abilities:user')->except('show');
+        $this->middleware(['auth:sanctum','abilities:user'])->except('show');
     }
     /**
      * show => اظهار بروفايل المشتري
@@ -77,8 +77,9 @@ class ProfileController extends Controller
             $api_data = db::table('currencies')->join('api_currencies', 'currencies.code', '=', 'api_currencies.code')->select('currencies.*')
                 ->get();
             $code_phones = Country::all()->groupBy('code_phone');
-            if (is_null($code_phones[$request->code_phone]))
+            if (is_null($code_phones[$request->code_phone])) {
                 throw new Exception("يجب إختيار كود هاتف متاح");
+            }
             $user = Auth::user();
             // تغيير اسم المستخدم
             $user->username = $request->username;
@@ -88,17 +89,20 @@ class ProfileController extends Controller
             if (!is_null($request->currency_id)) {
                 echo "currency is there";
                 $currency = Currency::where('id', $request->currency_id)->first();
-                if (is_null($currency))
+                if (is_null($currency)) {
                     return abort(404, 'تلك العملة غير موجودة');
+                }
                 if ($api_data->where('code', $currency->code)->count() != 0) {
                     $user->profile->currency_id = $request->currency_id;
                 }
             } else {
                 $country = Country::with('currency')->where('id', $request->country_id)->first();
-                if (is_null($country))
+                if (is_null($country)) {
                     return abort(404, 'تلك الدولة غير موجودة');
-                if ($api_data->where('code', $country->currency->code)->count() != 0)
+                }
+                if ($api_data->where('code', $country->currency->code)->count() != 0) {
                     $user->profile->currency_id = $country->currency_id;
+                }
             }
             // تغيير المعلومات الشخصية
 

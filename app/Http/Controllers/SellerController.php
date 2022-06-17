@@ -20,7 +20,7 @@ class SellerController extends Controller
      */
     public function __construct()
     {
-        $this->middleware('auth:sanctum','abilities:user');
+        $this->middleware(['auth:sanctum','abilities:user']);
     }
 
     /**
