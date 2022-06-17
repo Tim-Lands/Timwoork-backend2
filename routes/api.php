@@ -40,13 +40,13 @@ use Illuminate\Support\Facades\Route;
 | API Routes
 |--------------------------------------------------------------------------
 */
-Route::get('/currency_values',[CurrencyController::class,'send_currency_values']);
+Route::get('/currency_values', [CurrencyController::class,'send_currency_values']);
 Route::get('phone_codes', [CountryController::class, 'get_phone_codes']);
 Route::group(['middleware' => ['XSS']], function () {
     Route::get('/currency', [CurrencyController::class, 'index']);
     Route::get('/get_countries', [CountryController::class, 'index']);
     # code...
-    Broadcast::routes(['middleware' => ['auth:sanctum']]);
+    Broadcast::routes(['middleware' => ['auth:sanctum' ,'abilities:user']]);
     // send data currency to frontend in pusher
     Route::get('/send_currency', [CurrencyController::class, 'send_currency']);
     // مسار الرابط
@@ -58,7 +58,7 @@ Route::group(['middleware' => ['XSS']], function () {
     /* -------------------------------------------------------------------------- */
     /*                                 Auth Routes                                */
     /* -------------------------------------------------------------------------- */
-    Route::middleware('auth:sanctum')->group(function () {
+    Route::middleware('auth:sanctum', 'abilities:user')->group(function () {
         Route::get('/me', [LoginController::class, 'me']);
         Route::post('/logout_user', [LoginController::class, 'logout_user']);
         Route::post('/logout_all', [LoginController::class, 'logout_all']);
@@ -70,7 +70,7 @@ Route::group(['middleware' => ['XSS']], function () {
     /* -------------------------------------------------------------------------- */
     /*                             مسارات خدمات البائع                            */
     /* -------------------------------------------------------------------------- */
-    Route::prefix('my_products')->middleware(['auth:sanctum'])->group(function () {
+    Route::prefix('my_products')->middleware(['auth:sanctum', 'abilities:user'])->group(function () {
         // عرض كل الخدمات
         Route::get('/', [MyProductController::class, 'index']);
         // عرض الخدمات التي تم تنشيطها
@@ -96,7 +96,7 @@ Route::group(['middleware' => ['XSS']], function () {
     /**
      *  مسار لعرض مشترياتي
      */
-    Route::middleware('auth:sanctum')->prefix('my_purchases')->group(function () {
+    Route::middleware('auth:sanctum', 'abilities:user')->prefix('my_purchases')->group(function () {
         Route::get('/', [BuyerOrderController::class, 'index']);
         Route::get('/{id}', [BuyerOrderController::class, 'show']);
     });
@@ -105,7 +105,7 @@ Route::group(['middleware' => ['XSS']], function () {
     /**
      *  مسار لعرض مشترياتي
      */
-    Route::middleware('auth:sanctum')->prefix('my_sales')->group(function () {
+    Route::middleware('auth:sanctum', 'abilities:user')->prefix('my_sales')->group(function () {
         Route::get('/', [SellerOrderController::class, 'index']);
         Route::get('/{id}', [SellerOrderController::class, 'show']);
     });
@@ -116,7 +116,7 @@ Route::group(['middleware' => ['XSS']], function () {
     /**
      * مسار طلبات السحب
      */
-    Route::middleware('auth:sanctum')->prefix('withdrawals')->group(function () {
+    Route::middleware('auth:sanctum', 'abilities:user')->prefix('withdrawals')->group(function () {
         Route::get('/countries', [WithdrawalController::class, 'countries']);
         // حفظ حسابات البنكية
         Route::post('/store_paypal', [WithdrawalController::class, 'store_paypal']);
@@ -139,7 +139,7 @@ Route::group(['middleware' => ['XSS']], function () {
     /**
      *  مسار لعرض محفظتي
      */
-    Route::middleware('auth:sanctum')->prefix('my_wallet')->group(function () {
+    Route::middleware('auth:sanctum', 'abilities:user')->prefix('my_wallet')->group(function () {
         Route::get('/', [WalletController::class, 'index']);
     });
     /******************************************************************** */
@@ -205,7 +205,7 @@ Route::group(['middleware' => ['XSS']], function () {
     /* -------------------------------------------------------------------------- */
     /*                           مسارات انشاء خدمة جديدة                          */
     /* -------------------------------------------------------------------------- */
-    Route::prefix('product')->middleware(['auth:sanctum'])->group(function () {
+    Route::prefix('product')->middleware(['auth:sanctum', 'abilities:user'])->group(function () {
         // انشاء الخدمة
         Route::get('/store', [InsertProductContoller::class, 'store']);
         // حذف الصورة الواحدة من المعرض
@@ -227,7 +227,7 @@ Route::group(['middleware' => ['XSS']], function () {
         // حذف الخدمة
         Route::post('/{id}/deleteProduct', DeleteProductController::class);
         // إضافة محادثة للخدمة
-        Route::post('/{id}/conversations/create', [ConversationController::class, 'product_conversation_store'])->middleware('auth:sanctum');
+        Route::post('/{id}/conversations/create', [ConversationController::class, 'product_conversation_store'])->middleware('auth:sanctum', 'abilities:user');
     });
 
     /* -------------------------------------------------------------------------- */
@@ -240,7 +240,7 @@ Route::group(['middleware' => ['XSS']], function () {
     /*                             المحادثات والرسائل                             */
     /* -------------------------------------------------------------------------- */
 
-    Route::prefix('conversations')->middleware('auth:sanctum')->group(function () {
+    Route::prefix('conversations')->middleware('auth:sanctum', 'abilities:user')->group(function () {
         // عرض المحادثات
         Route::get('/', [ConversationController::class, 'index']);
         // اظهار المحادثة
@@ -309,7 +309,7 @@ Route::group(['middleware' => ['XSS']], function () {
             // حل النزاع بين الطرفين في حالة الغاء الطلبية
             Route::post('/{id}/resolve_the_conflict_between_them_in_modified', [ItemController::class, 'resolve_the_conflict_between_them_in_modified']);
             // إضافة محادثة للخدمة
-            Route::post('/{id}/conversations/create', [ConversationController::class, 'item_conversation_store'])->middleware('auth:sanctum');
+            Route::post('/{id}/conversations/create', [ConversationController::class, 'item_conversation_store'])->middleware('auth:sanctum', 'abilities:user');
             // تقييم الخدمة
             Route::post('/{id}/rating', [RatingController::class, 'rate']);
         });
@@ -319,13 +319,13 @@ Route::group(['middleware' => ['XSS']], function () {
     /*                            مسارات واجهة المستخدم                           */
     /* -------------------------------------------------------------------------- */
     // عرض التصنيفات الرئيسية
-    Route::get('/top_main_categories',[FrontEndController::class,'get_top_main_categories']);
+    Route::get('/top_main_categories', [FrontEndController::class,'get_top_main_categories']);
     Route::get('/top_categories', [FrontEndController::class, 'get_top_categories']);
     Route::get('/categories', [FrontEndController::class, 'get_all_categories']);
     // عرض التصنيفات الرئيسية
     Route::get('/get_categories', [FrontEndController::class, 'get_categories']);
     // عرض التصنيفات من اجل عملية الاضافة
-    Route::get('/get_categories_for_add_product', [FrontEndController::class, 'get_categories_for_add_product'])->middleware('auth:sanctum');
+    Route::get('/get_categories_for_add_product', [FrontEndController::class, 'get_categories_for_add_product'])->middleware('auth:sanctum', 'abilities:user');
     // تحويل الاموال من المعلقة الى قابلة للسحب
     Route::get('withdrawal/change_amount', [FrontEndController::class, 'chage_amount_withdrawal']);
     // فتح الحسابات المحظورة عند انتهاء من وقت الحظر
@@ -337,7 +337,7 @@ Route::group(['middleware' => ['XSS']], function () {
     Route::get(
         '/get_categories_for_add_product/{id}',
         [FrontEndController::class, 'get_subcategories_for_add_product']
-    )->middleware('auth:sanctum');
+    )->middleware('auth:sanctum', 'abilities:user');
 
     // عرض التصنيف الفرعي مع خدماته
     Route::get('/get_products_subcategory/{id}', [FrontEndController::class, 'get_products_by_subcategory']);

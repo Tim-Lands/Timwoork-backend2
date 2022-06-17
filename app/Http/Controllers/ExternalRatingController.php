@@ -19,7 +19,7 @@ class ExternalRatingController extends Controller
      */
     public function __construct()
     {
-        $this->middleware('auth:sanctum');
+        $this->middleware('auth:sanctum','abilities:user');
     }
 
     public function index(Request $request)

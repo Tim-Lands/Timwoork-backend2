@@ -2,13 +2,11 @@
 
 namespace App\Traits;
 
-
 trait LoginUser
 {
-
     public function login_with_token($user)
     {
-        $token = $user->createToken('token')->plainTextToken;
+        $token = $user->createToken('token', ['user'])->plainTextToken;
         //$cookie = cookie('timwoork_token', $token, $time);
         // تغيير حالة اليوزر الى اونلاين
         $user->status = true;

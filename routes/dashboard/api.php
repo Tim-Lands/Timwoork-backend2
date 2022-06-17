@@ -37,7 +37,7 @@ Route::group(['middleware' => ['XSS']], function () {
     // مسار تسجيل الدخول
     Route::post('/login', [AuthController::class, 'login']);
 
-    Route::middleware(['auth:sanctum'])->group(function () {
+    Route::middleware(['auth:sanctum','abilities:admin'])->group(function () {
         // =======================  مسارات التسجيل و التسجيل دخول الtype.adminمدير ======================
         Route::get('/me', [AuthController::class, 'me']);
         Route::post('/logout', [AuthController::class, 'logout']);

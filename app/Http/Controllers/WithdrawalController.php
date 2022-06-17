@@ -14,7 +14,6 @@ use App\Http\Requests\withdrawal\PaypalRequest;
 use App\Http\Requests\withdrawal\PaypalUpdateRequest;
 use App\Http\Requests\withdrawal\WiseRequest;
 use App\Http\Requests\withdrawal\WiseUpdateRequest;
-use App\Models\Attachment;
 use App\Models\BankAccount;
 use App\Models\BankTransferDetail;
 use App\Models\MoneyActivity;

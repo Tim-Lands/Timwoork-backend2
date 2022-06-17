@@ -16,7 +16,7 @@ class AuthController extends Controller
             return response()->error(__('messages.user.error_login'));
         }
         $user = auth('admin')->user();
-        $token = $user->createToken('token')->plainTextToken;
+        $token = $user->createToken('token', ['admin'])->plainTextToken;
         return response()->success(__('messages.dashboard.get_login'), $token);
     }
 

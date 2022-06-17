@@ -23,7 +23,7 @@ class ProfileController extends Controller
      */
     public function __construct()
     {
-        $this->middleware('auth:sanctum')->except('show');
+        $this->middleware('auth:sanctum','abilities:user')->except('show');
     }
     /**
      * show => اظهار بروفايل المشتري
