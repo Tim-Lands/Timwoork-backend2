@@ -54,6 +54,7 @@ class AcceptProductNotification extends Notification
             'title' =>  "لقد تم قبول خدمتك : " . $this->product->title,
             'content' => [
                 'product_id' => $this->product->id,
+                'slug' => $this->product->slug,
                 'title' => $this->product->title,
             ],
         ]);
@@ -78,6 +79,7 @@ class AcceptProductNotification extends Notification
             'title' =>  " لقد تم قبول خدمتك : " . $this->product->title,
             'content' => [
                 'product_id' => $this->product->id,
+                'slug' => $this->product->slug,
                 'title' => $this->product->title,
             ],
         ];

@@ -3,6 +3,7 @@
 namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rules\Password;
 
 class ForgetPasswordResetRequest extends FormRequest
 {
@@ -25,7 +26,7 @@ class ForgetPasswordResetRequest extends FormRequest
     {
         return [
             'email' => 'required|email|exists:users',
-            'password' => 'required|min:8|confirmed',
+            'password' => ['required','confirmed',Password::min(8)->letters()->numbers()->mixedCase()->symbols()],
             'password_confirmation' => 'required',
         ];
     }

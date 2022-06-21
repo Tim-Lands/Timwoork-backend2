@@ -9,27 +9,30 @@ use App\Http\Requests\SocialProviderRequest;
 use App\Models\User;
 use App\Traits\LoginUser;
 use Exception;
+use Illuminate\Support\Str;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\RateLimiter;
 
 class LoginController extends Controller
 {
     use LoginUser;
     public function login(LoginRequest $request)
     {
+        $this->checkTooManyFailedAttempts();
         // تتم عملية التسجيل الدخول بواسطة البريد الالكتروني أو اسم المستخدم أو رقم الهاتف
         $user = User::where('username', $request->username)
             ->orWhere('email', $request->username)
-            ->orWhere('phone', $request->username)
             ->first();
 
         // في حالة عدم وجود المستخدم في قاعدة البيانات أو عدم تطابق كلمة المرور المحفوظة مع كلمة المرور المرسلة
         // يتم إرسال رسالة عدم صحة البيانات
         if (!$user || !Hash::check($request->password, $user->password)) {
+            // عدد مرات الدخول المسموح بها في الدقائق
+            RateLimiter::hit($this->throttleKey(), $seconds = 60);
             return response()->error(__("messages.user.error_login"), Response::HTTP_UNAUTHORIZED);
         }
         if ($user->isBanned()) {
@@ -47,13 +50,14 @@ class LoginController extends Controller
         }
 
         Auth::login($user);
+        RateLimiter::clear($this->throttleKey());
         // في حالة صحة البيانات سيتم إنشاء توكن وتخزينه في جلسة كوكي وإرساله مع كل طلب
         return $this->login_with_token($user);
     }
 
     public function me(Request $request)
     {
-        $paginate = $request->query('paginate') ?? 10;
+        //$paginate = $request->query('paginate') ?? 10;
         $user =  $request->user()->load([
             'profile.profile_seller.badge',
             'profile.profile_seller.level',
@@ -214,4 +218,32 @@ class LoginController extends Controller
             'secret' => $user->email + $user->id,
         ]);
     } */
+
+    /**
+    * Get the rate limiting throttle key for the request.
+    *
+    * @return string
+    */
+    public function throttleKey()
+    {
+        return Str::lower(request('email')) . '|' . request()->ip() . '|'. request('username');
+    }
+
+    /**
+     * Ensure the login request is not rate limited.
+     *
+     * @return void
+     */
+    public function checkTooManyFailedAttempts()
+    {
+        if (! RateLimiter::tooManyAttempts($this->throttleKey(), 4)) {
+            return;
+        }
+
+        /*throw ValidationException::withMessages([
+            'email' => [],
+        ])->status(Response::HTTP_TOO_MANY_REQUESTS);*/
+
+        return response()->error(__("messages.errors.too_many_attempts"), Response::HTTP_UNAUTHORIZED);
+    }
 }

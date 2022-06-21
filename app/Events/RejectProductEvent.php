@@ -55,6 +55,7 @@ class RejectProductEvent implements ShouldBroadcast
             'content' => [
                 'product_id' => $this->product->id,
                 'title' => $this->product->title,
+                'slug' => $this->product->slug,
                 'cause' => $this->cause,
             ],
         ];

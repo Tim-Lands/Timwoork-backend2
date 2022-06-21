@@ -47,7 +47,7 @@ return [
         "price_required" => "price required",
         "price_two_after_number" => "price must have two digits after the comma only",
 
-         "developements_title_required" => "Development title required",
+        "developements_title_required" => "Development title required",
         "developements_duration_required" => "development period required",
         "developements_duration_great_zero" => "development time is at least 1 day",
         "developements_price_required" => "development price required",

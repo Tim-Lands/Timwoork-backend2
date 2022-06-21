@@ -57,6 +57,7 @@ class DisactiveProductNotification extends Notification
             'content' => [
                 'product_id' => $this->product->id,
                 'title' => $this->product->title,
+                'slug' => $this->product->slug,
                 "cause" => $this->cause
             ],
         ]);
@@ -82,6 +83,7 @@ class DisactiveProductNotification extends Notification
             'content' => [
                 'product_id' => $this->product->id,
                 'title' => $this->product->title,
+                'slug' => $this->product->slug,
                 "cause" => $this->cause
             ],
         ];
