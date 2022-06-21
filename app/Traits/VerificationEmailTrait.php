@@ -29,7 +29,7 @@ trait VerificationEmailTrait
             'user_id' => $user->id,
             'email' => $user->email,
             'code' => $this->generateVerificationCode(),
-            'date_expired' => Carbon::now()->addHour(1)
+            //'date_expired' => Carbon::now()->addHour(1)
         ]);
     }
 
@@ -38,7 +38,7 @@ trait VerificationEmailTrait
         // تفعيل البريد الالكتروني بادخال البريد الالكتروني مع رمز التفعيل
         $verify = VerifyEmailCode::where('email', $email)
             ->where('code', $code)
-            ->where('date_expired', '<=', Carbon::now())
+            //->where('date_expired', '<=', Carbon::now())
             ->first();
         if (!$verify) {
             return response()->error('حدث خطأ ما لم يتم العثور على رمز التفعيل الخاص بك');
@@ -68,7 +68,7 @@ trait VerificationEmailTrait
     {
         // استخراج رمز التفعيل من قاعدة البيانات باستعمال البريد الالكتروني
         $verify = VerifyEmailCode::where('email', $email)
-                ->where('date_expired', '<=', Carbon::now())
+                //->where('date_expired', '<=', Carbon::now())
                 ->first();
         if ($verify) {
             // في الحالة وجود الرمز يتم إرساله مباشرة
