@@ -31,7 +31,6 @@ use App\Http\Controllers\SalesProcces\ItemController;
 use App\Http\Controllers\SearchController;
 use App\Http\Controllers\Product\RatingController;
 use App\Http\Controllers\WithdrawalController;
-use App\Models\MoneyActivity;
 use Illuminate\Support\Facades\Broadcast;
 use Illuminate\Support\Facades\Route;
 
@@ -42,7 +41,7 @@ use Illuminate\Support\Facades\Route;
 */
 Route::get('/currency_values', [CurrencyController::class,'send_currency_values']);
 Route::get('phone_codes', [CountryController::class, 'get_phone_codes']);
-Route::group(['middleware' => ['XSS']], function () {
+Route::group(['middleware' => ['XSS','language']], function () {
     Route::get('/currency', [CurrencyController::class, 'index']);
     Route::get('/get_countries', [CountryController::class, 'index']);
     # code...

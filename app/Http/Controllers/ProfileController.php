@@ -11,8 +11,6 @@ use App\Models\Profile;
 use App\Models\User;
 use Exception;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Storage;
-use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
 
 class ProfileController extends Controller
@@ -78,7 +76,8 @@ class ProfileController extends Controller
                 ->get();
             $code_phones = Country::all()->groupBy('code_phone');
             if (is_null($code_phones[$request->code_phone])) {
-                throw new Exception("يجب إختيار كود هاتف متاح");
+                //throw new Exception("يجب إختيار كود هاتف متاح");
+                return response()->error(__("messages.errors.element_not_found"), 404);
             }
             $user = Auth::user();
             // تغيير اسم المستخدم
@@ -86,24 +85,31 @@ class ProfileController extends Controller
             $user->phone = $request->phone;
             $user->code_phone = $request->code_phone;
             $user->save();
+
+            // جلب الدولة
+            $country = Country::with('currency')->where('id', $request->country_id)->first();
+            // شرط اذا كانت الدولة موجودة
+            if (is_null($country)) {
+                return response()->error(__("messages.errors.element_not_found"), 404);
+            }
+
             if (!is_null($request->currency_id)) {
-                echo "currency is there";
+                //echo "currency is there";
                 $currency = Currency::where('id', $request->currency_id)->first();
                 if (is_null($currency)) {
-                    return abort(404, 'تلك العملة غير موجودة');
+                    //return abort(404, 'تلك العملة غير موجودة');
+                    return response()->error(__("messages.errors.element_not_found"), 404);
                 }
                 if ($api_data->where('code', $currency->code)->count() != 0) {
                     $user->profile->currency_id = $request->currency_id;
                 }
             } else {
-                $country = Country::with('currency')->where('id', $request->country_id)->first();
-                if (is_null($country)) {
-                    return abort(404, 'تلك الدولة غير موجودة');
-                }
                 if ($api_data->where('code', $country->currency->code)->count() != 0) {
                     $user->profile->currency_id = $country->currency_id;
                 }
             }
+
+
             // تغيير المعلومات الشخصية
 
             $user->profile->first_name = $request->first_name;
@@ -112,6 +118,7 @@ class ProfileController extends Controller
             $user->profile->gender = $request->gender;
             $user->profile->date_of_birth = $request->date_of_birth;
             $user->profile->country_id = $request->country_id;
+            $user->profile->lang = $request->has('lang') ? $request->lang:$country->lang;
             $user->profile->steps = Profile::COMPLETED_SETP_THREE;
             $user->profile->is_completed = true;
             $user->phone = $request->phone;

@@ -126,7 +126,7 @@ return [
         "disactive_dark_mode" => "Le mode a été changé en mode nuit",
     ],
 
-    "utilisateur" => [
+    "user" => [
         "send_eamil_reset_password" => "Le lien de récupération du mot de passe a été envoyé à votre adresse électronique",
         "erreur_verify" => "Quelque chose s’est mal passé... Votre code de récupération de mot de passe est introuvable",
         "success_verify_reset_password" => "Votre code de récupération de mot de passe est correct",
@@ -178,7 +178,8 @@ return [
         "error_database" => "Quelque chose s’est mal passé dans la base de données , assurez-vous de cela",
         "element_not_found " => "Cet élément n’existe pas",
         "url_not_found" => "Ce lien n’existe pas",
-        "upload_images" => "Vous devez importer des photos"
+        "upload_images" => "Vous devez importer des photos",
+        "too_many_attempts" => "Vos tentatives autorisées ont été dépassées, attendez une minute jusqu'à ce que vous puissiez répéter le processus",
     ],
 /* Tableau de bord ------------------------------- ------------------------------*/
     "dahshboard" => [
