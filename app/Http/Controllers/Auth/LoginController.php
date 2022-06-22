@@ -22,7 +22,7 @@ class LoginController extends Controller
     use LoginUser;
     public function login(LoginRequest $request)
     {
-        $this->checkTooManyFailedAttempts();
+        //$this->checkTooManyFailedAttempts();
         // تتم عملية التسجيل الدخول بواسطة البريد الالكتروني أو اسم المستخدم أو رقم الهاتف
         $user = User::where('username', $request->username)
             ->orWhere('email', $request->username)
@@ -32,7 +32,7 @@ class LoginController extends Controller
         // يتم إرسال رسالة عدم صحة البيانات
         if (!$user || !Hash::check($request->password, $user->password)) {
             // عدد مرات الدخول المسموح بها في الدقائق
-            RateLimiter::hit($this->throttleKey(), $seconds = 60);
+            //RateLimiter::hit($this->throttleKey(), $seconds = 60);
             return response()->error(__("messages.user.error_login"), Response::HTTP_UNAUTHORIZED);
         }
         if ($user->isBanned()) {
@@ -50,7 +50,7 @@ class LoginController extends Controller
         }
 
         Auth::login($user);
-        RateLimiter::clear($this->throttleKey());
+        // RateLimiter::clear($this->throttleKey());
         // في حالة صحة البيانات سيتم إنشاء توكن وتخزينه في جلسة كوكي وإرساله مع كل طلب
         return $this->login_with_token($user);
     }
@@ -224,17 +224,17 @@ class LoginController extends Controller
     *
     * @return string
     */
-    public function throttleKey()
+    /*public function throttleKey()
     {
         return Str::lower(request('email')) . '|' . request()->ip() . '|'. request('username');
-    }
+    }*/
 
     /**
      * Ensure the login request is not rate limited.
      *
      * @return void
      */
-    public function checkTooManyFailedAttempts()
+    /*public function checkTooManyFailedAttempts()
     {
         if (! RateLimiter::tooManyAttempts($this->throttleKey(), 4)) {
             return;
@@ -244,6 +244,6 @@ class LoginController extends Controller
             'email' => [],
         ])->status(Response::HTTP_TOO_MANY_REQUESTS);*/
 
-        return response()->error(__("messages.errors.too_many_attempts"), Response::HTTP_UNAUTHORIZED);
-    }
+        //return response()->error(__("messages.errors.too_many_attempts"), Response::HTTP_UNAUTHORIZED);
+    //}
 }
