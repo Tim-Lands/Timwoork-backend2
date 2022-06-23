@@ -166,7 +166,7 @@ Route::group(['middleware' => ['XSS','language']], function () {
     // التححق من الايميل
     Route::post('/email/verify', [RegisterController::class, 'verifyEmail']);
     // ادخال رمز التحقق
-    Route::post('/email/resend', [RegisterController::class, 'resend_verify_code'])->middleware('throttle:3,1');
+    Route::post('/email/resend', [RegisterController::class, 'resend_verify_code']);
     /* -------------------------------------------------------------------------- */
 
     /* -------------------------------------------------------------------------- */
