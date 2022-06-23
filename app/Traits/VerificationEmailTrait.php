@@ -13,7 +13,6 @@ use Illuminate\Support\Facades\RateLimiter;
 
 trait VerificationEmailTrait
 {
-    use Response;
     public function generateVerificationCode($length = 6)
     {
         // إنشاء كود التفعيل المكوّن من 6 أرقام ويمكن تغيير طول الرقم باختيار الطول، في حالة عدم اختيار الطول، الطول الافتراضي للكود هو 6
