@@ -6,8 +6,9 @@ use App\Events\VerifyEmail;
 use App\Models\User;
 use App\Models\VerifyEmailCode;
 use Carbon\Carbon;
-use Illuminate\Http\Response;
-use Illuminate\Support\Facades\RateLimiter;
+
+//use Illuminate\Http\Response;
+//use Illuminate\Support\Facades\RateLimiter;
 
 //use Illuminate\Support\Str;
 
