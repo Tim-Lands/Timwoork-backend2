@@ -100,6 +100,14 @@ return [
         "type_message_required" =>"You must enter a message type",
         "message_required" => "You must enter the message text",
         "email_unique" => "email already exists",
+        "phone_unique" => "phone number already exists",
+         "phone_regex" => "the phone number must contain numbers",
+         "phone_max" => "the phone number must contain at least 8 digits",
+         "phone_min" => "the phone number must contain at least 16 digits",
+         'phone_number_numeric' => 'phone number must contain numbers',
+         'code_phone_required' => 'You must enter the phone code for your country',
+         'phone_digits_between'=>'The phone number must be between 4 and 16 digits',
+        'username_regex' => 'Username must contain letters and numbers only'
     ],
 
     /* --------------------------------- الرسائل -------------------------------- */

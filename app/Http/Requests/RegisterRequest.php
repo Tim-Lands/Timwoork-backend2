@@ -58,7 +58,8 @@ class RegisterRequest extends FormRequest
             'phone.unique' => __("messages.validation.phone_unique"),
             'phone.numeric' => __("messages.validation.phone_number_numeric"),
             'phone.digits_between' => __("messages.validation.phone_digits_between"),
-            'code_phone.required' => __('messages.validation.code_phone_required')
+            'code_phone.required' => __('messages.validation.code_phone_required'),
+            'username.regex' => __('messages.validation.username_regex')
 
         ];
     }
