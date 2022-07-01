@@ -107,7 +107,8 @@ return [
         "phone_min" => "Le numéro de téléphone doit contenir au plus de 16 chiffres",
         'phone_number_numeric' => 'Le numéro de téléphone doit contenir des chiffres',
         'code_phone_required' => 'Vous devez entrer le code téléphonique de votre pays',
-        'phone_digits_between '=> "Le numéro de téléphone doit être compris entre 4 et 16 chiffres"
+        'phone_digits_between'=> "Le numéro de téléphone doit être compris entre 4 et 16 chiffres",
+        'username_regex' => 'Le nom d\'utilisateur ne doit contenir que des lettres et des chiffres'
     ],
 
     /* --------------------------------- Messages -------------------------------- */
