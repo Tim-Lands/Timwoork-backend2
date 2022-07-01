@@ -36,15 +36,17 @@ class ProductController extends Controller
         $paginate = request()->query('paginate') ? request()->query('paginate') : 10;
         // جلب جميع الخدمات
         $products = Product::selection()->where('is_completed', 1)
-        ->with(['subcategory','galaries','product_tag','video','developments',
-                 'profileSeller' => function ($q) {
-                     $q->select('id', 'profile_id')->with('profile', function ($q) {
-                         $q->select('id', 'full_name', 'user_id')->with('user:id,username,email');
-                     });
-                 }])
-        ->filter('status', 'is_active', 'like')
-        ->latest()
-        ->paginate($paginate);
+            ->with([
+                'subcategory', 'galaries', 'product_tag', 'video', 'developments',
+                'profileSeller' => function ($q) {
+                    $q->select('id', 'profile_id')->with('profile', function ($q) {
+                        $q->select('id', 'full_name', 'user_id')->with('user:id,username,email');
+                    });
+                }
+            ])
+            ->filter('status', 'is_active', 'like')
+            ->latest()
+            ->paginate($paginate);
         // اظهار العناصر
         return response()->success(__("messages.oprations.get_all_data"), $products);
     }
@@ -68,6 +70,7 @@ class ProductController extends Controller
     public function show(mixed $id)
     {
         $product = Product::selection()
+            ->withTrashed()
             ->whereSlug($id)
             ->orWhere('id', $id)
             ->withOnly([
@@ -100,7 +103,7 @@ class ProductController extends Controller
                                     ->with(['user' => function ($q) {
                                         $q->select('id', 'username', 'email', 'phone');
                                     }, 'badge:id,name_ar,name_en,name_fr', 'level:id,name_ar,name_en,name_fr', 'country'])
-                                    ->without('profile_seller');
+                                    ->without('bank_account', 'bank_transfer_detail', 'paypal_account', 'wise_account', 'badge', 'level', 'profile_seller');
                             },
                             'level:id,name_ar,name_en,name_fr',
                             'badge:id,name_ar,name_en,name_fr'
@@ -131,50 +134,51 @@ class ProductController extends Controller
     {
         // slug جلب الخدمة بواسطة
         $product = Product::selection()
-                ->whereId($id)
-                ->withOnly([
-                    'subcategory' => function ($q) {
-                        $q->select('id', 'parent_id', 'name_ar', 'name_en', 'name_fr')
-                            ->with('category', function ($q) {
-                                $q->select('id', 'name_ar', 'name_en', 'name_fr')
-                                    ->without('subcategories');
-                            })->withCount('products');
-                    },
-                    'developments' => function ($q) {
-                        $q->select('id', 'title', 'price', 'duration', 'product_id');
-                    },
-                    'product_tag:id,name',
-                    'ratings' => function ($q) {
-                        $q->with('user.profile');
-                    },
-                    'galaries' => function ($q) {
-                        $q->select('id', 'path', 'product_id');
-                    },
-                    'video' => function ($q) {
-                        $q->select('id', 'product_id', 'url_video');
-                    },
-                    'profileSeller' => function ($q) {
-                        $q->select('id', 'profile_id', 'number_of_sales', 'portfolio', 'profile_id', 'seller_badge_id', 'seller_level_id')
-                            ->with([
-                                'badge:id,name_ar,name_en,name_fr',
-                                'level:id,name_ar,name_en,name_fr',
-                                'profile' =>
-                                function ($q) {
-                                    $q->select('id', 'user_id', 'first_name', 'last_name', 'avatar', 'precent_rating', 'level_id', 'badge_id', 'country_id')
-                                        ->with(['user' => function ($q) {
+            ->whereId($id)
+            ->withOnly([
+                'subcategory' => function ($q) {
+                    $q->select('id', 'parent_id', 'name_ar', 'name_en', 'name_fr')
+                        ->with('category', function ($q) {
+                            $q->select('id', 'name_ar', 'name_en', 'name_fr')
+                                ->without('subcategories');
+                        })->withCount('products');
+                },
+                'developments' => function ($q) {
+                    $q->select('id', 'title', 'price', 'duration', 'product_id');
+                },
+                'product_tag:id,name',
+                'ratings' => function ($q) {
+                    $q->with('user.profile');
+                },
+                'galaries' => function ($q) {
+                    $q->select('id', 'path', 'product_id');
+                },
+                'video' => function ($q) {
+                    $q->select('id', 'product_id', 'url_video');
+                },
+                'profileSeller' => function ($q) {
+                    $q->select('id', 'profile_id', 'number_of_sales', 'portfolio', 'profile_id', 'seller_badge_id', 'seller_level_id')
+                        ->with([
+                            'badge:id,name_ar,name_en,name_fr',
+                            'level:id,name_ar,name_en,name_fr',
+                            'profile' =>
+                            function ($q) {
+                                $q->select('id', 'user_id', 'first_name', 'last_name', 'avatar', 'precent_rating', 'level_id', 'badge_id', 'country_id')
+                                    ->with([
+                                        'user' => function ($q) {
                                             $q->select('id', 'username', 'email', 'phone');
                                         },
-                                           'badge:id,name_ar,name_en,name_fr',
-                                           'level:id,name_ar,name_en,name_fr',
-                                           'country'
-                                          ])
-                                        ->without('profile_seller');
-                                }
-                            ]);
-                    }
-                ])
-                ->where('is_completed', 1)
-                ->first();
+                                        'badge:id,name_ar,name_en,name_fr',
+                                        'level:id,name_ar,name_en,name_fr',
+                                        'country'
+                                    ])
+                                    ->without('profile_seller');
+                            }
+                        ]);
+                }
+            ])
+            ->where('is_completed', 1)
+            ->first();
         // فحص اذا كان يوجد هذا العنصر
         if (!$product) {
             // رسالة خطأ
@@ -193,8 +197,8 @@ class ProductController extends Controller
     {
         // جلب جميع الخدمات التي تم تنشيطها
         $products_actived = Product::selection()->productActive()->with(['category', 'profileSeller'])
-        ->latest()
-        ->get();
+            ->latest()
+            ->get();
         // اظهار العناصر
         return response()->success(__("messages.dashboard.get_product_actived"), $products_actived);
     }
@@ -208,8 +212,8 @@ class ProductController extends Controller
     {
         // جلب جميع الخدمات التي تم رفضها
         $products_rejected = Product::selection()->productReject()->with(['category', 'profileSeller'])
-        ->latest()
-        ->get();
+            ->latest()
+            ->get();
         // اظهار العناصر
         return response()->success(__("messages.dashboard.get_product_rejected"), $products_rejected);
     }
@@ -261,22 +265,22 @@ class ProductController extends Controller
         // تصفح
         $paginate = request()->query('paginate') ? request()->query('paginate') : 10;
         //استعلام جلب الخدمات المحذوفة
-        $products = Product::selection()->onlyTrashed()->with(['profileSeller'=> function ($q) {
+        $products = Product::selection()->onlyTrashed()->with(['profileSeller' => function ($q) {
             $q->select('id', 'profile_id')
-            ->with('profile', function ($q) {
-                $q->select('id', 'first_name', 'last_name', 'user_id')
-                ->with('user:id,username')
+                ->with('profile', function ($q) {
+                    $q->select('id', 'first_name', 'last_name', 'user_id')
+                        ->with('user:id,username')
+                        ->without('level', 'badge');
+                })
                 ->without('level', 'badge');
-            })
-            ->without('level', 'badge');
-        },'subcategory'=> function ($q) {
+        }, 'subcategory' => function ($q) {
             $q->select('id', 'name_ar', 'name_en', 'name_fr')
-            ->with('category:name_ar,name_en,name_fr');
+                ->with('category:name_ar,name_en,name_fr');
         }])
-        ->where('is_completed', 1)
-        ->filter('like')
-        ->latest()
-        ->paginate($paginate);
+            ->where('is_completed', 1)
+            ->filter('like')
+            ->latest()
+            ->paginate($paginate);
 
         // اظهار العناصر
         return response()->success(__("messages.oprations.get_all_data"), $products);
@@ -385,13 +389,13 @@ class ProductController extends Controller
             // انشاء مصفوفة و وضع فيها بيانات المرحلة الاولى
             $data = [
                 'title'             => $request->title,
-                'slug'              => $product->id .'-'.slug_with_arabic($request->title),
+                'slug'              => $product->id . '-' . slug_with_arabic($request->title),
                 'category_id'       =>  (int)$request->subcategory,
                 'is_vide'           => 0,
             ];
             // جلب الوسوم من المستخدم
             $tag_request_values = array_values(array_map(function ($key) {
-                return strtolower($key["value"]) ;
+                return strtolower($key["value"]);
             }, $request->tags));
             // حلب الوسوم الموجودة داخل القواعد البيانات
             $tags = Tag::select('id', 'name')->whereIn('name', $tag_request_values)->get();
@@ -719,11 +723,11 @@ class ProductController extends Controller
                         $imagelName = "tw-galary-image-{$key}-{$time}.{$value->getClientOriginalExtension()}";
                         // وضع المعلومات فالمصفوفة
                         $galaries_images[$key] = [
-                                'path'      => $imagelName,
-                                'full_path' => $value,
-                                'size'      => number_format($value->getSize() / 1048576, 3) . ' MB',
-                                'mime_type' => $value->getClientOriginalExtension(),
-                            ];
+                            'path'      => $imagelName,
+                            'full_path' => $value,
+                            'size'      => number_format($value->getSize() / 1048576, 3) . ' MB',
+                            'mime_type' => $value->getClientOriginalExtension(),
+                        ];
                     }
                     // عملية رفع المفات
                     foreach ($galaries_images as $image) {
@@ -741,11 +745,11 @@ class ProductController extends Controller
                     $imagelName = "tw-galary-image-{$key}-{$time}.{$value->getClientOriginalExtension()}";
                     // وضع المعلومات فالمصفوفة
                     $galaries_images[$key] = [
-                            'path'      => $imagelName,
-                            'full_path' => $value,
-                            'size'      => number_format($value->getSize() / 1048576, 3) . ' MB',
-                            'mime_type' => $value->getClientOriginalExtension(),
-                        ];
+                        'path'      => $imagelName,
+                        'full_path' => $value,
+                        'size'      => number_format($value->getSize() / 1048576, 3) . ' MB',
+                        'mime_type' => $value->getClientOriginalExtension(),
+                    ];
                 }
                 // شرط اذا كان عدد صور يزيد عند 5 و يقل عن 1
                 if (count($galaries_images) > 5 || count($galaries_images) == 0) {
@@ -784,11 +788,11 @@ class ProductController extends Controller
 
 
     /**
-    * delete_one_galary
-    *
-    * @param  mixed $id
-    * @return void
-    */
+     * delete_one_galary
+     *
+     * @param  mixed $id
+     * @return void
+     */
     public function delete_one_galary($id, Request $request)
     {
         try {
