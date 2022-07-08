@@ -41,6 +41,9 @@ class SellerController extends Controller
                 'seller_badge_id' => 1,
                 'seller_level_id' => 1,
             ]);
+            $profile = Auth::user()->profile;
+            $profile->is_seller = 1;
+            $profile->save();
             return response()->success(__("messages.oprations.add_success"), $seller);
         } catch (Exception $ex) {
             //return $ex;
