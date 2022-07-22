@@ -14,6 +14,7 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Stichoza\GoogleTranslate\GoogleTranslate;
 
 class FrontEndController extends Controller
 {
@@ -23,6 +24,16 @@ class FrontEndController extends Controller
      *
      * @return void
      */
+
+    public function testTranslate()
+    {
+        $tr = new GoogleTranslate(); // Translates to 'en' from auto-detected language by default
+        $tr->setSource('en'); // Translate from English
+        $tr->setTarget('fr');
+        echo $tr->translate('Hello World!');
+
+    }
+
     public function get_top_main_categories()
     {
         $categories = DB::table('products')->join('categories', 'products.category_id', '=', 'categories.id')
@@ -164,6 +175,9 @@ class FrontEndController extends Controller
      * @param  mixed $slug
      * @return JsonResponse
      */
+
+
+
     public function show(mixed $slug): JsonResponse
     {
         // id او slug جلب الخدمة بواسطة
@@ -390,8 +404,7 @@ class FrontEndController extends Controller
             ]);
         }
 
-        return response()->success(__("تمت عملية التحوليات بنجاح"));
-        ;
+        return response()->success(__("تمت عملية التحوليات بنجاح"));;
     }
 
     /**

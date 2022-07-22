@@ -21,7 +21,8 @@
         "mehradsadeghi/laravel-filter-querystring": "^1.1",
         "nexmo/laravel": "^2.4",
         "paypal/paypal-checkout-sdk": "^1.0",
-        "pusher/pusher-php-server": "^7.0"
+        "pusher/pusher-php-server": "^7.0",
+        "stichoza/google-translate-php": "^4.1"
     },
     "require-dev": {
         "facade/ignition": "^2.5",

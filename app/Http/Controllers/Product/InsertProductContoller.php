@@ -23,6 +23,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
+use Stichoza\GoogleTranslate\GoogleTranslate;
 
 class InsertProductContoller extends Controller
 {
@@ -76,7 +77,14 @@ class InsertProductContoller extends Controller
     public function storeStepOne($id, ProductStepOneRequest $request)
     {
         try {
+
             //id  جلب العنصر بواسطة
+            $user_profile = Auth::user()->profile;
+            $tr = new GoogleTranslate(); // Translates to 'en' from auto-detected language by default
+            $tr->setSource($user_profile->lang); // Translate from English
+            $title_ar = $request->title_ar;
+            $title_en = $request->title_en;
+            $title_fr = $request->title_fr;
             $product = Product::whereId($id)
                 ->where('profile_seller_id', Auth::user()->profile->profile_seller->id)->first();
             // شرط اذا كان العنصر موجود
@@ -91,9 +99,47 @@ class InsertProductContoller extends Controller
                 return response()->error(__("messages.errors.element_not_found"), 403);
             }
             // انشاء مصفوفة و وضع فيها بيانات المرحلة الاولى
+            switch ($user_profile->lang) {
+                case "ar":
+                    if (is_null($title_en)) {
+                        $tr->setTarget('en');
+                        $title_en = $tr->translate($request->title);
+                    }
+                    if (is_null($title_fr)) {
+                        $tr->setTarget('fr');
+                        $title_fr = $tr->translate($request->title);
+                    }
+                    $title_ar = $request->title;
+                    break;
+                case 'en':
+                    if (is_null($title_ar)) {
+                        $tr->setTarget('ar');
+                        $title_ar = $tr->translate($request->title);
+                    }
+                    if (is_null($title_fr)) {
+                        $tr->setTarget('fr');
+                        $title_fr = $tr->translate($request->title);
+                    }
+                    $title_en = $request->title;
+                    break;
+                case 'fr':
+                    if (is_null($title_en)) {
+                        $tr->setTarget('en');
+                        $title_en = $tr->translate($request->title);
+                    }
+                    if (is_null($title_ar)) {
+                        $tr->setTarget('ar');
+                        $title_fr = $tr->translate($request->title);
+                    }
+                    $title_fr = $request->title;
+                    break;
+            }
             $data = [
                 'title'             => $request->title,
-                'slug'              => $product->id .'-'.slug_with_arabic($request->title),
+                'title_ar'          => $title_ar,
+                'title_en'          => $title_en,
+                'title_fr'          => $title_fr,
+                'slug'              => $product->id . '-' . slug_with_arabic($request->title),
                 'category_id'       =>  (int)$request->subcategory,
                 'is_vide'           => 0,
             ];
@@ -106,7 +152,7 @@ class InsertProductContoller extends Controller
 
             // جلب الوسوم من المستخدم
             $tag_request_values = array_values(array_map(function ($key) {
-                return strtolower($key["value"]) ;
+                return strtolower($key["value"]);
             }, $request->tags));
             // حلب الوسوم الموجودة داخل القواعد البيانات
             $tags = Tag::select('id', 'name')->whereIn('name', $tag_request_values)->get();
@@ -248,6 +294,16 @@ class InsertProductContoller extends Controller
     public function storeStepThree(mixed $id, ProductStepThreeRequest $request)
     {
         try {
+            $user_profile = Auth::user()->profile;
+            $tr = new GoogleTranslate(); // Translates to 'en' from auto-detected language by default
+            $tr->setSource($user_profile->lang); // Translate from English
+            $buyer_ar = $request->buyer_ar;
+            $buyer_en = $request->buyer_en;
+            $buyer_fr = $request->buyer_fr;
+            $content_ar = $request->content_ar;
+            $content_en = $request->content_en;
+            $content_fr = $request->content_fr;
+
             //id  جلب العنصر بواسطة
             $product = Product::whereId($id)
                 ->where('profile_seller_id', Auth::user()->profile->profile_seller->id)->first();     // شرط اذا كان العنصر موجود
@@ -255,10 +311,88 @@ class InsertProductContoller extends Controller
                 // رسالة خطأ
                 return response()->error(__("messages.errors.element_not_found"), 403);
             }
+
+            switch ($user_profile->lang) {
+                case "ar":
+                    //////////buyer
+                    if (is_null($buyer_en)) {
+                        $tr->setTarget('en');
+                        $buyer_en = $tr->translate($request->buyer_instruct);
+                    }
+                    if (is_null($buyer_fr)) {
+                        $tr->setTarget('fr');
+                        $buyer_fr = $tr->translate($request->buyer_instruct);
+                    }
+////////////////////////////content
+                    if (is_null($content_en)) {
+                        $tr->setTarget('en');
+                        $content_en = $tr->translate($request->content);
+                    }
+                    if (is_null($content_fr)) {
+                        $tr->setTarget('fr');
+                        $content_fr = $tr->translate($request->content);
+                    }
+                    $buyer_ar = $request->buyer_instruct;
+                    $content_ar = $request->content;
+                    break;
+                case 'en':
+                    ////////buyer
+                    if (is_null($buyer_ar)) {
+                        $tr->setTarget('ar');
+                        $buyer_ar = $tr->translate($request->buyer_instruct);
+                    }
+                    if (is_null($buyer_fr)) {
+                        $tr->setTarget('fr');
+                        $buyer_fr = $tr->translate($request->buyer_instruct);
+                    }
+                    //////////content
+                    if (is_null($content_ar)) {
+                        $tr->setTarget('ar');
+                        $content_ar = $tr->translate($request->content);
+                    }
+                    if (is_null($content_fr)) {
+                        $tr->setTarget('fr');
+                        $content_fr = $tr->translate($request->content);
+                    }
+
+                    $buyer_en = $request->buyer_instruct;
+                    $content_en = $request->content;
+                    break;
+                case 'fr':
+                    /////////buyer
+                    if (is_null($buyer_en)) {
+                        $tr->setTarget('en');
+                        $buyer_en = $tr->translate($request->buyer_instruct);
+                    }
+                    if (is_null($buyer_ar)) {
+                        $tr->setTarget('ar');
+                        $buyer_ar = $tr->translate($request->buyer_instruct);
+                    }
+
+                    ///////content
+                    if (is_null($content_en)) {
+                        $tr->setTarget('en');
+                        $content_en = $tr->translate($request->content);
+                    }
+                    if (is_null($content_ar)) {
+                        $tr->setTarget('ar');
+                        $content_ar = $tr->translate($request->content);
+                    }
+                    $buyer_fr = $request->buyer_instruct;
+                    $content_fr = $request->content;
+                    break;
+            }
             // وضع البيانات في مصفوفة من اجل اضافة فالمرحلة الثالثة
             $data = [
                 'buyer_instruct'  => $request->buyer_instruct,
+                'buyer_instruct_ar' => $buyer_ar,
+                'buyer_instruct_en' => $buyer_en,
+                'buyer_instruct_fr' => $buyer_fr,
                 'content'         => $request->content,
+                'content_ar' =>$content_ar,
+                'content_en' =>$content_en,
+                'content_fr' =>$content_fr,
+
             ];
             // دراسة حالة المرحلة
             if ($product->is_completed == 1 || $product->current_step > Product::PRODUCT_STEP_THREE) {
