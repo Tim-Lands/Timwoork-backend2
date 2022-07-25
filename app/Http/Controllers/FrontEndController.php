@@ -11,6 +11,7 @@ use App\Models\VerifyEmailCode;
 use Carbon\Carbon;
 use Exception;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -25,12 +26,15 @@ class FrontEndController extends Controller
      * @return void
      */
 
-    public function testTranslate()
+    public function detectLang(Request $request)
     {
+
         $tr = new GoogleTranslate(); // Translates to 'en' from auto-detected language by default
-        $tr->setSource('en'); // Translate from English
+        $tr->setSource(); // Translate from English
         $tr->setTarget('fr');
-        echo $tr->translate('Hello World!');
+        $tr->translate($request->sentence);
+        $lang = $tr->getLastDetectedSource();
+        return response()->success('success',$lang);
 
     }
 
