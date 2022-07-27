@@ -10,6 +10,7 @@ use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Stichoza\GoogleTranslate\GoogleTranslate;
 
 class SellerController extends Controller
 {
@@ -37,6 +38,9 @@ class SellerController extends Controller
             // إنشاء ملف شخصي للبائع
             $seller = Auth::user()->profile->profile_seller()->create([
                 'bio' => '',
+                'bio_fr' => '',
+                'bio_en' => '',
+                'bio_ar' => '',
                 'portfolio' => '',
                 'seller_badge_id' => 1,
                 'seller_level_id' => 1,
@@ -61,9 +65,55 @@ class SellerController extends Controller
     public function detailsStore(ProfileSellerStoreRequest $request)
     {
         try {
+            $tr = new GoogleTranslate(); // Translates to 'en' from auto-detected language by default
+            $tr->setSource($request->header('X-localization')); // Translate from English
+            $bio_ar = $request->bio_ar;
+            $bio_en = $request->bio_en;
+            $bio_fr = $request->bio_fr;
+
+            // انشاء مصفوفة و وضع فيها بيانات المرحلة الاولى
+            switch ($request->header('X-localization')) {
+                case "ar":
+                    if (is_null($bio_en)) {
+                        $tr->setTarget('en');
+                        $bio_en = $tr->translate($request->bio);
+                    }
+                    if (is_null($bio_fr)) {
+                        $tr->setTarget('fr');
+                        $bio_fr = $tr->translate($request->bio);
+                    }
+                    $bio_ar = $request->bio;
+                    break;
+                case 'en':
+                    if (is_null($bio_ar)) {
+                        $tr->setTarget('ar');
+                        $bio_ar = $tr->translate($request->bio);
+                    }
+                    if (is_null($bio_fr)) {
+                        $tr->setTarget('fr');
+                        $bio_fr = $tr->translate($request->bio);
+                    }
+                    $bio_en = $request->bio;
+                    break;
+                case 'fr':
+                    if (is_null($bio_en)) {
+                        $tr->setTarget('en');
+                        $bio_en = $tr->translate($request->bio);
+                    }
+                    if (is_null($bio_ar)) {
+                        $tr->setTarget('ar');
+                        $bio_fr = $tr->translate($request->bio);
+                    }
+                    $bio_fr = $request->bio;
+                    break;
+            }
+
             DB::beginTransaction();
             $seller = Auth::user()->profile->profile_seller;
             $seller->bio = $request->bio;
+            $seller->bio_en = $bio_en;
+            $seller->bio_fr = $bio_fr;
+            $seller->bio_ar = $bio_ar;
             $seller->portfolio = $request->portfolio;
             $seller->save();
             // تسجيل المهارات الخاصة للبائع
@@ -98,8 +148,56 @@ class SellerController extends Controller
     public function step_one(SellerStepOneRequest $request)
     {
         try {
+            $tr = new GoogleTranslate(); // Translates to 'en' from auto-detected language by default
+            $tr->setSource($request->header('X-localization')); // Translate from English
+            $bio_ar = $request->bio_ar;
+            $bio_en = $request->bio_en;
+            $bio_fr = $request->bio_fr;
+
+            // انشاء مصفوفة و وضع فيها بيانات المرحلة الاولى
+            switch ($request->header('X-localization')) {
+                case "ar":
+                    if (is_null($bio_en)) {
+                        $tr->setTarget('en');
+                        $bio_en = $tr->translate($request->bio);
+                    }
+                    if (is_null($bio_fr)) {
+                        $tr->setTarget('fr');
+                        $bio_fr = $tr->translate($request->bio);
+                    }
+                    $bio_ar = $request->bio;
+                    break;
+                case 'en':
+                    if (is_null($bio_ar)) {
+                        $tr->setTarget('ar');
+                        $bio_ar = $tr->translate($request->bio);
+                    }
+                    if (is_null($bio_fr)) {
+                        $tr->setTarget('fr');
+                        $bio_fr = $tr->translate($request->bio);
+                    }
+                    $bio_en = $request->bio;
+                    break;
+                case 'fr':
+                    if (is_null($bio_en)) {
+                        $tr->setTarget('en');
+                        $bio_en = $tr->translate($request->bio);
+                    }
+                    if (is_null($bio_ar)) {
+                        $tr->setTarget('ar');
+                        $bio_fr = $tr->translate($request->bio);
+                    }
+                    $bio_fr = $request->bio;
+                    break;
+            }
+
+
+
             $seller = Auth::user()->profile->profile_seller;
             $seller->bio = $request->bio;
+            $seller->bio_en = $bio_en;
+            $seller->bio_fr = $bio_fr;
+            $seller->bio_ar = $bio_ar;
             $seller->portfolio = $request->portfolio;
             $seller->languages()->syncWithoutDetaching($request->languages);
             $seller->steps = ProfileSeller::COMPLETED_SETP_ONE;

@@ -77,11 +77,8 @@ class InsertProductContoller extends Controller
     public function storeStepOne($id, ProductStepOneRequest $request)
     {
         try {
-
-            //id  جلب العنصر بواسطة
-            $user_profile = Auth::user()->profile;
             $tr = new GoogleTranslate(); // Translates to 'en' from auto-detected language by default
-            $tr->setSource($user_profile->lang); // Translate from English
+            $tr->setSource($request->header('X-localization')); // Translate from English
             $title_ar = $request->title_ar;
             $title_en = $request->title_en;
             $title_fr = $request->title_fr;
@@ -99,7 +96,7 @@ class InsertProductContoller extends Controller
                 return response()->error(__("messages.errors.element_not_found"), 403);
             }
             // انشاء مصفوفة و وضع فيها بيانات المرحلة الاولى
-            switch ($user_profile->lang) {
+            switch ($request->header('X-localization')) {
                 case "ar":
                     if (is_null($title_en)) {
                         $tr->setTarget('en');
@@ -143,6 +140,7 @@ class InsertProductContoller extends Controller
                 'category_id'       =>  (int)$request->subcategory,
                 'is_vide'           => 0,
             ];
+            return $data;
             // دراسة حالة المرحلة
             if ($product->is_completed == 1 || $product->current_step > Product::PRODUCT_STEP_ONE) {
                 $data['current_step'] = $product->current_step;
@@ -244,6 +242,10 @@ class InsertProductContoller extends Controller
             }
             // انشاء مصفوفة جديدة من اجل عملية اضافة تطويرات
             (object)$developments = [];
+
+            $tr = new GoogleTranslate(); // Translates to 'en' from auto-detected language by default
+            $tr->setSource($request->header('X-localization')); // Translate from English
+
             // شرط اذا كانت هناك توجد تطورات
             if ($request->only('developments') != null) {
                 if (count($request->developments) > $number_developments_max) {
@@ -251,6 +253,46 @@ class InsertProductContoller extends Controller
                 }
                 // جلب المرسلات من العميل و وضعهم فالمصفوفة الجديدة
                 foreach ($request->only('developments')['developments'] as $key => $value) {
+                    $value['title_ar'] = $request->title_ar ? $request->title_ar:null;
+                    $value['title_en'] = $request->title_ar ? $request->title_en:null;
+                    $value['title_fr'] = $request->title_ar ? $request->title_fr:null;
+                    // انشاء مصفوفة و وضع فيها بيانات المرحلة الاولى
+                    switch ($request->header('X-localization')) {
+                        case "ar":
+                            if (is_null($value['title_ar'])) {
+                                $tr->setTarget('en');
+                                $value['title_en'] = $tr->translate($value['title']);
+                            }
+                            if (is_null($value['title_fr'])) {
+                                $tr->setTarget('fr');
+                                $value['title_fr'] = $tr->translate($value['title']);
+                            }
+                            $value['title_ar'] = $value['title'];
+                            break;
+                        case 'en':
+                            if (is_null($value['title_ar'])) {
+                                $tr->setTarget('ar');
+                                $value['title_ar'] = $tr->translate($value['title']);
+                            }
+                            if (is_null($value['title_fr'])) {
+                                $tr->setTarget('fr');
+                                $value['title_fr'] = $tr->translate($value['title']);
+                            }
+                            $value['title_en'] = $value['title'];
+                            break;
+                        case 'fr':
+                            if (is_null($value['title_en'])) {
+                                $tr->setTarget('en');
+                                $value['title_en'] = $tr->translate($value['title']);
+                            }
+                            if (is_null($value['title_ar'])) {
+                                $tr->setTarget('ar');
+                                $value['title_ar'] = $tr->translate($value['title']);
+                            }
+                            $value['title_fr'] = $value['title'];
+                            break;
+                    }
+                    //$value['title_ar'] = $value['title'];
                     $developments[] = $value;
                     // اذا كان السعر اكبر
                     if ($value['price'] > $price_development_max) {
@@ -294,9 +336,8 @@ class InsertProductContoller extends Controller
     public function storeStepThree(mixed $id, ProductStepThreeRequest $request)
     {
         try {
-            $user_profile = Auth::user()->profile;
             $tr = new GoogleTranslate(); // Translates to 'en' from auto-detected language by default
-            $tr->setSource($user_profile->lang); // Translate from English
+            $tr->setSource($request->header('X-localization')); // Translate from English
             $buyer_ar = $request->buyer_ar;
             $buyer_en = $request->buyer_en;
             $buyer_fr = $request->buyer_fr;
@@ -312,7 +353,7 @@ class InsertProductContoller extends Controller
                 return response()->error(__("messages.errors.element_not_found"), 403);
             }
 
-            switch ($user_profile->lang) {
+            switch ($request->header('X-localization')) {
                 case "ar":
                     //////////buyer
                     if (is_null($buyer_en)) {
@@ -323,7 +364,7 @@ class InsertProductContoller extends Controller
                         $tr->setTarget('fr');
                         $buyer_fr = $tr->translate($request->buyer_instruct);
                     }
-////////////////////////////content
+                    ////////////////////////////content
                     if (is_null($content_en)) {
                         $tr->setTarget('en');
                         $content_en = $tr->translate($request->content);

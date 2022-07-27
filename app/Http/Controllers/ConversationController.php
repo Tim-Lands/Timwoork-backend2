@@ -14,10 +14,9 @@ use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Database\Eloquent\Builder;
 
-use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Storage;
+use Stichoza\GoogleTranslate\GoogleTranslate;
 
 class ConversationController extends Controller
 {
@@ -76,6 +75,32 @@ class ConversationController extends Controller
         $product = Product::findOrFail($id);
         $user_id = Auth::user()->id;
         $receiver_id = $request->receiver_id;
+
+        $tr = new GoogleTranslate(); // Translates to 'en' from auto-detected language by default
+        $tr->setSource($request->header('X-localization')); // Translate from English
+        $message_ar = null;
+        $message_en = null;
+        $message_fr = null;
+        // انشاء مصفوفة و وضع فيها بيانات المرحلة الاولى
+        switch ($request->header('X-localization')) {
+            case "ar":
+                $message_en = $tr->setTarget('en')->translate($request->initial_message);
+                $message_fr = $tr->setTarget('fr')->translate($request->initial_message);
+                $message_ar = $request->initial_message;
+                break;
+            case 'en':
+                $message_ar = $tr->setTarget('ar')->translate($request->initial_message);
+                $message_fr = $tr->setTarget('fr')->translate($request->initial_message);
+                $message_en = $request->message;
+                break;
+            case 'fr':
+                $message_en = $tr->setTarget('en')->translate($request->initial_message);
+                $message_ar = $tr->setTarget('ar')->translate($request->initial_message);
+                $message_fr = $request->initial_message;
+                break;
+        }
+
+
         try {
             DB::beginTransaction();
 
@@ -85,7 +110,10 @@ class ConversationController extends Controller
             $conversation->members()->attach([$user_id, $receiver_id]);
             $message = $conversation->messages()->create([
                 'user_id' => $user_id,
-                'message' => $request->initial_message
+                'message' => $request->initial_message,
+                'message_en' => $message_en,
+                'message_ar' => $message_ar,
+                'message_fr' => $message_fr,
             ]);
 
             broadcast(new MessageSent($message));
@@ -108,6 +136,34 @@ class ConversationController extends Controller
         $user_id = Auth::user()->id;
         //return Auth::user()->id;
         $receiver_id = $request->receiver_id;
+
+
+        $tr = new GoogleTranslate(); // Translates to 'en' from auto-detected language by default
+        $tr->setSource($request->header('X-localization')); // Translate from English
+        $message_ar = null;
+        $message_en = null;
+        $message_fr = null;
+        // انشاء مصفوفة و وضع فيها بيانات المرحلة الاولى
+        switch ($request->header('X-localization')) {
+            case "ar":
+                $message_en = $tr->setTarget('en')->translate($request->initial_message);
+                $message_fr = $tr->setTarget('fr')->translate($request->initial_message);
+                $message_ar = $request->initial_message;
+                break;
+            case 'en':
+                $message_ar = $tr->setTarget('ar')->translate($request->initial_message);
+                $message_fr = $tr->setTarget('fr')->translate($request->initial_message);
+                $message_en = $request->message;
+                break;
+            case 'fr':
+                $message_en = $tr->setTarget('en')->translate($request->initial_message);
+                $message_ar = $tr->setTarget('ar')->translate($request->initial_message);
+                $message_fr = $request->initial_message;
+                break;
+        }
+
+
+
         try {
             DB::beginTransaction();
             $conversation = $item->conversation()->create([
@@ -116,7 +172,10 @@ class ConversationController extends Controller
             $conversation->members()->attach([$user_id, $receiver_id]);
             $message = $conversation->messages()->create([
                 'user_id' => $user_id,
-                'message' => $request->initial_message
+                'message' => $request->initial_message,
+                'message_en' => $message_en,
+                'message_ar' => $message_ar,
+                'message_fr' => $message_fr,
             ]);
 
             broadcast(new MessageSent($message));
@@ -137,6 +196,32 @@ class ConversationController extends Controller
         $user_id = Auth::user()->id;
         $conversation_id = $conversation->id;
         $message = $request->message;
+        $message_ar = null;
+        $message_en = null;
+        $message_fr = null;
+        $tr = new GoogleTranslate(); // Translates to 'en' from auto-detected language by default
+        $tr->setSource($request->header('X-localization')); // Translate from English
+
+        // انشاء مصفوفة و وضع فيها بيانات المرحلة الاولى
+        switch ($request->header('X-localization')) {
+            case "ar":
+                $message_en = $tr->setTarget('en')->translate($message);
+                $message_fr = $tr->setTarget('fr')->translate($message);
+                $message_ar =  $message;
+                break;
+            case 'en':
+                $message_ar = $tr->setTarget('ar')->translate($message);
+                $message_fr = $tr->setTarget('fr')->translate($message);
+                $message_en = $request->message;
+                break;
+            case 'fr':
+                $message_en = $tr->setTarget('en')->translate($message);
+                $message_ar = $tr->setTarget('ar')->translate($message);
+                $message_fr =  $message;
+                break;
+        }
+
+
         try {
             DB::beginTransaction();
             $message = Message::create([
@@ -144,6 +229,9 @@ class ConversationController extends Controller
                 'conversation_id' => $conversation_id,
                 'message' => $message,
                 'type' => $request->type,
+                'message_ar' => $message_ar,
+                'message_en' => $message_en,
+                'message_fr' => $message_fr,
                 'is_reply' => $request->is_reply,
             ]);
 

@@ -343,7 +343,16 @@ class Product extends Model
             'status',
             'created_at',
             'deleted_at',
-            'ratings_avg'
+            'ratings_avg',
+            'title_ar',
+            'content_ar',
+            'buyer_instruct_ar',
+            'title_en',
+            'content_en',
+            'buyer_instruct_en',
+            'title_fr',
+            'content_fr',
+            'buyer_instruct_fr',
         );
     }
 

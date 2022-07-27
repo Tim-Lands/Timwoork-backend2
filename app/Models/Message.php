@@ -33,7 +33,7 @@ class Message extends Model
      */
     public function scopeSelection(mixed $query): ?object
     {
-        return $query->select('id', 'user_id', 'conversation_id', 'message', 'read_at', 'created_at');
+        return $query->select('id', 'user_id', 'conversation_id', 'message', 'read_at', 'created_at', 'message_ar', 'message_en', 'message_fr');
     }
     // ========================== Relations ============================
     // code
