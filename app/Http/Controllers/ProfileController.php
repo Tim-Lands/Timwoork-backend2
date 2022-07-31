@@ -126,7 +126,7 @@ class ProfileController extends Controller
             // إرسال رسالة نجاح المرحلة اﻷولى
             return response()->success(__("messages.product.success_step_one"), $user);
         } catch (Exception $ex) {
-            return $ex;
+            //return $ex;
             return response()->error(__("messages.errors.error_database"));
         }
     }
@@ -157,10 +157,11 @@ class ProfileController extends Controller
             $user->profile->avatar = $avatarName;
             $user->profile->avatar_url = $avatarUrl;
             $user->profile->save();
+
             // إرسال رسالة نجاح المرحلة الثانية مع إرسال رابط الصورة كاملا
             return response()->success(__("messages.product.success_step_two"), $avatarUrl);
         } catch (Exception $ex) {
-            return $ex;
+            //return $ex;
             return response()->error(__("messages.errors.error_database"));
         }
     }

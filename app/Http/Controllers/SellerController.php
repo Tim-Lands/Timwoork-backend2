@@ -229,7 +229,7 @@ class SellerController extends Controller
             // إرسال رسالة نجاح المرحلة اﻷولى
             return response()->success(__("messages.product.success_step_two"), $seller);
         } catch (Exception $ex) {
-            return $ex;
+            //return $ex;
             return response()->error(__("messages.errors.error_database"));
         }
     }
