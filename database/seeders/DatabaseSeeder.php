@@ -34,7 +34,8 @@ class DatabaseSeeder extends Seeder
             // CountryPhoneCodeSeeder::class,
             // createWalletInProfilesSeeder::class
             //CountriesLangSeederClass::class
-            ProfileLangSeederClass::class
+            //ProfileLangSeederClass::class
+            ProductTranslateSeeder::class
         ]);
     }
 }
