@@ -140,7 +140,6 @@ class InsertProductContoller extends Controller
                 'category_id'       =>  (int)$request->subcategory,
                 'is_vide'           => 0,
             ];
-            return $data;
             // دراسة حالة المرحلة
             if ($product->is_completed == 1 || $product->current_step > Product::PRODUCT_STEP_ONE) {
                 $data['current_step'] = $product->current_step;
