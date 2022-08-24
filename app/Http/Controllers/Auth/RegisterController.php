@@ -86,11 +86,7 @@ class RegisterController extends Controller
 
     public function resend_verify_code(ResendVerifyRequest $request)
     {
-        $user = User::where('email', $request->email)
-                ->firstOrFail();
-        $this->store_code_bin($user);
-        event(new VerifyEmail($user));
-        return "success"
+        return $this->resend_code($request->email);
     }
 
     /*     public function createChatEngineUser($user)

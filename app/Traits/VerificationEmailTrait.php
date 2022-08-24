@@ -6,6 +6,8 @@ use App\Events\VerifyEmail;
 use App\Models\User;
 use App\Models\VerifyEmailCode;
 use Carbon\Carbon;
+use Exception;
+use Illuminate\Support\Facades\DB;
 
 //use Illuminate\Http\Response;
 //use Illuminate\Support\Facades\RateLimiter;
@@ -71,23 +73,19 @@ trait VerificationEmailTrait
     public function resend_code($email)
     {
         // فحص عدد ارسال مرات كود التفعيل
-        $this->checkTooManyFailedAttempts();
         // استخراج رمز التفعيل من قاعدة البيانات باستعمال البريد الالكتروني
+        echo "before email find";
         $verify = VerifyEmailCode::where('email', $email)
-                ->where('date_expired', '>=', Carbon::now())
+                //->where('date_expired', '>=', Carbon::now())
                 ->first();
-        if ($verify) {
-            // في الحالة وجود الرمز يتم إرساله مباشرة
-            event(new VerifyEmail($verify->user));
-            // عداد الارسال الكود
-            //RateLimiter::hit($this->throttleKey(), $seconds = 60);
-            // مع إرسال رسالة نجاح العملية
-            return $this->success('تم إرسال رمز التفعيل بنجاح إلى بريدك اﻹلكتروني');
-        } else {
+        echo"after email find";
+
             // في  حالة عدم وجود رمز التفعيل يتم البحث عن البريد الالكتروني هل هو موجود في قاعدة البيانات ام لا
             // في حالة عدم وجوده يتم إرسال رسالة خطأ بعدم وجود الايميل في سجلاتنا
-            $user = User::where('email', $email)
-                ->firstOrFail();
+            echo $email;
+            $user = User::where('email',$email)->firstOrFail();
+            echo $user;
+            var_dump($user);
             //  في حالة وجود مستخدم مسجل بالبريد الالكتروني يتم إنشاء  رمز تفعيل جديد له
             $this->store_code_bin($user);
             // بعد إنشاء رمز التفعيل الجديد يتم إرساله
@@ -96,6 +94,8 @@ trait VerificationEmailTrait
             //RateLimiter::hit($this->throttleKey(), $seconds = 60);
             // مع إرسال رسالة نجاح العملية
             return $this->success('تم إرسال رمز التفعيل بنجاح إلى بريدك اﻹلكتروني');
-        }
+
     }
+
+
 }
