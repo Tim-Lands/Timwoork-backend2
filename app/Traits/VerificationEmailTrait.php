@@ -74,7 +74,7 @@ trait VerificationEmailTrait
         $this->checkTooManyFailedAttempts();
         // استخراج رمز التفعيل من قاعدة البيانات باستعمال البريد الالكتروني
         $verify = VerifyEmailCode::where('email', $email)
-                ->where('date_expired', '<=', Carbon::now())
+                ->where('date_expired', '>=', Carbon::now())
                 ->first();
         if ($verify) {
             // في الحالة وجود الرمز يتم إرساله مباشرة
