@@ -11,7 +11,7 @@ class FilterController extends Controller
     public function __invoke(Request $request)
     {
         $paginate = $request->query('paginate') ? $request->query('paginate') : 12;
-        $res = Product::select('id', 'title', 'slug', 'price', 'ratings_avg', 'count_buying', 'thumbnail', 'ratings_count', 'category_id', 'profile_seller_id', 'duration', 'content', 'created_at')
+        $res = Product::select('id', 'title', 'title_ar', "title_fr", "title_en" ,'slug', 'price', 'ratings_avg', 'count_buying', 'thumbnail', 'ratings_count', 'category_id', 'profile_seller_id', 'duration', 'content', 'content_ar', 'content_fr', 'content_en' ,'created_at')
             ->filter()
             ->productActive()
             ->where('is_active', 1)
