@@ -126,7 +126,7 @@ class InsertProductContoller extends Controller
                     }
                     if (is_null($title_ar)) {
                         $tr->setTarget('ar');
-                        $title_fr = $tr->translate($request->title);
+                        $title_ar = $tr->translate($request->title);
                     }
                     $title_fr = $request->title;
                     break;

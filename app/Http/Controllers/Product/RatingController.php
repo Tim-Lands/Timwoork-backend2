@@ -16,18 +16,23 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Stichoza\GoogleTranslate\GoogleTranslate;
 
 class RatingController extends Controller
 {
     public function __construct()
     {
-        $this->middleware('auth:sanctum',['abilities:user']);
+        $this->middleware('auth:sanctum', ['abilities:user']);
     }
     public function rate($id, RatingStoreRequest $request)
     {
         //id  جلب العنصر بواسطة
         $item = Item::find($id);
-
+        $tr = new GoogleTranslate(); // Translates to 'en' from auto-detected language by default
+        $tr->setSource($request->header('X-localization'));
+        $comment_ar = "";
+        $comment_en = "";
+        $comment_fr = "";
         $product = Product::withAvg('ratings', 'rating')->whereId($item->number_product)->first();
         // شرط اذا كان العنصر موجود
         if (!$product || !is_numeric($id)) {
@@ -53,10 +58,37 @@ class RatingController extends Controller
 
             try {
                 DB::beginTransaction();
+
+                switch ($request->header('X-localization')) {
+                    case "ar":
+                        $tr->setTarget('en');
+                        $comment_en = $tr->translate($request->comment);
+                        $tr->setTarget('fr');
+                        $comment_fr = $tr->translate($request->comment);
+                        $comment_ar = $request->comment;
+                        break;
+                    case 'en':
+                        $tr->setTarget('ar');
+                        $comment_ar = $tr->translate($request->comment);
+                        $tr->setTarget('fr');
+                        $comment_fr = $tr->translate($request->comment);
+                        $comment_en = $request->comment;
+                        break;
+                    case 'fr':
+                        $tr->setTarget('en');
+                        $comment_en = $tr->translate($request->comment);
+                        $tr->setTarget('ar');
+                        $comment_ar = $tr->translate($request->comment);
+                        $comment_fr = $request->comment;
+                        break;
+                }
                 // قم بإنشاء تقييم جديد
                 $rate->update([
                     'rating' => $request->rating,
                     'comment' => $request->comment,
+                    'comment_ar' => $comment_ar,
+                    'comment_fr' => $comment_fr,
+                    'comment_en' => $comment_en,
                     'status' => Rating::RATING_SUSPEND
                 ]);
                 // ثم جلب الخدمة من جديد لتعديل الحقلين : عدد التقييمات ومعدل التقييمات
@@ -83,6 +115,29 @@ class RatingController extends Controller
             // في حالة عدم وجود تقييم لهذه الخدمة من طرف المستخدم الحالي
             try {
                 DB::beginTransaction();
+                switch ($request->header('X-localization')) {
+                    case "ar":
+                        $tr->setTarget('en');
+                        $comment_en = $tr->translate($request->comment);
+                        $tr->setTarget('fr');
+                        $comment_fr = $tr->translate($request->comment);
+                        $comment_ar = $request->comment;
+                        break;
+                    case 'en':
+                        $tr->setTarget('ar');
+                        $comment_ar = $tr->translate($request->comment);
+                        $tr->setTarget('fr');
+                        $comment_fr = $tr->translate($request->comment);
+                        $comment_en = $request->comment;
+                        break;
+                    case 'fr':
+                        $tr->setTarget('en');
+                        $comment_en = $tr->translate($request->comment);
+                        $tr->setTarget('ar');
+                        $comment_ar = $tr->translate($request->comment);
+                        $comment_fr = $request->comment;
+                        break;
+                }
                 // قم بإنشاء تقييم جديد
                 $rating = Rating::create([
                     'user_id' => $user_id,
@@ -90,6 +145,9 @@ class RatingController extends Controller
                     'item_id' => $item->id,
                     'rating' => $request->rating,
                     'comment' => $request->comment,
+                    'comment_ar' => $comment_ar,
+                    'comment_fr' => $comment_fr,
+                    'comment_en' => $comment_en,
                     'status' => Rating::RATING_SUSPEND
                 ]);
                 // ثم جلب الخدمة من جديد لتعديل الحقلين : عدد التقييمات ومعدل التقييمات
