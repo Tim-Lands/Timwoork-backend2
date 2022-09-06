@@ -34,16 +34,7 @@ class Rating extends Model
         */
     public function scopeSelection(mixed $query): ?object
     {
-        return $query->select(
-            'id',
-            'comment',
-            'product_id',
-            'reply',
-            'status',
-            'rating',
-            'user_id',
-            'created_at'
-        );
+        return $query->select('*');
     }
     // ========================== Relations ============================
 

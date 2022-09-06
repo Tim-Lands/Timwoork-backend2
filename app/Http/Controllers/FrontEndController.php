@@ -197,7 +197,7 @@ class FrontEndController extends Controller
                         })->withCount('products');
                 },
                 'developments' => function ($q) {
-                    $q->select('id', 'title', 'price', 'duration', 'product_id');
+                    $q->select('*');
                 },
                 'product_tag',
                 'ratings' => function ($q) {
