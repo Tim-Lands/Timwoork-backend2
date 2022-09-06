@@ -76,7 +76,7 @@ class AcceptProductNotification extends Notification
                 'username' => null,
                 'avatar_url' => null
             ],
-            'title' =>  " لقد تم قبول خدمتك : " . $this->product->title,
+            'title' =>  " لقد تم قبول خدمتك بنجاح : " . $this->product->title,
             'content' => [
                 'product_id' => $this->product->id,
                 'slug' => $this->product->slug,

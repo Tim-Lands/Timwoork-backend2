@@ -27,7 +27,7 @@ class SellerOrderController extends Controller
         $item = Item::whereId($id)
             ->with(['order.cart.user.profile',
                     'profileSeller.products'=>function ($q) use ($product_id) {
-                        $q->select('id', 'profile_seller_id', 'buyer_instruct')->where('id', $product_id);
+                        $q->select("*")->where('id', $product_id);
                     },
                     'profileSeller.profile',
                     'item_rejected',
