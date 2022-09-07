@@ -87,10 +87,16 @@ class AcceptWithdrawal extends Notification
             'to' => "user",
             'user_sender' => [
                 'full_name' => 'اﻹدارة',
+                'full_name_ar'=>'الإدارة',
+                'full_name_en'=>'Administration',
+                'full_name_fr'=>'Administration',
                 'username' => null,
                 'avatar_url' => null
             ],
             'title' =>  " لقد تم وصول المبلغ إلى " . $this->type,
+            'title_ar' =>  " لقد تم وصول المبلغ إلى " . $this->type,
+            'title_en' =>  " The amount has been received by " . $this->type,
+            'title_fr' =>  " Le montant a été reçu par " . $this->type,
             'content' => [
                 'type' => $this->type,
                 'withdrawal' => $this->withdrawal,

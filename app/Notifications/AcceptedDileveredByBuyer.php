@@ -69,10 +69,14 @@ class AcceptedDileveredByBuyer extends Notification
      */
     public function toArray($notifiable)
     {
+        $full_name = Auth::user()->profile->full_name;
         return [
             'type' => "order",
             'to' => "seller",
-            'title' =>  " قام " . Auth::user()->profile->full_name . " باستلام العمل ",
+            'title' =>  " قام " .$full_name." باستلام العمل ",
+            'title_en'=>$full_name.' recieved the work',
+            'title_fr'=>$full_name.' a repris le travail',
+            'title_ar'=>" قام " .$full_name." باستلام العمل ",
             'user_sender' => [
                 'full_name' => Auth::user()->profile->full_name,
                 'username' => Auth::user()->username,
@@ -81,6 +85,9 @@ class AcceptedDileveredByBuyer extends Notification
             'content' => [
                 'item_id' => $this->item->id,
                 'title' => $this->item->title,
+                "title_ar"=>$this->item->title_ar,
+                "title_en"=>$this->item->title_en,
+                "title_fr"=>$this->item->title_fr
             ],
         ];
     }

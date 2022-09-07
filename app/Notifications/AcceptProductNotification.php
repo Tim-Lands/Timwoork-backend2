@@ -31,7 +31,7 @@ class AcceptProductNotification extends Notification
      */
     public function via($notifiable)
     {
-        return ['mail','database'];
+        return ['mail', 'database'];
     }
 
     /**
@@ -43,21 +43,21 @@ class AcceptProductNotification extends Notification
     public function toMail($notifiable)
     {
         return (new MailMessage)
-        ->from(env('MAIL_FROM_ADDRESS'), config('mail.from.ar_name'))
-        ->subject('قبول الخدمة')
-        ->view('emails.products.accept_product', [
-            'user_sender' => [
-                'full_name' => 'اﻹدارة',
-                'username' => null,
-                'avatar_url' => null
-            ],
-            'title' =>  "لقد تم قبول خدمتك : " . $this->product->title,
-            'content' => [
-                'product_id' => $this->product->id,
-                'slug' => $this->product->slug,
-                'title' => $this->product->title,
-            ],
-        ]);
+            ->from(env('MAIL_FROM_ADDRESS'), config('mail.from.ar_name'))
+            ->subject('قبول الخدمة')
+            ->view('emails.products.accept_product', [
+                'user_sender' => [
+                    'full_name' => 'اﻹدارة',
+                    'username' => null,
+                    'avatar_url' => null
+                ],
+                'title' =>  "لقد تم قبول خدمتك : " . $this->product->title,
+                'content' => [
+                    'product_id' => $this->product->id,
+                    'slug' => $this->product->slug,
+                    'title' => $this->product->title,
+                ],
+            ]);
     }
 
     /**
@@ -73,14 +73,24 @@ class AcceptProductNotification extends Notification
             'to' => "user",
             'user_sender' => [
                 'full_name' => 'اﻹدارة',
+                'full_name_ar' => 'الادارة',
+                'full_name_en' => 'the administration',
+                'full_name_fr' => "L'administration",
                 'username' => null,
                 'avatar_url' => null
             ],
             'title' =>  " لقد تم قبول خدمتك بنجاح : " . $this->product->title,
+            'title_ar' =>  " لقد تم قبول خدمتك بنجاح : " . $this->product->title,
+            'title_en' =>  " Your service has been successfully accepted: " . $this->product->title,
+            'title_fr' =>  " Votre service a été accepté avec succès: " . $this->product->title,
+
             'content' => [
                 'product_id' => $this->product->id,
                 'slug' => $this->product->slug,
                 'title' => $this->product->title,
+                'title_ar' => $this->product->title_ar,
+                'title_en' => $this->product->title_en,
+                'title_fr' => $this->product->title_fr,
             ],
         ];
     }

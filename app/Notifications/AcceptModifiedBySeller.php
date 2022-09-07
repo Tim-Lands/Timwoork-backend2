@@ -65,14 +65,21 @@ class AcceptModifiedBySeller extends Notification
      */
     public function toArray($notifiable)
     {
+        $full_name = Auth::user()->profile->full_name;
         return [
             'type' => "order",
             'to' => "buyer",
-            'title' =>  " قبل " . Auth::user()->profile->full_name . " بالموافقة على طلب التعديلات ",
+            'title' =>  " قبل " . $full_name . " بالموافقة على طلب التعديلات ",
+            'title_ar' =>  " قبل " . $full_name . " بالموافقة على طلب التعديلات ",
+            'title_en'=> $full_name. " accepted the request for modifications",
+            'title_fr'=> $full_name." a accepté la demande de modifications",
             'user_sender' => Auth::user()->profile,
             'content' => [
                 'item_id' => $this->item->id,
                 'title' => $this->item->title,
+                "title_ar"=>$this->item->title_ar,
+                "title_en"=>$this->item->title_en,
+                "title_fr"=>$this->item->title_fr
             ],
         ];
     }

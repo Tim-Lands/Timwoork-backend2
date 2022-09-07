@@ -44,8 +44,8 @@ class AcceptRequestRejectOrder extends Notification
     public function toMail($notifiable)
     {
         return (new MailMessage)
-        ->from(env('MAIL_FROM_ADDRESS'), config('mail.from.ar_name'))
-        ->subject('قبول طلب إلغاء الطلبية')
+            ->from(env('MAIL_FROM_ADDRESS'), config('mail.from.ar_name'))
+            ->subject('قبول طلب إلغاء الطلبية')
             ->view('emails.orders.accept_request_reject_order', [
                 'type' => "order",
                 'to' => "buyer",
@@ -66,14 +66,21 @@ class AcceptRequestRejectOrder extends Notification
      */
     public function toArray($notifiable)
     {
+        $full_name = Auth::user()->profile->full_name;
         return [
             'type' => "order",
             'to' => "buyer",
-            'title' =>  " قبل " . Auth::user()->profile->full_name . " بالموافقة على طلب إلغاء الطلبية ",
+            'title' =>  " قبل " . $full_name . " بالموافقة على طلب إلغاء الطلبية ",
+            'title_en' =>  $full_name . " accepted the request to cancel the order",
+            'title_fr' =>   $full_name . " a accepté la demande d'annulation de la commande",
+            'title_ar' =>  'قبل'. $full_name . " بالموافقة على طلب إلغاء الطلبية ",
             'user_sender' => Auth::user()->profile,
             'content' => [
                 'item_id' => $this->item->id,
                 'title' => $this->item->title,
+                "title_ar" => $this->item->title_ar,
+                "title_en" => $this->item->title_en,
+                "title_fr" => $this->item->title_fr
             ],
         ];
     }
