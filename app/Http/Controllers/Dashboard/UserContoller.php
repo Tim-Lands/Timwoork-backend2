@@ -15,6 +15,7 @@ use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\DB;
+use Stichoza\GoogleTranslate\GoogleTranslate;
 
 class UserContoller extends Controller
 {
@@ -124,7 +125,14 @@ class UserContoller extends Controller
     public function user_ban($id, Request $request)
     {
         try {
-            // جلب المستخدم
+            $tr = new GoogleTranslate();
+            if($request->header('X-localization')=='fr')
+                $tr->setSource('fr');
+            else if($request->header('X-localization')=='en')
+                $tr->setSource('en');
+            else
+                $tr->setSource('ar');
+                // جلب المستخدم
             $user = User::find($id);
             // فحص المستخدم
             if (!$user) {
@@ -142,6 +150,12 @@ class UserContoller extends Controller
             }
             if ($request->comment) {
                 $data['comment'] = $request->comment;
+                $tr->setTarget('ar');
+                $data['comment_ar'] = $tr->translate($request->comment);
+                $tr->setTarget('en');
+                $data['comment_en'] = $tr->translate($request->comment);
+                $tr->setTarget('fr');
+                $data['comment_fr'] = $tr->translate($request->comment);
             }
 
             DB::beginTransaction();
