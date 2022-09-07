@@ -20,7 +20,6 @@ class TranslateBanSeeder extends Seeder
         $tr->setTarget('en');
         $bans = Ban::all();
         foreach ($bans as $ban) {
-
             $ban->comment_ar = $ban->comment;
             $ban->comment_en = $tr->translate($ban->comment);
             $ban->save();

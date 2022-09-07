@@ -82,9 +82,9 @@ class BanAccountNotification extends Notification
                 'avatar_url' => null
             ],
             'title' => "تم الحظر عن حسابك بسبب : " . $this->comment . " وتاريخ الحظر : " . $this->expired_at ? $this->expired_at : "لا يوجد تاريخ",
-            'title_ar' => "تم الحظر عن حسابك بسبب : " . $this->comment . " وتاريخ الحظر : " . $this->expired_at ? $this->expired_at : "لا يوجد تاريخ",
-            'title_en' => "Your account has been banned because: " . $this->comment . " وتاريخ الحظر : " . $this->expired_at ? $this->expired_at : "لا يوجد تاريخ",
-            'title_fr' => "Votre compte a été banni car: " . $this->comment . " وتاريخ الحظر : " . $this->expired_at ? $this->expired_at : "لا يوجد تاريخ",
+            'title_ar' => "تم الحظر عن حسابك بسبب : " . $this->comment->ar . " وتاريخ الحظر : " . $this->expired_at ? $this->expired_at : "لا يوجد تاريخ",
+            'title_en' => "Your account has been banned because: " . $this->comment->en . " وتاريخ الحظر : " . $this->expired_at ? $this->expired_at : "لا يوجد تاريخ",
+            'title_fr' => "Votre compte a été banni car: " . $this->comment->fr . " وتاريخ الحظر : " . $this->expired_at ? $this->expired_at : "لا يوجد تاريخ",
             'content' => [
                 'user' => $this->user,
             ],

@@ -39,7 +39,8 @@ class DatabaseSeeder extends Seeder
             //CountryTranslateSeeder::class
             //ratingTranslateSeeder::class
             //TranslateDevelopmentSeeder::class
-            translate_items::class
+            //translate_items::class
+            TranslateBanSeeder::class
         ]);
     }
 }
