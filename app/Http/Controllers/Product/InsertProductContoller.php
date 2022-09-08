@@ -78,7 +78,17 @@ class InsertProductContoller extends Controller
     {
         try {
             $tr = new GoogleTranslate(); // Translates to 'en' from auto-detected language by default
-            $tr->setSource($request->header('X-localization')); // Translate from English
+            $tr->setSource(); // Translate from English
+            $xlocalization = "ar";
+            if ($request->headers->has('X-localization'))
+                $xlocalization = $request->header('X-localization');
+            else {
+                $tr->setSource();
+                $tr->setTarget('en');
+                $tr->translate($request->title);
+                $xlocalization = $tr->getLastDetectedSource();
+            }
+            $tr->setSource($xlocalization);
             $title_ar = $request->title_ar;
             $title_en = $request->title_en;
             $title_fr = $request->title_fr;
@@ -96,7 +106,7 @@ class InsertProductContoller extends Controller
                 return response()->error(__("messages.errors.element_not_found"), 403);
             }
             // انشاء مصفوفة و وضع فيها بيانات المرحلة الاولى
-            switch ($request->header('X-localization')) {
+            switch ($xlocalization) {
                 case "ar":
                     if (is_null($title_en)) {
                         $tr->setTarget('en');
@@ -243,7 +253,6 @@ class InsertProductContoller extends Controller
             (object)$developments = [];
 
             $tr = new GoogleTranslate(); // Translates to 'en' from auto-detected language by default
-            $tr->setSource($request->header('X-localization')); // Translate from English
 
             // شرط اذا كانت هناك توجد تطورات
             if ($request->only('developments') != null) {
@@ -251,12 +260,27 @@ class InsertProductContoller extends Controller
                     return response()->error(__("messages.product.number_developments_max"), 422);
                 }
                 // جلب المرسلات من العميل و وضعهم فالمصفوفة الجديدة
+
+                $xlocalization = "ar";
+                if ($request->headers->has('X-localization'))
+                    $xlocalization = $request->header('X-localization');
+                else {
+                    $tr->setSource();
+                    $tr->setTarget('en');
+                    $tr->translate($request->developments[0]->title);
+                    $xlocalization = $tr->getLastDetectedSource();
+                }
+                $tr->setSource($xlocalization);
+
                 foreach ($request->only('developments')['developments'] as $key => $value) {
-                    $value['title_ar'] = $request->title_ar ? $request->title_ar:null;
-                    $value['title_en'] = $request->title_ar ? $request->title_en:null;
-                    $value['title_fr'] = $request->title_ar ? $request->title_fr:null;
+                    $value['title_ar'] = $request->title_ar ? $request->title_ar : null;
+                    $value['title_en'] = $request->title_ar ? $request->title_en : null;
+                    $value['title_fr'] = $request->title_ar ? $request->title_fr : null;
                     // انشاء مصفوفة و وضع فيها بيانات المرحلة الاولى
-                    switch ($request->header('X-localization')) {
+
+
+
+                    switch ($xlocalization) {
                         case "ar":
                             if (is_null($value['title_ar'])) {
                                 $tr->setTarget('en');
@@ -336,7 +360,16 @@ class InsertProductContoller extends Controller
     {
         try {
             $tr = new GoogleTranslate(); // Translates to 'en' from auto-detected language by default
-            $tr->setSource($request->header('X-localization')); // Translate from English
+            $xlocalization = "ar";
+            if ($request->headers->has('X-localization'))
+                $xlocalization = $request->header('X-localization');
+            else {
+                $tr->setSource();
+                $tr->setTarget('en');
+                $tr->translate($request->title);
+                $xlocalization = $tr->getLastDetectedSource();
+            }
+            $tr->setSource($xlocalization);
             $buyer_ar = $request->buyer_ar;
             $buyer_en = $request->buyer_en;
             $buyer_fr = $request->buyer_fr;
@@ -352,7 +385,7 @@ class InsertProductContoller extends Controller
                 return response()->error(__("messages.errors.element_not_found"), 403);
             }
 
-            switch ($request->header('X-localization')) {
+            switch ($xlocalization) {
                 case "ar":
                     //////////buyer
                     if (is_null($buyer_en)) {
@@ -429,9 +462,9 @@ class InsertProductContoller extends Controller
                 'buyer_instruct_en' => $buyer_en,
                 'buyer_instruct_fr' => $buyer_fr,
                 'content'         => $request->content,
-                'content_ar' =>$content_ar,
-                'content_en' =>$content_en,
-                'content_fr' =>$content_fr,
+                'content_ar' => $content_ar,
+                'content_en' => $content_en,
+                'content_fr' => $content_fr,
 
             ];
             // دراسة حالة المرحلة

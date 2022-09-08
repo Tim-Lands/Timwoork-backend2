@@ -28,6 +28,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\ValidationException;
 use Illuminate\Http\Request;
+use Stichoza\GoogleTranslate\GoogleTranslate;
 
 class WithdrawalController extends Controller
 {
@@ -109,13 +110,50 @@ class WithdrawalController extends Controller
             return response()->error("لقد تم رفض الطلب سابقا", 403);
         }
         try {
+            $tr = new GoogleTranslate(); // Translates to 'en' from auto-detected language by default
+            $xlocalization = "ar";
+            if ($request->headers->has('X-localization'))
+                $xlocalization = $request->header('X-localization');
+            else {
+                $tr->setSource();
+                $tr->setTarget('en');
+                $tr->translate($request->cause);
+                $xlocalization = $tr->getLastDetectedSource();
+            }
+            $tr->setSource($xlocalization);
+            $cause_ar = "";
+            $cause_en = "";
+            $cause_fr = "";
             DB::beginTransaction();
+            switch ($xlocalization) {
+                case "ar":
+                    $tr->setTarget('en');
+                    $cause_en = $tr->translate($request->cause);
+                    $tr->setTarget('fr');
+                    $cause_fr = $tr->translate($request->cause);
+                    $cause_ar = $request->cause;
+                    break;
+                case 'en':
+                    $tr->setTarget('ar');
+                    $cause_ar = $tr->translate($request->cause);
+                    $tr->setTarget('fr');
+                    $cause_fr = $tr->translate($request->cause);
+                    $cause_en = $request->cause;
+                    break;
+                case 'fr':
+                    $tr->setTarget('en');
+                    $cause_en = $tr->translate($request->cause);
+                    $tr->setTarget('ar');
+                    $cause_ar = $tr->translate($request->cause);
+                    $cause_fr = $request->cause;
+                    break;
+            }
             $withdrawal->status = 2;
             $withdrawal->save();
             // send notification to user
             $user = $withdrawal->wallet->profile->user;
 
-            event(new CancelWithdrwal($user, $withdrawal, $request->cause));
+            event(new CancelWithdrwal($user, $withdrawal, $request->cause, $cause_ar, $cause_en, $cause_fr));
             DB::commit();
             return response()->success("لقد تم رفض طلب التحويل");
         } catch (Exception $ex) {
@@ -312,8 +350,8 @@ class WithdrawalController extends Controller
             $withdrawable_amount = $wallet->withdrawable_amount;
             // جلب الرصيد المعلق من قبل
             $pending_withdrawal_count = $wallet->withdrawals()
-            ->where('status', 0)
-            ->count();
+                ->where('status', 0)
+                ->count();
             // شرط اذا كان هناك رصيد معلق
             if ($pending_withdrawal_count > 0) {
                 return response()->error(__("messages.bank.pending_withdrawal"), 403);
@@ -377,8 +415,8 @@ class WithdrawalController extends Controller
             $withdrawable_amount = $wallet->withdrawable_amount;
             // جلب الرصيد المعلق من قبل
             $pending_withdrawal_count = $wallet->withdrawals()
-            ->where('status', 0)
-            ->count();
+                ->where('status', 0)
+                ->count();
             // شرط اذا كان هناك رصيد معلق
             if ($pending_withdrawal_count > 0) {
                 return response()->error(__("messages.bank.pending_withdrawal"), 403);
@@ -442,8 +480,8 @@ class WithdrawalController extends Controller
             $withdrawable_amount = $wallet->withdrawable_amount;
             // جلب الرصيد المعلق من قبل
             $pending_withdrawal_count = $wallet->withdrawals()
-             ->where('status', 0)
-             ->count();
+                ->where('status', 0)
+                ->count();
             // شرط اذا كان هناك رصيد معلق
             if ($pending_withdrawal_count > 0) {
                 return response()->error(__("messages.bank.pending_withdrawal"), 403);
@@ -674,7 +712,7 @@ class WithdrawalController extends Controller
         try {
             // جلب بيانات الحساب حوالة البنكية
             $bank_transfer_detail = BankTransferDetail::where('profile_id', Auth::user()->profile->id)
-            ->first();
+                ->first();
 
             // تحقق من وجود حساب حوالة بنكية
             if (!$bank_transfer_detail) {

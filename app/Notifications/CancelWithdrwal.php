@@ -94,10 +94,17 @@ class CancelWithdrwal extends Notification
                 'avatar_url' => null
             ],
             'title' =>  " لقد تم رفض طلب السحب الخاص بك في " . $this->type,
+            'title_ar' =>  " لقد تم رفض طلب السحب الخاص بك في " . $this->type,
+            'title_en' =>  " Your" . $this->type.'withdrawal request has been rejected',
+            'title_fr' =>  "Votre demande de retrait" . $this->type . "a été rejetée",
+
             'content' => [
                 'type' => $this->type,
                 'withdrawal' => $this->withdrawal,
                 'cause' => $this->cause,
+                'cause_ar' => $this->cause_ar,
+                'cause_en' => $this->cause_en,
+                'cause_Fr' => $this->cause_fr,
             ],
         ];
     }

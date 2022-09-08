@@ -21,7 +21,7 @@ class SellerController extends Controller
      */
     public function __construct()
     {
-        $this->middleware(['auth:sanctum','abilities:user']);
+        $this->middleware(['auth:sanctum', 'abilities:user']);
     }
 
     /**
@@ -66,13 +66,22 @@ class SellerController extends Controller
     {
         try {
             $tr = new GoogleTranslate(); // Translates to 'en' from auto-detected language by default
-            $tr->setSource($request->header('X-localization')); // Translate from English
+            $xlocalization = "ar";
+            if ($request->headers->has('X-localization'))
+                $xlocalization = $request->header('X-localization');
+            else {
+                $tr->setSource();
+                $tr->setTarget('en');
+                $tr->translate($request->title);
+                $xlocalization = $tr->getLastDetectedSource();
+            }
+            $tr->setSource($xlocalization);
             $bio_ar = $request->bio_ar;
             $bio_en = $request->bio_en;
             $bio_fr = $request->bio_fr;
 
             // انشاء مصفوفة و وضع فيها بيانات المرحلة الاولى
-            switch ($request->header('X-localization')) {
+            switch ($xlocalization) {
                 case "ar":
                     if (is_null($bio_en)) {
                         $tr->setTarget('en');
@@ -149,13 +158,22 @@ class SellerController extends Controller
     {
         try {
             $tr = new GoogleTranslate(); // Translates to 'en' from auto-detected language by default
-            $tr->setSource($request->header('X-localization')); // Translate from English
+            $xlocalization = "ar";
+            if ($request->headers->has('X-localization'))
+                $xlocalization = $request->header('X-localization');
+            else {
+                $tr->setSource();
+                $tr->setTarget('en');
+                $tr->translate($request->bio);
+                $xlocalization = $tr->getLastDetectedSource();
+            }
+            $tr->setSource($xlocalization);
             $bio_ar = $request->bio_ar;
             $bio_en = $request->bio_en;
             $bio_fr = $request->bio_fr;
 
             // انشاء مصفوفة و وضع فيها بيانات المرحلة الاولى
-            switch ($request->header('X-localization')) {
+            switch ($xlocalization) {
                 case "ar":
                     if (is_null($bio_en)) {
                         $tr->setTarget('en');

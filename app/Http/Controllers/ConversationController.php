@@ -31,8 +31,8 @@ class ConversationController extends Controller
             $query->where('user_id', '<>', $user->id)
                 ->whereNull('read_at');
         }])
-        ->orderBy('updated_at', 'desc')
-        ->paginate($paginate);
+            ->orderBy('updated_at', 'desc')
+            ->paginate($paginate);
         return response()->success('ok', $conversations);
     }
 
@@ -77,12 +77,19 @@ class ConversationController extends Controller
         $receiver_id = $request->receiver_id;
 
         $tr = new GoogleTranslate(); // Translates to 'en' from auto-detected language by default
-        $tr->setSource($request->header('X-localization')); // Translate from English
+
         $message_ar = null;
         $message_en = null;
         $message_fr = null;
+        $xlocalization = $request->header('X-localization');
         // انشاء مصفوفة و وضع فيها بيانات المرحلة الاولى
-        switch ($request->header('X-localization')) {
+        if (!$request->headers->has('X-localization')) {
+            $tr->setSource();
+            $tr->setTarget('en');
+            $tr->translate($request->initial_message);
+            $xlocalization = $tr->getLastDetectedSource();
+        }
+        switch ($xlocalization) {
             case "ar":
                 $message_en = $tr->setTarget('en')->translate($request->initial_message);
                 $message_fr = $tr->setTarget('fr')->translate($request->initial_message);
@@ -98,6 +105,7 @@ class ConversationController extends Controller
                 $message_ar = $tr->setTarget('ar')->translate($request->initial_message);
                 $message_fr = $request->initial_message;
                 break;
+            default:
         }
 
 
@@ -139,12 +147,21 @@ class ConversationController extends Controller
 
 
         $tr = new GoogleTranslate(); // Translates to 'en' from auto-detected language by default
-        $tr->setSource($request->header('X-localization')); // Translate from English
+        $xlocalization = "ar";
+        if ($request->headers->has('X-localization'))
+            $xlocalization = $request->header('X-localization');
+        else {
+            $tr->setSource();
+            $tr->setTarget('en');
+            $tr->translate($request->initial_message);
+            $xlocalization = $tr->getLastDetectedSource();
+        }
+        $tr->setSource($xlocalization);
         $message_ar = null;
         $message_en = null;
         $message_fr = null;
         // انشاء مصفوفة و وضع فيها بيانات المرحلة الاولى
-        switch ($request->header('X-localization')) {
+        switch ($xlocalization) {
             case "ar":
                 $message_en = $tr->setTarget('en')->translate($request->initial_message);
                 $message_fr = $tr->setTarget('fr')->translate($request->initial_message);
@@ -200,10 +217,18 @@ class ConversationController extends Controller
         $message_en = null;
         $message_fr = null;
         $tr = new GoogleTranslate(); // Translates to 'en' from auto-detected language by default
-        $tr->setSource($request->header('X-localization')); // Translate from English
-
+        $xlocalization = "ar";
+        if ($request->headers->has('X-localization'))
+            $xlocalization = $request->header('X-localization');
+        else {
+            $tr->setSource();
+            $tr->setTarget('en');
+            $tr->translate($request->message);
+            $xlocalization = $tr->getLastDetectedSource();
+        }
+        $tr->setSource($xlocalization);
         // انشاء مصفوفة و وضع فيها بيانات المرحلة الاولى
-        switch ($request->header('X-localization')) {
+        switch ($xlocalization) {
             case "ar":
                 $message_en = $tr->setTarget('en')->translate($message);
                 $message_fr = $tr->setTarget('fr')->translate($message);

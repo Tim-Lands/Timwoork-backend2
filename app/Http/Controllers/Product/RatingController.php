@@ -29,7 +29,16 @@ class RatingController extends Controller
         //id  جلب العنصر بواسطة
         $item = Item::find($id);
         $tr = new GoogleTranslate(); // Translates to 'en' from auto-detected language by default
-        $tr->setSource($request->header('X-localization'));
+        $xlocalization = "ar";
+        if ($request->headers->has('X-localization'))
+            $xlocalization = $request->header('X-localization');
+        else {
+            $tr->setSource();
+            $tr->setTarget('en');
+            $tr->translate($request->comment);
+            $xlocalization = $tr->getLastDetectedSource();
+        }
+        $tr->setSource($xlocalization);
         $comment_ar = "";
         $comment_en = "";
         $comment_fr = "";
@@ -59,7 +68,7 @@ class RatingController extends Controller
             try {
                 DB::beginTransaction();
 
-                switch ($request->header('X-localization')) {
+                switch ($xlocalization) {
                     case "ar":
                         $tr->setTarget('en');
                         $comment_en = $tr->translate($request->comment);
@@ -115,7 +124,7 @@ class RatingController extends Controller
             // في حالة عدم وجود تقييم لهذه الخدمة من طرف المستخدم الحالي
             try {
                 DB::beginTransaction();
-                switch ($request->header('X-localization')) {
+                switch ($xlocalization) {
                     case "ar":
                         $tr->setTarget('en');
                         $comment_en = $tr->translate($request->comment);
