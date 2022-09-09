@@ -18,17 +18,23 @@ class Reply implements ShouldBroadcast
     public $user;
     public $id;
     public $title;
+    public $title_ar;
+    public $title_en;
+    public $title_fr;
     public $rating_id;
     /**
      * Create a new event instance.
      *
      * @return void
      */
-    public function __construct($user, $id, $title, $rating_id)
+    public function __construct($user, $id, $title, $title_ar, $title_en, $title_fr, $rating_id)
     {
         $this->user = $user;
         $this->id = $id;
         $this->title = $title;
+        $this->title_ar = $title_ar;
+        $this->title_en = $title_en;
+        $this->title_fr = $title_fr;
         $this->rating_id = $rating_id;
     }
 

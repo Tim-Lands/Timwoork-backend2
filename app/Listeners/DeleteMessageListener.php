@@ -28,6 +28,12 @@ class DeleteMessageListener
      */
     public function handle(DeleteMessageEvent $event)
     {
-        $event->user->notify(new DeleteMessageNotification($event->user, $event->cause));
+        $event->user->notify(new DeleteMessageNotification(
+            $event->user,
+            $event->cause,
+            $event->cause_ar,
+            $event->cause_en,
+            $event->cause_fr,
+        ));
     }
 }

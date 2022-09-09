@@ -15,17 +15,23 @@ class Rating implements ShouldBroadcast
     public $user;
     public $slug;
     public $title;
+    public $title_ar;
+    public $title_en;
+    public $title_fr;
     public $rating_id;
     /**
      * Create a new event instance.
      *
      * @return void
      */
-    public function __construct($user, $slug, $title, $rating_id)
+    public function __construct($user, $slug, $title, $title_ar, $title_en, $title_fr, $rating_id)
     {
         $this->user = $user;
         $this->slug = $slug;
         $this->title = $title;
+        $this->title_ar = $title_ar;
+        $this->title_en = $title_en;
+        $this->title_fr = $title_fr;
         $this->rating_id = $rating_id;
     }
 

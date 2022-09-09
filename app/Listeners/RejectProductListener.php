@@ -27,6 +27,13 @@ class RejectProductListener
      */
     public function handle(RejectProductEvent $event)
     {
-        $event->user->notify(new RejectProductNotification($event->user, $event->product, $event->cause));
+        $event->user->notify(new RejectProductNotification(
+            $event->user,
+             $event->product,
+              $event->cause,
+              $event->cause_ar,
+              $event->cause_en,
+              $event->cause_fr,
+            ));
     }
 }

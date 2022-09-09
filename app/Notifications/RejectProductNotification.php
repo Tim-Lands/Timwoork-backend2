@@ -13,16 +13,24 @@ class RejectProductNotification extends Notification
     public $user;
     public $product;
     public $cause;
+    public $cause_ar;
+    public $cause_en;
+    public $cause_fr;
+
     /**
      * Create a new notification instance.
      *
      * @return void
      */
-    public function __construct($user, $product, $cause)
+    public function __construct($user, $product, $cause, $cause_ar, $cause_en, $cause_fr)
     {
         $this->user = $user;
         $this->product = $product;
         $this->cause = $cause;
+        $this->cause_ar = $cause_ar;
+        $this->cause_en = $cause_en;
+        $this->cause_fr = $cause_fr;
+
     }
 
     /**
@@ -71,20 +79,41 @@ class RejectProductNotification extends Notification
      */
     public function toArray($notifiable)
     {
+        $title= $this->product->title;
+        $title_ar= $this->product->title_ar;
+        $title_en= $this->product->title_en;
+        $title_fr= $this->product->title_fr;
+
         return [
             'type' => "system",
             'to' => "user",
             'user_sender' => [
                 'full_name' => 'اﻹدارة',
+                'full_name_ar'=>'الإدارة',
+                'full_name_en'=>'Administration',
+                'full_name_fr'=>'Administration',
+
                 'username' => null,
                 'avatar_url' => null
             ],
-            'title' =>  "لقد تم رفض خدمتك : " . $this->product->title . " و السبب هو :".$this->cause,
+            'title' =>  "لقد تم رفض خدمتك : " . $title . " و السبب هو :".$this->cause,
+            'title' =>  "لقد تم رفض خدمتك : " . $title_ar . " و السبب هو :".$this->cause_ar,
+            'title_en' =>  "Your service has been denied: " . $title_en . " The reason is:".$this->cause_en,
+            'title_fr' =>  "Votre service a été refusé: " . $title_fr . " La raison est:".$this->cause_fr,
+
             'content' => [
                 'product_id' => $this->product->id,
                 'title' => $this->product->title,
+                'title_ar' => $this->product->title_ar,
+                'title_en' => $this->product->title_en,
+                'title_fr' => $this->product->title_fr,
+
                 'slug' => $this->product->slug,
-                "cause" => $this->cause
+                "cause" => $this->cause,
+                "cause_ar" => $this->cause_ar,
+                "cause_en" => $this->cause_en,
+                "cause_fr" => $this->cause_fr,
+
             ],
         ];
     }

@@ -12,16 +12,22 @@ class BanAccountNotification extends Notification
     use Queueable;
     public $user;
     public $comment;
+    public $comment_ar;
+    public $comment_en;
+    public $comment_fr;
     public $expired_at;
     /**
      * Create a new notification instance.
      *
      * @return void
      */
-    public function __construct($user, $comment, $expired_at)
+    public function __construct($user, $comment, $comment_ar, $comment_en, $comment_fr , $expired_at)
     {
         $this->user = $user;
         $this->comment = $comment;
+        $this->comment_ar = $comment_ar;
+        $this->comment_en = $comment_en;
+        $this->comment_fr = $comment_fr;
         $this->expired_at = $expired_at;
     }
 

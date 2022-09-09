@@ -69,10 +69,17 @@ class UnbanAccountNotification extends Notification
             'to' => "user",
             'user_sender' => [
                 'full_name' => 'اﻹدارة',
+                'full_name_ar' => 'اﻹدارة',
+                'full_name_en' => 'Administration',
+                'full_name_fr' => 'Administration',
                 'username' => null,
                 'avatar_url' => null
             ],
             'title' => "تم رفع الحظر عن حسابك",
+            'title_ar' => "تم رفع الحظر عن حسابك",
+            'title_en' => "Your account has been unbanned",
+            'title_fr' => "Votre compte a été débloqué",
+
             'content' => [
                 'user' => $this->user,
             ],

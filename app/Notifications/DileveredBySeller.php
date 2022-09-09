@@ -57,6 +57,9 @@ class DileveredBySeller extends Notification
                 ],                'content' => [
                     'item_id' => $this->item->id,
                     'title' => $this->item->title,
+                    'title_ar' => $this->item->title_ar,
+                    'title_en' => $this->item->title_en,
+                    'title_fr' => $this->item->title_fr,
                 ],
             ]);
     }
@@ -69,10 +72,15 @@ class DileveredBySeller extends Notification
      */
     public function toArray($notifiable)
     {
+        $full_name = Auth::user()->profile->full_name;
         return [
             'type' => "order",
             'to' => "buyer",
-            'title' =>  " قام " . Auth::user()->profile->full_name . " بتسليم العمل ",
+            'title' =>  " قام " . $full_name . " بتسليم العمل ",
+            'title_ar' =>  " قام " . $full_name . " بتسليم العمل ",
+            'title_en' =>   $full_name . " handed in the work",
+            'title_fr' =>   $full_name . " a remis le travail",
+
             'user_sender' => [
                 'full_name' => Auth::user()->profile->full_name,
                 'username' => Auth::user()->username,
@@ -81,6 +89,9 @@ class DileveredBySeller extends Notification
             'content' => [
                 'item_id' => $this->item->id,
                 'title' => $this->item->title,
+                'title_ar' => $this->item->title->ar,
+                'title_en' => $this->item->title->en,
+                'title_fr' => $this->item->title->fr,
             ],
         ];
     }

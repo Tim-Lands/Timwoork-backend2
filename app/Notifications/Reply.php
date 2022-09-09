@@ -13,17 +13,24 @@ class Reply extends Notification
     public $user;
     public $id;
     public $title;
+    public $title_ar;
+    public $title_en;
+    public $title_fr;
     public $rating_id;
     /**
      * Create a new event instance.
      *
      * @return void
      */
-    public function __construct($user, $id, $title, $rating_id)
+    public function __construct($user, $id, $title, $title_ar, $title_en, $title_fr, $rating_id)
     {
         $this->user       = $user;
         $this->id         = $id;
         $this->title      = $title;
+        $this->title_ar      = $title_ar;
+        $this->title_en      = $title_en;
+        $this->title_fr      = $title_fr;
+
         $this->rating_id  = $rating_id;
     }
 
@@ -47,8 +54,8 @@ class Reply extends Notification
     public function toMail($notifiable)
     {
         return (new MailMessage)
-        ->from(env('MAIL_FROM_ADDRESS'), config('mail.from.ar_name'))
-        ->subject('الرد على التعليق')
+            ->from(env('MAIL_FROM_ADDRESS'), config('mail.from.ar_name'))
+            ->subject('الرد على التعليق')
             ->view('emails.products.reply', [
                 'type' => "rating",
                 'to' => "buyer",
@@ -57,7 +64,7 @@ class Reply extends Notification
                     'full_name' => Auth::user()->profile->full_name,
                     'username' => Auth::user()->username,
                     'avatar_path' => Auth::user()->profile->avatar_path
-                ],'content' => [
+                ], 'content' => [
                     'item_id' => $this->id,
                     'title' => $this->title,
                     'rating_id' => $this->rating_id,
@@ -73,10 +80,15 @@ class Reply extends Notification
      */
     public function toArray($notifiable)
     {
+        $full_name = Auth::user()->profile->full_name;
         return [
             'type' => "order",
             'to' => "buyer",
-            'title' =>  " قام " . Auth::user()->profile->full_name . " بالرد على تعليقك ",
+            'title' =>  " قام " . $full_name . " بالرد على تعليقك ",
+            'title_ar' =>  " قام " . $full_name . " بالرد على تعليقك ",
+            'title_en' =>  $full_name . " replied to your comment",
+            'title_fr' => $full_name . "a répondu à votre commentaire",
+
             'user_sender' =>  [
                 'full_name' => Auth::user()->profile->full_name,
                 'username' => Auth::user()->username,
@@ -85,6 +97,10 @@ class Reply extends Notification
             'content' => [
                 'item_id' => $this->id,
                 'title' => $this->title,
+                'title_ar' => $this->title_ar,
+                'title_en' => $this->title_en,
+                'title_Fr' => $this->title_Fr,
+
             ],
         ];
     }

@@ -16,16 +16,24 @@ class RejectProductEvent implements ShouldBroadcast
     public $user;
     public $product;
     public $cause;
+    public $cause_ar;
+    public $cause_en;
+    public $cause_fr;
+
     /**
      * Create a new event instance.
      *
      * @return void
      */
-    public function __construct($user, $product, $cause)
+    public function __construct($user, $product, $cause, $cause_ar, $cause_en, $cause_fr)
     {
         $this->user = $user;
         $this->product = $product;
         $this->cause = $cause;
+        $this->cause_ar = $cause_ar;
+        $this->cause_en = $cause_en;
+        $this->cause_fr = $cause_fr;
+
     }
 
     /**

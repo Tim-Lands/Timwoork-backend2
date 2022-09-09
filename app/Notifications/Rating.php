@@ -15,17 +15,23 @@ class Rating extends Notification
     public $user;
     public $slug;
     public $title;
+    public $title_ar;
+    public $title_en;
+    public $title_fr;
     public $rating_id;
     /**
      * Create a new event instance.
      *
      * @return void
      */
-    public function __construct($user, $slug, $title, $rating_id)
+    public function __construct($user, $slug, $title, $title_ar, $title_en, $title_fr, $rating_id)
     {
         $this->user = $user;
         $this->slug = $slug;
         $this->title = $title;
+        $this->title_ar = $title_ar;
+        $this->title_en = $title;
+        $this->title_fr = $title_fr;
         $this->$rating_id = $rating_id;
     }
 
@@ -50,8 +56,8 @@ class Rating extends Notification
     public function toMail($notifiable)
     {
         return (new MailMessage)
-        ->from(env('MAIL_FROM_ADDRESS'), config('mail.from.ar_name'))
-        ->subject('تقييم الخدمة')
+            ->from(env('MAIL_FROM_ADDRESS'), config('mail.from.ar_name'))
+            ->subject('تقييم الخدمة')
             ->view('emails.products.rating', [
                 'type' => "rating",
                 'to' => "seller",
@@ -76,10 +82,14 @@ class Rating extends Notification
      */
     public function toArray($notifiable)
     {
+        $full_name = Auth::user()->full_name;
         return [
             'type' => "rating",
             'to' => "seller",
-            'title' =>  " قام " . Auth::user()->profile->full_name . "بتقييم خدمتك",
+            'title' =>  " قام " . $full_name . "بتقييم خدمتك",
+            'title_ar' =>  " قام " . $full_name . "بتقييم خدمتك",
+            'title_en' =>  $full_name . "rated your service",
+            'title_fr' => $full_name . " a évalué votre servicu",
             'user_sender' =>  [
                 'full_name' => Auth::user()->profile->full_name,
                 'username' => Auth::user()->username,
@@ -88,6 +98,9 @@ class Rating extends Notification
             'content' => [
                 'slug' => $this->slug,
                 'title' => $this->title,
+                'title_ar' => $this->title_ar,
+                'title_en' => $this->title_en,
+                'title_fr' => $this->title_fr,
                 'rating_id' => $this->rating_id,
             ],
         ];

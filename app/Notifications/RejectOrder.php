@@ -66,18 +66,27 @@ class RejectOrder extends Notification
      */
     public function toArray($notifiable)
     {
+        $full_name = Auth::user()->profile->full_name;
         return [
             'type' => "order",
             'to' => "buyer",
-            'title' =>  " قام " . Auth::user()->profile->full_name . " بإلغاء عملية الشراء التي قام بها",
+            'title' =>  " قام " . $full_name . " بإلغاء عملية الشراء التي قام بها",
+            'title_ar' =>  " قام " . $full_name . " بإلغاء عملية الشراء التي قام بها",
+            'title_en' => $full_name . " has canceled his purchase",
+            'title_fr' =>   $full_name . " has canceled his purchase",
+
             'user_sender' => [
-                'full_name' => Auth::user()->profile->full_name,
+                'full_name' => $full_name,
                 'username' => Auth::user()->username,
                 'avatar_path' => Auth::user()->profile->avatar_path
             ],
             'content' => [
                 'item_id' => $this->item->id,
                 'title' => $this->item->title,
+                'title_ar' => $this->item->title_ar,
+                'title_en' => $this->item->title_en,
+                'title_fr' => $this->item->title_fr,
+
             ],
         ];
     }

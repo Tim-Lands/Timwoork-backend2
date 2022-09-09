@@ -53,8 +53,66 @@ class UserContoller extends Controller
             // رسالة خطأ
             return response()->error(__('messages.errors.element_not_found'), Response::HTTP_NOT_FOUND);
         }
+        $tr = new GoogleTranslate(); // Translates to 'en' from auto-detected language by default
+        $xlocalization = "ar";
+        if ($request->headers->has('X-localization'))
+            $xlocalization = $request->header('X-localization');
+        else {
+            $tr->setSource();
+            $tr->setTarget('en');
+            $tr->translate($request->cause);
+            $xlocalization = $tr->getLastDetectedSource();
+        }
+        $tr->setSource($xlocalization);
+
+        $cause_ar = "";
+        $cause_fr = "";
+        $cause_en = '';
+        switch ($xlocalization) {
+            case "ar":
+                if (is_null($cause_en)) {
+                    $tr->setTarget('en');
+                    $cause_en = $tr->translate($request->cause);
+                }
+                if (is_null($cause_fr)) {
+                    $tr->setTarget('fr');
+                    $cause_fr = $tr->translate($request->cause);
+                }
+                $cause_ar = $request->cause;
+                break;
+            case 'en':
+                if (is_null($cause_ar)) {
+                    $tr->setTarget('ar');
+                    $cause_ar = $tr->translate($request->cause);
+                }
+                if (is_null($cause_fr)) {
+                    $tr->setTarget('fr');
+                    $cause_fr = $tr->translate($request->cause);
+                }
+                $cause_en = $request->cause;
+                break;
+            case 'fr':
+                if (is_null($cause_en)) {
+                    $tr->setTarget('en');
+                    $cause_en = $tr->translate($request->cause);
+                }
+                if (is_null($cause_ar)) {
+                    $tr->setTarget('ar');
+                    $cause_fr = $tr->translate($request->cause);
+                }
+                $cause_fr = $request->cause;
+                break;
+        }
         // جلب المستخدم من اجل ارسال الاشعار
-        event(new SendUserNotificationEvent($user, $request->cause));
+
+        event(new SendUserNotificationEvent(
+            $user,
+            $request->cause,
+            $request->cause_ar,
+            $request->cause_en,
+            $request->cause_fr,
+
+        ));
         return response()->success("تم إرسال الإشعار بنجاح إلى المستخدم");
     }
 
@@ -126,13 +184,13 @@ class UserContoller extends Controller
     {
         try {
             $tr = new GoogleTranslate();
-            if($request->header('X-localization')=='fr')
+            if ($request->header('X-localization') == 'fr')
                 $tr->setSource('fr');
-            else if($request->header('X-localization')=='en')
+            else if ($request->header('X-localization') == 'en')
                 $tr->setSource('en');
             else
                 $tr->setSource('ar');
-                // جلب المستخدم
+            // جلب المستخدم
             $user = User::find($id);
             // فحص المستخدم
             if (!$user) {

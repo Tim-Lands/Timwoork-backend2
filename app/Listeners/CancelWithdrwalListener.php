@@ -27,6 +27,14 @@ class CancelWithdrwalListener
      */
     public function handle(CancelWithdrwal $event)
     {
-        $event->user->notify(new NotificationsCancelWithdrwal($event->user, $event->withdrawal, $event->cause));
+        $event->user->notify(new NotificationsCancelWithdrwal(
+            $event->user,
+            $event->withdrawal,
+            $event->cause,
+            $event->cause_ar,
+            $event->cause_en,
+            $event->cause_fr,
+
+        ));
     }
 }

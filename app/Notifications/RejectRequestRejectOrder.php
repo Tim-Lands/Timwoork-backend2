@@ -66,14 +66,23 @@ class RejectRequestRejectOrder extends Notification
      */
     public function toArray($notifiable)
     {
+        $full_name = Auth::user()->profile->full_name;
         return [
             'type' => "order",
             'to' => "buyer",
-            'title' =>  " لم يقبل " . Auth::user()->profile->full_name . " برفض إلغاء الطلبية ",
+            'title' =>  " قام" . $full_name . " برفض إلغاء الطلبية ",
+            'title_ar' =>  " قام" . $full_name . " برفض إلغاء الطلبية ",
+            'title_en' => $full_name . " refused to cancel the order",
+            'title_fr' =>  $full_name . " a refusé d'annuler la commande",
+
             'user_sender' => Auth::user()->profile,
             'content' => [
                 'item_id' => $this->item->id,
                 'title' => $this->item->title,
+                'title_ar' => $this->item->title_ar,
+                'title_en' => $this->item->title_en,
+                'title_fr' => $this->item->title_fr,
+
             ],
         ];
     }

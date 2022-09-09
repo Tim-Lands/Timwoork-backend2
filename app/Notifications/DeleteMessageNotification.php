@@ -12,15 +12,22 @@ class DeleteMessageNotification extends Notification
     use Queueable;
     public $user;
     public $cause;
+    public $cause_ar;
+    public $cause_en;
+    public $cause_fr;
     /**
      * Create a new notification instance.
      *
      * @return void
      */
-    public function __construct($user, $cause)
+    public function __construct($user, $cause, $cause_ar, $cause_en, $cause_fr)
     {
         $this->user = $user;
         $this->cause = $cause;
+        $this->cause_ar = $cause_ar;
+        $this->cause_en = $cause_en;
+        $this->cause_fr = $cause_fr;
+
     }
 
     /**
@@ -72,13 +79,25 @@ class DeleteMessageNotification extends Notification
             'to' => "user",
             'user_sender' => [
                 'full_name' => 'اﻹدارة',
+                'full_name_ar'=>"الإدارة",
+                'full_name_en'=>'Administration',
+                'full_name_ar'=>'Administration',
+
                 'username' => null,
                 'avatar_url' => null
             ],
             'title' => "تم حذف رسالتك من طرف الطرف الادارة و ذلك بسبب :". $this->cause,
+            'title_ar' => "تم حذف رسالتك من طرف الطرف الادارة و ذلك بسبب :". $this->cause_ar,
+            'title_en' => "Your message has been deleted by the administration because of: ". $this->cause_en,
+            'title_fr' => "Votre message a été supprimé par l'administration à cause de :". $this->cause_fr,
+
             'content' => [
                 'user' => $this->user,
                 'cause' => $this->cause,
+                'cause_ar' => $this->cause_ar,
+                'cause_en' => $this->cause_en,
+                'cause_fr' => $this->cause_fr,
+
             ],
         ];
     }

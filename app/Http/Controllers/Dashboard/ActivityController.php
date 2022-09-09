@@ -12,6 +12,7 @@ use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\DB;
+use Stichoza\GoogleTranslate\GoogleTranslate;
 
 class ActivityController extends Controller
 {
@@ -32,21 +33,21 @@ class ActivityController extends Controller
         $search = $request->query('search');
         if ($search) {
             $notifications = DB::table('notifications')
-                    ->join('users', 'users.id', '=', 'notifications.notifiable_id')
-                    ->join('profiles', 'profiles.user_id', '=', 'users.id')
-                    ->select('notifications.*', 'users.id as user_id', 'users.email', 'users.username', 'profiles.full_name', 'profiles.avatar_url', 'notifications.created_at')
-                    ->where('users.username', 'like', '%' . $search . '%')
-                    ->orWhere('users.email', 'like', '%' . $search . '%')
-                    ->orWhere('profiles.full_name', 'like', '%' . $search . '%')
-                    ->orderBy('notifications.created_at', 'desc')
-                    ->paginate($paginate);
+                ->join('users', 'users.id', '=', 'notifications.notifiable_id')
+                ->join('profiles', 'profiles.user_id', '=', 'users.id')
+                ->select('notifications.*', 'users.id as user_id', 'users.email', 'users.username', 'profiles.full_name', 'profiles.avatar_url', 'notifications.created_at')
+                ->where('users.username', 'like', '%' . $search . '%')
+                ->orWhere('users.email', 'like', '%' . $search . '%')
+                ->orWhere('profiles.full_name', 'like', '%' . $search . '%')
+                ->orderBy('notifications.created_at', 'desc')
+                ->paginate($paginate);
         } else {
             $notifications = DB::table('notifications')
-            ->join('users', 'users.id', '=', 'notifications.notifiable_id')
-            ->join('profiles', 'profiles.user_id', '=', 'users.id')
-            ->select('notifications.*', 'users.id as user_id', 'users.email', 'users.username', 'profiles.full_name', 'profiles.avatar_url')
-            ->orderBy('notifications.created_at', 'desc')
-            ->paginate($paginate);
+                ->join('users', 'users.id', '=', 'notifications.notifiable_id')
+                ->join('profiles', 'profiles.user_id', '=', 'users.id')
+                ->select('notifications.*', 'users.id as user_id', 'users.email', 'users.username', 'profiles.full_name', 'profiles.avatar_url')
+                ->orderBy('notifications.created_at', 'desc')
+                ->paginate($paginate);
         }
         // اظهار العناصر
         return response()->success(__('messages.oprations.get_all_data'), $notifications);
@@ -62,17 +63,17 @@ class ActivityController extends Controller
         // تصفح
         $paginate = $request->query('paginate') ? $request->query('paginate') : 10;
         // جلب كل الحركات المالية
-        $activities = MoneyActivity::with(['wallet'=> function ($q) {
+        $activities = MoneyActivity::with(['wallet' => function ($q) {
             $q->select('id', 'profile_id', 'created_at')->with(['profile' => function ($q) {
                 $q->select('id', 'user_id', 'full_name', 'avatar_url')
-                ->with(['user' => function ($q) {
-                    $q->select('id', 'email', 'username');
-                }])->without(['level','badge','wise_account','paypal_account','bank_account','bank_transfer_detail','country']);
+                    ->with(['user' => function ($q) {
+                        $q->select('id', 'email', 'username');
+                    }])->without(['level', 'badge', 'wise_account', 'paypal_account', 'bank_account', 'bank_transfer_detail', 'country']);
             }]);
         }])
-        ->filter()
-        ->latest()
-        ->paginate($paginate);
+            ->filter()
+            ->latest()
+            ->paginate($paginate);
 
         // اظهار العناصر
         return response()->success(__('messages.oprations.get_all_data'), $activities);
@@ -88,8 +89,8 @@ class ActivityController extends Controller
         $paginate = $request->query('paginate') ? $request->query('paginate') : 10;
         // جلب جميع المحادثات الموقع الحالي
         $conversations = Conversation::selection()->filter()->with('members')
-        ->latest()
-        ->paginate($paginate);
+            ->latest()
+            ->paginate($paginate);
         // اظهار العناصر
         return response()->success(__('messages.oprations.get_all_data'), $conversations);
     }
@@ -104,10 +105,10 @@ class ActivityController extends Controller
     {
         // جلب المحادثة الواحدة
         $conversation = Message::selection()
-                ->where('conversation_id', $id)
-                ->with('user', function ($query) {
-                    $query->select('id', 'username', 'email');
-                })->get();
+            ->where('conversation_id', $id)
+            ->with('user', function ($query) {
+                $query->select('id', 'username', 'email');
+            })->get();
         // get conversation members
         $conversation_members = Conversation::selection()
             ->where('id', $id)
@@ -174,9 +175,66 @@ class ActivityController extends Controller
             DB::beginTransaction();
             // تحديث الرسالة
             $message->update(['message' => $request->message]);
+            $tr = new GoogleTranslate(); // Translates to 'en' from auto-detected language by default
+            $xlocalization = "ar";
+            if ($request->headers->has('X-localization'))
+                $xlocalization = $request->header('X-localization');
+            else {
+                $tr->setSource();
+                $tr->setTarget('en');
+                $tr->translate($request->cause);
+                $xlocalization = $tr->getLastDetectedSource();
+            }
+            $tr->setSource($xlocalization);
+
+            $cause_ar = "";
+            $cause_fr = "";
+            $cause_en = '';
+            switch ($xlocalization) {
+                case "ar":
+                    if (is_null($cause_en)) {
+                        $tr->setTarget('en');
+                        $cause_en = $tr->translate($request->cause);
+                    }
+                    if (is_null($cause_fr)) {
+                        $tr->setTarget('fr');
+                        $cause_fr = $tr->translate($request->cause);
+                    }
+                    $cause_ar = $request->cause;
+                    break;
+                case 'en':
+                    if (is_null($cause_ar)) {
+                        $tr->setTarget('ar');
+                        $cause_ar = $tr->translate($request->cause);
+                    }
+                    if (is_null($cause_fr)) {
+                        $tr->setTarget('fr');
+                        $cause_fr = $tr->translate($request->cause);
+                    }
+                    $cause_en = $request->cause;
+                    break;
+                case 'fr':
+                    if (is_null($cause_en)) {
+                        $tr->setTarget('en');
+                        $cause_en = $tr->translate($request->cause);
+                    }
+                    if (is_null($cause_ar)) {
+                        $tr->setTarget('ar');
+                        $cause_fr = $tr->translate($request->cause);
+                    }
+                    $cause_fr = $request->cause;
+                    break;
+            }
             // اﻻرسال اشعار للمستخدم
             if ($message->wasChanged()) {
-                event(new UpdateMessageEvent($user, $request->cause));
+                event(new UpdateMessageEvent(
+                    $user,
+                    $request->cause,
+                    $cause_ar,
+                    $cause_en,
+                    $cause_fr,
+
+                ));
             }
             DB::commit();
             // اظهار العناصر
@@ -205,12 +263,59 @@ class ActivityController extends Controller
             }
             // جلب المستخدم
             $user = $message->user;
-
+            $tr = new GoogleTranslate(); // Translates to 'en' from auto-detected language by default
+            $xlocalization = "";
+            $tr->setSource($xlocalization);
+            $cause_ar = "";
+            $cause_fr = "";
+            $cause_en = '';
+            switch ($xlocalization) {
+                case "ar":
+                    if (is_null($cause_en)) {
+                        $tr->setTarget('en');
+                        $cause_en = $tr->translate($request->cause);
+                    }
+                    if (is_null($cause_fr)) {
+                        $tr->setTarget('fr');
+                        $cause_fr = $tr->translate($request->cause);
+                    }
+                    $cause_ar = $request->cause;
+                    break;
+                case 'en':
+                    if (is_null($cause_ar)) {
+                        $tr->setTarget('ar');
+                        $cause_ar = $tr->translate($request->cause);
+                    }
+                    if (is_null($cause_fr)) {
+                        $tr->setTarget('fr');
+                        $cause_fr = $tr->translate($request->cause);
+                    }
+                    $cause_en = $request->cause;
+                    break;
+                case 'fr':
+                    if (is_null($cause_en)) {
+                        $tr->setTarget('en');
+                        $cause_en = $tr->translate($request->cause);
+                    }
+                    if (is_null($cause_ar)) {
+                        $tr->setTarget('ar');
+                        $cause_fr = $tr->translate($request->cause);
+                    }
+                    $cause_fr = $request->cause;
+                    break;
+            }
             DB::beginTransaction();
             // حذف الرسالة
             $message->delete();
             // ارسال اشعاؤ للمستخدم
-            event(new DeleteMessageEvent($user, $request->cause));
+            event(new DeleteMessageEvent(
+                $user,
+                $request->cause,
+                $cause_ar,
+                $cause_en,
+                $cause_fr,
+
+            ));
             DB::commit();
             // اظهار العناصر
             return response()->success(__('messages.oprations.delete_success'), $message);

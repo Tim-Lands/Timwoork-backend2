@@ -27,6 +27,12 @@ class SendUserNotificationListener
      */
     public function handle(SendUserNotificationEvent $event)
     {
-        $event->user->notify(new SendUserNotification($event->user, $event->cause));
+        $event->user->notify(new SendUserNotification(
+            $event->user,
+             $event->cause,
+             $event->cause_ar,
+             $event->cause_en,
+             $event->cause_fr,
+            ));
     }
 }

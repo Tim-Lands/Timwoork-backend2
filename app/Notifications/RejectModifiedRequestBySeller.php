@@ -44,8 +44,8 @@ class RejectModifiedRequestBySeller extends Notification
     public function toMail($notifiable)
     {
         return (new MailMessage)
-        ->from(env('MAIL_FROM_ADDRESS'), config('mail.from.ar_name'))
-        ->subject('رفض إلغاء الطلبية')
+            ->from(env('MAIL_FROM_ADDRESS'), config('mail.from.ar_name'))
+            ->subject('رفض إلغاء الطلبية')
             ->view('emails.orders.reject_modified_request_by_seller', [
                 'type' => "order",
                 'to' => "buyer",
@@ -66,14 +66,23 @@ class RejectModifiedRequestBySeller extends Notification
      */
     public function toArray($notifiable)
     {
+        $full_name = Auth::user()->profile->full_name;
         return [
             'type' => "order",
             'to' => "buyer",
-            'title' =>  " لم يقبل " . Auth::user()->profile->full_name . " برفض طلب التعديلات ",
+            'title' =>  "قام " . $full_name . " برفض طلب التعديلات ",
+            'title_ar' =>  "قام " . $full_name . " برفض طلب التعديلات ",
+            'title_en' => $full_name . " refused the request for modifications",
+            'title_fr' =>  $full_name . " a refusé la demande de modifications",
+
             'user_sender' => Auth::user()->profile,
             'content' => [
                 'item_id' => $this->item->id,
                 'title' => $this->item->title,
+                'title_ar' => $this->item->title_ar,
+                'title_en' => $this->item->title_en,
+                'title_fr' => $this->item->title_fr,
+
             ],
         ];
     }

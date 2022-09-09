@@ -71,10 +71,14 @@ class NewOrder extends Notification implements ShouldQueue
      */
     public function toArray($notifiable)
     {
+        $full_name = Auth::user()->profile->full_name;
         return [
             'type' => "order",
             'to' => "seller",
-            'title' =>  " قام " . Auth::user()->profile->full_name . " بشراء خدمة ",
+            'title' =>  " قام " . $full_name . " بشراء خدمة ",
+            'title_ar' =>  " قام " . $full_name . " بشراء خدمة ",
+            'title_en' =>  $full_name . " bought a service",
+            'title_fr' =>  $full_name . " a acheté un service",
             'user_sender' =>  [
                 'full_name' => Auth::user()->profile->full_name,
                 'username' => Auth::user()->username,
@@ -83,6 +87,10 @@ class NewOrder extends Notification implements ShouldQueue
             'content' => [
                 'item_id' => $this->item->id,
                 'title' => $this->item->title,
+                'title_ar' => $this->item->title_ar,
+                'title_en' => $this->item->title_en,
+                'title_fr' => $this->item->title_fr,
+
             ],
         ];
     }

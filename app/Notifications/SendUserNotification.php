@@ -12,15 +12,22 @@ class SendUserNotification extends Notification
     use Queueable;
     public $user;
     public $cause;
+    public $cause_ar;
+    public $cause_en;
+    public $cause_fr;
     /**
      * Create a new notification instance.
      *
      * @return void
      */
-    public function __construct($user, $cause)
+    public function __construct($user, $cause, $cause_ar, $cause_en, $cause_fr)
     {
         $this->user = $user;
         $this->cause = $cause;
+        $this->cause_ar = $cause_ar;
+        $this->cause_fr = $cause_fr;
+        $this->cause_en = $cause_en;
+
     }
 
     /**
@@ -77,7 +84,11 @@ class SendUserNotification extends Notification
             'title' =>  "لقد تم إرسال إشعار إليك من قِبل الإدارة",
             'content' => [
                 'user' => $this->user,
-                'cause' => $this->cause
+                'cause' => $this->cause,
+                'cause_ar' => $this->cause_ar,
+                'cause_en' => $this->cause_en,
+                'cause_fr' => $this->cause_fr,
+
             ],
         ];
     }

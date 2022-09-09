@@ -14,6 +14,7 @@ use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\DB;
 use phpDocumentor\Reflection\Types\Null_;
+use Stichoza\GoogleTranslate\GoogleTranslate;
 
 class ActivedProductController extends Controller
 {
@@ -82,8 +83,65 @@ class ActivedProductController extends Controller
             $product->save();
             // جلب المستخدم من اجل ارسال الاشعار
             $user = $product->profileSeller->profile->user;
+            $tr = new GoogleTranslate(); // Translates to 'en' from auto-detected language by default
+            $xlocalization = "ar";
+            if ($request->headers->has('X-localization'))
+                $xlocalization = $request->header('X-localization');
+            else {
+                $tr->setSource();
+                $tr->setTarget('en');
+                $tr->translate($request->cause);
+                $xlocalization = $tr->getLastDetectedSource();
+            }
+            $tr->setSource($xlocalization);
+            $cause_ar = "";
+            $cause_fr = "";
+            $cause_en = '';
+            switch ($xlocalization) {
+                case "ar":
+                    if (is_null($cause_en)) {
+                        $tr->setTarget('en');
+                        $cause_en = $tr->translate($request->cause);
+                    }
+                    if (is_null($cause_fr)) {
+                        $tr->setTarget('fr');
+                        $cause_fr = $tr->translate($request->cause);
+                    }
+                    $cause_ar = $request->cause;
+                    break;
+                case 'en':
+                    if (is_null($cause_ar)) {
+                        $tr->setTarget('ar');
+                        $cause_ar = $tr->translate($request->cause);
+                    }
+                    if (is_null($cause_fr)) {
+                        $tr->setTarget('fr');
+                        $cause_fr = $tr->translate($request->cause);
+                    }
+                    $cause_en = $request->cause;
+                    break;
+                case 'fr':
+                    if (is_null($cause_en)) {
+                        $tr->setTarget('en');
+                        $cause_en = $tr->translate($request->cause);
+                    }
+                    if (is_null($cause_ar)) {
+                        $tr->setTarget('ar');
+                        $cause_fr = $tr->translate($request->cause);
+                    }
+                    $cause_fr = $request->cause;
+                    break;
+            }
             // ارسال اشعار للمستخدم
-            event(new RejectProductEvent($user, $product, $request->cause));
+            event(new RejectProductEvent(
+                $user,
+                $product,
+                $request->cause,
+                $cause_ar,
+                $cause_en,
+                $cause_fr,
+
+            ));
             // انهاء المعاملة بشكل جيد :
             DB::commit();
             // رسالة نجاح عملية الرفض:
@@ -116,7 +174,63 @@ class ActivedProductController extends Controller
             // جلب المستخدم من اجل ارسال الاشعار
             $user = $product->profileSeller->profile->user;
             // ارسال اشعار للمستخدم
-            event(new DisactiveProductEvent($user, $product, $request->cause));
+            $tr = new GoogleTranslate(); // Translates to 'en' from auto-detected language by default
+            $xlocalization = "ar";
+            if ($request->headers->has('X-localization'))
+                $xlocalization = $request->header('X-localization');
+            else {
+                $tr->setSource();
+                $tr->setTarget('en');
+                $tr->translate($request->cause);
+                $xlocalization = $tr->getLastDetectedSource();
+            }
+            $tr->setSource($xlocalization);
+            $cause_ar = "";
+            $cause_fr = "";
+            $cause_en = '';
+            switch ($xlocalization) {
+                case "ar":
+                    if (is_null($cause_en)) {
+                        $tr->setTarget('en');
+                        $cause_en = $tr->translate($request->cause);
+                    }
+                    if (is_null($cause_fr)) {
+                        $tr->setTarget('fr');
+                        $cause_fr = $tr->translate($request->cause);
+                    }
+                    $cause_ar = $request->cause;
+                    break;
+                case 'en':
+                    if (is_null($cause_ar)) {
+                        $tr->setTarget('ar');
+                        $cause_ar = $tr->translate($request->cause);
+                    }
+                    if (is_null($cause_fr)) {
+                        $tr->setTarget('fr');
+                        $cause_fr = $tr->translate($request->cause);
+                    }
+                    $cause_en = $request->cause;
+                    break;
+                case 'fr':
+                    if (is_null($cause_en)) {
+                        $tr->setTarget('en');
+                        $cause_en = $tr->translate($request->cause);
+                    }
+                    if (is_null($cause_ar)) {
+                        $tr->setTarget('ar');
+                        $cause_fr = $tr->translate($request->cause);
+                    }
+                    $cause_fr = $request->cause;
+                    break;
+            }
+            event(new DisactiveProductEvent(
+                $user,
+                $product,
+                $request->cause,
+                $cause_ar,
+                $cause_en,
+                $cause_fr
+            ));
             // انهاء المعاملة بشكل جيد :
             DB::commit();
             // رسالة نجاح عملية الرفض:

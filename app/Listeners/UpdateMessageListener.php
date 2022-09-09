@@ -27,6 +27,13 @@ class UpdateMessageListener
      */
     public function handle(UpdateMessageEvent $event)
     {
-        $event->user->notify(new UpdateMessageNotification($event->user, $event->cause));
+        $event->user->notify(new UpdateMessageNotification(
+            $event->user,
+             $event->cause,
+             $event->cause_ar,
+             $event->cause_en,
+             $event->cause_fr,
+
+        ));
     }
 }

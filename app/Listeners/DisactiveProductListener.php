@@ -29,6 +29,15 @@ class DisactiveProductListener
      */
     public function handle(DisactiveProductEvent $event)
     {
-        $event->user->notify(new DisactiveProductNotification($event->user, $event->product, $event->cause));
+        $event->user->notify(new DisactiveProductNotification(
+            $event->user,
+            $event->product,
+            $event->cause,
+            $event->cause_ar,
+            $event->cause_en,
+            $event->cause_fr,
+
+
+        ));
     }
 }

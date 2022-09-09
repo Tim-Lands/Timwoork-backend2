@@ -13,17 +13,24 @@ class CancelWithdrwal extends Notification
     public $user;
     public $withdrawal;
     public $cause;
+    public $cause_ar;
+    public $cause_en;
+    public $cause_fr;
     public $type;
     /**
      * Create a new notification instance.
      *
      * @return void
      */
-    public function __construct($user, $withdrawal, $cause)
+    public function __construct($user, $withdrawal, $cause, $cause_ar, $cause_en, $cause_fr)
     {
         $this->user = $user;
         $this->withdrawal = $withdrawal;
         $this->cause = $cause;
+        $this->cause_ar = $cause_ar;
+        $this->cause_en = $cause_en;
+        $this->cause_fr = $cause_fr;
+
         switch ($this->withdrawal->type) {
             case 0:
                 $this->type = ' حسابك في بايبال ';

@@ -66,14 +66,23 @@ class RequestModifiedByBuyer extends Notification
      */
     public function toArray($notifiable)
     {
+        $full_name = Auth::user()->profile->full_name;
         return [
             'type' => "order",
             'to' => "seller",
-            'title' =>  " قام " . Auth::user()->profile->full_name . " بطلب تعديلات ",
+            'title' =>  " قام " . $full_name . " بطلب تعديلات ",
+            'title_ar' =>  " قام " . $full_name . " بطلب تعديلات ",
+            'title_en' =>  $full_name . " requested modifications",
+            'title_fr' =>  $full_name . " a demandé des modifications",
+
             'user_sender' => Auth::user()->profile,
             'content' => [
                 'item_id' => $this->item->id,
                 'title' => $this->item->title,
+                'title_ar' => $this->item->title_ar,
+                'title_en' => $this->item->title_en,
+                'title_fr' => $this->item->title_fr,
+
             ],
         ];
     }

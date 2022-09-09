@@ -15,15 +15,23 @@ class SendUserNotificationEvent implements ShouldBroadcast
     use Dispatchable, InteractsWithSockets, SerializesModels;
     public $user;
     public $cause;
+    public $cause_ar;
+    public $cause_en;
+    public $cause_fr;
+
     /**
      * Create a new event instance.
      *
      * @return void
      */
-    public function __construct($user, $cause)
+    public function __construct($user, $cause, $cause_ar, $cause_en, $cause_fr)
     {
         $this->user = $user;
         $this->cause = $cause;
+        $this->cause_ar = $cause_ar;
+        $this->cause_en = $cause_en;
+        $this->cause_fr = $cause_fr;
+
     }
 
     /**

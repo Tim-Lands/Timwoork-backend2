@@ -27,6 +27,12 @@ class BanAccountListener
      */
     public function handle(BanAccountEvent $event)
     {
-        $event->user->notify(new BanAccountNotification($event->user, $event->comment, $event->expired_at));
+        $event->user->notify(new BanAccountNotification(
+            $event->user,
+            $event->comment,
+            $event->comment_ar,
+            $event->comment_en,
+            $event->comment_fr,
+            $event->expired_at));
     }
 }

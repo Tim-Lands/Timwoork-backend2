@@ -109,7 +109,13 @@ class RatingController extends Controller
 
                 $item->is_rating = false;
                 $item->save();
-                event(new EventsRating($seller, $product->slug, $product->title, $rate->id));
+                event(new EventsRating($seller,
+                 $product->slug,
+                  $product->title,
+                 $rate->id,
+                 $product->title_ar,
+                 $product->title_en,
+                 $product->title_fr,));
                 DB::commit();
                 // إرسال رسالة النجاح
                 return response()->success('لقد تمّ التعديل التقييم بنجاح', $rate);
@@ -201,7 +207,13 @@ class RatingController extends Controller
                 $rate->reply = $request->reply;
                 $rate->save();
 
-                event(new Reply($buyer, $product->id, $product->title, $rate->id));
+                event(new Reply($buyer,
+                 $product->id,
+                  $product->title,
+                  $product->title_ar,
+                  $product->title_en,
+                  $product->title_fr,
+                  $rate->id));
 
                 DB::commit();
                 // إرسال رسالة النجاح

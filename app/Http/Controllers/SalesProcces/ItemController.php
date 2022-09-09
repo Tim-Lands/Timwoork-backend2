@@ -506,7 +506,11 @@ class ItemController extends Controller
             $profile->save();
 
             $payload = [
-                'title' => 'ربح المبلغ من طلبية',
+                'title' => ' ربح المبلغ من الطلبية',
+                'title_ar' => ' ربح المبلغ من الطلبية',
+                'title_en' => 'won the money from the order',
+                'title_fr' => "a gagné l'argent de la commande",
+
                 'amount' => $final_amount,
             ];
             $activity = MoneyActivity::create([

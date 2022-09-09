@@ -15,16 +15,22 @@ class BanAccountEvent implements ShouldBroadcast
     use Dispatchable, InteractsWithSockets, SerializesModels;
     public $user;
     public $comment;
+    public $comment_ar;
+    public $comment_en;
+    public $comment_fr;
     public $expired_at;
     /**
      * Create a new event instance.
      *
      * @return void
      */
-    public function __construct($user, $comment, $expired_at)
+    public function __construct($user, $comment, $comment_ar, $comment_en, $comment_fr ,$expired_at)
     {
         $this->user = $user;
         $this->comment = $comment;
+        $this->comment_ar = $comment_ar;
+        $this->comment_en = $comment_en;
+        $this->comment_fr = $comment_fr;
         $this->expired_at = $expired_at;
     }
 
