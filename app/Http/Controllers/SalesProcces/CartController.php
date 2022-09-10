@@ -126,6 +126,9 @@ class CartController extends Controller
             $data_cart_items = [
                 'product_id'    => $request->product_id,
                 'product_title' => $product->title,
+                'product_title_ar' => $product->title_ar,
+                'product_title_en' => $product->title_en,
+                'product_title_fr' => $product->title_fr,
             ];
             // شرط في حالة وجود الكمية
             if ($request->has('quantity')) {
