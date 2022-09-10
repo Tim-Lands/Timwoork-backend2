@@ -78,6 +78,9 @@ class SendUserNotification extends Notification
             'to' => "user",
             'user_sender' => [
                 'full_name' => 'اﻹدارة',
+                'full_name_ar' => 'اﻹدارة',
+                'full_name_en' => 'Administration',
+                'full_name_fr' => 'Administration',
                 'username' => null,
                 'avatar_url' => null
             ],

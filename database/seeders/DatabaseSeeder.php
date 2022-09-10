@@ -40,7 +40,9 @@ class DatabaseSeeder extends Seeder
             //ratingTranslateSeeder::class
             //TranslateDevelopmentSeeder::class
             //translate_items::class
-            TranslateBanSeeder::class
+            //TranslateBanSeeder::class
+            //translateNotificationSeeder::class
+            //translateCartItemsSeeder::class
         ]);
     }
 }

@@ -98,11 +98,20 @@ class DisactiveProductNotification extends Notification
                 'avatar_url' => null
             ],
             'title' =>  "لقد تم تعطيل خدمتك : " . $this->product->title . " و السبب هو :".$this->cause,
+            'title_ar' =>  "لقد تم تعطيل خدمتك : " . $this->product->title_ar . " و السبب هو :".$this->cause_ar,
+            'title_en' =>  "Your service has been disabled: " . $this->product->title_en . " The reason is:".$this->cause_en,
+            'title_fr' =>  "Votre service a été désactivé : " . $this->product->title_fr . " La raison est:".$this->cause_fr,
             'content' => [
                 'product_id' => $this->product->id,
                 'title' => $this->product->title,
+                'title_ar' => $this->product->title_ar,
+                'title_en' => $this->product->title_en,
+                'title_fr' => $this->product->title_fr,
                 'slug' => $this->product->slug,
-                "cause" => $this->cause
+                "cause" => $this->cause,
+                "cause_ar" => $this->cause_ar,
+                "cause_en" => $this->cause_en,
+                "cause_fr" => $this->cause_fr,
             ],
         ];
     }

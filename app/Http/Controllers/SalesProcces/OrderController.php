@@ -85,7 +85,11 @@ class OrderController extends Controller
                     ->first()['profileSeller']->id;
                 // المدة الزمنية للخدمة
                 $duration_product = $cart['cart_items'][$key]->duration_product;
-                $title_product = $cart['cart_items'][$key]->product_title;
+                $cart_item = $cart['cart_items'][$key];
+                $title_product = $cart_item->product_title;
+                $title_product_ar = $cart_item->product_title_ar;
+                $title_product_en = $cart_item->product_title_en;
+                $title_product_fr = $cart_item->product_title_fr;
                 // جلب تطويرات المضافة في العنصر السلة
                 // جلب كمية الخدمة
                 $quantity = $cart['cart_items'][$key]->quantity;
@@ -97,6 +101,9 @@ class OrderController extends Controller
                 $item = Item::create([
                     'uuid' => Str::uuid(),
                     'title' => $title_product,
+                    'title_ar' => $title_product_ar,
+                    'title_en' => $title_product_en,
+                    'title_fr' => $title_product_fr,
                     'profile_seller_id' => $user_seller,
                     'order_id' => $order->id,
                     'number_product' => $value,
