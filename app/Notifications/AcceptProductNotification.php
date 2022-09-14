@@ -80,9 +80,9 @@ class AcceptProductNotification extends Notification
                 'avatar_url' => null
             ],
             'title' =>  " لقد تم قبول خدمتك بنجاح : " . $this->product->title,
-            'title_ar' =>  " لقد تم قبول خدمتك بنجاح : " . $this->product->title,
-            'title_en' =>  " Your service has been successfully accepted: " . $this->product->title,
-            'title_fr' =>  " Votre service a été accepté avec succès: " . $this->product->title,
+            'title_ar' =>  " لقد تم قبول خدمتك بنجاح : " . $this->product->title_ar,
+            'title_en' =>  " Your service has been successfully accepted: " . $this->product->title_en,
+            'title_fr' =>  " Votre service a été accepté avec succès: " . $this->product->title_fr,
 
             'content' => [
                 'product_id' => $this->product->id,
