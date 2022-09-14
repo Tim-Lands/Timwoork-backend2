@@ -35,13 +35,13 @@ class DatabaseSeeder extends Seeder
             // createWalletInProfilesSeeder::class
             //CountriesLangSeederClass::class
             //ProfileLangSeederClass::class
-            ProductTranslateSeeder::class
+            //ProductTranslateSeeder::class
             //CountryTranslateSeeder::class
             //ratingTranslateSeeder::class
             //TranslateDevelopmentSeeder::class
             //translate_items::class
             //TranslateBanSeeder::class
-            //translateNotificationSeeder::class
+            translateNotificationSeeder::class
             //translateCartItemsSeeder::class
         ]);
     }

@@ -23,11 +23,15 @@ class translateNotificationSeeder extends Seeder
             $tr->setSource('ar');
             $tr->setTarget('en');
             $notifications = DB::table('notifications')->get();
+
             foreach ($notifications as $notification) {
                 $data = json_decode($notification->data);
                 if(isset($data->title)){
                     $title_ar = $data->title;
                     $title_en = $tr->translate($title_ar);
+                    echo $title_en;
+                    echo $notification->id;
+                    echo "\n**********\n";
                     $data->title_ar = $title_ar;
                     $data->title_en = $title_en;
                 }
@@ -57,7 +61,9 @@ class translateNotificationSeeder extends Seeder
                 }
                 DB::table('notifications')
                     ->where('id', $notification->id)
-                    ->update(['data' => json_encode($data)]);
+                    ->update(array('data' => json_encode($data)));
+                var_dump($data);
+                echo 'updated';
             }
             $tr->setTarget('fr');
             foreach ($notifications as $notification) {
@@ -91,7 +97,7 @@ class translateNotificationSeeder extends Seeder
                 }
                 DB::table('notifications')
                     ->where('id', $notification->id)
-                    ->update(['data' => json_encode($data)]);
+                    ->update(array('data' => json_encode($data)));
             }
         } catch (Exception $e) {
             echo  $e;

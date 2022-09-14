@@ -30,7 +30,7 @@ class DisactiveProductEvent implements ShouldBroadcast
         $this->product = $product;
         $this->cause = $cause;
         $this->cause_ar = $cause_ar;
-        $this->cause_fr = $cause_en;
+        $this->cause_en = $cause_en;
         $this->cause_fr = $cause_fr;
 
     }

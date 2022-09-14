@@ -216,7 +216,6 @@ class ActivedProductController extends Controller
                     $cause_fr = $request->cause;
                     break;
             }
-            echo $cause_en;
             event(new DisactiveProductEvent(
                 $user,
                 $product,
@@ -228,7 +227,7 @@ class ActivedProductController extends Controller
             // انهاء المعاملة بشكل جيد :
             DB::commit();
             // رسالة نجاح عملية الرفض:
-            return response()->success(__('messages.dashboard.disactive_status_product'), $product);
+            return response()->success(__('messages.dashboard.disactive_status_product'));
             // =================================================
         } catch (Exception $ex) {
             return $ex;
