@@ -190,39 +190,33 @@ class ActivedProductController extends Controller
             $cause_en = '';
             switch ($xlocalization) {
                 case "ar":
-                    if (is_null($cause_en)) {
-                        $tr->setTarget('en');
-                        $cause_en = $tr->translate($request->cause);
-                    }
-                    if (is_null($cause_fr)) {
-                        $tr->setTarget('fr');
-                        $cause_fr = $tr->translate($request->cause);
-                    }
+                    $tr->setTarget('en');
+                    $cause_en = $tr->translate($request->cause);
+
+                    $tr->setTarget('fr');
+                    $cause_fr = $tr->translate($request->cause);
+
                     $cause_ar = $request->cause;
                     break;
                 case 'en':
-                    if (is_null($cause_ar)) {
-                        $tr->setTarget('ar');
-                        $cause_ar = $tr->translate($request->cause);
-                    }
-                    if (is_null($cause_fr)) {
-                        $tr->setTarget('fr');
-                        $cause_fr = $tr->translate($request->cause);
-                    }
+                    $tr->setTarget('ar');
+                    $cause_ar = $tr->translate($request->cause);
+                    $tr->setTarget('fr');
+                    $cause_fr = $tr->translate($request->cause);
+
                     $cause_en = $request->cause;
                     break;
                 case 'fr':
-                    if (is_null($cause_en)) {
-                        $tr->setTarget('en');
-                        $cause_en = $tr->translate($request->cause);
-                    }
-                    if (is_null($cause_ar)) {
-                        $tr->setTarget('ar');
-                        $cause_fr = $tr->translate($request->cause);
-                    }
+                    $tr->setTarget('en');
+                    $cause_en = $tr->translate($request->cause);
+
+                    $tr->setTarget('ar');
+                    $cause_fr = $tr->translate($request->cause);
+
                     $cause_fr = $request->cause;
                     break;
             }
+            echo $cause_en;
             event(new DisactiveProductEvent(
                 $user,
                 $product,

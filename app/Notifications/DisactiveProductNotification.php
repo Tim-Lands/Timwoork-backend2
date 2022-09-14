@@ -62,7 +62,7 @@ class DisactiveProductNotification extends Notification
             ],
             'title' =>  "لقد تم تعطيل خدمتك : " . $this->product->title . " و السبب هو :".$this->cause,
             'title_ar' =>  "لقد تم تعطيل خدمتك : " . $this->product->title . " و السبب هو :".$this->cause,
-            'title_en' =>  "Your service has been disabled: " . $this->product->title . " The reason is:".$this->cause,
+            'title_en' =>  "Your service has been disabled: " . $this->product->title_ . " The reason is:".$this->cause,
             'title_fr' =>  "Votre service a été désactivé: " . $this->product->title . " La raison est:".$this->cause,
 
             'content' => [
