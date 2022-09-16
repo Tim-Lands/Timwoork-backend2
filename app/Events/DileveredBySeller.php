@@ -25,6 +25,7 @@ class DileveredBySeller implements ShouldBroadcast
     {
         $this->user = $user;
         $this->item = $item;
+
     }
 
     /**

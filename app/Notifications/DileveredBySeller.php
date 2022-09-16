@@ -32,7 +32,7 @@ class DileveredBySeller extends Notification
      */
     public function via($notifiable)
     {
-        return ['mail', 'database'];
+        return ['database'];
     }
 
     /**
@@ -56,10 +56,7 @@ class DileveredBySeller extends Notification
                     'avatar_path' => Auth::user()->profile->avatar_path
                 ],                'content' => [
                     'item_id' => $this->item->id,
-                    'title' => $this->item->title,
-                    'title_ar' => $this->item->title_ar,
-                    'title_en' => $this->item->title_en,
-                    'title_fr' => $this->item->title_fr,
+                    'title' => $this->item->title
                 ],
             ]);
     }
@@ -89,9 +86,9 @@ class DileveredBySeller extends Notification
             'content' => [
                 'item_id' => $this->item->id,
                 'title' => $this->item->title,
-                'title_ar' => $this->item->title->ar,
-                'title_en' => $this->item->title->en,
-                'title_fr' => $this->item->title->fr,
+                'title_ar' => $this->item->title_ar,
+                'title_en' => $this->item->title_en,
+                'title_fr' => $this->item->title_fr,
             ],
         ];
     }
