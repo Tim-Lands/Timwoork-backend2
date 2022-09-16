@@ -189,6 +189,7 @@ class RatingController extends Controller
                 // إرسال رسالة النجاح
                 return response()->success('لقد تمّ إضافة  التقييم بنجاح', $rating);
             } catch (Exception $ex) {
+                echo $ex;
                 // في حالة الخطأ يتم التراجع عن أي تغيير حدث في قاعدة البيانات
                 DB::rollback();
                 //eturn $ex;

@@ -82,7 +82,7 @@ class Rating extends Notification
      */
     public function toArray($notifiable)
     {
-        $full_name = Auth::user()->full_name;
+        $full_name = Auth::user()->profile->full_name;
         return [
             'type' => "rating",
             'to' => "seller",
