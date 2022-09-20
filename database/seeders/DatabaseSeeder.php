@@ -44,6 +44,7 @@ class DatabaseSeeder extends Seeder
             //translateNotificationSeeder::class
             //translateCartItemsSeeder::class
             //translateConversationSeeder::class
+            TranslateWalletActivitiesSeeder::class
         ]);
     }
 }
