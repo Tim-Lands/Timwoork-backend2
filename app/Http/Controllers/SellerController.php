@@ -67,14 +67,11 @@ class SellerController extends Controller
         try {
             $tr = new GoogleTranslate(); // Translates to 'en' from auto-detected language by default
             $xlocalization = "ar";
-            if ($request->headers->has('X-localization'))
-                $xlocalization = $request->header('X-localization');
-            else {
-                $tr->setSource();
-                $tr->setTarget('en');
-                $tr->translate($request->title);
-                $xlocalization = $tr->getLastDetectedSource();
-            }
+            $tr->setSource();
+            $tr->setTarget('en');
+            $tr->translate($request->bio);
+            $xlocalization = $tr->getLastDetectedSource();
+
             $tr->setSource($xlocalization);
             $bio_ar = $request->bio_ar;
             $bio_en = $request->bio_en;
