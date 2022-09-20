@@ -43,7 +43,7 @@ class DatabaseSeeder extends Seeder
             //TranslateBanSeeder::class
             //translateNotificationSeeder::class
             //translateCartItemsSeeder::class
-            translateConversationSeeder::class
+            //translateConversationSeeder::class
         ]);
     }
 }

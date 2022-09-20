@@ -22,6 +22,7 @@ use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
+use Stichoza\GoogleTranslate\GoogleTranslate;
 
 class ProductController extends Controller
 {
@@ -373,6 +374,21 @@ class ProductController extends Controller
     public function product_step_one($id, ProductStepOneRequest $request)
     {
         try {
+            $tr = new GoogleTranslate(); // Translates to 'en' from auto-detected language by default
+            $tr->setSource(); // Translate from English
+            $xlocalization = "ar";
+            if ($request->headers->has('X-localization'))
+                $xlocalization = $request->header('X-localization');
+            else {
+                $tr->setSource();
+                $tr->setTarget('en');
+                $tr->translate($request->title);
+                $xlocalization = $tr->getLastDetectedSource();
+            }
+            $tr->setSource($xlocalization);
+            $title_ar = $request->title_ar;
+            $title_en = $request->title_en;
+            $title_fr = $request->title_fr;
             //id  جلب العنصر بواسطة
             $product = Product::whereId($id)->first();
             // شرط اذا كان العنصر موجود
@@ -386,9 +402,47 @@ class ProductController extends Controller
             if (!$subcategory) {
                 return response()->error(__("messages.errors.element_not_found"), 403);
             }
+            switch ($xlocalization) {
+                case "ar":
+                    if (is_null($title_en)) {
+                        $tr->setTarget('en');
+                        $title_en = $tr->translate($request->title);
+                    }
+                    if (is_null($title_fr)) {
+                        $tr->setTarget('fr');
+                        $title_fr = $tr->translate($request->title);
+                    }
+                    $title_ar = $request->title;
+                    break;
+                case 'en':
+                    if (is_null($title_ar)) {
+                        $tr->setTarget('ar');
+                        $title_ar = $tr->translate($request->title);
+                    }
+                    if (is_null($title_fr)) {
+                        $tr->setTarget('fr');
+                        $title_fr = $tr->translate($request->title);
+                    }
+                    $title_en = $request->title;
+                    break;
+                case 'fr':
+                    if (is_null($title_en)) {
+                        $tr->setTarget('en');
+                        $title_en = $tr->translate($request->title);
+                    }
+                    if (is_null($title_ar)) {
+                        $tr->setTarget('ar');
+                        $title_ar = $tr->translate($request->title);
+                    }
+                    $title_fr = $request->title;
+                    break;
+            }
             // انشاء مصفوفة و وضع فيها بيانات المرحلة الاولى
             $data = [
                 'title'             => $request->title,
+                'title_ar'          => $title_ar,
+                'title_en'          => $title_en,
+                'title_fr'          => $title_fr,
                 'slug'              => $product->id . '-' . slug_with_arabic($request->title),
                 'category_id'       =>  (int)$request->subcategory,
                 'is_vide'           => 0,
