@@ -194,6 +194,9 @@ class ItemController extends Controller
 
             $payload = [
                 'title' => 'استعادة مبلغ بعد رفض طلبية',
+                'title_ar' => 'استعادة مبلغ بعد رفض طلبية',
+                'title_en' => 'Refund after rejecting an order',
+                'title_fr' => 'Remboursement après refus de commande',
                 'amount' => $item_amount,
             ];
             $activity = MoneyActivity::create([
@@ -269,6 +272,9 @@ class ItemController extends Controller
             $profile->save();
             $payload = [
                 'title' => 'استعادة مبلغ بعد إلغاء طلبية',
+                'title_ar' => 'استعادة مبلغ بعد إلغاء طلبية',
+                'title_en' => 'Refund after canceling an order',
+                'title_fr' => "Remboursement après annulation d'une commande",
                 'amount' => $item_amount,
             ];
             $activity = MoneyActivity::create([
@@ -347,6 +353,9 @@ class ItemController extends Controller
 
             $payload = [
                 'title' => 'استعادة مبلغ بعد إلغاء طلبية',
+                'title_ar' => 'استعادة مبلغ بعد إلغاء طلبية',
+                'title_en' => 'Refund after canceling an order',
+                'title_fr' => "Remboursement après annulation d'une commande",
                 'amount' => $item_amount,
             ];
             $activity = MoneyActivity::create([
@@ -659,6 +668,9 @@ class ItemController extends Controller
 
             $payload = [
                 'title' => 'استعادة مبلغ بعد إلغاء طلبية',
+                'title_ar' => 'استعادة مبلغ بعد إلغاء طلبية',
+                'title_en' => 'Refund after canceling an order',
+                'title_fr' => "Remboursement après annulation d'une commande",
                 'amount' => $item_amount,
             ];
             $activity = MoneyActivity::create([

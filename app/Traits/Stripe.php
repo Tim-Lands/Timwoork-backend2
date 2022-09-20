@@ -29,6 +29,9 @@ trait Stripe
             ]);
             $payload = [
                 'title' => 'عملية شراء بواسطة بطاقة بنكية',
+                'title_ar' => 'عملية شراء بواسطة بطاقة بنكية',
+                'title_en' => 'Purchasing with a bank card',
+                'title_fr' => 'Achat avec une carte bancaire',
                 'payment_method' => 'البطاقة بنكية',
                 'total_price' => $cart->stripe()->total,
                 'price_with_tax' => $cart->stripe()->total_with_tax,

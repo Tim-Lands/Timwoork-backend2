@@ -128,6 +128,9 @@ trait Paypal
                 ]);
                 $payload = [
                     'title' => 'عملية شراء بواسطة بايبال',
+                    'title_ar' => 'عملية شراء بواسطة بايبال',
+                    'title_en' => 'Purchase with Paypal',
+                    'title_fr' => 'Achetez avec Paypal',
                     'payment_method' => 'البايبال',
                     'total_price' => $cart->paypal()->total,
                     'price_with_tax' => $cart->paypal()->total_with_tax,

@@ -377,6 +377,9 @@ class WithdrawalController extends Controller
 
             $payload = [
                 'title' => 'عملية طلب سحب بواسطة بايبال',
+                'title_ar'=>'عملية طلب سحب بواسطة بايبال',
+                'title_en'=>'The process of requesting a withdrawal by PayPal',
+                'title_fr'=>'Le processus de demande de retrait par PayPal',
                 'amount' => $withdrawal->amount,
             ];
             $activity = MoneyActivity::create([
@@ -442,6 +445,9 @@ class WithdrawalController extends Controller
 
             $payload = [
                 'title' => 'عملية طلب سحب بواسطة وايز',
+                'title_ar' => 'عملية طلب سحب بواسطة وايز',
+                'title_en' => 'The process of requesting a withdrawal by WISE',
+                'title_fr' => 'Processus de demande de retrait WISE',
                 'amount' => $withdrawal->amount,
             ];
             $activity = MoneyActivity::create([
@@ -507,6 +513,9 @@ class WithdrawalController extends Controller
 
             $payload = [
                 'title' => 'عملية طلب سحب بواسطة حساب بنكي',
+                'title_ar' => 'عملية طلب سحب بواسطة حساب بنكي',
+                'title_en' => 'The process of requesting a withdrawal by WISE',
+                'title_fr' => 'Processus de demande de retrait WISE',
                 'amount' => $withdrawal->amount,
             ];
             $activity = MoneyActivity::create([
@@ -573,6 +582,9 @@ class WithdrawalController extends Controller
 
             $payload = [
                 'title' => 'عملية طلب سحب بواسطة حوالة بنكية',
+                'title_ar' => 'عملية طلب سحب بواسطة حوالة بنكية',
+                'title_en' => 'Process of requesting withdrawal by bank transfer',
+                'title_fr' => 'Processus de demande de retrait par virement bancaire',
                 'amount' => $withdrawal->amount,
             ];
             $activity = MoneyActivity::create([
