@@ -9,7 +9,7 @@ use Carbon\Carbon;
 use Exception;
 use Illuminate\Support\Facades\DB;
 
-//use Illuminate\Http\Response;
+use Illuminate\Http\Response;
 //use Illuminate\Support\Facades\RateLimiter;
 
 //use Illuminate\Support\Str;
@@ -41,6 +41,7 @@ trait VerificationEmailTrait
 
     public function verify_email($email, $code)
     {
+        try{
         // تفعيل البريد الالكتروني بادخال البريد الالكتروني مع رمز التفعيل
         $verify = VerifyEmailCode::where('email', $email)
             ->where('code', $code)
@@ -61,13 +62,17 @@ trait VerificationEmailTrait
             $verify->delete();
 
             // إرسال رسالة تفيد بنجاح العملية
-            return $this->success('لقد تم تفعيل حسابك بنجاح');
+            return response()->success('لقد تم تفعيل حسابك بنجاح');
         } else {
             // حالة البريد الالكتروني مفعّل
             //  يتم ارسال رسال مفادها أن البريد الالكتروني الذي تريد تفعيله، مفعّل سابقا
 
-            return $this->error('البريد اﻹلكتروني مفعّل من قبل');
+            return response()->error('البريد اﻹلكتروني مفعّل من قبل');
         }
+    }
+    catch (Exception $exc){
+        echo $exc;
+    }
     }
 
     public function resend_code($email)
