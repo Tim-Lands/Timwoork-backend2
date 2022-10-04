@@ -359,14 +359,15 @@ class InsertProductContoller extends Controller
     public function storeStepThree(mixed $id, ProductStepThreeRequest $request)
     {
         try {
+            $langs = ['ar', 'en', 'fr'];
             $tr = new GoogleTranslate(); // Translates to 'en' from auto-detected language by default
             $xlocalization = "ar";
-            if ($request->headers->has('X-localization'))
+            if ($request->headers->has('X-localization') && in_array($request->header('X-localization'),$langs) )
                 $xlocalization = $request->header('X-localization');
             else {
                 $tr->setSource();
                 $tr->setTarget('en');
-                $tr->translate($request->title);
+                $tr->translate($request->content);
                 $xlocalization = $tr->getLastDetectedSource();
             }
             $tr->setSource($xlocalization);
