@@ -77,10 +77,10 @@ class InsertProductContoller extends Controller
     public function storeStepOne($id, ProductStepOneRequest $request)
     {
         try {
+            $langs = ['ar', 'en', 'fr'];
             $tr = new GoogleTranslate(); // Translates to 'en' from auto-detected language by default
-            $tr->setSource(); // Translate from English
             $xlocalization = "ar";
-            if ($request->headers->has('X-localization'))
+            if ($request->headers->has('X-localization') && in_array($request->header('X-localization'),$langs) )
                 $xlocalization = $request->header('X-localization');
             else {
                 $tr->setSource();
@@ -252,7 +252,11 @@ class InsertProductContoller extends Controller
             // انشاء مصفوفة جديدة من اجل عملية اضافة تطويرات
             (object)$developments = [];
 
+            $langs = ['ar', 'en', 'fr'];
             $tr = new GoogleTranslate(); // Translates to 'en' from auto-detected language by default
+            $xlocalization = "ar";
+            if ($request->headers->has('X-localization') && in_array($request->header('X-localization'),$langs) )
+                $xlocalization = $request->header('X-localization'); // Translates to 'en' from auto-detected language by default
 
             // شرط اذا كانت هناك توجد تطورات
             if ($request->only('developments') != null) {
@@ -261,9 +265,7 @@ class InsertProductContoller extends Controller
                 }
                 // جلب المرسلات من العميل و وضعهم فالمصفوفة الجديدة
 
-                $xlocalization = "ar";
-                if ($request->headers->has('X-localization'))
-                    $xlocalization = $request->header('X-localization');
+
                 else {
                     $tr->setSource();
                     $tr->setTarget('en');
