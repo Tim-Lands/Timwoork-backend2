@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 
 use App\Http\Requests\Dashboard\Auth\LoginRequest;
 use App\Http\Requests\SocialProviderRequest;
+use App\Models\Profile;
 use App\Models\User;
 use App\Traits\LoginUser;
 use Exception;
@@ -55,34 +56,7 @@ class LoginController extends Controller
         return $this->login_with_token($user);
     }
 
-    public function me(Request $request)
-    {
-        //$paginate = $request->query('paginate') ?? 10;
-        $user =  $request->user()->load([
-            'profile.profile_seller.badge',
-            'profile.profile_seller.level',
-            'profile.profile_seller.skills',
-            'profile.badge',
-            'profile.level',
-            'profile.country',
-            'profile.currency',
-            'profile.wallet' => function ($q) {
-                return $q->with('activities');
-            },
-        ]);
 
-        // make some columns hidden in response
-        $notifications_count = $user->unreadNotifications->count();
-        $msg_count = $this->getUnreadMessagesCount($user);
-        $cart_items_count = $this->getCartItemsCount($user);
-        $data = [
-            'user_details' => $user,
-            'unread_messages_count' => $msg_count,
-            'unread_notifications_count' => $notifications_count,
-            'cart_items_count' => $cart_items_count
-        ];
-        return response()->json($data, Response::HTTP_OK);
-    }
     /**
      * logout_all => تسجيل الخروج من جميع جلسات المستخدم
      *
@@ -117,14 +91,6 @@ class LoginController extends Controller
     /**
      * get user unread messeges count
      */
-    public function getUnreadMessagesCount($user)
-    {
-        $count = $user->conversations->loadCount(['messages' => function ($q) {
-            $q->whereNull('read_at')
-                ->where('user_id', '<>', Auth::id());
-        }])->sum('messages_count');
-        return $count;
-    }
 
     /**
      * Get user cart items count

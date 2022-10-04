@@ -20,6 +20,7 @@ use App\Http\Controllers\ExternalAccountRatingController;
 use App\Http\Controllers\ExternalRatingController;
 use App\Http\Controllers\FilterController;
 use App\Http\Controllers\FrontEndController;
+use App\Http\Controllers\MeController;
 use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\Product\InsertProductContoller;
 use App\Http\Controllers\Product\DeleteProductController;
@@ -62,7 +63,8 @@ Route::group(['middleware' => ['XSS','language']], function () {
     /*                                 Auth Routes                                */
     /* -------------------------------------------------------------------------- */
     Route::middleware('auth:sanctum', 'abilities:user')->group(function () {
-        Route::get('/me', [LoginController::class, 'me']);
+        Route::prefix('me')->group(base_path('routes/me.php'));
+
         Route::post('/logout_user', [LoginController::class, 'logout_user']);
         Route::post('/logout_all', [LoginController::class, 'logout_all']);
         Route::post('/{user}/online', [UserStatusController::class, 'online']);

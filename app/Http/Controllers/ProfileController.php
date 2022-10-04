@@ -10,6 +10,8 @@ use App\Models\Currency;
 use App\Models\Profile;
 use App\Models\User;
 use Exception;
+use Illuminate\Http\Request;
+use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 
@@ -30,6 +32,7 @@ class ProfileController extends Controller
      * @param  mixed $username
      * @return void
      */
+
     public function show($username)
     {
         // البحث في قاعدة البيانات عن اسم المستخدم
