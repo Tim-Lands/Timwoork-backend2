@@ -75,7 +75,7 @@ Route::group(['middleware' => ['XSS','language']], function () {
     /* -------------------------------------------------------------------------- */
     /*                             مسارات خدمات البائع                            */
     /* -------------------------------------------------------------------------- */
-    Route::prefix('my_products')->middleware(['auth:sanctum', 'abilities:user'])->group(function () {
+   /*  Route::prefix('my_products')->middleware(['auth:sanctum', 'abilities:user'])->group(function () {
         // عرض كل الخدمات
         Route::get('/', [MyProductController::class, 'index']);
         // عرض الخدمات التي تم تنشيطها
@@ -96,7 +96,7 @@ Route::group(['middleware' => ['XSS','language']], function () {
         Route::get('/product/{id}', [MyProductController::class, 'product']);
         // تعيين الخدمة
         Route::get('/{slug}', [MyProductController::class, 'review']);
-    });
+    }); */
 
     /**
      *  مسار لعرض مشترياتي

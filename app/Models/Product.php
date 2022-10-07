@@ -15,7 +15,23 @@ use Mehradsadeghi\FilterQueryString\FilterQueryString;
 class Product extends Model
 {
     use HasFactory, FilterQueryString, SoftDeletes;
-
+   /* -------------------------------- Constants ------------------------------- */
+    // code
+    //حالة الخدمة مرفوضة او معطلة
+    const PRODUCT_REJECT = 0;
+    // حالة الخدمة نشطة
+    const PRODUCT_ACTIVE = 1;
+    // مراحل انشاء الخدمة
+    const PRODUCT_STEP_ONE    = 1;
+    const PRODUCT_STEP_TWO    = 2;
+    const PRODUCT_STEP_THREE  = 3;
+    const PRODUCT_STEP_FOUR   = 4;
+    const PRODUCT_STEP_FIVE   = 5;
+    // اكتمال عملية انشاء الخدمة
+    const PRODUCT_IS_COMPLETED = 1;
+    // حالة الخدمة اذا كانت في قائمة المسودات
+    const PRODUCT_IS_DRAFT = 1;
+    const PRODUCT_IS_NOT_DRAFT = 0;
     /**
      * table
      *
@@ -264,23 +280,7 @@ class Product extends Model
         return $query->where('is_active', $value);
     }
 
-    /* -------------------------------- Constants ------------------------------- */
-    // code
-    //حالة الخدمة مرفوضة او معطلة
-    const PRODUCT_REJECT = 0;
-    // حالة الخدمة نشطة
-    const PRODUCT_ACTIVE = 1;
-    // مراحل انشاء الخدمة
-    const PRODUCT_STEP_ONE    = 1;
-    const PRODUCT_STEP_TWO    = 2;
-    const PRODUCT_STEP_THREE  = 3;
-    const PRODUCT_STEP_FOUR   = 4;
-    const PRODUCT_STEP_FIVE   = 5;
-    // اكتمال عملية انشاء الخدمة
-    const PRODUCT_IS_COMPLETED = 1;
-    // حالة الخدمة اذا كانت في قائمة المسودات
-    const PRODUCT_IS_DRAFT = 1;
-    const PRODUCT_IS_NOT_DRAFT = 0;
+ 
     /* --------------------------- Accessor & Metators -------------------------- */
     // code
 
