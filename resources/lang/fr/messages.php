@@ -211,6 +211,7 @@ return [
     ],
 //Transaction entre le vendeur et l’acheteur
     "item" => [
+      "item_type_not_found"=>"Le type d'élément est introuvable, vous devez définir ?type=sells or purchases",
       "not_may_this_operation" => "Vous ne pouvez pas réaliser cette opération, vérifiez vos données",
       "not_found_item_reject" => "La demande n’existe pas ... Annuler la commande",
       "accept_item_by_seller" => "La commande a été acceptée par le vendeur",

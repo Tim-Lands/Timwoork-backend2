@@ -11,17 +11,6 @@ use Illuminate\Http\Response;
 
 class BuyerOrderController extends Controller
 {
-    public function index(Request $request)
-    {
-        //$paginate = $request->query('paginate') ? $request->query('paginate') : 10;
-        $buyer = Auth::id();
-        $items = Item::whereHas('order', function ($q) use ($buyer) {
-            $q->whereHas('cart', function ($query) use ($buyer) {
-                $query->where('user_id', $buyer);
-            })->with('cart');
-        })->with(['order', 'profileSeller.profile.user'])->withCount('item_rejected')->orderBy('created_at', 'DESC')->get();
-        return response()->success(__("messages.oprations.get_all_data"), $items);
-    }
 
     public function show($id)
     {

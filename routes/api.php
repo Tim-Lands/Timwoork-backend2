@@ -105,7 +105,7 @@ Route::group(['middleware' => ['XSS','language']], function () {
         Route::get('/', [BuyerOrderController::class, 'index']);
         Route::get('/{id}', [BuyerOrderController::class, 'show']);
     });
-
+ 
     /********************************************************************** */
     /**
      *  مسار لعرض مشترياتي

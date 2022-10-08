@@ -219,6 +219,7 @@ return [
     ],
     // المعاملة بين البائع و المشتري
     "item" => [
+        "item_type_not_found"=>"نوع العنصر غير موجود يجب وضع ?type=sells او purchases",
         "not_may_this_operation" => "لا يمكنك إجراء هذه العملية, تفقد بياناتك",
         "not_found_item_reject" => "الطلب غير موجود ... إلغاء الطلبية",
         "accept_item_by_seller" => "تم قبول الطلب من قبل البائع",

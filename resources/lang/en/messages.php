@@ -207,6 +207,7 @@ return [
     ],
     // المعاملة بين البائع و المشتري
     "item" => [
+        "item_type_not_found"=>"Item type is not found, you should set ?type=sells or purchases",
         "not_may_this_operation" => "You cannot perform this operation, you will lose your data",
         "not_found_item_reject" => "Order not found...Order canceled",
         "accept_item_by_seller" => "The order was accepted by the seller",
