@@ -259,7 +259,7 @@ class InsertProductContoller extends Controller
                 $xlocalization = $request->header('X-localization'); // Translates to 'en' from auto-detected language by default
 
             // شرط اذا كانت هناك توجد تطورات
-            if ($request->only('developments') != null) {
+            if ($request->only('developments') != null && count($request->developments)>0) {
                 if (count($request->developments) > $number_developments_max) {
                     return response()->error(__("messages.product.number_developments_max"), 422);
                 }
@@ -269,7 +269,7 @@ class InsertProductContoller extends Controller
                 else {
                     $tr->setSource();
                     $tr->setTarget('en');
-                    $tr->translate($request->developments[0]->title);
+                    $tr->translate($request->developments[0]["title"]);
                     $xlocalization = $tr->getLastDetectedSource();
                 }
                 $tr->setSource($xlocalization);
