@@ -1,7 +1,8 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Me;
 
+use App\Http\Controllers\Controller;
 use App\Http\Requests\GetMeProducts;
 use App\Models\Product;
 use App\Models\Profile;
