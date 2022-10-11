@@ -59,7 +59,7 @@ class MeController extends Controller
             $x_localization = $request->header('X-localization');
         }
         $user_id =  $request->user()->id;
-        $profile = Profile::where(['user_id' => $user_id])->first();
+        $profile = Profile::where(['user_id' => $user_id])->first()->withoutRelations();
         return response()->json($profile, Response::HTTP_OK);
     }
 
@@ -70,7 +70,9 @@ class MeController extends Controller
             $x_localization = $request->header('X-localization');
         }
         $user_id =  $request->user()->id;
-        $badge = Profile::where(['user_id' => $user_id])->first()->badge;
+        $badge = Profile::with(['badge'=>function($query) use($x_localization){
+            $query->select('id',"name_{$x_localization} AS name");
+        }])->where(['user_id' => $user_id])->get()->first()->badge;
         return response()->json($badge, Response::HTTP_OK);
     }
 
@@ -81,7 +83,9 @@ class MeController extends Controller
             $x_localization = $request->header('X-localization');
         }
         $user_id =  $request->user()->id;
-        $level = Profile::where(['user_id' => $user_id])->first()->level;
+        $level = Profile::with(['level'=>function($query) use($x_localization){
+            $query->select("id","name_{$x_localization} AS name","value_bayer_min","value_bayer_max");
+        }])->where(['user_id' => $user_id])->first()->level;
         return response()->json($level, Response::HTTP_OK);
     }
 
@@ -104,24 +108,45 @@ class MeController extends Controller
 
     public function conversations(Request $request)
     {
+        try{
+        $x_localization = 'ar';
+        if ($request->hasHeader('X-localization')) {
+            $x_localization = $request->header('X-localization');
+        }
         $paginate = $request->query('paginate') ? $request->query('paginate') : 10;
         $user = $request->user();
 
-        $conversations = $user->conversations()->with(['latestMessage', 'members' => function ($q) use ($user) {
+        /* $conversations = $user->with(['conversations'=>function($query) use($x_localization){
+            $query->select("title");
+        }])->first()->conversations()->with(['latestMessage', 'members' => function ($q) use ($user) {
             $q->where('user_id', '<>', $user->id)->with('profile');
         }])->withCount(['messages' => function (Builder $query) use ($user) {
             $query->where('user_id', '<>', $user->id)
                 ->whereNull('read_at');
         }])
             ->orderBy('updated_at', 'desc')
-            ->paginate($paginate);
-
+            ->paginate($paginate); */
+            $conversations = $user->with(
+                ["conversations:id,title_{$x_localization} AS title,created_at,updated_at,conversationable_type,conversationable_id",
+                "conversations.latestMessage",
+                'conversations.members:id,id,username,email,phone,code_phone'
+                ])
+            ->withCount(['messages' => function (Builder $query) use ($user) {
+                $query->where('user_id', '<>', $user->id)
+                    ->whereNull('read_at');
+            }])
+                ->orderBy('updated_at', 'desc')
+                ->paginate($paginate);
         $unread_messages = $user->conversations->loadCount(['messages' => function ($q) use ($user) {
             $q->whereNull('read_at')
                 ->where('user_id', '<>', $user->id);
         }]);
         return response()->success('ok', ['conversations'=>$conversations,"unread_conversations"=>$unread_messages]);
     }
+    catch(Exception $exc){
+        echo($exc);
+    }
+}
     //
     
 public function products(Request $request, Response $response, $type='all'){

@@ -3,15 +3,15 @@
  /{user}/online , /{user}/ofline should be grouped into PUT:user/status
 /logout_user to post: /user/logout
 /logout_all to post: /user/logut_all
-/my_products/ to /me/products
-/my_products/[published, paused, pending, paused, draft] => they all will be /me/products?type={enum_numeric_value}
+#DONE /my_products/ to /me/products
+#DONE /my_products/[published, paused, pending, paused, draft] => they all will be /me/products?type={enum_numeric_value}
 عشان ننجز اي حاجة فيها my_products هتبقى /me/products
-/my_products/{id}/active_product, and /my_products/{id}/disactive_product all will be PUT: /me/products/{id}/is_active
-/my_products/product/{id} to /me/products/{id}
-/my_purchases/ = /me/items?type={enum_numeric_value}
-/my_purchases/{id} = me/items/{id}
-/my_sales/ = me/items?type={enum_numeric_value}
-/my_sales/{id} = me/items/{id}
+#DONE /my_products/{id}/active_product, and /my_products/{id}/disactive_product all will be PUT: /me/products/{id}/is_active
+/my_products/product/{id} to /products/{id}
+#DONE /my_purchases/ = /me/items/purchase
+/my_purchases/{id} = me/items/purchases/{id}
+#DONE /my_sales/ = me/items/sales
+#PROGRESSING /my_sales/{id} = me/items/sales/{id}
 /my_wallet = me/wallet
 /notifications = /me/notifications
 /notifications/{id} = /me/notifications/{id}

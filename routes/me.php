@@ -12,7 +12,10 @@ Route::get('/products/{type?}',[MeController::class,'products']);
 Route::get('/profile',[MeController::class,'profile']);
 Route::get('/profile/level',[MeController::class,'level']);
 Route::get('/profile/badge',[MeController::class,'badge']);
-Route::get('/items',[ItemsController::class,'index']); 
+Route::get('/items/purchases',[ItemsController::class,'indexPurchase']); 
+Route::get('/items/sales',[ItemsController::class,'indexSells']);
+Route::get('/items/purchases/{id}',[ItemsController::class,'showPurchase']); 
+Route::get('/items/sales/{id}',[ItemsController::class,'showSales']); 
 Route::PUT('/products/{id}/is_active',[ProductController::class,'updateIsActive']);
 }
 catch(Exception $exc){

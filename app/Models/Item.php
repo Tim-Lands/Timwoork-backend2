@@ -11,7 +11,7 @@ use Illuminate\Database\Eloquent\Relations\HasOne;
 class Item extends Model
 {
     use HasFactory;
-    protected $appends = ['user_id'];
+    //protected $appends = ['user_id'];
     protected $table = 'items';
     // ===========================Contants =============================
     // code
