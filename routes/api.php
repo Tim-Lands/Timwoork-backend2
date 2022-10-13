@@ -62,6 +62,7 @@ Route::group(['middleware' => ['XSS','language']], function () {
     /*                                 Auth Routes                                */
     /* -------------------------------------------------------------------------- */
     Route::middleware('auth:sanctum', 'abilities:user')->group(function () {
+        Route::prefix('new/me')->group(base_path('routes/me.php'));
         Route::get('/me', [LoginController::class, 'me']);
         Route::post('/logout_user', [LoginController::class, 'logout_user']);
         Route::post('/logout_all', [LoginController::class, 'logout_all']);
