@@ -44,7 +44,7 @@ class Product extends Model
      *
      * @var array
      */
-    protected $appends = ['full_path_thumbnail', 'ratings_avg_rating'];
+    protected $appends = ['full_path_thumbnail'];
 
 
     /**

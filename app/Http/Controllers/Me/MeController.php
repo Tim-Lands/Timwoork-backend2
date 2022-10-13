@@ -154,34 +154,5 @@ class MeController extends Controller
 }
     //
     
-public function products(Request $request, Response $response, $type='all'){
-    try{
-    if (!in_array($type, array('all','published','paused','rejected','pending','drafted')))
-        return response()->error(__("messages.validation.products_type"), 400);
-    $where = [
-        'all'=>['is_vide'=>0],
-        'published'=>['is_vide'=>0, 'is_completed'=>Product::PRODUCT_IS_COMPLETED, 'is_active'=>Product::PRODUCT_ACTIVE,'status'=>Product::PRODUCT_ACTIVE],
-        "paused"=>['is_vide'=>0, 'is_completed'=>Product::PRODUCT_IS_COMPLETED, 'is_active'=>Product::PRODUCT_REJECT,'status'=>Product::PRODUCT_REJECT],
-        "rejected"=>['is_vide'=>0, 'is_completed'=>Product::PRODUCT_IS_COMPLETED,'status'=>Product::PRODUCT_ACTIVE],
-        'pending'=>['is_vide'=>0, 'is_completed'=>Product::PRODUCT_IS_COMPLETED],
-        'drafted'=>['is_vide'=>0, 'is_draft'=>Product::PRODUCT_IS_DRAFT]
-    ];
-    $where_null = array('pending'=>'status','all'=>[],'published'=>[],'paused'=>[], 'rejected'=>[],'drafted'=>[]);
-    $paginate = $request->query('paginate') ? $request->query('paginate') : 10;
-    $user = Auth::user();
-    $products = $user->profile->profile_seller->products()
-        ->where($where[$type])
-        ->whereNull($where_null[$type])
-        ->paginate($paginate)
-        ->makeHidden([
-            'buyer_instruct', 'content', 'profile_seller_id', 'category_id', 'duration','price','is_vide'
-            ,'updated_at','created_at','deleted_at','thumbnail'
-        ]);
-    return response()->success(__("messages.oprations.get_all_data"), $products);
-    }
-    catch(Exception $exc){
-        echo ($exc);
-    }
 
-}
 }
