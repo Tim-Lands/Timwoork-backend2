@@ -101,19 +101,7 @@ Route::group(['middleware' => ['XSS','language']], function () {
     /**
      *  مسار لعرض مشترياتي
      */
-    Route::middleware('auth:sanctum', 'abilities:user')->prefix('my_purchases')->group(function () {
-        Route::get('/', [BuyerOrderController::class, 'index']);
-        Route::get('/{id}', [BuyerOrderController::class, 'show']);
-    });
- 
-    /********************************************************************** */
-    /**
-     *  مسار لعرض مشترياتي
-     */
-    Route::middleware('auth:sanctum', 'abilities:user')->prefix('my_sales')->group(function () {
-        Route::get('/', [SellerOrderController::class, 'index']);
-        Route::get('/{id}', [SellerOrderController::class, 'show']);
-    });
+  
     /******************************************************************** */
 
     /********************************************************************** */

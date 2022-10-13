@@ -3,9 +3,11 @@
 use App\Http\Controllers\Me\ItemsController;
 use App\Http\Controllers\Me\ProductController;
 use App\Http\Controllers\Me\MeController;
+use App\Http\Controllers\Me\WalletController as MeWalletController;
 use Illuminate\Support\Facades\Route;
 try{
 Route::get('/', [MeController::class,'index']);
+Route::get('/wallet', [MeWalletController::class,'index']);
 Route::get('/notifications', [MeController::class,'notifications']);
 Route::get('/conversations',[MeController::class,'conversations']);
 Route::get('/products/{type?}',[MeController::class,'products']);
