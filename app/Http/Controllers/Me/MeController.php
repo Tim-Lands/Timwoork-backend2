@@ -23,6 +23,11 @@ class MeController extends Controller
             $x_localization = $request->header('X-localization');
         }
         $user =  $request->user();
+        $email_verified = True;
+        if(is_null($user->email_verified_at))
+            $email_verified = False;
+        $user->email_verified = $email_verified;
+        unset($user->email_verified_at);
         return response()->json($user, Response::HTTP_OK);
 
         /* load([
