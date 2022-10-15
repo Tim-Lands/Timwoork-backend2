@@ -64,7 +64,12 @@ class MeController extends Controller
             $x_localization = $request->header('X-localization');
         }
         $user_id =  $request->user()->id;
-        $profile = Profile::where(['user_id' => $user_id])->with(['badge','level'])->first();
+        $profile = Profile::where(['user_id' => $user_id])->with(['badge'=>function($query) use($x_localization){
+            $query->select("id","name_{$x_localization} AS name");
+        },
+        'level'=>function($query) use($x_localization){
+            $query->select("id","name_{$x_localization} AS name","value_bayer_min","value_bayer_max");
+        }])->first();
         return response()->json($profile, Response::HTTP_OK);
     }
 
