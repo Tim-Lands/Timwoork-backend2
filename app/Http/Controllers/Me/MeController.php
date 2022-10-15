@@ -64,7 +64,7 @@ class MeController extends Controller
             $x_localization = $request->header('X-localization');
         }
         $user_id =  $request->user()->id;
-        $profile = Profile::where(['user_id' => $user_id])->with(['badge','level','currency'])->first();
+        $profile = Profile::where(['user_id' => $user_id])->with(['badge','level'])->first();
         return response()->json($profile, Response::HTTP_OK);
     }
 
@@ -93,6 +93,20 @@ class MeController extends Controller
         }])->where(['user_id' => $user_id])->first()->level;
         return response()->json($level, Response::HTTP_OK);
     }
+
+    public function currency(Request $request)
+    {
+        $x_localization = 'ar';
+        if ($request->hasHeader('X-localization')) {
+            $x_localization = $request->header('X-localization');
+        }
+        $user_id =  $request->user()->id;
+        $currency = Profile::with(['level'=>function($query) use($x_localization){
+            $query->select("id","name_{$x_localization} AS name","value_bayer_min","value_bayer_max");
+        }])->where(['user_id' => $user_id])->first()->currency;
+        return response()->json($currency, Response::HTTP_OK);
+    }
+
 
     public function notifications(Request $request)
     {
