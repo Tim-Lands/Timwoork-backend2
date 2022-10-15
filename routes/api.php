@@ -198,7 +198,7 @@ Route::group(['middleware' => ['XSS','language']], function () {
     /* -------------------------------------------------------------------------- */
     /*                           مسارات انشاء خدمة جديدة                          */
     /* -------------------------------------------------------------------------- */
-    Route::prefix('product')->middleware(['auth:sanctum', 'abilities:user'])->group(function () {
+    /* Route::prefix('product')->middleware(['auth:sanctum', 'abilities:user'])->group(function () {
         // انشاء الخدمة
         Route::get('/store', [InsertProductContoller::class, 'store']);
         // حذف الصورة الواحدة من المعرض
@@ -221,7 +221,7 @@ Route::group(['middleware' => ['XSS','language']], function () {
         Route::post('/{id}/deleteProduct', DeleteProductController::class);
         // إضافة محادثة للخدمة
         Route::post('/{id}/conversations/create', [ConversationController::class, 'product_conversation_store'])->middleware('auth:sanctum', 'abilities:user');
-    });
+    }); */
 
     /* -------------------------------------------------------------------------- */
     /*                          مسار رابط المختصر للخدمة                          */
@@ -239,16 +239,16 @@ Route::group(['middleware' => ['XSS','language']], function () {
         // اظهار المحادثة
         Route::get('/{id}', [ConversationController::class, 'show']);
         // اضافة المحادثة
-        Route::post('/store', [ConversationController::class, 'store']);
+        Route::post('/', [ConversationController::class, 'store']);
         // ارسال الرسالة
-        Route::post('/{conversation}/sendMessage', [ConversationController::class, 'sendMessage']);
+        Route::put('/{conversation}/messages', [ConversationController::class, 'sendMessage']);
     });
 
     /* -------------------------------------------------------------------------- */
     /*                       مسارات انشاء عناصر جديدة فالسلة                      */
     /* -------------------------------------------------------------------------- */
 
-    Route::prefix('cart')->group(function () {
+    Route::prefix('cart')->group(function () { 
         // عرض السلة
         Route::get('/', [CartController::class, 'index']);
         // انشاء عنصر فالسلة
