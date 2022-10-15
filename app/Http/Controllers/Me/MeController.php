@@ -64,7 +64,7 @@ class MeController extends Controller
             $x_localization = $request->header('X-localization');
         }
         $user_id =  $request->user()->id;
-        $profile = Profile::where(['user_id' => $user_id])->first()->withoutRelations();
+        $profile = Profile::where(['user_id' => $user_id])->with(['badge','level','currency'])->first();
         return response()->json($profile, Response::HTTP_OK);
     }
 
