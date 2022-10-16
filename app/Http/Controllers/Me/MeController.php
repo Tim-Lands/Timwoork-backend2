@@ -69,7 +69,8 @@ class MeController extends Controller
         },
         'level'=>function($query) use($x_localization){
             $query->select("id","name_{$x_localization} AS name","value_bayer_min","value_bayer_max");
-        }])->first();
+        },
+        'country'=>function($q) use($x_localization){$q->select("id","name_{$x_localization} AS name","flag","code_phone","country_code","lang");}])->first();
         return response()->json($profile, Response::HTTP_OK);
     }
 
