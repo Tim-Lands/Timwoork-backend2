@@ -18,6 +18,9 @@ trait WalletPaymentMethod
             $withdrawable_amount = $wallet->withdrawable_amount;
 
             if ($cart->total_price > $withdrawable_amount) {
+                echo("total price over");
+                echo $cart->total_price;
+                echo $withdrawable_amount;
                 return false;
             }
 

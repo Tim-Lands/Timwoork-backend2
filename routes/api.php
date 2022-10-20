@@ -63,7 +63,7 @@ Route::group(['middleware' => ['XSS','language']], function () {
     /*                                 Auth Routes                                */
     /* -------------------------------------------------------------------------- */
     Route::middleware('auth:sanctum', 'abilities:user')->group(function () {
-        Route::prefix('me')->group(base_path('routes/me.php'));
+        Route::prefix('me')->group(base_path('routes/me.php')); 
 
         Route::post('/logout_user', [LoginController::class, 'logout_user']);
         Route::post('/logout_all', [LoginController::class, 'logout_all']);
@@ -266,7 +266,7 @@ Route::group(['middleware' => ['XSS','language']], function () {
     Route::prefix('order')->group(function () {
         // انشاء الطلبية و ارسال الطلبيات للبائعين
         //Route::post('/store', [OrderController::class, 'create_order_with_items']);
-        Route::post('/store', [OrderController::class, 'create_order_with_items']);
+        Route::post('/', [OrderController::class, 'create_order_with_items']);
         /* ------------------ مسارات المعاملة بين البائع و المشتري ------------------ */
         Route::prefix('items')->group(function () {
             // اظهار الطلبية الواحدة
