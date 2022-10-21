@@ -185,7 +185,7 @@ Route::group(['middleware' => ['XSS','language']], function () {
 
     Route::prefix('profile_seller')->group(function () {
         // اضافة بائع جديد
-        
+        Route::get('/',[SellerController::class,'index']);
         Route::post('/store', [SellerController::class, 'store']);
         // اضافة تفاصيل بروفايل البائع
         Route::put('/details', [SellerController::class, 'detailsStore']);

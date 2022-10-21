@@ -6,6 +6,7 @@ use App\Http\Requests\ProfileSellerStoreRequest;
 use App\Http\Requests\SellerStepOneRequest;
 use App\Http\Requests\SellerSteptwoRequest;
 use App\Models\ProfileSeller;
+use App\Models\User;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -29,6 +30,25 @@ class SellerController extends Controller
      *
      * @return object
      */
+
+    public function index(Request $request){
+        $x_localization = 'ar';
+        if ($request->hasHeader('X-localization')) {
+            $x_localization = $request->header('X-localization');
+        }
+        $profile = Auth::user()->profile->profile_seller;
+        $profile_json = (object) $profile;
+        $bio_localization = "bio_{$x_localization}";
+        $name_localization = "name_{$x_localization}";
+        $profile_json->bio = $profile->$bio_localization;
+        $profile_json->level->name = $profile_json->level->$name_localization;
+        $profile_json->badge->name = $profile_json->badge->$name_localization;
+        unset($profile_json->bio_ar, $profile_json->bio_en, $profile_json->bio_fr,$profile_json->level->name_ar,
+         $profile_json->level->name_en, $profile_json->level->name_fr,
+         $profile_json->badge->name_ar,$profile_json->badge->name_en,$profile_json->badge->name_fr);
+        return $profile_json;
+    }
+
     public function store()
     {
         try {
