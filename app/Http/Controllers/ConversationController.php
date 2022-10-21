@@ -137,11 +137,17 @@ class ConversationController extends Controller
 
     public function item_conversation_store($id, ConversationStoreRequest $request)
     {
+        try{
         //   إضافة محادثة جديدة لطلبية
-
-        $item = Item::findOrFail($id);
-
+        $item = Item::findOrFail($id)->with(['order'=>function($q){$q->select('id','cart_id');},
+        'order.cart'=>function($q) {
+            $q->select('id','user_id');
+        }
+        ])->select('id','order_id',"profile_seller_id")
+            ->withCount('item_rejected')->orderBy('created_at', 'DESC')->first();
         $user_id = Auth::user()->id;
+        if ($user_id != $item->profile_seller_id && $user_id != $item->order->cart->user_id)
+            return response()->error(__("messages.errors.error_database"), 403);
         //return Auth::user()->id;
         $receiver_id = $request->receiver_id;
 
@@ -205,6 +211,10 @@ class ConversationController extends Controller
             return response()->error(__("messages.errors.error_database"), 403);
         }
     }
+    catch(Exception $ex){
+        echo $ex;
+    }
+}
     // send Message
     public function sendMessage(Conversation $conversation, MessageStoreRequest $request)
     {

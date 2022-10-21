@@ -2,10 +2,13 @@
 
 namespace App\Http\Controllers\Me;
 
+use App\Events\UserOffline;
+use App\Events\UserOnline;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\GetMeProducts;
 use App\Models\Product;
 use App\Models\Profile;
+use App\Models\User;
 use Exception;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
@@ -152,6 +155,18 @@ class MeController extends Controller
         echo($exc);
     }
 }
+public function status(User $user, Request $request){
+    
+    $status = strtolower($request->status)=="true";
+    $user->status = $status;
+        $user->save();
+        if($status){
+            broadcast(new UserOnline($user));
+        }
+            else{
+            broadcast(new UserOffline($user));
+        }
+    }
     //
     
 

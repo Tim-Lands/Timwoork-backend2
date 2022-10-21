@@ -183,11 +183,12 @@ Route::group(['middleware' => ['XSS','language']], function () {
     /*                         مسارات الملف الشخصي البائع                         */
     /* -------------------------------------------------------------------------- */
 
-    Route::prefix('sellers')->group(function () {
+    Route::prefix('profile_seller')->group(function () {
         // اضافة بائع جديد
+        
         Route::post('/store', [SellerController::class, 'store']);
         // اضافة تفاصيل بروفايل البائع
-        Route::post('/detailsStore', [SellerController::class, 'detailsStore']);
+        Route::put('/details', [SellerController::class, 'detailsStore']);
         // اضافة المرحلة الاولى من بروفايل البائع
         Route::post('/step_one', [SellerController::class, 'step_one']);
         // اضافة المرحلة الثانية من بروفايل البائع
@@ -263,14 +264,14 @@ Route::group(['middleware' => ['XSS','language']], function () {
     /*                            مسارات انشاء الطلبية                            */
     /* -------------------------------------------------------------------------- */
 
-    Route::prefix('order')->group(function () {
+    Route::prefix('orders')->group(function () {
         // انشاء الطلبية و ارسال الطلبيات للبائعين
         //Route::post('/store', [OrderController::class, 'create_order_with_items']);
         Route::post('/', [OrderController::class, 'create_order_with_items']);
         /* ------------------ مسارات المعاملة بين البائع و المشتري ------------------ */
         Route::prefix('items')->group(function () {
             // اظهار الطلبية الواحدة
-            Route::get('/{id}/show_item', [ItemController::class, 'show']);
+            Route::get('/{id}', [ItemController::class, 'show']); 
             // قبول الطلبية من قبل البائع
             Route::post('/{id}/item_accepted_by_seller', [ItemController::class, 'item_accepted_by_seller']);
             // رفض الطلبية من قبل البائع
@@ -302,7 +303,7 @@ Route::group(['middleware' => ['XSS','language']], function () {
             // حل النزاع بين الطرفين في حالة الغاء الطلبية
             Route::post('/{id}/resolve_the_conflict_between_them_in_modified', [ItemController::class, 'resolve_the_conflict_between_them_in_modified']);
             // إضافة محادثة للخدمة
-            Route::post('/{id}/conversations/create', [ConversationController::class, 'item_conversation_store'])->middleware('auth:sanctum', 'abilities:user');
+            Route::post('/{id}/conversations/', [ConversationController::class, 'item_conversation_store'])->middleware('auth:sanctum', 'abilities:user');
             // تقييم الخدمة
             Route::post('/{id}/rating', [RatingController::class, 'rate']);
         });
@@ -312,11 +313,16 @@ Route::group(['middleware' => ['XSS','language']], function () {
     /*                            مسارات واجهة المستخدم                           */
     /* -------------------------------------------------------------------------- */
     // عرض التصنيفات الرئيسية
-    Route::get('/top_main_categories', [FrontEndController::class,'get_top_main_categories']);
-    Route::get('/top_categories', [FrontEndController::class, 'get_top_categories']);
-    Route::get('/categories', [FrontEndController::class, 'get_all_categories']);
+    Route::prefix('categories')->group(function(){
+    Route::get('/main', [FrontEndController::class, 'main_categories']);
+    Route::get('/{id}/subcategories', [FrontEndController::class, 'get_subcategories']);
+    Route::get('/', [FrontEndController::class, 'get_all_categories']);
+    });
+    
+    Route::prefix('products')->group(function() {
+        Route::get('/', FilterController::class);
+    });
     // عرض التصنيفات الرئيسية
-    Route::get('/get_categories', [FrontEndController::class, 'get_categories']);
     // عرض التصنيفات من اجل عملية الاضافة
     Route::get('/get_categories_for_add_product', [FrontEndController::class, 'get_categories_for_add_product'])->middleware('auth:sanctum', 'abilities:user');
     // تحويل الاموال من المعلقة الى قابلة للسحب
@@ -330,7 +336,6 @@ Route::group(['middleware' => ['XSS','language']], function () {
     // فتح الحسابات المحظورة عند انتهاء من وقت الحظر
     Route::get('/expired_unban_users', [UserContoller::class, 'expired_unban_users']);
     // عرض التصنيفات الفرعية
-    Route::get('/get_categories/{id}', [FrontEndController::class, 'get_subcategories']);
 
     // عرض التصنيفات الفرعية من اجل عملية الاضافة
     Route::get(
@@ -349,9 +354,7 @@ Route::group(['middleware' => ['XSS','language']], function () {
     Route::get('tags/filter', [TagController::class, 'filter']);
 
     // مسار عملية الفلترة
-    Route::prefix('filter')->group(function () {
-        Route::get('/', FilterController::class);
-    });
+  
 
     // مسار عملية البحث السريع
 

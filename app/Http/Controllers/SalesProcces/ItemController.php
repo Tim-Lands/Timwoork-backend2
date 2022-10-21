@@ -26,6 +26,7 @@ use App\Models\Product;
 use App\Models\User;
 use Carbon\Carbon;
 use Exception;
+use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
@@ -48,28 +49,37 @@ class ItemController extends Controller
      * @param  mixed $id
      * @return void
      */
-    public function show($id)
+    public function show($id, Request $request)
     {
         // جلب الطلبية
+        try{
+            $x_localization = 'ar';
+            if ($request->hasHeader('X-localization')) {
+                $x_localization = $request->header('X-localization');
+            }
         $product_id = Item::whereId($id)->first()->number_product;
         $item = Item::whereId($id)
+            ->select("id","uuid","number_product","price_product","order_id","profile_seller_id","status","duration","is_rating","title_{$x_localization} AS title")
             ->with([
-                'order.cart.user.profile' => function ($q) {
-                    $q->with(['level', 'badge']);
+                'order'=>function($q) use($x_localization){
+                    $q->select('id','cart_id');
                 },
-                'profileSeller.profile',
-                'profileSeller.products' => function ($q) use ($product_id) {
-                    $q->select('id', 'profile_seller_id', 'buyer_instruct')->where('id', $product_id);
+                'order.cart'=>function($q)  use($x_localization){
+                    $q->select('id','user_id');
                 },
-                'profileSeller' => function ($q) {
-                    $q->with(['level', 'badge']);
+                "order.cart.user"=>function($q) use($x_localization){
+                    $q->select('id',"username","email");
+                },
+                'profileSeller'=>function($q) use($x_localization){
+                    $q->select('id','profile_id');
+                },
+                'profileSeller.profile'=>function($q) use($x_localization){
+                    $q->select("id","first_name","last_name","avatar_url","gender","user_id","full_name");
                 },
                 'item_rejected',
                 'item_modified',
                 'attachments',
-                'item_date_expired',
-                'conversation.messages.user.profile',
-                'conversation.messages.attachments'
+                'item_date_expired'
             ])
             ->first();
         if (!$item) {
@@ -79,6 +89,10 @@ class ItemController extends Controller
         // رسالة نجاح
         return response()->success(__("messages.oprations.get_data"), $item);
     }
+    catch(Exception $exc){
+        echo $exc;
+    }
+}
 
     /**
      * display_item_rejected

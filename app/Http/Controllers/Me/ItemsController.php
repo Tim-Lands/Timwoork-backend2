@@ -41,7 +41,14 @@ class ItemsController extends Controller
             $x_localization = $request->header('X-localization');
         }
         $seller = Auth::user()->profile->profile_seller->id;
-        $items = Item::where('profile_seller_id', $seller)->with('order')->select('id','uuid','number_product','price_product','order_id','status','duration','is_rating','is_item_work','created_at','updated_at',"title_{$x_localization} AS title")
+        $items = Item::where('profile_seller_id', $seller)->with(['order',
+        'order.cart'=>function($q) use($x_localization){
+            $q->select('id','user_id');
+        },
+        'order.cart.user'=>function($q) use($x_localization){
+            $q->select('id');
+        }
+        ])->select('id','uuid','number_product','price_product','order_id','status','duration','is_rating','is_item_work','created_at','updated_at',"title_{$x_localization} AS title")
             ->withCount('item_rejected')->orderBy('created_at', 'DESC')->get();
         
         return response()->success(__("messages.oprations.get_all_data"), $items);

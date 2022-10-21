@@ -3,6 +3,7 @@
 namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Http\Request;
 
 class ConversationStoreRequest extends FormRequest
 {
@@ -24,9 +25,7 @@ class ConversationStoreRequest extends FormRequest
     public function rules()
     {
         return [
-            'title' => 'required',
-            'receiver_id' => 'required',
-            'initial_message' => 'required'
+            
         ];
     }
 
@@ -38,9 +37,7 @@ class ConversationStoreRequest extends FormRequest
     public function messages()
     {
         return [
-            'title.required' => __("messages.validation.conversation_title"),
-            'receiver_id.required' => __("messages.validation.receiver_id"),
-            'initial_message.required' => __("messages.validation.initial_message"),
+          
         ];
     }
 }

@@ -37,9 +37,12 @@ class OrderController extends Controller
      *
      * @return void
      */
-    public function create_order_with_items()
+    public function create_order_with_items(Request $request)
     {
         try {
+            $x_localization = "ar";
+            if ($request->headers->has('X-localization'))
+                $x_localization = $request->header('X-localization');
             //سلة المشتري
             $cart = Cart::selection()
                 ->with(['cart_items' => function ($q) {
@@ -127,12 +130,21 @@ class OrderController extends Controller
             }
             // انهاء المعاملة بشكل جيد :
             DB::commit();
+            $order->load('items');
+            $order_json = (object)$order;
+            $order_json->items = $order->items->map(function($item) use($x_localization){
+                $title_xlocalization = "title_{$x_localization}";
+                $item->title = $item->$title_xlocalization;
+                unset($item->title_ar,$item->title_en,$item->title_fr);
+                return $item;
+            });
             /* -------------------------------------------------------------------------- */
             return response()->success('تم انشاء الطلبية', [
-                'order' => $order->with('items')->first(),
+                'order' => $order_json,
                 'cart' => $cart
             ]);
         } catch (Exception $ex) {
+            return $ex;
             DB::rollBack();
             return $ex;
             // رسالة خطأ
@@ -183,7 +195,7 @@ class OrderController extends Controller
         $pay =  $this->paypal_purchase($request->token, $cart);
         //return $pay;
         if ($pay) {
-            return $this->create_order_with_items();
+            return $this->create_order_with_items($request);
         //return $pay;
         } else {
             return response()->error(__("messages.oprations.nothing_this_operation"), Response::HTTP_FORBIDDEN);
@@ -211,7 +223,7 @@ class OrderController extends Controller
             ->first();
         $pay = $this->stripe_purchase($request, $cart);
         if ($pay) {
-            return $this->create_order_with_items();
+            return $this->create_order_with_items($request);
         } else {
             return response()->error(__("messages.oprations.nothing_this_operation"), Response::HTTP_FORBIDDEN);
         }
@@ -225,6 +237,7 @@ class OrderController extends Controller
      */
     public function wallet_charge(Request $request)
     {
+        try{
         $cart = Cart::selection()
             ->with(['cart_items' => function ($q) {
                 $q->with('cartItem_developments')->get();
@@ -234,9 +247,13 @@ class OrderController extends Controller
             ->first();
         $pay = $this->wallet_purchase($cart);
         if ($pay) {
-            return $this->create_order_with_items();
+            return $this->create_order_with_items($request);
         } else {
             return response()->error(__("messages.oprations.nothing_this_operation"), Response::HTTP_FORBIDDEN);
         }
+    }
+    catch(Exception $ex){
+        echo $ex;
+    }
     }
 }

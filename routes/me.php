@@ -26,6 +26,7 @@ Route::get('/items/sales/{id}',[ItemsController::class,'showSales']);
 Route::get('/products',[ProductController::class,'index']);
 Route::get('/products/{id}',[ProductController::class,'show']);
 Route::post('/products',[ProductController::class,'store']);
+Route::put('/status',[MeController::class,'status']);
 Route::put('/products/{id}/step_one',[ProductController::class,'storeStepOne']);
 Route::put('/products/{id}/step_two',[ProductController::class,'storeStepTwo']);
 Route::put('/products/{id}/step_three',[ProductController::class,'storeStepThree']);

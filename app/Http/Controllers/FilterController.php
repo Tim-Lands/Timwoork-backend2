@@ -10,25 +10,27 @@ class FilterController extends Controller
 {
     public function __invoke(Request $request)
     {
+        $xlocalization = "ar";
+            if ($request->headers->has('X-localization'))
+                $xlocalization = $request->header('X-localization');
         $paginate = $request->query('paginate') ? $request->query('paginate') : 12;
-        $res = Product::select('id', 'title', 'title_ar', "title_fr", "title_en" ,'slug', 'price', 'ratings_avg', 'count_buying', 'thumbnail', 'ratings_count', 'category_id', 'profile_seller_id', 'duration', 'content', 'content_ar', 'content_fr', 'content_en' ,'created_at')
+        $res = Product::select('id', "title_{$xlocalization} AS title" ,'slug', 'price', 'ratings_avg', 'count_buying', 'thumbnail', 'ratings_count', 'category_id', 'profile_seller_id', 'duration', "content_{$xlocalization} AS content",'created_at')
             ->filter()
             ->productActive()
             ->where('is_active', 1)
             ->with([
                 'profileSeller' => function ($q) {
-                    $q->with(['profile'=> function ($q) {
-                        $q->select('*')
-                            ->with('user:id,username')
-                            ->without('bank_account', 'bank_transfer_detail', 'paypal_account', 'wise_account', 'badge', 'level');
-                    }])
-                    ->without('languages', 'skills', 'professions');
+                        $q->select('profile_id','id');
+                
                 },
-                'ratings',
-                'subcategory' => function ($q) {
-                    $q->select('id', 'parent_id', 'name_ar', 'name_en', 'name_fr')
-                        ->with('category', function ($q) {
-                            $q->select('id', 'name_ar', 'name_en', 'name_fr')
+                'profileSeller.profile'=>function($q) use($xlocalization){
+                        $q->select('id', 'first_name','last_name', 'avatar_url','gender','user_id','full_name')->without(['level','badge']);
+                },
+
+                'subcategory' => function ($q) use($xlocalization) {
+                    $q->select('id', 'parent_id', "name_{$xlocalization}")
+                        ->with('category', function ($q) use($xlocalization) {
+                            $q->select('id', "name_{$xlocalization} AS name")
                                 ->without('subcategories');
                         })->withCount('products');
                 },

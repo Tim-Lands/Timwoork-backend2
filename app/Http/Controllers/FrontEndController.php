@@ -38,20 +38,26 @@ class FrontEndController extends Controller
 
     }
 
-    public function get_top_main_categories()
+    public function get_top_main_categories(Request $request)
     {
+        $xlocalization = "ar";
+            if ($request->headers->has('X-localization'))
+                $xlocalization = $request->header('X-localization');
         $categories = DB::table('products')->join('categories', 'products.category_id', '=', 'categories.id')
             ->join('categories as parent_category', 'categories.parent_id', '=', 'parent_category.id')
-            ->selectRaw('count(count_buying) as category_buying, parent_category.*')
+            ->selectRaw("count(count_buying) as category_buying, parent_category.id, parent_category.name_{$xlocalization} AS name")
             ->groupBy('parent_category.id')
             ->orderByDesc('category_buying')
             ->get();
         return response()->success('success', $categories);
     }
-    public function get_top_categories()
+    public function get_top_categories(Request $request)
     {
+        $xlocalization = "ar";
+            if ($request->headers->has('X-localization'))
+                $xlocalization = $request->header('X-localization');
         $top_categories = DB::table('products')->join('categories', 'products.category_id', '=', 'categories.id')
-            ->selectRaw('count(count_buying) as category_buying, categories.*')
+            ->selectRaw("count(count_buying) as category_buying, categories.id, categories.name_{$xlocalization} AS name")
             ->groupBy('categories.id')
             ->orderByDesc('category_buying')
             ->get();
@@ -60,8 +66,16 @@ class FrontEndController extends Controller
         pluck('category_count_buying'); */
         return $top_categories;
     }
-    public function get_categories()
+    public function main_categories(Request $request)
     {
+        $xlocalization = "ar";
+            if ($request->headers->has('X-localization'))
+                $xlocalization = $request->header('X-localization');
+        $sort_by = "all";
+        if($request->has('sort_by'))
+            $sort_by = $request->sort_by;
+        if ($sort_by == "count_buying")
+            return $this->get_top_main_categories($request); 
         // جلب التصنيفات الرئيسية
         $categories = Category::Selection()->with('subcategories', function ($q) {
             $q->withCount('products');
@@ -72,9 +86,7 @@ class FrontEndController extends Controller
             $data[] =
                 [
                     'id'      => $category['id'],
-                    'name_ar' => $category['name_ar'],
-                    'name_en' => $category['name_en'],
-                    'name_fr' => $category['name_fr'],
+                    'name'=>$category["name_{$xlocalization}"],
                     'parent_id' => $category['parent_id'],
                     'icon'    => $category['icon'],
                     "image"   => $category['image'],
@@ -126,17 +138,20 @@ class FrontEndController extends Controller
      * @param  mixed $id
      * @return void
      */
-    public function get_subcategories(mixed $id): JsonResponse
+    public function get_subcategories(mixed $id, Request $request): JsonResponse
     {
+        $xlocalization = "ar";
+            if ($request->headers->has('X-localization'))
+                $xlocalization = $request->header('X-localization');
         // جلب التصنيف الرئيسي من اجل التحقق
         $catagory = Category::whereId($id);
         if (!$catagory->first()) {
             return response()->error(__("messages.errors.element_not_found"), 403);
         }
         // جلب التصنيفات الفرعية
-        $subcategories = $catagory->select('id', 'slug', 'name_ar', 'name_en', 'name_fr')
-            ->with('subCategories', function ($q) {
-                $q->select('id', 'name_ar', 'slug', 'name_en', 'name_fr', 'parent_id')
+        $subcategories = $catagory->select('id', 'slug',"name_{$xlocalization} AS name")
+            ->with('subCategories', function ($q) use($xlocalization) {
+                $q->select('id', "name_{$xlocalization} AS name", 'slug','parent_id')
                     ->withCount('products')
                     ->orderBy('id', 'asc')
                     ->take(Category::SUBCATEGORY_DISPLAY)
@@ -267,12 +282,21 @@ class FrontEndController extends Controller
      *
      * @return JsonResponse
      */
-    public function get_all_categories()
+    public function get_all_categories(Request $request)
     {
+        $xlocalization = "ar";
+            if ($request->headers->has('X-localization'))
+                $xlocalization = $request->header('X-localization');
+        $sort_by = "all";
+        if($request->has('sort_by'))
+            $sort_by = $request->sort_by;
+            if($sort_by == "count_buying")
+                return $this->get_top_categories($request);
         // جلب جميع الاصناف الرئيسة و الاصناف الفرعية عن طريق التصفح
         $categories = Category::Selection()
-            ->with(['subcategories' => function ($q) {
-                $q->select('id', 'name_ar', 'name_en', 'name_fr', 'parent_id', 'icon');
+            ->select('id',"name_{$xlocalization} AS name", 'slug', "description_{$xlocalization} AS description", 'icon', 'parent_id','image')
+            ->with(['subcategories' => function ($q) use($xlocalization) {
+                $q->select('id', "name_{$xlocalization} AS name", 'parent_id', 'icon');
             }])->parent()->get();
 
         // اظهار العناصر
