@@ -2,10 +2,13 @@
 
 namespace App\Http\Controllers\Me;
 
+use App\Events\UserOffline;
+use App\Events\UserOnline;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\GetMeProducts;
 use App\Models\Product;
 use App\Models\Profile;
+use App\Models\User;
 use Exception;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
@@ -64,13 +67,7 @@ class MeController extends Controller
             $x_localization = $request->header('X-localization');
         }
         $user_id =  $request->user()->id;
-        $profile = Profile::where(['user_id' => $user_id])->with(['badge'=>function($query) use($x_localization){
-            $query->select("id","name_{$x_localization} AS name");
-        },
-        'level'=>function($query) use($x_localization){
-            $query->select("id","name_{$x_localization} AS name","value_bayer_min","value_bayer_max");
-        },
-        'country'=>function($q) use($x_localization){$q->select("id","name_{$x_localization} AS name","flag","code_phone","country_code","lang");}])->first();
+        $profile = Profile::where(['user_id' => $user_id])->first()->withoutRelations();
         return response()->json($profile, Response::HTTP_OK);
     }
 
@@ -99,20 +96,6 @@ class MeController extends Controller
         }])->where(['user_id' => $user_id])->first()->level;
         return response()->json($level, Response::HTTP_OK);
     }
-
-    public function currency(Request $request)
-    {
-        $x_localization = 'ar';
-        if ($request->hasHeader('X-localization')) {
-            $x_localization = $request->header('X-localization');
-        }
-        $user_id =  $request->user()->id;
-        $currency = Profile::with(['level'=>function($query) use($x_localization){
-            $query->select("id","name_{$x_localization} AS name","value_bayer_min","value_bayer_max");
-        }])->where(['user_id' => $user_id])->first()->currency;
-        return response()->json($currency, Response::HTTP_OK);
-    }
-
 
     public function notifications(Request $request)
     {
@@ -172,36 +155,19 @@ class MeController extends Controller
         echo($exc);
     }
 }
+public function status(User $user, Request $request){
+    
+    $status = strtolower($request->status)=="true";
+    $user->status = $status;
+        $user->save();
+        if($status){
+            broadcast(new UserOnline($user));
+        }
+            else{
+            broadcast(new UserOffline($user));
+        }
+    }
     //
     
-public function products(Request $request, Response $response, $type='all'){
-    try{
-    if (!in_array($type, array('all','published','paused','rejected','pending','drafted')))
-        return response()->error(__("messages.validation.products_type"), 400);
-    $where = [
-        'all'=>['is_vide'=>0],
-        'published'=>['is_vide'=>0, 'is_completed'=>Product::PRODUCT_IS_COMPLETED, 'is_active'=>Product::PRODUCT_ACTIVE,'status'=>Product::PRODUCT_ACTIVE],
-        "paused"=>['is_vide'=>0, 'is_completed'=>Product::PRODUCT_IS_COMPLETED, 'is_active'=>Product::PRODUCT_REJECT,'status'=>Product::PRODUCT_REJECT],
-        "rejected"=>['is_vide'=>0, 'is_completed'=>Product::PRODUCT_IS_COMPLETED,'status'=>Product::PRODUCT_ACTIVE],
-        'pending'=>['is_vide'=>0, 'is_completed'=>Product::PRODUCT_IS_COMPLETED],
-        'drafted'=>['is_vide'=>0, 'is_draft'=>Product::PRODUCT_IS_DRAFT]
-    ];
-    $where_null = array('pending'=>'status','all'=>[],'published'=>[],'paused'=>[], 'rejected'=>[],'drafted'=>[]);
-    $paginate = $request->query('paginate') ? $request->query('paginate') : 10;
-    $user = Auth::user();
-    $products = $user->profile->profile_seller->products()
-        ->where($where[$type])
-        ->whereNull($where_null[$type])
-        ->paginate($paginate)
-        ->makeHidden([
-            'buyer_instruct', 'content', 'profile_seller_id', 'category_id', 'duration','price','is_vide'
-            ,'updated_at','created_at','deleted_at','thumbnail'
-        ]);
-    return response()->success(__("messages.oprations.get_all_data"), $products);
-    }
-    catch(Exception $exc){
-        echo ($exc);
-    }
 
-}
 }
