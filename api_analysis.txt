@@ -80,37 +80,34 @@ all under investigation(might require database edit but i hope not)
 ########################################################
 DASHBOARD
 
-/categories/store = POST: /categories
-/categories/{id} = GET: /categories/{id}
-/categories/{id}/update = PATCH /categories/{id}
-/categories/{id}/delete = DELETE /categories/{id}
+#DONE /categories/store = POST: /categories
+#DONE /categories/{id} = GET: /categories/{id}
+#DONE /categories/{id}/update = PATCH /categories/{id}
+#DONE /categories/{id}/delete = DELETE /categories/{id}
 
-/subcategories = GET /categories/{id}/subcategories
-/subcategories = GET /categories/{id}/subcategories/{id}
-/subcategories/create = PUT /categories/{id}/subcategories
-/subcategories/{id}/update = PATCH /categories/{id}/subcategories/{id}
-/subcategories/{id}/delete = DELETE /categories/{id}/subcategories/{id}
+#DONE /subcategories/create = PUT /categories/{id}/subcategories
+#DONE /subcategories/{id}/update = PATCH /subcategories/{id}/
+#DONE /subcategories/{id}/delete = DELETE /subcategories/{id}
 
-/levels/store = POST /levels
-/levels/{id}/update = PATCH /levels/{id}
-/levels/{id}/delete = DELETE /levels/{id}
+#DONE /levels/store = POST /levels
+#DONE /levels/{id}/update = PATCH /levels/{id}
+#DONE /levels/{id}/delete = DELETE /levels/{id}
 
 
-/users/get_users_banned => /users?filter
-/users/get_users_banned => /users?filter
-/users/{id}/send_notification => POST /users/{id}/notifications
-/users/{id}/is_banned => PUT /users/{id}/is_banned
+#DONE /users/get_users_banned => /users?filter
+#DONE /users/get_users_banned => /users?filter
+#DONE /users/{id}/send_notification => PUT /users/{id}/notifications
 
-/badges/store = POST /badges
-/badges/{id}/update = PATCH  /badges/{id}
-/badges/{id}/delete = DELETE /badges/{id}
+#DONE /badges/store = POST /badges
+#DONE /badges/{id}/update = PATCH  /badges/{id}
+#DONE /badges/{id}/delete = DELETE /badges/{id}
 
-/badges_sellers/store = POST /badges_sellers
-/badges_sellers/{id}/update = PATCH /badges_sellers/{id}
-/badges_sellers/{id}/delete = DELETE /badges_sellers/{id}
+#DONE /badges_sellers/store = POST /badges_sellers
+#DONE /badges_sellers/{id}/update = PATCH /badges_sellers/{id}
+#DONE /badges_sellers/{id}/delete = DELETE /badges_sellers/{id}
 
-/products/active/status = GET /products?is_active=1
-/products/reject/status = GET /products?is_active=0
+#DONE /products/active/status = GET /products?is_active=1
+#DONE /products/reject/status = GET /products?is_active=0
 /products/get_products_soft_deleted = GET /products/is_archieved=1
 /products/{id}/activeProduct = PUT /products/{id}/status
 /product/{id}/rejectProduct = PUT /products/{id}/status

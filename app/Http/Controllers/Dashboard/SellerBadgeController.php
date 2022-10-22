@@ -19,10 +19,13 @@ class SellerBadgeController extends Controller
      *
      * @return JsonResponse
      */
-    public function index(): JsonResponse
+    public function index(Request $request): JsonResponse
     {
+        $xlocalization = "ar";
+        if ($request->headers->has('X-localization'))
+            $xlocalization = $request->header('X-localization');
         // جلب جميع الاصناف عن طريق التصفح
-        $badges = SellerBadge::Selection()->get();
+        $badges = SellerBadge::select('id',"name_{$xlocalization} AS name", 'precent_deducation')->get();
         // اظهار العناصر
         return response()->success(__('messages.oprations.get_all_data'), $badges);
     }
@@ -36,6 +39,9 @@ class SellerBadgeController extends Controller
     public function store(SellerBadgeRequest $request): ?object
     {
         try {
+            $xlocalization = "ar";
+        if ($request->headers->has('X-localization'))
+            $xlocalization = $request->header('X-localization');
             // جلب البيانات و وضعها في مصفوفة:
             $data = [
                 'name_ar'            => $request->name_ar,
@@ -50,6 +56,10 @@ class SellerBadgeController extends Controller
             $seller_badge = SellerBadge::create($data);
             // انهاء المعاملة بشكل جيد :
             DB::commit();
+            $name_localization = "name_{$xlocalization}";
+            $seller_badge = (object)$seller_badge;
+            $seller_badge->name = $seller_badge->$name_localization;
+            unset($seller_badge->name_ar, $seller_badge->name_en, $seller_badge->name_fr);
             // =================================================
             // رسالة نجاح عملية الاضافة:
             return response()->success(__('messages.oprations.add_success'), $seller_badge);
@@ -92,6 +102,9 @@ class SellerBadgeController extends Controller
     public function update(SellerBadgeRequest $request, mixed $id): ?object
     {
         try {
+            $xlocalization = "ar";
+        if ($request->headers->has('X-localization'))
+            $xlocalization = $request->header('X-localization');
             //من اجل التعديل  id  جلب العنصر بواسطة المعرف
             $seller_badge = SellerBadge::find($id);
 
@@ -121,6 +134,10 @@ class SellerBadgeController extends Controller
             $seller_badge->update($data);
             // انهاء المعاملة بشكل جيد :
             DB::commit();
+            $name_localization = "name_{$xlocalization}";
+            $seller_badge = (object)$seller_badge;
+            $seller_badge->name = $seller_badge->$name_localization;
+            unset($seller_badge->name_ar, $seller_badge->name_en, $seller_badge->name_fr);
             // =================================================
 
             // رسالة نجاح عملية التعديل:

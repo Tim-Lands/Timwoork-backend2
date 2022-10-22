@@ -28,7 +28,14 @@ class UserContoller extends Controller
     {
         // تصفح المستخدمين
         $paginate = $request->query('paginate') ? $request->query('paginate') : 10;
-
+        $is_banned = "all";
+        if($request->has('is_banned')){
+            $is_banned = $request->is_banned;
+            if ($is_banned =='true')
+                return $this->get_user_banned($request);
+            else if ($is_banned == "false")
+                return $this->get_user_unbanned($request);
+        }
         // جلب جميع المستخدمين
         $users = User::selection()
             ->filter()
@@ -65,9 +72,9 @@ class UserContoller extends Controller
         }
         $tr->setSource($xlocalization);
 
-        $cause_ar = "";
-        $cause_fr = "";
-        $cause_en = '';
+        $cause_ar = null;
+        $cause_fr = null;
+        $cause_en = null;
         switch ($xlocalization) {
             case "ar":
                 if (is_null($cause_en)) {
@@ -108,9 +115,9 @@ class UserContoller extends Controller
         event(new SendUserNotificationEvent(
             $user,
             $request->cause,
-            $request->cause_ar,
-            $request->cause_en,
-            $request->cause_fr,
+            $cause_ar,
+            $cause_en,
+            $cause_fr,
 
         ));
         return response()->success("تم إرسال الإشعار بنجاح إلى المستخدم");
@@ -167,7 +174,6 @@ class UserContoller extends Controller
         // جلب المستخدمين الغير المحظورين
         $users_unbanned = User::selection()
             ->filter()
-            ->with('profile')
             ->withoutBanned()
             ->paginate($paginate);
         // اظهار العناصر
@@ -183,6 +189,9 @@ class UserContoller extends Controller
     public function user_ban($id, Request $request)
     {
         try {
+            $xlocalization = "ar";
+        if ($request->headers->has('X-localization'))
+            $xlocalization = $request->header('X-localization');
             $tr = new GoogleTranslate();
             if ($request->header('X-localization') == 'fr')
                 $tr->setSource('fr');
@@ -191,12 +200,16 @@ class UserContoller extends Controller
             else
                 $tr->setSource('ar');
             // جلب المستخدم
+            
+
             $user = User::find($id);
+            
             // فحص المستخدم
             if (!$user) {
                 // رسالة خطأ
                 return response()->error(__("messages.errors.element_not_found"), Response::HTTP_NOT_FOUND);
             }
+            
             // حضر من قبل
             if ($user->bans) {
                 // رسالة خطأ
@@ -218,15 +231,21 @@ class UserContoller extends Controller
 
             DB::beginTransaction();
             // حظر المستخدم
+            
             $user->ban($data);
+            
             // عمل تسجيل خروج لكل الحسابات
             $user->tokens()->delete();
+            
             // ارسال اشعاؤ للمستخدم
-            event(new BanAccountEvent($user, $request->comment, $request->expired_at));
+            event(new BanAccountEvent($user, $request->comment, $data['comment_ar'], $data['comment_en'], $data['comment_fr'], $request->expired_at));
             DB::commit();
             // رسالة نجاح
-            return response()->success(__("messages.user.ban_success"), $user->load('bans'));
+            return response()->success(__("messages.user.ban_success"), $user->load(['bans'=>function($q) use($xlocalization){
+                $q->select('id','bannable_type', 'bannable_id','created_by_type',"comment_{$xlocalization} AS comment", 'expired_at');
+            }]));
         } catch (Exception $ex) {
+            echo $ex;
             return response()->error(__("messages.errors.error_database"), Response::HTTP_FORBIDDEN);
         }
     }
@@ -261,6 +280,7 @@ class UserContoller extends Controller
             // رسالة نجاح
             return response()->success(__("messages.user.unban_success"), $user);
         } catch (Exception $ex) {
+            echo $ex;
             return response()->error(__("messages.errors.error_database"), Response::HTTP_FORBIDDEN);
         }
     }

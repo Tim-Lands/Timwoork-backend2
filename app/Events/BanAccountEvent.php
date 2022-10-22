@@ -51,6 +51,7 @@ class BanAccountEvent implements ShouldBroadcast
 
     public function broadcastWith()
     {
+        
         return [
             'type' => "system",
             'to' => "user",
@@ -60,7 +61,7 @@ class BanAccountEvent implements ShouldBroadcast
             ],
             'title' =>  "تم الحظر عن حسابك بسبب : " . $this->comment . " وتاريخ الحظر : " . $this->expired_at ? $this->expired_at : "لا يوجد تاريخ",
             'content' => [
-                'user' => $this->user,
+                'user_id' => $this->user->id,
                 'comment' => $this->comment,
                 'expired_at' => $this->expired_at,
             ],

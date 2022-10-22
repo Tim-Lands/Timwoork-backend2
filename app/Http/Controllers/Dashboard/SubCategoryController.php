@@ -7,6 +7,7 @@ use App\Http\Requests\Dashboard\SubCategoryRequest;
 use App\Models\Category;
 use Exception;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
@@ -32,11 +33,14 @@ class SubCategoryController extends Controller
      *s @param  mixed $id => id متغير المعرف
      * @return JsonResponse
      */
-    public function show(mixed $id): JsonResponse
+    public function show(mixed $id, Request $request): JsonResponse
     {
 
+        $xlocalization = "ar";
+            if ($request->headers->has('X-localization'))
+                $xlocalization = $request->header('X-localization');
         //id  جلب العنصر بواسطة
-        $subcategory = Category::selection()->whereId($id)->child()->first();
+        $subcategory = Category::select('id', "name_{$xlocalization} AS name", 'slug', "description_{$xlocalization} AS description",'icon', 'parent_id')->whereId($id)->child()->first();
         // شرط اذا كان العنصر موجود ام لا
         if (!$subcategory) {
             // رسالة خطأ

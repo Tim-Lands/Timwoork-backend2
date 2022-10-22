@@ -50,7 +50,7 @@ class UnbanAccountEvent implements ShouldBroadcast
             ],
             'title' =>  "تم رفع الحظر عن حسابك",
             'content' => [
-                'user' => $this->user,
+                'user_id' => $this->user->id,
             ],
         ];
     }

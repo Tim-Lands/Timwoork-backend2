@@ -31,14 +31,37 @@ class ProductController extends Controller
      *
      * @return void
      */
-    public function index(): JsonResponse
+    public function index(Request $request): JsonResponse
     {
+        try{
+            if($request->has('is_active')){
+                $is_active = $request->is_active;
+                if($is_active == "true"){
+                    return $this->getProductsActived($request);
+                    
+                }
+                else if($is_active == "false"){
+                    return $this->getProductsRejected();
+                }
+            }
+        $xlocalization = "ar";
+        if ($request->headers->has('X-localization'))
+            $xlocalization = $request->header('X-localization');
         // تصفح
         $paginate = request()->query('paginate') ? request()->query('paginate') : 10;
         // جلب جميع الخدمات
-        $products = Product::selection()->where('is_completed', 1)
+        $products = Product::select("id", "title_{$xlocalization} AS title", "slug_{$xlocalization} AS slug", "content_{$xlocalization} AS content",
+        "price", "duration", "count_buying", "thumbnail", "buyer_instruct_{$xlocalization} AS buyer_instruct", "status", "is_active", "current_step",
+        "is_completed", "is_draft", "profile_seller_id", "category_id", "is_vide", "ratings_avg","ratings_count", "deleted_at")
+        ->where('is_completed', 1)
             ->with([
-                'subcategory', 'galaries', 'product_tag', 'video', 'developments',
+                'subcategory'=>function($q) use($xlocalization){
+                    $q->select('id', "name_{$xlocalization} AS name", "icon");
+                },
+                 'galaries',
+                  'product_tag',
+                   'video',
+                    'developments',
                 'profileSeller' => function ($q) {
                     $q->select('id', 'profile_id')->with('profile', function ($q) {
                         $q->select('id', 'full_name', 'user_id')->with('user:id,username,email');
@@ -51,7 +74,10 @@ class ProductController extends Controller
         // اظهار العناصر
         return response()->success(__("messages.oprations.get_all_data"), $products);
     }
-
+    catch(Exception $ex){
+        echo $ex;
+    }
+    }
     /**
      * get_all_messages_for_rejected_product => رسائل رفض الخدمات
      *
@@ -194,14 +220,39 @@ class ProductController extends Controller
      *
      * @return JsonResponse
      */
-    public function getProductsActived(): JsonResponse
+    public function getProductsActived(Request $request)
     {
+        try{
+            $xlocalization = "ar";
+        if ($request->headers->has('X-localization'))
+            $xlocalization = $request->header('X-localization');
+            
         // جلب جميع الخدمات التي تم تنشيطها
-        $products_actived = Product::selection()->productActive()->with(['category', 'profileSeller'])
+        $products_actived = Product::select("id", "title_{$xlocalization} AS title", "slug_{$xlocalization} AS slug", "content_{$xlocalization} AS content",
+        "price", "duration", "count_buying", "thumbnail", "buyer_instruct_{$xlocalization} AS buyer_instruct", "status", "is_active", "current_step",
+        "is_completed", "is_draft", "profile_seller_id", "category_id", "is_vide", "ratings_avg","ratings_count", "deleted_at")->productActive()->with([
+            'subcategory'=>function($q) use($xlocalization){
+                $q->select('id', "name_{$xlocalization} AS name", "icon");
+            },
+             'galaries',
+              'product_tag',
+               'video',
+                'developments',
+            'profileSeller' => function ($q) {
+                $q->select('id', 'profile_id')->with('profile', function ($q) {
+                    $q->select('id', 'full_name', 'user_id')->with('user:id,username,email');
+                });
+            }
+        ])
             ->latest()
             ->get();
+            
         // اظهار العناصر
         return response()->success(__("messages.dashboard.get_product_actived"), $products_actived);
+        }
+        catch(Exception $ex){
+            echo $ex;
+        }
     }
 
     /**

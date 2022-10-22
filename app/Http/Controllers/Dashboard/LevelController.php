@@ -29,16 +29,23 @@ class LevelController extends Controller
         مستويات خاصة بالبائع
         في حالة عدم إرسال الكيوري من الفرونت يتم عرض جميع المستويات
         */
+        try{
+        $xlocalization = "ar";
+            if ($request->headers->has('X-localization'))
+                $xlocalization = $request->header('X-localization');
 
         if ($request->query('type')) {
             $type = $request->query('type');
-            $levels = Level::where('type', $type)->get();
+            $levels = Level::where('type', $type)->select('id',"name_{$xlocalization} AS name")->get(); 
         } else {
-            $levels = Level::all();
+            $levels = Level::select('id',"name_{$xlocalization} AS name")->get();
         }
         return response()->success(__("messages.oprations.get_all_data"), $levels);
     }
-
+    catch(Exception $ex){
+        echo $ex;
+    }
+    }
     /**
      * store => دالة اضافة مستوى جديد
      *
@@ -48,6 +55,9 @@ class LevelController extends Controller
     public function store(LevelRequest $request)
     {
         try {
+            $xlocalization = "ar";
+            if ($request->headers->has('X-localization'))
+                $xlocalization = $request->header('X-localization');
             // جلب البيانات و وضعها في مصفوفة:
             $data = [
                 'name_ar'               => $request->name_ar,
@@ -57,7 +67,7 @@ class LevelController extends Controller
                 'number_developments'   => $request->number_developments,
                 'price_developments'    => $request->price_developments,
                 'number_sales'          => $request->number_sales,
-                'value_bayer'          => $request->value_bayer,
+                'value_bayer_max'          => $request->value_bayer,
             ];
             // ============= انشاء مستوى جديد ================:
             // بداية المعاملة مع البيانات المرسلة لقاعدة بيانات :
@@ -65,11 +75,16 @@ class LevelController extends Controller
             // عملية اضافة مستوى :
             $level = Level::create($data);
             // انهاء المعاملة بشكل جيد :
-            DB::commit();
+            #DB::commit();
             // =================================================
             // رسالة نجاح عملية الاضافة:
+            $name_localization = "name_{$xlocalization}";
+            $level = (object) $level;
+            $level->name = $level->$name_localization;
+            unset($level->name_ar, $level->name_en, $level->name_fr);
             return response()->success(__("messages.oprations.add_success"), $level);
         } catch (Exception $ex) {
+            echo $ex;
             // لم تتم المعاملة بشكل نهائي و لن يتم ادخال اي بيانات لقاعدة البيانات
             DB::rollback();
             //return $ex;
@@ -84,10 +99,13 @@ class LevelController extends Controller
      *s @param  string $id => id متغير المعرف
      * @return object
      */
-    public function show(mixed $id): ?object
+    public function show(mixed $id, Request $request): ?object
     {
+        $xlocalization = "ar";
+            if ($request->headers->has('X-localization'))
+                $xlocalization = $request->header('X-localization');
         //id  جلب العنصر بواسطة
-        $level = Level::Selection()->where('id', $id)->first();
+        $level = Level::select('id',"name_{$xlocalization} AS name")->where('id', $id)->first();
         // شرط اذا كان العنصر موجود
         if (!$level) {
             // رسالة خطأ
@@ -107,6 +125,9 @@ class LevelController extends Controller
     public function update(LevelRequest $request, mixed $id): ?object
     {
         try {
+            $xlocalization = "ar";
+            if ($request->headers->has('X-localization'))
+                $xlocalization = $request->header('X-localization');
             //من اجل التعديل  id  جلب العنصر بواسطة المعرف
             $level = Level::find($id);
 
@@ -125,7 +146,7 @@ class LevelController extends Controller
                 'number_developments'   => $request->number_developments,
                 'price_developments'    => $request->price_developments,
                 'number_sales'          => $request->number_sales,
-                'value_bayer'          => $request->value_bayer,
+                'value_bayer_max'          => $request->value_bayer,
             ];
 
             // ============= التعديل على التصنيف  ================:
@@ -135,6 +156,10 @@ class LevelController extends Controller
             $level->update($data);
             // انهاء المعاملة بشكل جيد :
             DB::commit();
+            $name_localization = "name_{$xlocalization}";
+            $level = (object) $level;
+            $level->name = $level->$name_localization;
+            unset($level->name_ar, $level->name_en, $level->name_fr);
             // =================================================
 
             // رسالة نجاح عملية التعديل:

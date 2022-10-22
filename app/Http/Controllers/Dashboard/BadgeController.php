@@ -8,6 +8,7 @@ use App\Models\Badge;
 use Exception;
 
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\DB;
 
@@ -19,10 +20,13 @@ class BadgeController extends Controller
      *
      * @return JsonResponse
      */
-    public function index(): JsonResponse
+    public function index(Request $request): JsonResponse
     {
+        $xlocalization = "ar";
+        if ($request->headers->has('X-localization'))
+            $xlocalization = $request->header('X-localization');
         // جلب جميع الاصناف عن طريق التصفح
-        $badges = Badge::Selection()->get();
+        $badges = Badge::select('id', "name_{$xlocalization} AS name")->get();
         // اظهار العناصر
         return response()->success(__('messages.oprations.get_all_data'), $badges);
     }
@@ -36,6 +40,9 @@ class BadgeController extends Controller
     public function store(BadgeRequest $request): ?object
     {
         try {
+            $xlocalization = "ar";
+        if ($request->headers->has('X-localization'))
+            $xlocalization = $request->header('X-localization');
             // جلب البيانات و وضعها في مصفوفة:
             $data = [
                 'name_ar'            => $request->name_ar,
@@ -46,10 +53,15 @@ class BadgeController extends Controller
             // ============= انشاء شارة جديدة ================:
             // بداية المعاملة مع البيانات المرسلة لقاعدة بيانات :
             DB::beginTransaction();
+            
             // عملية اضافة شارة :
             $badge = Badge::create($data);
             // انهاء المعاملة بشكل جيد :
             DB::commit();
+            $name_localization = "name_{$xlocalization}";
+            $badge = (object)$badge;
+            $badge->name = $badge->$name_localization;
+            unset($badge->name_ar, $badge->name_en, $badge->name_fr);
             // =================================================
             // رسالة نجاح عملية الاضافة:
             return response()->success(__('messages.oprations.add_success'), $badge);
@@ -92,6 +104,9 @@ class BadgeController extends Controller
     public function update(BadgeRequest $request, mixed $id): ?object
     {
         try {
+            $xlocalization = "ar";
+        if ($request->headers->has('X-localization'))
+            $xlocalization = $request->header('X-localization');
             //من اجل التعديل  id  جلب العنصر بواسطة المعرف
             $badge = Badge::find($id);
 
@@ -121,6 +136,10 @@ class BadgeController extends Controller
             $badge->update($data);
             // انهاء المعاملة بشكل جيد :
             DB::commit();
+            $name_localization = "name_{$xlocalization}";
+            $badge = (object)$badge;
+            $badge->name = $badge->$name_localization;
+            unset($badge->name_ar, $badge->name_en, $badge->name_fr);
             // =================================================
 
             // رسالة نجاح عملية التعديل:

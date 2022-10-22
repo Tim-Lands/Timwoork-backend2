@@ -7,6 +7,7 @@ use App\Http\Requests\Dashboard\CategoryRequest;
 use App\Models\Category;
 use Exception;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
@@ -20,11 +21,14 @@ class CategoryController extends Controller
      *
      * @return JsonResponse
      */
-    public function index()
+    public function index(Request $request)
     {
+        $xlocalization = "ar";
+            if ($request->headers->has('X-localization'))
+                $xlocalization = $request->header('X-localization');
         // جلب جميع الاصناف الرئيسة و الاصناف الفرعية عن طريق التصفح
-        $categories = Category::Selection()->with(['subcategories' => function ($q) {
-            $q->select('id', 'name_ar', 'name_en', 'parent_id', 'icon');
+        $categories = Category::select('id',"name_{$xlocalization} AS name", "slug", "description_{$xlocalization} AS description","icon","parent_id",'image')->with(['subcategories' => function ($q) use($xlocalization) {
+            $q->select('id', "name_{$xlocalization} AS name", 'parent_id', 'icon');
         }])->parent()->get();
 
         // اظهار العناصر
@@ -36,11 +40,14 @@ class CategoryController extends Controller
      *s @param  mixed $id => id متغير المعرف
      * @return object
      */
-    public function show(mixed $id): ?object
+    public function show(mixed $id, Request $request): ?object
     {
+        $xlocalization = "ar";
+            if ($request->headers->has('X-localization'))
+                $xlocalization = $request->header('X-localization');
         //id  جلب العنصر بواسطة
-        $category = Category::selection()->whereId($id)->with(['subcategories' => function ($q) {
-            $q->select('id', 'name_ar', 'name_en', 'parent_id', 'icon');
+        $category = Category::select("id", "name_{$xlocalization} AS name", 'slug', "description_{$xlocalization} AS description", "icon", "image")->whereId($id)->with(['subcategories' => function ($q) use($xlocalization) {
+            $q->select('id', "name_{$xlocalization} AS name", 'parent_id', 'icon');
         }])->first();
         // شرط اذا كان العنصر موجود
         if (!$category) {
@@ -60,6 +67,9 @@ class CategoryController extends Controller
     public function store(CategoryRequest $request)
     {
         try {
+            $xlocalization = "ar";
+            if ($request->headers->has('X-localization'))
+                $xlocalization = $request->header('X-localization');
             // جلب البيانات و وضعها في مصفوفة:
             $data = [
                 'name_ar'        => $request->name_ar,
@@ -80,7 +90,13 @@ class CategoryController extends Controller
             DB::commit();
             // =================================================
             // رسالة نجاح عملية الاضافة:
-            return response()->success(__("messages.oprations.add_success"), $category);
+            $name_localization="name_{$xlocalization}";
+            $description_localization = "description_{$xlocalization}";
+            $category_json = (object)$category;
+            $category_json->name = $category->$name_localization;
+            $category_json->description = $category->$description_localization;
+            unset($category_json->name_ar, $category_json->name_en, $category_json->name_fr, $category_json->description_ar, $category_json->description_en, $category_json->description_fr);
+            return response()->success(__("messages.oprations.add_success"), $category_json);
         } catch (Exception $ex) {
             // لم تتم المعاملة بشكل نهائي و لن يتم ادخال اي بيانات لقاعدة البيانات
             DB::rollback();
@@ -99,6 +115,9 @@ class CategoryController extends Controller
     public function update(mixed $id, CategoryRequest $request): ?object
     {
         try {
+            $xlocalization = "ar";
+            if ($request->headers->has('X-localization'))
+                $xlocalization = $request->header('X-localization');
             //من اجل التعديل  id  جلب العنصر بواسطة المعرف
             $category = Category::find($id);
 
@@ -139,10 +158,15 @@ class CategoryController extends Controller
             $category->update($data);
             // انهاء المعاملة بشكل جيد :
             DB::commit();
+            $name_localization="name_{$xlocalization}";
+            $description_localization = "description_{$xlocalization}";
+            $category_json = (object)$category;
+            $category_json->name = $category->$name_localization;
+            $category_json->description = $category->$description_localization;
+            unset($category_json->name_ar, $category_json->name_en, $category_json->name_fr, $category_json->description_ar, $category_json->description_en, $category_json->description_fr);
             // =================================================
-
             // رسالة نجاح عملية التعديل:
-            return response()->success(__("messages.oprations.update_success"), $category);
+            return response()->success(__("messages.oprations.update_success"), $category_json);
         } catch (Exception $ex) {
             // لم تتم المعاملة بشكل نهائي و لن يتم ادخال اي بيانات لقاعدة البيانات
             DB::rollback();

@@ -49,26 +49,24 @@ Route::group(['middleware' => ['XSS']], function () {
             // مسار العرض
             Route::get('/', [CategoryController::class, 'index']);
             // مسار انشاء عنصر جديد
-            Route::post('/store', [CategoryController::class, 'store']);
+            Route::post('/', [CategoryController::class, 'store']);
             // مسار جلب عنصر الواحد
             Route::get('/{id}', [CategoryController::class, 'show']);
             // مسار التعديل على العنصر
-            Route::post('/{id}/update', [CategoryController::class, 'update']);
+            Route::patch('/{id}', [CategoryController::class, 'update']);
             // مسار حذف العنصر
-            Route::post('/{id}/delete', [CategoryController::class, 'delete']);
+            Route::delete('/{id}', [CategoryController::class, 'delete']);
+            Route::get('/create', [SubCategoryController::class, 'create']);
+            Route::put('/subcategories', [SubCategoryController::class, 'store']);
         });
         // ================================ مسارات المستخدمين ====================================
         Route::prefix('users')->group(function () {
             // مسار العرض
             Route::get('/', [UserContoller::class, 'get_users']);
-            // عرض المستخدمين المحظورين
-            Route::get('/get_users_banned', [UserContoller::class, 'get_user_banned']);
-            // عرض المستخدمين الغير المحظورين
-            Route::get('/get_users_unbanned', [UserContoller::class, 'get_user_unbanned']);
             // مسار انشاء عنصر جديد
             Route::get('/{id}', [UserContoller::class, 'show']);
             //إرسال إشعار للمستخدم
-            Route::post('/{id}/send_notification', [UserContoller::class, 'sendNotification']);
+            Route::put('/{id}/notifications', [UserContoller::class, 'sendNotification']);
             // حظر المستخدم
             Route::post('/{id}/ban', [UserContoller::class, 'user_ban']);
             // فك حظر المستخدم
@@ -79,15 +77,15 @@ Route::group(['middleware' => ['XSS']], function () {
         Route::prefix('subcategories')->group(function () {
 
             // مسار عرض عنصر من اجل انشاء
-            Route::get('/create', [SubCategoryController::class, 'create']);
+            
             // مسار انشاء عنصر جديد
-            Route::post('/store', [SubCategoryController::class, 'store']);
+            
             // مسار جلب عنصر الواحد
             Route::get('/{id}', [SubCategoryController::class, 'show']);
             // مسار التعديل على العنصر
-            Route::post('/{id}/update', [SubCategoryController::class, 'update']);
+            Route::patch('/{id}/update', [SubCategoryController::class, 'update']);
             // مسار حذف العنصر
-            Route::post('/{id}/delete', [SubCategoryController::class, 'delete']);
+            Route::delete('/{id}/delete', [SubCategoryController::class, 'delete']);
         });
 
         // =============================== مسارات المستوى ==================================
@@ -96,13 +94,13 @@ Route::group(['middleware' => ['XSS']], function () {
             // مسار العرض
             Route::get('/', [LevelController::class, 'index']);
             // مسار انشاء عنصر جديد
-            Route::post('/store', [LevelController::class, 'store']);
+            Route::post('/', [LevelController::class, 'store']);
             // مسار جلب عنصر الواحد
             Route::get('/{id}', [LevelController::class, 'show']);
             // مسار التعديل على العنصر
-            Route::post('/{id}/update', [LevelController::class, 'update']);
+            Route::put('/{id}', [LevelController::class, 'update']);
             // مسار حذف العنصر
-            Route::post('/{id}/delete', [LevelController::class, 'delete']);
+            Route::delete('/{id}', [LevelController::class, 'delete']);
         });
 
         // =============================== مسارات المستوى البائع ==================================
@@ -126,13 +124,13 @@ Route::group(['middleware' => ['XSS']], function () {
             // مسار العرض
             Route::get('/', [BadgeController::class, 'index']);
             // مسار انشاء عنصر جديد
-            Route::post('/store', [BadgeController::class, 'store']);
+            Route::post('/', [BadgeController::class, 'store']);
             // مسار جلب عنصر الواحد
             Route::get('/{id}', [BadgeController::class, 'show']);
             // مسار التعديل على العنصر
-            Route::post('/{id}/update', [BadgeController::class, 'update']);
+            Route::patch('/{id}', [BadgeController::class, 'update']);
             // مسار حذف العنصر
-            Route::post('/{id}/delete', [BadgeController::class, 'delete']);
+            Route::delete('/{id}', [BadgeController::class, 'delete']);
         });
         // =============================== مسارات الشارة البائع ====================================
 
@@ -140,13 +138,13 @@ Route::group(['middleware' => ['XSS']], function () {
             // مسار العرض
             Route::get('/', [SellerBadgeController::class, 'index']);
             // مسار انشاء عنصر جديد
-            Route::post('/store', [SellerBadgeController::class, 'store']);
+            Route::post('/', [SellerBadgeController::class, 'store']);
             // مسار جلب عنصر الواحد
             Route::get('/{id}', [SellerBadgeController::class, 'show']);
             // مسار التعديل على العنصر
-            Route::post('/{id}/update', [SellerBadgeController::class, 'update']);
+            Route::patch('/{id}', [SellerBadgeController::class, 'update']);
             // مسار حذف العنصر
-            Route::post('/{id}/delete', [SellerBadgeController::class, 'delete']);
+            Route::delete('/{id}', [SellerBadgeController::class, 'delete']);
         });
         // =============================== مسارات الخدمة ====================================
         Route::prefix('products')->group(function () {
