@@ -177,7 +177,17 @@ Route::group(['middleware' => ['XSS','language']], function () {
     /* -------------------------------------------------------------------------- */
     /*                             مسارات الملف الشخصي                            */
     /* -------------------------------------------------------------------------- */
-
+    Route::prefix('profile_seller')->group(function () {
+        // اضافة بائع جديد
+        Route::get('/',[SellerController::class,'index']);
+        Route::post('/store', [SellerController::class, 'store']);
+        // اضافة تفاصيل بروفايل البائع
+        Route::put('/details', [SellerController::class, 'detailsStore']);
+        // اضافة المرحلة الاولى من بروفايل البائع
+        Route::post('/step_one', [SellerController::class, 'step_one']);
+        // اضافة المرحلة الثانية من بروفايل البائع
+        Route::post('/step_two', [SellerController::class, 'step_two']);
+    });
     Route::prefix('profiles')->group(function () {
         // انشاء المرحلة الاولى من البروفايل
         Route::post('/step_one', [ProfileController::class, 'step_one']);
@@ -233,7 +243,9 @@ Route::group(['middleware' => ['XSS','language']], function () {
         // إضافة محادثة للخدمة
         Route::post('/{id}/conversations/create', [ConversationController::class, 'product_conversation_store'])->middleware('auth:sanctum', 'abilities:user');
     });
-
+    Route::prefix('products')->group(function() {
+        Route::get('/', FilterController::class);
+    });
     /* -------------------------------------------------------------------------- */
     /*                          مسار رابط المختصر للخدمة                          */
     /* -------------------------------------------------------------------------- */
