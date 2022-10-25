@@ -148,6 +148,7 @@ Route::group(['middleware' => ['XSS']], function () {
             // مسار حذف العنصر
             Route::post('/{id}/delete', [SellerBadgeController::class, 'delete']);
         });
+        
         // =============================== مسارات الخدمة ====================================
         Route::prefix('products')->group(function () {
             // مسار العرض الخدمات

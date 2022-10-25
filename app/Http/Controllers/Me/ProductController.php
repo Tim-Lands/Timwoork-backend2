@@ -31,6 +31,9 @@ class ProductController extends Controller
     //
     public function index(Request $request, Response $response){
         try{
+            $xlocalization = "ar";
+            if ($request->headers->has('X-localization'))
+                $xlocalization = $request->header('X-localization');
             $type='all';
             if($request->filled('type'))
                 $type = $request->input('type');
@@ -51,13 +54,24 @@ class ProductController extends Controller
         $paginate = $request->query('paginate') ? $request->query('paginate') : 10;
         $user = Auth::user();
         $products = $user->profile->profile_seller->products()
-            ->where($where[$type])
+        ->select('id', "title_{$xlocalization} AS title", "slug_{$xlocalization} AS slug",
+         'status', 'is_active', 'current_step', 'is_completed', 'is_draft','ratings_avg',
+          'ratings_count', "buyer_instruct_{$xlocalization} AS buyer_instruct", "content_{$xlocalization} AS content", 'created_at', 'category_id')
+          ->with([
+            "subcategory"=>function($q) use($xlocalization){
+                $q->select('id','parent_id', "name_{$xlocalization} AS name", "slug", "description_{$xlocalization} AS description", 'icon', 'image');
+            },
+            "subcategory.category"=>function($q) use($xlocalization){
+                $q->select('id', "name_{$xlocalization} AS name", "slug", "description_{$xlocalization} AS description", 'icon', 'image');
+            },
+            ])  
+          ->where($where[$type])
             ->whereNull($where_null[$type])
             ->paginate($paginate)
-            ->makeHidden([
-                'buyer_instruct', 'content', 'profile_seller_id', 'category_id', 'duration','price','is_vide'
-                ,'updated_at','created_at','deleted_at','thumbnail'
-            ]);
+            ->makeHidden('ratings');
+            
+       
+        
         return response()->success(__("messages.oprations.get_all_data"), $products);
         }
         catch(Exception $exc){
@@ -751,10 +765,13 @@ class ProductController extends Controller
         }
     }
 
-    public function updateIsActive($id, ActiveProduct $request)
+    public function updateIsActive($id, Request $request)
     {
         try {
-            $is_active = $request->is_active;
+            if(strtolower($request->is_active) == "true")
+                $is_active=1;
+            else
+                $is_active = 0;
             // جلب الخدمة
             $product = Product::select('id', 'is_active')
             ->ProductActive()

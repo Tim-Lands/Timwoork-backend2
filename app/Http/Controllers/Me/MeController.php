@@ -59,6 +59,19 @@ class MeController extends Controller
         return response()->json($data, Response::HTTP_OK); */
     }
 
+    public function currency(Request $request){
+        try{
+        $x_localization = 'ar';
+        if ($request->hasHeader('X-localization')) {
+            $x_localization = $request->header('X-localization');
+        }
+        return Auth::user()->profile->currency;
+        }
+        catch(Exception $exc){
+            echo $exc;
+        }
+    }
+
     public function profile(Request $request)
     {
         //$paginate = $request->query('paginate') ?? 10;

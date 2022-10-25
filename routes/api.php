@@ -177,7 +177,7 @@ Route::group(['middleware' => ['XSS','language']], function () {
     /* -------------------------------------------------------------------------- */
     /*                             مسارات الملف الشخصي                            */
     /* -------------------------------------------------------------------------- */
-    Route::prefix('profile_seller')->group(function () {
+    /* Route::prefix('profile_seller')->group(function () {
         // اضافة بائع جديد
         Route::get('/',[SellerController::class,'index']);
         Route::post('/store', [SellerController::class, 'store']);
@@ -187,7 +187,7 @@ Route::group(['middleware' => ['XSS','language']], function () {
         Route::post('/step_one', [SellerController::class, 'step_one']);
         // اضافة المرحلة الثانية من بروفايل البائع
         Route::post('/step_two', [SellerController::class, 'step_two']);
-    });
+    }); */
     Route::prefix('profiles')->group(function () {
         // انشاء المرحلة الاولى من البروفايل
         Route::post('/step_one', [ProfileController::class, 'step_one']);

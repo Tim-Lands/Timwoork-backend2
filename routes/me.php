@@ -6,9 +6,23 @@ use App\Http\Controllers\Me\ItemsController;
 use App\Http\Controllers\Me\ProductController;
 use App\Http\Controllers\Me\MeController;
 use App\Http\Controllers\Me\WalletController as MeWalletController;
+use App\Http\Controllers\SellerController;
 use Illuminate\Support\Facades\Route;
 try{
+    
+Route::prefix('profile_seller')->group(function () {
+    // اضافة بائع جديد
+    Route::get('/',[SellerController::class,'index']);
+    Route::post('/store', [SellerController::class, 'store']);
+    // اضافة تفاصيل بروفايل البائع
+    Route::put('/details', [SellerController::class, 'detailsStore']);
+    // اضافة المرحلة الاولى من بروفايل البائع
+    Route::post('/step_one', [SellerController::class, 'step_one']);
+    // اضافة المرحلة الثانية من بروفايل البائع
+    Route::post('/step_two', [SellerController::class, 'step_two']);
+});
 Route::get('/', [MeController::class,'index']);
+Route::get('/currency',[MeController::class,'currency']);
 Route::get('/cart',[CartController::class, 'index']);
 Route::put('/cart/items',[CartController::class,'store']);
 Route::patch('/cart/items/{id}',[CartController::class,'update']);
