@@ -197,17 +197,20 @@ class FrontEndController extends Controller
 
 
 
-    public function show(mixed $slug): JsonResponse
+    public function show(mixed $slug, Request $request): JsonResponse
     {
+        $xlocalization = "ar";
+            if ($request->headers->has('X-localization'))
+                $xlocalization = $request->header('X-localization');
         // id او slug جلب الخدمة بواسطة
-        $product = Product::selection()
+        $product = Product::select('id',"title_{$xlocalization} AS title","slug_{$xlocalization} AS slug","content_{$xlocalization} AS content",'price', 'duration','thumbnail  ')
             ->whereSlug($slug)
             ->orWhere('id', $slug)
             ->withOnly([
-                'subcategory' => function ($q) {
-                    $q->select('id', 'parent_id', 'name_ar', 'name_en', 'name_fr')
-                        ->with('category', function ($q) {
-                            $q->select('id', 'name_ar')
+                'subcategory' => function ($q) use($xlocalization) {
+                    $q->select('id', 'parent_id', "name_{$xlocalization} AS name")
+                        ->with('category', function ($q) use($xlocalization) {
+                            $q->select('id', "name_{$xlocalization} AS name")
                                 ->without('subcategories');
                         })->withCount('products');
                 },
