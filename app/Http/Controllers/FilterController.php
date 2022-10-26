@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Builder;
 
 class FilterController extends Controller
 {
-    public function __invoke(Request $request)
+    public function __invoke1(Request $request)
     {
         $xlocalization = "ar";
             if ($request->headers->has('X-localization'))
@@ -31,6 +31,43 @@ class FilterController extends Controller
                     $q->select('id', 'parent_id', "name_{$xlocalization}")
                         ->with('category', function ($q) use($xlocalization) {
                             $q->select('id', "name_{$xlocalization} AS name")
+                                ->without('subcategories');
+                        })->withCount('products');
+                },
+            ])/*->withAvg('ratings', 'rating')*/
+            ->withCount('ratings as rats_count')
+            ->where('is_completed', 1)
+            ->paginate($paginate);
+
+
+
+        if (!$res->isEmpty()) {
+            return response()->success(__("messages.filter.filter_success"), $res);
+        } else {
+            return response()->success(__("messages.filter.filter_field"), [], 204);
+        }
+    }
+    public function __invoke(Request $request)
+    {
+        $paginate = $request->query('paginate') ? $request->query('paginate') : 12;
+        $res = Product::select('id', 'title', 'title_ar', "title_fr", "title_en" ,'slug', 'price', 'ratings_avg', 'count_buying', 'thumbnail', 'ratings_count', 'category_id', 'profile_seller_id', 'duration', 'content', 'content_ar', 'content_fr', 'content_en' ,'created_at')
+            ->filter()
+            ->productActive()
+            ->where('is_active', 1)
+            ->with([
+                'profileSeller' => function ($q) {
+                    $q->with(['profile'=> function ($q) {
+                        $q->select('*')
+                            ->with('user:id,username')
+                            ->without('bank_account', 'bank_transfer_detail', 'paypal_account', 'wise_account', 'badge', 'level');
+                    }])
+                    ->without('languages', 'skills', 'professions');
+                },
+                'ratings',
+                'subcategory' => function ($q) {
+                    $q->select('id', 'parent_id', 'name_ar', 'name_en', 'name_fr')
+                        ->with('category', function ($q) {
+                            $q->select('id', 'name_ar', 'name_en', 'name_fr')
                                 ->without('subcategories');
                         })->withCount('products');
                 },
