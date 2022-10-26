@@ -335,9 +335,14 @@ Route::group(['middleware' => ['XSS','language']], function () {
     /*                            مسارات واجهة المستخدم                           */
     /* -------------------------------------------------------------------------- */
     // عرض التصنيفات الرئيسية
+    Route::prefix('categories')->group(function(){
+        Route::get('/main', [FrontEndController::class, 'main_categories']);
+        Route::get('/{id}/subcategories', [FrontEndController::class, 'get_subcategories']);
+        Route::get('/', [FrontEndController::class, 'get_all_categories']);
+        });
     Route::get('/top_main_categories', [FrontEndController::class,'get_top_main_categories']);
     Route::get('/top_categories', [FrontEndController::class, 'get_top_categories']);
-    Route::get('/categories', [FrontEndController::class, 'get_all_categories']);
+    #Route::get('/categories', [FrontEndController::class, 'get_all_categories']);
     // عرض التصنيفات الرئيسية
     Route::get('/get_categories', [FrontEndController::class, 'get_categories']);
     // عرض التصنيفات من اجل عملية الاضافة
