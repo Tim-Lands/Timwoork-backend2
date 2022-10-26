@@ -135,6 +135,33 @@ class FrontEndController extends Controller
      *
      * @return void
      */
+
+    public function get_categories1()
+    {
+        // جلب التصنيفات الرئيسية
+        $categories = Category::Selection()->with('subcategories', function ($q) {
+            $q->withCount('products');
+        })->parent()->get();
+        $data = [];
+        // عمل لووب من اجل فرز التصنيفات الرئيسية مع عدد الخدمات التابعة لها
+        foreach ($categories as $category) {
+            $data[] =
+                [
+                    'id'      => $category['id'],
+                    'name_ar' => $category['name_ar'],
+                    'name_en' => $category['name_en'],
+                    'name_fr' => $category['name_fr'],
+                    'parent_id' => $category['parent_id'],
+                    'icon'    => $category['icon'],
+                    "image"   => $category['image'],
+                    'products_count' => $category['subcategories']->sum('products_count')
+                ];
+        }
+
+        // اظهار العناصر
+        return response()->success(__("messages.oprations.get_all_data"), $data);
+    }
+
     public function get_categories_for_add_product()
     {
         // جلب التصنيفات الرئيسية
