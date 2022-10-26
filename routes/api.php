@@ -338,8 +338,10 @@ Route::group(['middleware' => ['XSS','language']], function () {
     Route::prefix('categories')->group(function(){
         Route::get('/main', [FrontEndController::class, 'main_categories']);
         Route::get('/{id}/subcategories', [FrontEndController::class, 'get_subcategories']);
-        Route::get('/', [FrontEndController::class, 'get_all_categories']);
-        });
+        #Route::get('/', [FrontEndController::class, 'get_all_categories']);
+        Route::get('/', [FrontEndController::class, 'get_all_categories1']);
+    
+    });
     Route::get('/top_main_categories', [FrontEndController::class,'get_top_main_categories1']);
     Route::get('/top_categories', [FrontEndController::class, 'get_top_categories1']);
     #Route::get('/categories', [FrontEndController::class, 'get_all_categories']);

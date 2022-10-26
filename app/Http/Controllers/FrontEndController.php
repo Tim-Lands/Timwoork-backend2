@@ -339,6 +339,30 @@ class FrontEndController extends Controller
         return response()->success(__("messages.oprations.get_all_data"), $categories);
     }
 
+    public function get_all_categories1(Request $request)
+    {
+        $xlocalization = "ar";
+            if ($request->headers->has('X-localization'))
+                $xlocalization = $request->header('X-localization');
+        $sort_by = "all";
+        if($request->has('sort_by'))
+            $sort_by = $request->sort_by;
+            if($sort_by == "count_buying")
+                return $this->get_top_categories($request);
+        // جلب جميع الاصناف الرئيسة و الاصناف الفرعية عن طريق التصفح
+        $categories = Category::Selection()
+            ->select('id',"name_{$xlocalization} AS name", 'slug', "description_{$xlocalization} AS description", 'icon', 'parent_id','image')
+            ->with(['subcategories' => function ($q) use($xlocalization) {
+                $q->select('id', "name_{$xlocalization} AS name", 'parent_id', 'icon');
+            }])->parent()->get();
+
+        // اظهار العناصر
+        if (auth()->check() && auth()->user()->profile->gender == 1) {
+            return response()->success(__("messages.oprations.get_all_data"), $categories);
+        }
+        return response()->success(__("messages.oprations.get_all_data"), $categories);
+    }
+
     /**
      * get_products_by_subcategory => جلب الخدمات التابعة لهذا التصنيف
      *
