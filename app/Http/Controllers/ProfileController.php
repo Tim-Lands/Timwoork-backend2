@@ -10,6 +10,7 @@ use App\Models\Currency;
 use App\Models\Profile;
 use App\Models\User;
 use Exception;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 
@@ -62,6 +63,43 @@ class ProfileController extends Controller
         }
     }
 
+    public function show1($username, Request $request)
+    {
+        // البحث في قاعدة البيانات عن اسم المستخدم
+        $x_localization = 'ar';
+        if ($request->hasHeader('X-localization')) {
+            $x_localization = $request->header('X-localization');
+        }
+        $user = User::where('username', $username)
+            ->orWhere('id', $username)
+            ->with([
+                'profile.profile_seller'=>function($q) use($x_localization){
+                    $q->select('id',"steps","number_of_sales","portfolio","bio_{$x_localization} AS bio",'profile_id', 'seller_badge_id','seller_level_id'
+                ,'created_at');
+                },
+                'profile.profile_seller.badge',
+                'profile.profile_seller.level',
+                'profile' ,
+                'profile.badge'=>function($q) use($x_localization){
+                    $q->select('id',"name_{$x_localization} AS name");
+                },
+                'profile.level'=>function($q) use($x_localization){
+                    $q->select('id',"name_{$x_localization} AS name", 'value_bayer_min', 'value_bayer_max','type', 'number_developments', 'price_developments', 'number_sales');
+                },
+                'profile.country'=>function($q) use($x_localization){
+                    $q->select('id',"name_{$x_localization} AS name");
+                }
+            ])
+            ->first();
+        if (!$user) {
+            // في حالة عدم وجود اسم مستخدم يتم إرسال رسالة الخطأ
+            return response()->error(__("messages.errors.element_not_found"));
+        } else {
+
+            // في حالة وجود اسم المستخدم يتم عرض معلوماته الشخصية
+            return response()->success(__("messages.oprations.get_data"), $user);
+        }
+    }
     /**
      * step_one => دالة المرحلة الأولى في الملف الشخصي وهي مرحلة المعلومات الشخصية
      *

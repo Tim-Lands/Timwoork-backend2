@@ -191,6 +191,37 @@ class FrontEndController extends Controller
         // اظهار العناصر
         return response()->success(__("messages.oprations.get_all_data"), $data);
     }
+    public function get_categories_for_add_product1(Request $request)
+    {
+        $xlocalization = "ar";
+            if ($request->headers->has('X-localization'))
+                $xlocalization = $request->header('X-localization');
+        // جلب التصنيفات الرئيسية
+        $categories = Category::Selection()->where(function ($q) {
+            if (auth()->user()->profile->gender == 1) {
+                $q->where('is_women', 0);
+            }
+        })->with('subcategories', function ($q) {
+            $q->withCount('products');
+        })->parent()->get();
+        $data = [];
+        // عمل لووب من اجل فرز التصنيفات الرئيسية مع عدد الخدمات التابعة لها
+        foreach ($categories as $category) {
+            $data[] =
+                [
+                    'id'      => $category['id'],
+                    "name" => $category["name_{$xlocalization}"],
+
+                    'parent_id' => $category['parent_id'],
+                    'icon'    => $category['icon'],
+                    "image"   => $category['image'],
+                    'products_count' => $category['subcategories']->sum('products_count')
+                ];
+        }
+
+        // اظهار العناصر
+        return response()->success(__("messages.oprations.get_all_data"), $data);
+    }
 
     /**
      * get_subcategories => دالة اظهار التصنيفات الفرعية
@@ -270,6 +301,28 @@ class FrontEndController extends Controller
         return response()->success(__("messages.oprations.get_all_data"), $category);
     }
 
+    public function get_subcategories_for_add_product1(mixed $id, Request $request): JsonResponse
+    {
+        $xlocalization = "ar";
+        if ($request->headers->has('X-localization'))
+            $xlocalization = $request->header('X-localization');
+        //id  جلب العنصر بواسطة
+        $category = Category::select('id',"name_{$xlocalization}",'icon')->whereId($id)->where(function ($q) {
+            if (auth()->user()->profile->gender == 1) {
+                $q->where('is_women', 0);
+            }
+        })->with(['subcategories' => function ($q) use($xlocalization) {
+            $q->select('id', "name_{$xlocalization} AS name", 'parent_id', 'icon');
+        }])->first();
+
+        // شرط اذا كان العنصر موجود
+        if (!$category) {
+            //رسالة خطأ
+            return response()->error(__("messages.errors.element_not_found"), Response::HTTP_NOT_FOUND);
+        }
+        // اظهار العناصر
+        return response()->success(__("messages.oprations.get_all_data"), $category);
+    }
 
     /**
      * show => slug او  id  عرض الخدمة الواحدة بواسطة

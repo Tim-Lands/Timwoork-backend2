@@ -40,6 +40,15 @@ class WithdrawalController extends Controller
         $wise_countries = WiseCountry::all();
         return response()->success("لقد تمّ جلب البيانات بنجاح", $wise_countries);
     }
+
+    public function countries1(Request $request)
+    {
+        $xlocalization = "ar";
+        if ($request->headers->has('X-localization'))
+            $xlocalization = $request->header('X-localization');
+        $wise_countries = WiseCountry::select('id', "{$xlocalization}_name AS name")->get()->all();
+        return response()->success("لقد تمّ جلب البيانات بنجاح", $wise_countries);
+    }
     // عرض جميع طلبات السحب
 
     public function index(Request $request)

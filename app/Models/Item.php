@@ -11,7 +11,7 @@ use Illuminate\Database\Eloquent\Relations\HasOne;
 class Item extends Model
 {
     use HasFactory;
-    protected $appends = ['user_id'];
+    //protected $appends = ['user_id'];
     protected $table = 'items';
     // ===========================Contants =============================
     // code
@@ -33,6 +33,8 @@ class Item extends Model
     // item work
     const IS_ITEM_WORk = 1;
     const IS_ITEM_NOT_WORk = 0;
+    const ITEM_TYPE_SELL = 'sells';
+    const ITEM_TYPE_PURCHASE = 'purchases';
     // ================== Acssesor & mutators ==========================
     // code
     public function getUserIdAttribute()

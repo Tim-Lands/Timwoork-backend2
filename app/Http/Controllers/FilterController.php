@@ -28,7 +28,7 @@ class FilterController extends Controller
                 },
 
                 'subcategory' => function ($q) use($xlocalization) {
-                    $q->select('id', 'parent_id', "name_{$xlocalization}")
+                    $q->select('id', 'parent_id', "name_{$xlocalization} AS name")
                         ->with('category', function ($q) use($xlocalization) {
                             $q->select('id', "name_{$xlocalization} AS name")
                                 ->without('subcategories');

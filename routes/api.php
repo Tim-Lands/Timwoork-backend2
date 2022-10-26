@@ -139,6 +139,11 @@ Route::group(['middleware' => ['XSS','language']], function () {
         Route::post('/withdrawal_bank_transfer', [WithdrawalController::class, 'withdrawal_bank_transfer']);
     });
 
+    Route::middleware('auth:sanctum', 'abilities:user')->prefix('new/withdrawals')->group(function () {
+        Route::get('/countries', [WithdrawalController::class, 'countries1']);
+    });
+
+
     /********************************************************************** */
     /**
      *  مسار لعرض محفظتي
@@ -199,6 +204,16 @@ Route::group(['middleware' => ['XSS','language']], function () {
         Route::get('/{username}', [ProfileController::class, 'show']);
     });
 
+    Route::prefix('new/profiles')->group(function () {
+        // انشاء المرحلة الاولى من البروفايل
+        Route::post('/step_one', [ProfileController::class, 'step_one']);
+        // انشاء المرحلة الثانية من البروفايل
+        Route::post('/step_two', [ProfileController::class, 'step_two']);
+        // انشاء المرحلة الثالثة من البروفايل
+        Route::post('/step_three', [ProfileController::class, 'step_three']);
+        // اظهار البروفايل
+        Route::get('/{username}', [ProfileController::class, 'show1']);
+    });
 
     /* -------------------------------------------------------------------------- */
     /*                         مسارات الملف الشخصي البائع                         */
@@ -245,6 +260,9 @@ Route::group(['middleware' => ['XSS','language']], function () {
     });
     Route::prefix('products')->group(function() {
         Route::get('/', FilterController::class);
+    });
+    Route::prefix('new/products')->group(function() {
+        Route::get('/', [FilterController::class,'__invoke1']);
     });
     /* -------------------------------------------------------------------------- */
     /*                          مسار رابط المختصر للخدمة                          */
@@ -331,6 +349,54 @@ Route::group(['middleware' => ['XSS','language']], function () {
         });
     });
 
+    //////
+
+
+    Route::prefix('new/orders')->group(function () {
+        // انشاء الطلبية و ارسال الطلبيات للبائعين
+        //Route::post('/store', [OrderController::class, 'create_order_with_items']);
+        Route::post('/', [OrderController::class, 'create_order_with_items']);
+        /* ------------------ مسارات المعاملة بين البائع و المشتري ------------------ */
+        Route::prefix('items')->group(function () {
+            // اظهار الطلبية الواحدة
+            Route::get('/{id}', [ItemController::class, 'show1']); 
+            // قبول الطلبية من قبل البائع
+            Route::post('/{id}/item_accepted_by_seller', [ItemController::class, 'item_accepted_by_seller']);
+            // رفض الطلبية من قبل البائع
+            Route::post('/{id}/item_rejected_by_seller', [ItemController::class, 'item_rejected_by_seller']);
+            // الغاء الطلبية من قبل المشتري
+            Route::post('/{id}/item_cancelled_by_buyer', [ItemController::class, 'item_cancelled_by_buyer']);
+            // الغاء الطلبية من قبل البائع
+            Route::post('/{id}/item_cancelled_by_seller', [ItemController::class, 'item_cancelled_by_seller']);
+            // رفع و تسليم المشروع من قبل البائع
+            Route::post('/{id}/dilevered_by_seller', [ItemController::class, 'dilevered_by_seller']);
+            // قبول المشروع من قبل المشتري
+            Route::post('/{id}/accepted_delivery_by_buyer', [ItemController::class, 'accepted_delivery_by_buyer']);
+            // عرض الالغاء طلب الخدمة
+            Route::get('/{id}/display_item_rejected', [ItemController::class, 'display_item_rejected']);
+            // طلب الالغاء الخدمة من قبل المشتري
+            Route::post('/{id}/request_cancel_item_by_buyer', [ItemController::class, 'request_cancel_item_by_buyer']);
+            //  قبول طلب الالغاء الخدمة من قبل البائع
+            Route::post('/{id}/accept_cancel_request_by_seller', [ItemController::class, 'accept_cancel_request_by_seller']);
+            //  رفض طلب الالغاء الخدمة من قبل البائع
+            Route::post('/{id}/reject_cancel_request_by_seller', [ItemController::class, 'reject_cancel_request_by_seller']);
+            // حل النزاع بين الطرفين في حالة الغاء الطلبية
+            Route::post('/{id}/resolve_the_conflict_between_them_in_rejected', [ItemController::class, 'resolve_the_conflict_between_them_in_rejected']);
+            // طلب تعديل الخدمة من قبل المشتري
+            Route::post('/{id}/request_modified_by_buyer', [ItemController::class, 'request_modified_by_buyer']);
+            // قبول تعديل الخدمة من قبل المشتري
+            Route::post('/{id}/accept_modified_by_seller', [ItemController::class, 'accept_modified_by_seller']);
+            // رفض تعديل الخدمة من قبل المشتري
+            Route::post('/{id}/reject_modified_by_seller', [ItemController::class, 'reject_modified_by_seller']);
+            // حل النزاع بين الطرفين في حالة الغاء الطلبية
+            Route::post('/{id}/resolve_the_conflict_between_them_in_modified', [ItemController::class, 'resolve_the_conflict_between_them_in_modified']);
+            // إضافة محادثة للخدمة
+            Route::post('/{id}/conversations/', [ConversationController::class, 'item_conversation_store'])->middleware('auth:sanctum', 'abilities:user');
+            // تقييم الخدمة
+            Route::post('/{id}/rating', [RatingController::class, 'rate']);
+        });
+    });
+
     /* -------------------------------------------------------------------------- */
     /*                            مسارات واجهة المستخدم                           */
     /* -------------------------------------------------------------------------- */
@@ -342,6 +408,14 @@ Route::group(['middleware' => ['XSS','language']], function () {
         Route::get('/', [FrontEndController::class, 'get_all_categories1']);
     
     });
+
+    Route::prefix('new/categories')->group(function(){
+        Route::get('/main', [FrontEndController::class, 'main_categories']);
+        Route::get('/{id}/subcategories', [FrontEndController::class, 'get_subcategories']);
+        Route::get('/', [FrontEndController::class, 'get_all_categories']);
+        #Route::get('/', [FrontEndController::class, 'get_all_categories1']);
+    
+    });
     Route::get('/top_main_categories', [FrontEndController::class,'get_top_main_categories1']);
     Route::get('/top_categories', [FrontEndController::class, 'get_top_categories1']);
     #Route::get('/categories', [FrontEndController::class, 'get_all_categories']);
@@ -349,6 +423,7 @@ Route::group(['middleware' => ['XSS','language']], function () {
     Route::get('/get_categories', [FrontEndController::class, 'get_categories1']);
     // عرض التصنيفات من اجل عملية الاضافة
     Route::get('/get_categories_for_add_product', [FrontEndController::class, 'get_categories_for_add_product'])->middleware('auth:sanctum', 'abilities:user');
+    Route::get('new/get_categories_for_add_product', [FrontEndController::class, 'get_categories_for_add_product1'])->middleware('auth:sanctum', 'abilities:user');
     // تحويل الاموال من المعلقة الى قابلة للسحب
     Route::get('withdrawal/change_amount', [FrontEndController::class, 'chage_amount_withdrawal']);
     // حذف الخدمات الفارغة
@@ -368,6 +443,10 @@ Route::group(['middleware' => ['XSS','language']], function () {
         [FrontEndController::class, 'get_subcategories_for_add_product']
     )->middleware('auth:sanctum', 'abilities:user');
 
+    Route::get(
+        '/new/get_categories_for_add_product/{id}',
+        [FrontEndController::class, 'get_subcategories_for_add_product1']
+    )->middleware('auth:sanctum', 'abilities:user');
     // عرض التصنيف الفرعي مع خدماته
     Route::get('/get_products_subcategory/{id}', [FrontEndController::class, 'get_products_by_subcategory']);
     // عرض الخدمة الواحدة
