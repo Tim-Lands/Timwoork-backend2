@@ -338,13 +338,15 @@ Route::group(['middleware' => ['XSS','language']], function () {
     Route::prefix('categories')->group(function(){
         Route::get('/main', [FrontEndController::class, 'main_categories']);
         Route::get('/{id}/subcategories', [FrontEndController::class, 'get_subcategories']);
-        Route::get('/', [FrontEndController::class, 'get_all_categories']);
-        });
-    Route::get('/top_main_categories', [FrontEndController::class,'get_top_main_categories']);
-    Route::get('/top_categories', [FrontEndController::class, 'get_top_categories']);
+        #Route::get('/', [FrontEndController::class, 'get_all_categories']);
+        Route::get('/', [FrontEndController::class, 'get_all_categories1']);
+    
+    });
+    Route::get('/top_main_categories', [FrontEndController::class,'get_top_main_categories1']);
+    Route::get('/top_categories', [FrontEndController::class, 'get_top_categories1']);
     #Route::get('/categories', [FrontEndController::class, 'get_all_categories']);
     // عرض التصنيفات الرئيسية
-    Route::get('/get_categories', [FrontEndController::class, 'get_categories']);
+    Route::get('/get_categories', [FrontEndController::class, 'get_categories1']);
     // عرض التصنيفات من اجل عملية الاضافة
     Route::get('/get_categories_for_add_product', [FrontEndController::class, 'get_categories_for_add_product'])->middleware('auth:sanctum', 'abilities:user');
     // تحويل الاموال من المعلقة الى قابلة للسحب

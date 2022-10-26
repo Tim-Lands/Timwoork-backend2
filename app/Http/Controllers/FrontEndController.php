@@ -66,6 +66,39 @@ class FrontEndController extends Controller
         pluck('category_count_buying'); */
         return $top_categories;
     }
+
+
+
+    public function get_top_main_categories1(Request $request)
+    {
+        $xlocalization = "ar";
+            if ($request->headers->has('X-localization'))
+                $xlocalization = $request->header('X-localization');
+        $categories = DB::table('products')->join('categories', 'products.category_id', '=', 'categories.id')
+            ->join('categories as parent_category', 'categories.parent_id', '=', 'parent_category.id')
+            ->selectRaw("count(count_buying) as category_buying, parent_category.*")
+            ->groupBy('parent_category.id')
+            ->orderByDesc('category_buying')
+            ->get();
+        return response()->success('success', $categories);
+    }
+    public function get_top_categories1(Request $request)
+    {
+        $xlocalization = "ar";
+            if ($request->headers->has('X-localization'))
+                $xlocalization = $request->header('X-localization');
+        $top_categories = DB::table('products')->join('categories', 'products.category_id', '=', 'categories.id')
+            ->selectRaw("count(count_buying) as category_buying, categories.*")
+            ->groupBy('categories.id')
+            ->orderByDesc('category_buying')
+            ->get();
+        /* Product::groupBy('category_id')->
+        selectRaw('sum(count_buying) as category_count_buying')->
+        pluck('category_count_buying'); */
+        return $top_categories;
+    }
+
+
     public function main_categories(Request $request)
     {
         $xlocalization = "ar";
@@ -102,6 +135,33 @@ class FrontEndController extends Controller
      *
      * @return void
      */
+
+    public function get_categories1()
+    {
+        // جلب التصنيفات الرئيسية
+        $categories = Category::Selection()->with('subcategories', function ($q) {
+            $q->withCount('products');
+        })->parent()->get();
+        $data = [];
+        // عمل لووب من اجل فرز التصنيفات الرئيسية مع عدد الخدمات التابعة لها
+        foreach ($categories as $category) {
+            $data[] =
+                [
+                    'id'      => $category['id'],
+                    'name_ar' => $category['name_ar'],
+                    'name_en' => $category['name_en'],
+                    'name_fr' => $category['name_fr'],
+                    'parent_id' => $category['parent_id'],
+                    'icon'    => $category['icon'],
+                    "image"   => $category['image'],
+                    'products_count' => $category['subcategories']->sum('products_count')
+                ];
+        }
+
+        // اظهار العناصر
+        return response()->success(__("messages.oprations.get_all_data"), $data);
+    }
+
     public function get_categories_for_add_product()
     {
         // جلب التصنيفات الرئيسية
@@ -300,6 +360,30 @@ class FrontEndController extends Controller
             ->select('id',"name_{$xlocalization} AS name", 'slug', "description_{$xlocalization} AS description", 'icon', 'parent_id','image')
             ->with(['subcategories' => function ($q) use($xlocalization) {
                 $q->select('id', "name_{$xlocalization} AS name", 'parent_id', 'icon');
+            }])->parent()->get();
+
+        // اظهار العناصر
+        if (auth()->check() && auth()->user()->profile->gender == 1) {
+            return response()->success(__("messages.oprations.get_all_data"), $categories);
+        }
+        return response()->success(__("messages.oprations.get_all_data"), $categories);
+    }
+
+    public function get_all_categories1(Request $request)
+    {
+        $xlocalization = "ar";
+            if ($request->headers->has('X-localization'))
+                $xlocalization = $request->header('X-localization');
+        $sort_by = "all";
+        if($request->has('sort_by'))
+            $sort_by = $request->sort_by;
+            if($sort_by == "count_buying")
+                return $this->get_top_categories($request);
+        // جلب جميع الاصناف الرئيسة و الاصناف الفرعية عن طريق التصفح
+        $categories = Category::Selection()
+            ->select('*')
+            ->with(['subcategories' => function ($q) use($xlocalization) {
+                $q->select('*');
             }])->parent()->get();
 
         // اظهار العناصر
