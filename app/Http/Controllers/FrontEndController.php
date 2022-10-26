@@ -353,7 +353,7 @@ class FrontEndController extends Controller
         $categories = Category::Selection()
             ->select('*')
             ->with(['subcategories' => function ($q) use($xlocalization) {
-                $q->select('id', "name_{$xlocalization} AS name", 'parent_id', 'icon');
+                $q->select('*');
             }])->parent()->get();
 
         // اظهار العناصر
