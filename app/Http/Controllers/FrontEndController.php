@@ -351,7 +351,7 @@ class FrontEndController extends Controller
                 return $this->get_top_categories($request);
         // جلب جميع الاصناف الرئيسة و الاصناف الفرعية عن طريق التصفح
         $categories = Category::Selection()
-            ->select('id',"name_{$xlocalization} AS name", 'slug', "description_{$xlocalization} AS description", 'icon', 'parent_id','image')
+            ->select('*')
             ->with(['subcategories' => function ($q) use($xlocalization) {
                 $q->select('id', "name_{$xlocalization} AS name", 'parent_id', 'icon');
             }])->parent()->get();
