@@ -360,7 +360,7 @@ Route::group(['middleware' => ['XSS','language']], function () {
     // فتح الحسابات المحظورة عند انتهاء من وقت الحظر
     Route::get('/expired_unban_users', [UserContoller::class, 'expired_unban_users']);
     // عرض التصنيفات الفرعية
-    Route::get('/get_categories/{id}', [FrontEndController::class, 'get_subcategories']);
+    Route::get('/get_categories/{id}', [FrontEndController::class, 'get_subcategories1']);
 
     // عرض التصنيفات الفرعية من اجل عملية الاضافة
     Route::get(

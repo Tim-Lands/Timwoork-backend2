@@ -221,6 +221,29 @@ class FrontEndController extends Controller
         return response()->success(__("messages.oprations.get_all_data"), $subcategories);
     }
 
+    public function get_subcategories1(mixed $id, Request $request): JsonResponse
+    {
+        $xlocalization = "ar";
+            if ($request->headers->has('X-localization'))
+                $xlocalization = $request->header('X-localization');
+        // جلب التصنيف الرئيسي من اجل التحقق
+        $catagory = Category::whereId($id);
+        if (!$catagory->first()) {
+            return response()->error(__("messages.errors.element_not_found"), 403);
+        }
+        // جلب التصنيفات الفرعية
+        $subcategories = $catagory->select('id', 'slug',"name_{$xlocalization} AS name")
+            ->with('subCategories', function ($q) use($xlocalization) {
+                $q->select('id', "name_ar", "name_en", "name_fr", 'slug','parent_id')
+                    ->withCount('products')
+                    ->orderBy('id', 'asc')
+                    ->take(Category::SUBCATEGORY_DISPLAY)
+                    ->get();
+            })->first();
+        // اظهار العناصر
+        return response()->success(__("messages.oprations.get_all_data"), $subcategories);
+    }
+
     /**
      * get_subcategories_for_add_product => دالة اظهار التصنيفات الفرعية من اجل اضافة خدمة
      *
