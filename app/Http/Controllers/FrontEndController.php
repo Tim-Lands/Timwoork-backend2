@@ -66,6 +66,39 @@ class FrontEndController extends Controller
         pluck('category_count_buying'); */
         return $top_categories;
     }
+
+
+
+    public function get_top_main_categories1(Request $request)
+    {
+        $xlocalization = "ar";
+            if ($request->headers->has('X-localization'))
+                $xlocalization = $request->header('X-localization');
+        $categories = DB::table('products')->join('categories', 'products.category_id', '=', 'categories.id')
+            ->join('categories as parent_category', 'categories.parent_id', '=', 'parent_category.id')
+            ->selectRaw("count(count_buying) as category_buying, parent_category.*")
+            ->groupBy('parent_category.id')
+            ->orderByDesc('category_buying')
+            ->get();
+        return response()->success('success', $categories);
+    }
+    public function get_top_categories1(Request $request)
+    {
+        $xlocalization = "ar";
+            if ($request->headers->has('X-localization'))
+                $xlocalization = $request->header('X-localization');
+        $top_categories = DB::table('products')->join('categories', 'products.category_id', '=', 'categories.id')
+            ->selectRaw("count(count_buying) as category_buying, categories.*")
+            ->groupBy('categories.id')
+            ->orderByDesc('category_buying')
+            ->get();
+        /* Product::groupBy('category_id')->
+        selectRaw('sum(count_buying) as category_count_buying')->
+        pluck('category_count_buying'); */
+        return $top_categories;
+    }
+
+
     public function main_categories(Request $request)
     {
         $xlocalization = "ar";
