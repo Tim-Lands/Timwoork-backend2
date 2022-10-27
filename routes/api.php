@@ -451,6 +451,7 @@ Route::group(['middleware' => ['XSS','language']], function () {
     Route::get('/get_products_subcategory/{id}', [FrontEndController::class, 'get_products_by_subcategory']);
     // عرض الخدمة الواحدة
     Route::get('product/{slug}', [FrontEndController::class, 'show']);
+    Route::get('new/product/{slug}', [FrontEndController::class, 'show1']);
 
     // ارسال رسالة الى لوحة التحكم
     Route::post('/contactus', [FrontEndController::class, 'send_to_dashboad']);

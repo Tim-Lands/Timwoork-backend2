@@ -335,11 +335,12 @@ class FrontEndController extends Controller
 
     public function show(mixed $slug, Request $request): JsonResponse
     {
+        try{
         $xlocalization = "ar";
             if ($request->headers->has('X-localization'))
                 $xlocalization = $request->header('X-localization');
         // id او slug جلب الخدمة بواسطة
-        $product = Product::select('id',"title_{$xlocalization} AS title","slug_{$xlocalization} AS slug","content_{$xlocalization} AS content",'price', 'duration','thumbnail  ')
+        $product = Product::select('*')
             ->whereSlug($slug)
             ->orWhere('id', $slug)
             ->withOnly([
@@ -392,7 +393,85 @@ class FrontEndController extends Controller
         // اظهار العناصر
         return response()->success(__("messages.oprations.get_data"), $product);
     }
+    catch(Exception $ex){
+        echo $ex;
+    }
+    }
 
+    public function show1(mixed $slug, Request $request): JsonResponse
+    {
+        try{
+        $xlocalization = "ar";
+            if ($request->headers->has('X-localization'))
+                $xlocalization = $request->header('X-localization');
+        // id او slug جلب الخدمة بواسطة
+        $product = Product::select('id',"title_{$xlocalization} AS title","slug_{$xlocalization} AS slug","content_{$xlocalization} AS content",'price', 'duration','profile_seller_id')
+            ->whereSlug($slug)
+            ->orWhere('id', $slug)
+            ->withOnly([
+                'subcategory' => function ($q) use($xlocalization) {
+                    $q->select('id', 'parent_id', "name_{$xlocalization} AS name")
+                        ->with('category', function ($q) use($xlocalization) {
+                            $q->select('id', "name_{$xlocalization} AS name")
+                                ->without('subcategories');
+                        })->withCount('products');
+                },
+                'developments' => function ($q) use($xlocalization) {
+                    $q->select('id', "title_{$xlocalization} AS title", 'duration', 'price','product_id', 'created_at');
+                },
+                'product_tag',
+                'ratings' => function ($q) use($xlocalization) {
+                    $q->select('id','user_id','product_id','rating',"comment_{$xlocalization} AS comment",'reply','status','created_at'
+                    ,'item_id');
+                },
+                'ratings.user',
+                'ratings.user.profile'=>function($q){
+                    $q->select('id','steps','first_name','last_name','avatar','avatar_url','gender','date_of_birth','user_id','country_id'
+                ,'badge_id','level_id','full_name','currency_id');
+                },
+                'ratings.user.profile.level'=>function($q) use($xlocalization){
+                    $q->select('id',"name_{$xlocalization} AS name");
+                },
+                'ratings.user.profile.badge'=>function($q) use($xlocalization){
+                    $q->select('id',"name_{$xlocalization} AS name");
+                },
+                'galaries' => function ($q) {
+                    $q->select('id', 'path', 'product_id');
+                },
+                'video' => function ($q) {
+                    $q->select('id', 'product_id', 'url_video');
+                },
+                'profileSeller' => function ($q) use($xlocalization) {
+                    $q->select('id','portfolio', "bio_{$xlocalization} AS bio", 'profile_id','seller_badge_id','seller_level_id',);
+                },
+                'profileSeller.profile'=>function($q) use($xlocalization){
+                    $q->select('id','steps','first_name','last_name','avatar','avatar_url','gender','date_of_birth','user_id','country_id'
+                ,'badge_id','level_id','full_name','currency_id')->without('level','badge','wise_account','paypal_account');
+                },
+                'profileSeller.level'=>function($q) use($xlocalization){
+                    $q->select('id',"name_{$xlocalization} AS name");
+                },
+                'profileSeller.badge'=>function($q) use($xlocalization){
+                    $q->select('id',"name_{$xlocalization} AS name");
+                },
+            ])
+            ->where('is_completed', 1)
+            //->withAvg('ratings', 'rating')
+            ->withCount('ratings')
+
+            ->first();
+        // فحص اذا كان يوجد هذا العنصر
+        if (!$product) {
+            // رسالة خطأ
+            return response()->error(__("messages.errors.element_not_found"), 403);
+        }
+        // اظهار العناصر
+        return response()->success(__("messages.oprations.get_data"), $product);
+    }
+    catch(Exception $ex){
+        echo $ex;
+    }
+    }
     /**
      * get_all_categories => دالة عرض كل التصنيفات
      *
