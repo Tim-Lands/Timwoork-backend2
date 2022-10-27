@@ -345,9 +345,9 @@ class FrontEndController extends Controller
             ->orWhere('id', $slug)
             ->withOnly([
                 'subcategory' => function ($q) use($xlocalization) {
-                    $q->select('id', 'parent_id', "name_{$xlocalization} AS name")
+                    $q->select('*')
                         ->with('category', function ($q) use($xlocalization) {
-                            $q->select('id', "name_{$xlocalization} AS name")
+                            $q->select('id', "*")
                                 ->without('subcategories');
                         })->withCount('products');
                 },
