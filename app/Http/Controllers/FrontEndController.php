@@ -347,7 +347,7 @@ class FrontEndController extends Controller
                 'subcategory' => function ($q) use($xlocalization) {
                     $q->select('*')
                         ->with('category', function ($q) use($xlocalization) {
-                            $q->select('id', "*")
+                            $q->select("*")
                                 ->without('subcategories');
                         })->withCount('products');
                 },
