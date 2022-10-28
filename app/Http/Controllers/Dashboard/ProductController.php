@@ -256,6 +256,43 @@ class ProductController extends Controller
         }
     }
 
+    public function updateIsArchieved($id, Request $request)
+    {
+        try {
+            $new_is_archieved = $request->is_archieved;
+            if(!in_array($new_is_archieved,[0,1]))
+                return response()->error('',400);
+            //id  جلب العنصر بواسطة
+            $product = Product::find($id);
+            // شرط اذا كان العنصر موجود
+            if (!$product || !is_numeric($id)) {
+                // رسالة خطأ
+                return response()->error(__("messages.errors.element_not_found"), 403);
+            }
+
+            // ============================== حذف الخدمة ====================================:
+            // بداية المعاملة مع البيانات المرسلة لقاعدة بيانات :
+            DB::beginTransaction();
+            // عملية حذف الخدمة
+            if ($new_is_archieved==0)
+                $product->delete();
+            else
+                $product->restore();
+            // انهاء المعاملة بشكل جيد :
+            DB::commit();
+            // ==============================================================================
+            // رسالة نجاح عملية الاضافة:
+            return response()->success(__("messages.oprations.delete_success"), $product);
+        } catch (Exception $ex) {
+            return $ex;
+            // لم تتم المعاملة بشكل نهائي و لن يتم ادخال اي بيانات لقاعدة البيانات
+            DB::rollback();
+            // رسالة خطأ
+            return response()->error(__("messages.errors.error_database"), 403);
+        }
+    }
+
+    
     /**
      * products_soft_deleted => جلب الخدمات المحذوفة
      *

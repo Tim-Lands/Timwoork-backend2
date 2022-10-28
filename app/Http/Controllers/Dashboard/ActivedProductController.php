@@ -24,6 +24,61 @@ class ActivedProductController extends Controller
      * @param  mixed $id => id المعرف
      * @return void
      */
+
+    /* public function updateStatus(mixed $id, Request $request){
+        try {
+            $new_status = $request->status;
+            if (!in_array($new_status,[Product::PRODUCT_ACTIVE, Product::PRODUCT_REJECT,'null']))
+                return response()->error('',400);
+            // تحديد الخدمة
+            $product = Product::find($id);
+            // فحص العنصر موجود ام لا
+            if (!$product) {
+                // رسالة خطأ
+                return response()->error(__('messages.errors.element_not_found'), Response::HTTP_NOT_FOUND);
+            }
+            // شرط اذا كانت الخدمة مقبولة
+            if ($product->status == Product::PRODUCT_ACTIVE) {
+                // رسالة خطأ
+                return response()->error(__('messages.product.accepted_product'), Response::HTTP_NOT_FOUND);
+            }
+            // ============= تنشيط الخدمة  ================:
+            // بداية المعاملة مع البيانات المرسلة لقاعدة بيانات :
+            DB::beginTransaction();
+            // عملية تنشيط الخدمة :
+            if ($new_status == "null")
+                $product->status = null;
+            else
+                $product->status = $new_status;
+            $product->save();
+            // جلب المستخدم من اجل ارسال الاشعار
+            $user = $product->profileSeller->profile->user;
+            // ارسال اشعار للمستخدم
+            if($new_status == Product::PRODUCT_ACTIVE)
+                event(new AcceptProductEvent($user, $product));
+            else if($new_status == Product::PRODUCT_REJECT)
+            event(new RejectProductEvent(
+                $user,
+                $product,
+                $request->cause,
+                $cause_ar,
+                $cause_en,
+                $cause_fr,
+
+            ));;
+            // انهاء المعاملة بشكل جيد :
+            DB::commit();
+            // رسالة نجاح عملية التنشيط:
+            return response()->success(__('messages.dashboard.active_status_product'), $product);
+            // =================================================
+        } catch (Exception $ex) {
+            // لم تتم المعاملة بشكل نهائي و لن يتم ادخال اي بيانات لقاعدة البيانات
+            DB::rollback();
+            // رسالة خطأ :
+            return response()->error(__('messages.errors.error_database'), Response::HTTP_FORBIDDEN);
+        }
+    } */
+
     public function activeProduct(mixed $id)
     {
         try {

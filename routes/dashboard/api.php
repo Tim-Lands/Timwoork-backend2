@@ -57,6 +57,20 @@ Route::group(['middleware' => ['XSS']], function () {
             // مسار حذف العنصر
             Route::post('/{id}/delete', [CategoryController::class, 'delete']);
         });
+        Route::prefix('new/categories')->group(function () {
+            // مسار العرض
+            Route::get('/', [CategoryController::class, 'index1']);
+            // مسار انشاء عنصر جديد
+            Route::post('/', [CategoryController::class, 'store1']);
+            // مسار جلب عنصر الواحد
+            Route::get('/{id}', [CategoryController::class, 'show1']);
+            // مسار التعديل على العنصر
+            Route::patch('/{id}', [CategoryController::class, 'update1']);
+            // مسار حذف العنصر
+            Route::delete('/{id}', [CategoryController::class, 'delete1']);
+            Route::get('/create', [SubCategoryController::class, 'create1']);
+            Route::put('/subcategories', [SubCategoryController::class, 'store1']);
+        });
         // ================================ مسارات المستخدمين ====================================
         Route::prefix('users')->group(function () {
             // مسار العرض
@@ -75,6 +89,20 @@ Route::group(['middleware' => ['XSS']], function () {
             Route::post('/{id}/unban', [UserContoller::class, 'user_unban']);
         });
 
+        Route::prefix('new/users')->group(function () {
+            // مسار العرض
+            Route::get('/', [UserContoller::class, 'get_users1']);
+            // مسار انشاء عنصر جديد
+            Route::get('/{id}', [UserContoller::class, 'show1']);
+            //إرسال إشعار للمستخدم
+            Route::put('/{id}/notifications', [UserContoller::class, 'sendNotification']);
+            // حظر المستخدم
+            Route::post('/{id}/ban', [UserContoller::class, 'user_ban']);
+            // فك حظر المستخدم
+            Route::post('/{id}/unban', [UserContoller::class, 'user_unban']);
+        });
+
+
         // =============================== مسارات التصنيف الفرعي ====================================
         Route::prefix('subcategories')->group(function () {
 
@@ -90,6 +118,19 @@ Route::group(['middleware' => ['XSS']], function () {
             Route::post('/{id}/delete', [SubCategoryController::class, 'delete']);
         });
 
+        Route::prefix('new/subcategories')->group(function () {
+
+            // مسار عرض عنصر من اجل انشاء
+            
+            // مسار انشاء عنصر جديد
+            
+            // مسار جلب عنصر الواحد
+            Route::get('/{id}', [SubCategoryController::class, 'show1']);
+            // مسار التعديل على العنصر
+            Route::patch('/{id}', [SubCategoryController::class, 'update']);
+            // مسار حذف العنصر
+            Route::delete('/{id}', [SubCategoryController::class, 'delete']);
+        });
         // =============================== مسارات المستوى ==================================
 
         Route::prefix('levels')->group(function () {
@@ -103,6 +144,19 @@ Route::group(['middleware' => ['XSS']], function () {
             Route::post('/{id}/update', [LevelController::class, 'update']);
             // مسار حذف العنصر
             Route::post('/{id}/delete', [LevelController::class, 'delete']);
+        });
+
+        Route::prefix('new/levels')->group(function () {
+            // مسار العرض
+            Route::get('/', [LevelController::class, 'index1']);
+            // مسار انشاء عنصر جديد
+            Route::post('/', [LevelController::class, 'store1']);
+            // مسار جلب عنصر الواحد
+            Route::get('/{id}', [LevelController::class, 'show1']);
+            // مسار التعديل على العنصر
+            Route::put('/{id}', [LevelController::class, 'update1']);
+            // مسار حذف العنصر
+            Route::delete('/{id}', [LevelController::class, 'delete1']);
         });
 
         // =============================== مسارات المستوى البائع ==================================
@@ -179,6 +233,50 @@ Route::group(['middleware' => ['XSS']], function () {
             Route::post('/{id}/delete', [ProductController::class, 'delete']);
             // حذف الخدمة نهائيا
             Route::post('/{id}/force_delete_product', [ProductController::class, 'force_delete_product']);
+            // مسار التعديل المرحلة الاولى
+            Route::post('/{id}/step_one', [ProductController::class,'product_step_one']);
+            // مسار التعديل المرحلة الثانية
+            Route::post('/{id}/step_two', [ProductController::class,'product_step_two']);
+            // مسار التعديل المرحلة الثالثة
+            Route::post('/{id}/step_three', [ProductController::class,'product_step_three']);
+            // مسار التعديل المرحلة الرابعة
+            Route::post('/{id}/step_four', [ProductController::class,'product_step_four']);
+            // مسار التعديل على الصورة البارزة
+            Route::post('/{id}/upload_thumbnail', [ProductController::class,'upload_thumbnail']);
+            // مسار التعديل المعرض
+            Route::post('/{id}/delete_galary', [ProductController::class,'delete_one_galary']);
+            // مسار حذف الصورة من المعرض
+            Route::post('/{id}/upload_galaries', [ProductController::class,'upload_galaries']);
+        });
+
+        Route::prefix('new/products')->group(function () {
+            // مسار العرض الخدمات
+            Route::get('/', [ProductController::class, 'index']);
+            // مسار العرض الخدمات التي تم تنشيطها
+            Route::get('/active/status', [ProductController::class, 'getProductsActived']);
+            // مسار العرض الخدمات التي تم تنشيطها
+            Route::get('/reject/status', [ProductController::class, 'getProductsRejected']);
+            // عرض الرسائل خدمات المرفوضة
+            Route::get('/messages_rejected', [ProductController::class, 'get_all_messages_for_rejected_product']);
+            // جلب الخدمات المحذوفة
+            Route::get('/archieved', [ProductController::class, 'get_products_soft_deleted']);
+            // مسار جلب عنصر الواحد
+            Route::get('/{id}', [ProductController::class, 'show']);
+            // مسار جلب عنصر الواحد من اجل الفحص
+            Route::get('show_product_checked/{id}', [ProductController::class, 'show_product_for_checked']);
+            // مسار تنشيط الخدمة
+            // مسار رفض الخدمة
+             Route::post('/{id}/rejectProduct', [ActivedProductController::class, 'rejectProduct']);
+            Route::post('/{id}/disactive_product', [ActivedProductController::class, 'disactiveProduct']);
+
+            // مسار ارسال رسالة رفض الخدمة
+            Route::post('/{id}/send_reject_product', RejectProductController::class);
+            // استرجاع الخدمة المحذوفة
+            Route::post('/{id}/restore_product_deleted', [ProductController::class, 'restore_product_deleted']);
+            // حذف الخدمة
+            Route::put('/{id}/is_archieved', [ProductController::class, 'updateIsArchieved']);
+            // حذف الخدمة نهائيا
+            Route::delete('/{id}', [ProductController::class, 'force_delete_product']);
             // مسار التعديل المرحلة الاولى
             Route::post('/{id}/step_one', [ProductController::class,'product_step_one']);
             // مسار التعديل المرحلة الثانية

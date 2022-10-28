@@ -23,9 +23,11 @@ class FilterController extends Controller
                         $q->select('profile_id','id');
                 
                 },
+                
                 'profileSeller.profile'=>function($q) use($xlocalization){
-                        $q->select('id', 'first_name','last_name', 'avatar_url','gender','user_id','full_name')->without(['level','badge']);
+                        $q->select('id', 'first_name','last_name', 'avatar_url','gender','user_id','full_name')->without(['level','badge','wise_account','paypal_account']);
                 },
+                'profileSeller.profile.user',
 
                 'subcategory' => function ($q) use($xlocalization) {
                     $q->select('id', 'parent_id', "name_{$xlocalization} AS name")

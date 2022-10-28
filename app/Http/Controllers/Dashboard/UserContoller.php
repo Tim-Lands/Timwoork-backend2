@@ -39,6 +39,27 @@ class UserContoller extends Controller
         return response()->success(__('messages.oprations.get_all_data'), $users);
     }
 
+    public function get_users1(Request $request)
+    {
+        // تصفح المستخدمين
+        $paginate = $request->query('paginate') ? $request->query('paginate') : 10;
+        $is_banned = "all";
+        if($request->has('is_banned')){
+            $is_banned = $request->is_banned;
+            if ($is_banned =='true')
+                return $this->get_user_banned($request);
+            else if ($is_banned == "false")
+                return $this->get_user_unbanned($request);
+        }
+        // جلب جميع المستخدمين
+        $users = User::selection()
+            ->filter()
+            ->with('profile')
+            ->latest()
+            ->paginate($paginate);
+        // رسالة نجاح
+        return response()->success(__('messages.oprations.get_all_data'), $users);
+    }
 
     /**
      * sendNotification => ارسال اشعار للمستخدم
@@ -136,6 +157,19 @@ class UserContoller extends Controller
         return response()->success(__('messages.oprations.get_data'), $user);
     }
 
+    public function show1($id)
+    {
+        // جلب المستخدم الواحد
+        $user = User::selection()->whereId($id)->with(['profile', 'ratings', 'favorites'])->first();
+        // اذا لم يجد المستخدم
+        if (!$user) {
+            // رسالة خطأ
+            return response()->error(__("messages.errors.element_not_found"), Response::HTTP_NOT_FOUND);
+        }
+
+        // رسالة نجاح العملية
+        return response()->success(__('messages.oprations.get_data'), $user);
+    }
 
     /**
      * get_user_banned => جلب الأعضاء المحظورين
