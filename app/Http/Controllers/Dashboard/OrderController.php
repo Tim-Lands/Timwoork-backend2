@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Dashboard;
 use App\Http\Controllers\Controller;
 use App\Models\Item;
 use App\Models\Order;
+use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 
@@ -116,6 +117,7 @@ class OrderController extends Controller
     public function get_order_item($id)
     {
         // جلب الطلبية
+        try{
         $product_id = Item::whereId($id)->first()->number_product;
         //return $product_id;
         $item = Item::select('id', 'order_id', 'uuid', 'title', 'number_product', 'price_product', 'profile_seller_id', 'duration', 'status')
@@ -154,4 +156,8 @@ class OrderController extends Controller
         // رسالة نجاح
         return response()->success(__("messages.oprations.get_data"), $item);
     }
+    catch(Exception $exc){
+        echo $exc;
+    }
+}
 }

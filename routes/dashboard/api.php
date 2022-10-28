@@ -467,7 +467,7 @@ Route::group(['middleware' => ['XSS']], function () {
             // عرض طلبية الواحدة
             Route::get('/{id}', [OrderController::class, 'show1']);
             // عرض عنصر من عناصر الطلبية
-            Route::get('item/{id}', [OrderController::class, 'get_order_item1']);
+            Route::get('item/{id}', [OrderController::class, 'get_order_item']);
         });
 
 
@@ -515,6 +515,23 @@ Route::group(['middleware' => ['XSS']], function () {
             Route::post('/message/{id}/update', [ActivityController::class, 'update_message']);
             // مسار تنشيط البوابة
             Route::post('/message/{id}/delete', [ActivityController::class, 'delete_message']);
+        });
+
+        Route::prefix('new/activities')->group(function () {
+            // مسار العرض جميع الاشعارات
+            Route::get('/notifications', [ActivityController::class, 'get_all_notifications']);
+            //  مسار جلب جميع المحادثات
+            Route::get('/conversations', [ActivityController::class, 'get_all_conversations']);
+            // مسار جلب المعاملات المالية
+            Route::get('/transactions', [ActivityController::class, 'all_financial_transactions']);
+            // مسار جلب المحادثة الواحدة
+            Route::get('/conversations/{id}', [ActivityController::class, 'get_conversation']);
+            // حذف المحادثة
+            Route::delete('conversation/{id}', [ActivityController::class, 'get_conversation']);
+            // التعديل على الرسالة
+            Route::patch('/message/{id}', [ActivityController::class, 'update_message']);
+            // مسار تنشيط البوابة
+            Route::delete('/message/{id}', [ActivityController::class, 'delete_message']);
         });
 
         Route::prefix('external_rating')->group(function () {
