@@ -305,13 +305,14 @@ Route::group(['middleware' => ['XSS']], function () {
             Route::get('show_product_checked/{id}', [ProductController::class, 'show_product_for_checked']);
             // مسار تنشيط الخدمة
             // مسار رفض الخدمة
-             Route::post('/{id}/rejectProduct', [ActivedProductController::class, 'rejectProduct']);
+            Route::post('/{id}/activeProduct', [ActivedProductController::class, 'activeProduct']);
+            Route::post('/{id}/rejectProduct', [ActivedProductController::class, 'rejectProduct']);
             Route::post('/{id}/disactive_product', [ActivedProductController::class, 'disactiveProduct']);
 
             // مسار ارسال رسالة رفض الخدمة
             Route::post('/{id}/send_reject_product', RejectProductController::class);
             // استرجاع الخدمة المحذوفة
-            Route::post('/{id}/restore_product_deleted', [ProductController::class, 'restore_product_deleted']);
+            #Route::post('/{id}/restore_product_deleted', [ProductController::class, 'restore_product_deleted']);
             // حذف الخدمة
             Route::put('/{id}/is_archieved', [ProductController::class, 'updateIsArchieved']);
             // حذف الخدمة نهائيا
@@ -345,6 +346,18 @@ Route::group(['middleware' => ['XSS']], function () {
             // مسار حذف العنصر
             Route::post('/{id}/delete', [TagController::class, 'delete']);
         });
+        Route::prefix('new/tags')->group(function () {
+            // مسار العرض
+            Route::get('/', [TagController::class, 'index']);
+            // مسار انشاء عنصر جديد
+            Route::post('/', [TagController::class, 'store']);
+            // مسار جلب عنصر الواحد
+            Route::get('/{id}', [TagController::class, 'show']);
+            // مسار التعديل على العنصر
+            Route::patch('/{id}', [TagController::class, 'update']);
+            // مسار حذف العنصر
+            Route::delete('/{id}', [TagController::class, 'delete']);
+        });
         // =============================== مسارات الدولة ==================================
 
         Route::prefix('countries')->group(function () {
@@ -358,6 +371,19 @@ Route::group(['middleware' => ['XSS']], function () {
             Route::post('/{id}/update', [CountryController::class, 'update']);
             // مسار حذف العنصر
             Route::post('/{id}/delete', [CountryController::class, 'delete']);
+        });
+
+        Route::prefix('new/countries')->group(function () {
+            // مسار العرض
+            Route::get('/', [CountryController::class, 'index']);
+            // مسار انشاء عنصر جديد
+            Route::post('/', [CountryController::class, 'store']);
+            // مسار جلب عنصر الواحد
+            Route::get('/{id}', [CountryController::class, 'show']);
+            // مسار التعديل على العنصر
+            Route::patch('/{id}', [CountryController::class, 'update']);
+            // مسار حذف العنصر
+            Route::delete('/{id}', [CountryController::class, 'delete']);
         });
 
         // =============================== مسارات الوسم ====================================
@@ -374,6 +400,19 @@ Route::group(['middleware' => ['XSS']], function () {
             Route::post('/{id}/delete', [SkillController::class, 'delete']);
         });
 
+        Route::prefix('new/skills')->group(function () {
+            // مسار العرض
+            Route::get('/', [SkillController::class, 'index']);
+            // مسار انشاء عنصر جديد
+            Route::post('/', [SkillController::class, 'store']);
+            // مسار جلب عنصر الواحد
+            Route::get('/{id}', [SkillController::class, 'show']);
+            // مسار التعديل على العنصر
+            Route::patch('/{id}', [SkillController::class, 'update']);
+            // مسار حذف العنصر
+            Route::delete('/{id}', [SkillController::class, 'delete']);
+        });
+
         // =============================== مسارات الوسم ====================================
         Route::prefix('languages')->group(function () {
             // مسار العرض
@@ -386,6 +425,18 @@ Route::group(['middleware' => ['XSS']], function () {
             Route::post('/{id}/update', [LanguageController::class, 'update']);
             // مسار حذف العنصر
             Route::post('/{id}/delete', [LanguageController::class, 'delete']);
+        });
+        Route::prefix('new/languages')->group(function () {
+            // مسار العرض
+            Route::get('/', [LanguageController::class, 'index']);
+            // مسار انشاء عنصر جديد
+            Route::post('/', [LanguageController::class, 'store']);
+            // مسار جلب عنصر الواحد
+            Route::get('/{id}', [LanguageController::class, 'show']);
+            // مسار التعديل على العنصر
+            Route::patch('/{id}', [LanguageController::class, 'update']);
+            // مسار حذف العنصر
+            Route::delete('/{id}', [LanguageController::class, 'delete']);
         });
         // =============================== مسار اتصل بنا ====================================
         Route::prefix('contacts')->group(function () {
@@ -410,6 +461,15 @@ Route::group(['middleware' => ['XSS']], function () {
             // عرض عنصر من عناصر الطلبية
             Route::get('item/{id}', [OrderController::class, 'get_order_item']);
         });
+        Route::prefix('new/orders')->group(function () {
+            //  عرض كل الطلبيات
+            Route::get('/', [OrderController::class, 'index1']);
+            // عرض طلبية الواحدة
+            Route::get('/{id}', [OrderController::class, 'show1']);
+            // عرض عنصر من عناصر الطلبية
+            Route::get('item/{id}', [OrderController::class, 'get_order_item1']);
+        });
+
 
         /* ------------------------------- مسار طلبيات ------------------------------ */
         Route::prefix('withdrawals')->group(function () {

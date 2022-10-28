@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Dashboard;
 use App\Http\Controllers\Controller;
 use App\Models\Item;
 use App\Models\Order;
+use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 
 class OrderController extends Controller
@@ -32,6 +33,25 @@ class OrderController extends Controller
         return response()->success(__('messages.oprations.get_all_data'), $orders);
     }
 
+    public function index1()
+    {
+        // التصفح
+        $paginate = request()->query('paginate') ? request()->query('paginate') : 10;
+        // جلب كل الطلبيات
+        $orders = Order::selection()->with('cart', function ($q) {
+            $q->select('id', 'user_id')
+                ->with('user', function ($q) {
+                    $q->select('id', 'username')->with('profile', function ($q) {
+                        $q->select('id', 'first_name', 'last_name', 'user_id', 'full_name')
+                        ->without(['wise_account','paypal_account','bank_account','bank_transfer_detail','counrty']);
+                    });
+                });
+        })->latest()->paginate($paginate);
+        // رسالة نجاح
+        return response()->success(__('messages.oprations.get_all_data'), $orders);
+    }
+
+
     /**
      * show
      *
@@ -47,6 +67,32 @@ class OrderController extends Controller
                                        ->with('profileSeller', function ($q) {
                                            $q->select('id', 'profile_id')->with('profile', function ($q) {
                                                $q->select('id', 'user_id', 'first_name', 'last_name')->with(['user:id,username'])
+                                               ->without(['wise_account','paypal_account','bank_account','bank_transfer_detail','level','badge','counrty'])
+                                               ;
+                                           })->without('level', 'badge');
+                                       });
+                                   }])->first();
+
+        if (!$order) {
+            // رسالة خطأ
+            return response()->error(__("messages.errors.element_not_found"), Response::HTTP_NOT_FOUND);
+        }
+        // رسالة نجاح العملية
+        return response()->success(__('messages.oprations.get_data'), $order);
+    }
+
+    public function show1($id, Request $request)
+    {
+        $xlocalization = "ar";
+            if ($request->headers->has('X-localization'))
+                $xlocalization = $request->header('X-localization');
+        // جلب الطلبية مع عناصرها
+        $order = Order::selection()->whereId($id)
+                                   ->with(['items' => function ($q) use($xlocalization) {
+                                       $q->select('id', 'order_id', 'uuid', "title_{$xlocalization} AS title", 'duration', 'status', 'profile_seller_id')
+                                       ->with('profileSeller', function ($q) {
+                                           $q->select('id', 'profile_id')->with('profile', function ($q) {
+                                               $q->select('id', 'user_id', 'first_name', 'last_name','avatar')->with(['user:id,username'])
                                                ->without(['wise_account','paypal_account','bank_account','bank_transfer_detail','level','badge','counrty'])
                                                ;
                                            })->without('level', 'badge');
