@@ -20,10 +20,15 @@ class FilterController extends Controller
             ->where('is_active', 1)
             ->with([
                 'profileSeller' => function ($q) {
-                        $q->select('profile_id','id');
+                        $q->select('profile_id','id','seller_badge_id','seller_level_id');
                 
                 },
-                
+                'profileSeller.level'=>function($q) use($xlocalization){
+                    $q->select('id', "name_{$xlocalization} AS name");
+                },
+                'profileSeller.badge'=>function($q) use($xlocalization){
+                    $q->select('id', "name_{$xlocalization} AS name");
+                },
                 'profileSeller.profile'=>function($q) use($xlocalization){
                         $q->select('id', 'first_name','last_name', 'avatar_url','gender','user_id','full_name')->without(['level','badge','wise_account','paypal_account']);
                 },

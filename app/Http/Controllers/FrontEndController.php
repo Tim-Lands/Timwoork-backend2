@@ -396,10 +396,10 @@ class FrontEndController extends Controller
             if ($request->headers->has('X-localization'))
                 $xlocalization = $request->header('X-localization');
         // id او slug جلب الخدمة بواسطة
-        $product = Product::select('id',"title_{$xlocalization} AS title","slug_{$xlocalization} AS slug","content_{$xlocalization} AS content",'price', 'duration','profile_seller_id')
+        $product = Product::select('id',"title_{$xlocalization} AS title","slug_{$xlocalization} AS slug","content_{$xlocalization} AS content",'price', 'duration','profile_seller_id','thumbnail', 'category_id')
             ->whereSlug($slug)
             ->orWhere('id', $slug)
-            ->withOnly([
+            ->with([
                 'subcategory' => function ($q) use($xlocalization) {
                     $q->select('id', 'parent_id', "name_{$xlocalization} AS name")
                         ->with('category', function ($q) use($xlocalization) {
@@ -407,6 +407,7 @@ class FrontEndController extends Controller
                                 ->without('subcategories');
                         })->withCount('products');
                 },
+                
                 'developments' => function ($q) use($xlocalization) {
                     $q->select('id', "title_{$xlocalization} AS title", 'duration', 'price','product_id', 'created_at');
                 },
