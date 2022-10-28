@@ -174,6 +174,19 @@ Route::group(['middleware' => ['XSS']], function () {
             Route::post('/{id}/delete', [SellerLevelController::class, 'delete']);
         });
 
+        Route::prefix('new/levels_sellers')->group(function () {
+            // مسار العرض
+            Route::get('/', [SellerLevelController::class, 'index']);
+            // مسار انشاء عنصر جديد
+            Route::post('/', [SellerLevelController::class, 'store']);
+            // مسار جلب عنصر الواحد
+            Route::get('/{id}', [SellerLevelController::class, 'show']);
+            // مسار التعديل على العنصر
+            Route::patch('/{id}', [SellerLevelController::class, 'update']);
+            // مسار حذف العنصر
+            Route::delete('/{id}', [SellerLevelController::class, 'delete']);
+        });
+
         // =============================== مسارات الشارة ====================================
 
         Route::prefix('badges')->group(function () {
@@ -188,6 +201,19 @@ Route::group(['middleware' => ['XSS']], function () {
             // مسار حذف العنصر
             Route::post('/{id}/delete', [BadgeController::class, 'delete']);
         });
+
+        Route::prefix('new/badges')->group(function () {
+            // مسار العرض
+            Route::get('/', [BadgeController::class, 'index']);
+            // مسار انشاء عنصر جديد
+            Route::post('/', [BadgeController::class, 'store']);
+            // مسار جلب عنصر الواحد
+            Route::get('/{id}', [BadgeController::class, 'show']);
+            // مسار التعديل على العنصر
+            Route::patch('/{id}', [BadgeController::class, 'update']);
+            // مسار حذف العنصر
+            Route::delete('/{id}', [BadgeController::class, 'delete']);
+        });
         // =============================== مسارات الشارة البائع ====================================
 
         Route::prefix('badges_sellers')->group(function () {
@@ -201,6 +227,19 @@ Route::group(['middleware' => ['XSS']], function () {
             Route::post('/{id}/update', [SellerBadgeController::class, 'update']);
             // مسار حذف العنصر
             Route::post('/{id}/delete', [SellerBadgeController::class, 'delete']);
+        });
+
+        Route::prefix('new/badges_sellers')->group(function () {
+            // مسار العرض
+            Route::get('/', [SellerBadgeController::class, 'index']);
+            // مسار انشاء عنصر جديد
+            Route::post('/', [SellerBadgeController::class, 'store']);
+            // مسار جلب عنصر الواحد
+            Route::get('/{id}', [SellerBadgeController::class, 'show']);
+            // مسار التعديل على العنصر
+            Route::patch('/{id}', [SellerBadgeController::class, 'update']);
+            // مسار حذف العنصر
+            Route::delete('/{id}', [SellerBadgeController::class, 'delete']);
         });
         
         // =============================== مسارات الخدمة ====================================

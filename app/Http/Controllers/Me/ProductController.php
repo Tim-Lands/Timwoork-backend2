@@ -768,7 +768,7 @@ class ProductController extends Controller
     public function updateIsActive($id, Request $request)
     {
         try {
-            if(strtolower($request->is_active) == "true")
+            if(strtolower($request->is_active) == "true" || $request->is_active==1)
                 $is_active=1;
             else
                 $is_active = 0;

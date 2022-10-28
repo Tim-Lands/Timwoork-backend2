@@ -55,7 +55,7 @@ Route::delete('/products/{id}',[ProductController::class,'delete']);
 /* Route::get('/products',[ProductController::class],'index');
 Route::get('/products/{id}',[ProductController::class, 'show']); */
 
-Route::PUT('/products/{id}/is_active',[ProductController::class,'updateIsActive']);
+Route::put('/products/{id}/is_active',[ProductController::class,'updateIsActive']);
 }
 catch(Exception $exc){
     echo("###############");
