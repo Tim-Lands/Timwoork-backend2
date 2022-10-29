@@ -290,7 +290,7 @@ Route::group(['middleware' => ['XSS']], function () {
 
         Route::prefix('new/products')->group(function () {
             // مسار العرض الخدمات
-            Route::get('/', [ProductController::class, 'index']);
+            Route::get('/', [ProductController::class, 'index1']);
             // مسار العرض الخدمات التي تم تنشيطها
             Route::get('/active/status', [ProductController::class, 'getProductsActived']);
             // مسار العرض الخدمات التي تم تنشيطها
@@ -326,11 +326,11 @@ Route::group(['middleware' => ['XSS']], function () {
             // مسار التعديل المرحلة الرابعة
             Route::post('/{id}/step_four', [ProductController::class,'product_step_four']);
             // مسار التعديل على الصورة البارزة
-            Route::post('/{id}/upload_thumbnail', [ProductController::class,'upload_thumbnail']);
+            Route::put('/{id}/thumbnail', [ProductController::class,'upload_thumbnail']);
             // مسار التعديل المعرض
-            Route::post('/{id}/delete_galary', [ProductController::class,'delete_one_galary']);
+            Route::delete('/{id}/galaries', [ProductController::class,'delete_one_galary']);
             // مسار حذف الصورة من المعرض
-            Route::post('/{id}/upload_galaries', [ProductController::class,'upload_galaries']);
+            Route::put('/{id}/galaries', [ProductController::class,'upload_galaries']);
         });
 
         // =============================== مسارات الوسم ====================================
@@ -488,13 +488,13 @@ Route::group(['middleware' => ['XSS']], function () {
             // مسار العرض
             Route::get('/', [TypePaymentController::class, 'index']);
             // مسار انشاء عنصر جديد
-            Route::post('/store', [TypePaymentController::class, 'store']);
+            Route::post('/', [TypePaymentController::class, 'store']);
             // مسار جلب عنصر الواحد
             Route::get('/{id}', [TypePaymentController::class, 'show']);
             // مسار التعديل على العنصر
-            Route::post('/{id}/update', [TypePaymentController::class, 'update']);
+            Route::patch('/{id}', [TypePaymentController::class, 'update']);
             // مسار حذف العنصر
-            Route::post('/{id}/delete', [TypePaymentController::class, 'delete']);
+            Route::delete('/{id}', [TypePaymentController::class, 'delete']);
             // مسار تنشيط البوابة
             Route::post('/{id}/active_payment', [TypePaymentController::class, 'active_payment']);
             // مسار تعطيل البوابة
@@ -527,11 +527,11 @@ Route::group(['middleware' => ['XSS']], function () {
             // مسار جلب المحادثة الواحدة
             Route::get('/conversations/{id}', [ActivityController::class, 'get_conversation']);
             // حذف المحادثة
-            Route::delete('conversation/{id}', [ActivityController::class, 'get_conversation']);
+            Route::delete('conversations/{id}', [ActivityController::class, 'get_conversation']);
             // التعديل على الرسالة
-            Route::patch('/message/{id}', [ActivityController::class, 'update_message']);
+            Route::patch('/messages/{id}', [ActivityController::class, 'update_message']);
             // مسار تنشيط البوابة
-            Route::delete('/message/{id}', [ActivityController::class, 'delete_message']);
+            Route::delete('/messages/{id}', [ActivityController::class, 'delete_message']);
         });
 
         Route::prefix('external_rating')->group(function () {

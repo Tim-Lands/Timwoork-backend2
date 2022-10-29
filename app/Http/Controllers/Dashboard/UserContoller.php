@@ -46,9 +46,9 @@ class UserContoller extends Controller
         $is_banned = "all";
         if($request->has('is_banned')){
             $is_banned = $request->is_banned;
-            if ($is_banned =='true')
+            if ($is_banned =='true' || $is_banned == true)
                 return $this->get_user_banned($request);
-            else if ($is_banned == "false")
+            else if ($is_banned == "false" || $is_banned == false)
                 return $this->get_user_unbanned($request);
         }
         // جلب جميع المستخدمين

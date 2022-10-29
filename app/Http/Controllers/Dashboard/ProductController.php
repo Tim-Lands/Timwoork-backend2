@@ -24,18 +24,36 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 use Stichoza\GoogleTranslate\GoogleTranslate;
 
-class ProductController extends Controller
+    class ProductController extends Controller
 {
     /**
      * index => عرض جميع الخدمات
      *
      * @return void
      */
-    public function index(): JsonResponse
+    public function index(Request $request): JsonResponse
     {
         // تصفح
         $paginate = request()->query('paginate') ? request()->query('paginate') : 10;
         // جلب جميع الخدمات
+        if($request->headers->has('status')){
+            $status = $request->status;
+            if($status == "active"){
+                $products_actived = Product::selection()->productActive()->with(['category', 'profileSeller'])
+            ->latest()
+            ->get();
+        // اظهار العناصر
+        return response()->success(__("messages.dashboard.get_product_actived"), $products_actived); 
+            }
+            else if($status == "rejected"){
+                $products_rejected = Product::selection()->productReject()->with(['category', 'profileSeller'])
+            ->latest()
+            ->get();
+        // اظهار العناصر
+        return response()->success(__("messages.dashboard.get_product_actived"), $products_rejected); 
+            }
+        }
+
         $products = Product::selection()->where('is_completed', 1)
             ->with([
                 'subcategory', 'galaries', 'product_tag', 'video', 'developments',
@@ -50,6 +68,44 @@ class ProductController extends Controller
             ->paginate($paginate);
         // اظهار العناصر
         return response()->success(__("messages.oprations.get_all_data"), $products);
+    }
+
+    public function index1(Request $request): JsonResponse
+    {
+        try{
+        $xlocalization = "ar";
+        if ($request->headers->has('X-localization'))
+            $xlocalization = $request->header('X-localization');
+        // تصفح
+        $paginate = request()->query('paginate') ? request()->query('paginate') : 10;
+        // جلب جميع الخدمات
+        
+
+        $products = Product::select('id',"title_{$xlocalization} AS title", "slug_{$xlocalization} AS slug", "content_{$xlocalization} AS content",'price'
+        ,'duration','count_buying', 'thumbnail', "buyer_instruct_{$xlocalization} AS buyer_instruct", 'status', 'is_active', 'current_step','is_draft', 'profile_seller_id', 'category_id', 'is_vide','created_at', 'ratings_avg', 'ratings_count')->where('is_completed', 1)
+            ->with([
+                'subcategory'=>function($q) use($xlocalization){
+                    $q->select('id',"name_{$xlocalization} AS name", 'icon', 'parent_id', 'image');
+                },
+                 'galaries', 'product_tag', 'video',
+                  'developments'=>function($q) use($xlocalization){
+                    $q->select("id", "title_{$xlocalization} AS title", 'duration', 'price', 'product_id');
+                  },
+                'profileSeller' => function ($q) {
+                    $q->select('id', 'profile_id')->with('profile', function ($q) {
+                        $q->select('id', 'full_name', 'user_id')->with('user:id,username,email');
+                    });
+                }
+            ])
+            ->filter('status', 'is_active', 'like')
+            ->latest()
+            ->paginate($paginate);
+        // اظهار العناصر
+        return response()->success(__("messages.oprations.get_all_data"), $products);
+    }
+    catch(Exception $exc){
+        echo $exc;
+    }
     }
 
     /**
