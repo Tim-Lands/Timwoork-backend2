@@ -91,7 +91,7 @@ class SubCategoryController extends Controller
                 'description_ar' => $request->description_ar,
                 'description_en' => $request->description_en,
                 'description_fr' => $request->description_fr,
-                'parent_id'      => $request->parent_id,
+                'parent_id'      => $request->id,
                 'icon'           => $request->icon
             ];
             // ============= انشاء تصنيف جديد ================:

@@ -69,7 +69,7 @@ Route::group(['middleware' => ['XSS']], function () {
             // مسار حذف العنصر
             Route::delete('/{id}', [CategoryController::class, 'delete1']);
             Route::get('/create', [SubCategoryController::class, 'create1']);
-            Route::put('/subcategories', [SubCategoryController::class, 'store1']);
+            Route::put('/{id}/subcategories', [SubCategoryController::class, 'store1']);
         });
         // ================================ مسارات المستخدمين ====================================
         Route::prefix('users')->group(function () {
@@ -447,9 +447,9 @@ Route::group(['middleware' => ['XSS']], function () {
             // مسار انشاء عنصر جديد
             Route::post('/sent_to_client_by_email/{id}', [ContactController::class, 'sent_to_client_by_email']);
             // مسار الشكاوي
-            Route::get('/get_messages_complaints', [ContactController::class, 'get_messages_complaints']);
+            Route::get('/complaints', [ContactController::class, 'get_messages_complaints']);
             //مسار الاستفسارات
-            Route::post('/get_messages_enquiries', [ContactController::class, 'get_messages_enquiries']);
+            Route::get('/enquiries', [ContactController::class, 'get_messages_enquiries']);
         });
 
         /* ------------------------------- مسار طلبيات ------------------------------ */
