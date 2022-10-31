@@ -131,11 +131,14 @@ class MeController extends Controller
             }); */
         $user = $request->user();
         $notifications = $user->notifications()->paginate($paginate);
-        $unread_notifications = $user->unreadNotifications;
-        return response()->json([
-            'notifications' => $notifications,
-            'unread_notifications' => $unread_notifications,
-        ], Response::HTTP_OK);
+        return response()->json(
+            $notifications,Response::HTTP_OK);
+    }
+
+    public function unread_notifications_count(Request $request){
+        $user = $request->user();
+        $unread_notifications_count = $user->unread_notifications_count;
+        return response($unread_notifications_count);
     }
 
     public function conversations(Request $request)
@@ -178,6 +181,10 @@ class MeController extends Controller
     catch(Exception $exc){
         echo($exc);
     }
+}
+
+public function unread_conversations_count(Request $request){
+    return response($request->user()->unread_conversations_count);
 }
 public function status(User $user, Request $request){
     

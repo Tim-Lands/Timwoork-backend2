@@ -23,7 +23,19 @@ class ItemsController extends Controller
         $q->whereHas('cart', function ($query) use ($buyer) {
             $query->where('user_id', $buyer);
         })->with(['cart']);
-    })->with(['order','profileSeller'=>function ($q){$q->select("id");}])
+    })->with(['order','profileSeller'=>function ($q){
+        $q->select("id", 'profile_id','seller_badge_id', 'seller_level_id');
+    },
+    'profileSeller.profile'=>function($q){
+        $q->select('id','first_name', 'last_name', 'full_name', 'avatar',  'gender')->without('paypal_account');
+    },
+    'profileSeller.level'=>function($q) use($x_localization){
+        $q->select('id', "name_{$x_localization} AS name", 'value_bayer_min', 'value_bayer_max');
+    },
+    'profileSeller.badge'=>function($q) use($x_localization){
+        $q->select('id', "name_{$x_localization} AS name");
+    }
+    ])
     ->select('id','uuid','number_product','price_product','order_id','profile_seller_id','status','duration','created_at','updated_at',"title_{$x_localization} AS title")
     ->withCount('item_rejected')->orderBy('created_at', 'DESC')->get();
     return response()->success(__("messages.oprations.get_all_data"), $items);
@@ -47,6 +59,15 @@ class ItemsController extends Controller
         },
         'order.cart.user'=>function($q) use($x_localization){
             $q->select('id');
+        },
+        'order.cart.user.profile'=>function($q){
+            $q->select('*')->without('wise_account','paypal_account', 'bank_account', 'bank_transfer_detail');
+        },
+        'order.cart.user.profile.level'=>function($q) use($x_localization){
+            $q->select('id', "name_{$x_localization} AS name", 'value_bayer_min', 'value_bayer_max');
+        },
+        'order.cart.user.profile.badge'=>function($q) use($x_localization){
+            $q->select('id', "name_{$x_localization} AS name");
         }
         ])->select('id','uuid','number_product','price_product','order_id','status','duration','is_rating','is_item_work','created_at','updated_at',"title_{$x_localization} AS title")
             ->withCount('item_rejected')->orderBy('created_at', 'DESC')->get();
