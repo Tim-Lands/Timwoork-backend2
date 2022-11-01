@@ -179,12 +179,22 @@ class MeController extends Controller
         return response()->success('ok', ['conversations'=>$conversations,"unread_conversations"=>$unread_messages]);
     }
     catch(Exception $exc){
-        echo($exc);
+        echo($exc); 
     }
 }
 
 public function unread_conversations_count(Request $request){
-    return response($request->user()->unread_conversations_count);
+    try{
+    $user = $request->user();
+    $unread_messages = $user->conversations->loadCount(['messages' => function ($q) use ($user) {
+        $q->whereNull('read_at')
+            ->where('user_id', '<>', $user->id);
+    }])->where('messages_count','>','0')->sortByDesc('updated_at');
+    return response($unread_messages);
+    }
+    catch (Exception $ex){
+        echo $ex;
+    }
 }
 public function status(User $user, Request $request){
     

@@ -259,7 +259,7 @@ class ConversationController extends Controller
                 'message_fr' => $message_fr,
                 'is_reply' => $request->is_reply,
             ]);
-
+            Conversation::where('id','=',$conversation_id)->update(['updated_at'=>DB::raw('NOW()')]);
             if ($request->has('attachments')) {
                 foreach ($request->file('attachments') as $key => $value) {
                     $attachmentPath = $value;
