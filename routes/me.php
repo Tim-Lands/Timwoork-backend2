@@ -31,6 +31,7 @@ Route::get('/wallet', [MeWalletController::class,'index']);
 Route::get('/notifications', [MeController::class,'notifications']);
 Route::get("/unread_notifications_count",[MeController::class,'unread_notifications_count']);
 Route::get('/conversations',[MeController::class,'conversations']);
+Route::get('/conversations/{id}',[ConversationController::class,'show']);
 Route::get('/unread_conversations_count',[MeController::class,'unread_conversations_count']);
 Route::get('/profile',[MeController::class,'profile']);
 Route::get('/profile/level',[MeController::class,'level']);

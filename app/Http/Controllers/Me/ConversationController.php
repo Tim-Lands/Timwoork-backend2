@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Me;
 use App\Events\MessageSent;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\ConversationStoreRequest;
+use App\Models\Conversation;
 use App\Models\Product;
 use Exception;
 use Illuminate\Http\Request;
@@ -14,6 +15,34 @@ use Stichoza\GoogleTranslate\GoogleTranslate;
 
 class ConversationController extends Controller
 {
+    public function show(Request $request, $id){
+        
+        $x_localization = 'ar';
+        if ($request->hasHeader('X-localization')) {
+            $x_localization = $request->header('X-localization');
+        }
+        $conversation = Conversation::Selection()->whereId($id)->with(['messages' => function ($q) use($x_localization) {
+            $q->select('id','user_id', 'conversation_id', "message_{$x_localization} AS message",'read_at', 'created_at', 'type', 'is_reply')->orderBy('id', 'ASC')->with('attachments', 'user.profile');
+        }])->find($id);
+        // شرط اذا كان العنصر موجود
+        if (!$conversation) {
+            // رسالة خطأ
+            return response()->error(__("messages.errors.element_not_found"), 403);
+        }
+        $unread_messages = $conversation->messages()
+            ->whereNull('read_at')
+            ->where('user_id', '<>', Auth::user());
+        if ($unread_messages->count() > 0) {
+            foreach ($unread_messages->get() as $key => $value) {
+                if ($value->user_id !== Auth::user()->id) {
+                    $value->read_at = now();
+                    $value->save();
+                }
+            }
+        }
+        // اظهار العنصر
+        return response()->success(__("messages.oprations.get_data"), $conversation);
+    }
     public function create_conversation($id, ConversationStoreRequest $request)
     {
         $product = Product::findOrFail($id);
