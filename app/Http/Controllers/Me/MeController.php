@@ -149,34 +149,40 @@ class MeController extends Controller
             $x_localization = $request->header('X-localization');
         }
         $paginate = $request->query('paginate') ? $request->query('paginate') : 10;
-        $user = $request->user();
+        $user = Auth::user();
 
-        /* $conversations = $user->with(['conversations'=>function($query) use($x_localization){
-            $query->select("title");
-        }])->first()->conversations()->with(['latestMessage', 'members' => function ($q) use ($user) {
-            $q->where('user_id', '<>', $user->id)->with('profile');
+        $conversations = $user->conversations()->with(['latestMessage', 'members' => function ($q) use ($user, $x_localization) {
+            $q->where('user_id', '<>', $user->id)
+            #->without(['profile.bank_d'])
+            ->with(['profile'=>function ($q) use($x_localization){
+                $q->select('id', 'first_name', 'last_name', 'avatar', 'avatar_url', 'gender', 'is_seller', 'user_id', 'country_id', 'badge_id', 'level_id', 'full_name');
+            },
+        'profile.level'=>function($q) use($x_localization){
+            $q->select('id', "name_{$x_localization} AS name");
+        },
+        'profile.badge'=>function($q) use($x_localization){
+            $q->select('id', "name_{$x_localization} AS name");
+        },
+        'profile.country'=> function($q) use($x_localization){
+            $q->select('id','flag', 'code_phone', "name_{$x_localization} AS name ");
+        },
+        'profile.paypal_account'=>function($q) use($x_localization){
+            $q->select('created_at');
+        },
+        'profile.bank_account'=>function($q) use($x_localization){
+            $q->select('created_at');
+        },
+        'profile.bank_transfer_detail'=>function($q) use($x_localization){
+            $q->select('created_at');
+        },
+    ]);
         }])->withCount(['messages' => function (Builder $query) use ($user) {
             $query->where('user_id', '<>', $user->id)
                 ->whereNull('read_at');
         }])
             ->orderBy('updated_at', 'desc')
-            ->paginate($paginate); */
-            $conversations = $user->with(
-                ["conversations:id,title_{$x_localization} AS title,created_at,updated_at,conversationable_type,conversationable_id",
-                "conversations.latestMessage",
-                'conversations.members:id,id,username,email,phone,code_phone'
-                ])
-            ->withCount(['messages' => function (Builder $query) use ($user) {
-                $query->where('user_id', '<>', $user->id)
-                    ->whereNull('read_at');
-            }])
-                ->orderBy('updated_at', 'desc')
-                ->paginate($paginate);
-        $unread_messages = $user->conversations->loadCount(['messages' => function ($q) use ($user) {
-            $q->whereNull('read_at')
-                ->where('user_id', '<>', $user->id);
-        }]);
-        return response()->success('ok', ['conversations'=>$conversations,"unread_conversations"=>$unread_messages]);
+            ->paginate($paginate);
+        return response()->success('ok', $conversations);
     }
     catch(Exception $exc){
         echo($exc); 
