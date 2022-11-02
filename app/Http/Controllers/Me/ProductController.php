@@ -56,7 +56,7 @@ class ProductController extends Controller
         $products = $user->profile->profile_seller->products()
         ->select('id', "title_{$xlocalization} AS title", "slug_{$xlocalization} AS slug",
          'status', 'is_active', 'current_step', 'is_completed', 'is_draft','ratings_avg',
-          'ratings_count', "buyer_instruct_{$xlocalization} AS buyer_instruct", "content_{$xlocalization} AS content", 'created_at', 'category_id')
+          'ratings_count', 'thumbnail',"buyer_instruct_{$xlocalization} AS buyer_instruct", "content_{$xlocalization} AS content", 'created_at', 'category_id')
           ->with([
             "subcategory"=>function($q) use($xlocalization){
                 $q->select('id','parent_id', "name_{$xlocalization} AS name", "slug", "description_{$xlocalization} AS description", 'icon', 'image');

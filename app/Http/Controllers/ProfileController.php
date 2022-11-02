@@ -65,6 +65,7 @@ class ProfileController extends Controller
 
     public function show1($username, Request $request)
     {
+        try{
         // البحث في قاعدة البيانات عن اسم المستخدم
         $x_localization = 'ar';
         if ($request->hasHeader('X-localization')) {
@@ -77,8 +78,15 @@ class ProfileController extends Controller
                     $q->select('id',"steps","number_of_sales","portfolio","bio_{$x_localization} AS bio",'profile_id', 'seller_badge_id','seller_level_id'
                 ,'created_at');
                 },
-                'profile.profile_seller.badge',
-                'profile.profile_seller.level',
+                'profile.profile_seller.badge'=>function($q) use($x_localization){
+                    $q->select('id',"name_{$x_localization} AS name");
+                },
+                'profile.profile_seller.level' =>function($q) use($x_localization){
+                    $q->select('id',"name_{$x_localization} AS name");
+                },
+                'profile.profile_seller.products'=>function($q) use($x_localization){
+                    $q->select('id',"title_{$x_localization} AS title", "slug_{$x_localization} AS slug", "content_{$x_localization} AS content", 'price', 'duration', 'count_buying', 'thumbnail', "buyer_instruct_{$x_localization}",'status', 'profile_seller_id', 'ratings_avg', 'ratings_count', 'deleted_at');
+                },
                 'profile' ,
                 'profile.badge'=>function($q) use($x_localization){
                     $q->select('id',"name_{$x_localization} AS name");
@@ -100,6 +108,10 @@ class ProfileController extends Controller
             return response()->success(__("messages.oprations.get_data"), $user);
         }
     }
+    catch (Exception $exc){
+        echo $exc;
+    }
+}
     /**
      * step_one => دالة المرحلة الأولى في الملف الشخصي وهي مرحلة المعلومات الشخصية
      *

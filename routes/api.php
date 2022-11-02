@@ -201,7 +201,7 @@ Route::group(['middleware' => ['XSS','language']], function () {
         // انشاء المرحلة الثالثة من البروفايل
         Route::post('/step_three', [ProfileController::class, 'step_three']);
         // اظهار البروفايل
-        Route::get('/{username}', [ProfileController::class, 'show']);
+        Route::get('/{username}', [ProfileController::class, 'show1']);
     });
 
     Route::prefix('new/profiles')->group(function () {
