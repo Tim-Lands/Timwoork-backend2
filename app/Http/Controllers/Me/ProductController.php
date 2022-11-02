@@ -90,8 +90,21 @@ class ProductController extends Controller
         
                             ->select('id','profile_seller_id',"title_{$x_localization} AS title", "slug", "content_{$x_localization} AS content", "price", 'duration', 'count_buying',"thumbnail","buyer_instruct_{$x_localization} AS buyer_instruct", "status", "is_active","current_step","is_completed","is_draft","category_id", "created_at", "updated_at", "ratings_avg","ratings_count")
                             ->where('profile_seller_id', Auth::user()->profile->profile_seller->id)
-                            ->with(['developments'=>function($q) use($x_localization) {$q->select('id',"title_{$x_localization} AS title",'product_id');}
-                            ,'product_tag','galaries','file','video','shortener'])
+                            ->with([
+                                'developments'=>function($q) use($x_localization) {$q->select('id',"title_{$x_localization} AS title",'product_id');}
+                            ,'product_tag','galaries','file','video','shortener','ratings'=>function($q) use($x_localization){
+                                $q->select('id', 'user_id', 'product_id', 'rating', "comment_{$x_localization} AS comment",'created_at');
+                            }
+                            ,'ratings.user','ratings.user.profile'=>function($q){
+                                $q->select('*')->without(['paypal_account','wise_account', 'bank_account', 'bank_transfer_detail']);
+                            }
+                            ,'ratings.user.profile.badge'=>function($q) use($x_localization){
+                                $q->select("id", "name_{$x_localization} AS name");
+                            },
+                            'ratings.user.profile.level'=>function($q) use($x_localization){
+                                $q->select("id", "name_{$x_localization} AS name");
+                            }
+                            ])
                             ->first();
         // شرط اذا لم يتم ايجاد الخدمة
         if (!$product) {
