@@ -91,7 +91,14 @@ class ProductController extends Controller
                             ->select('id','profile_seller_id',"title_{$x_localization} AS title", "slug", "content_{$x_localization} AS content", "price", 'duration', 'count_buying',"thumbnail","buyer_instruct_{$x_localization} AS buyer_instruct", "status", "is_active","current_step","is_completed","is_draft","category_id", "created_at", "updated_at", "ratings_avg","ratings_count")
                             ->where('profile_seller_id', Auth::user()->profile->profile_seller->id)
                             ->with([
-                                'developments'=>function($q) use($x_localization) {$q->select('id',"title_{$x_localization} AS title",'product_id');}
+                            
+                            'subcategory'=>function($q) use($x_localization){
+                                $q->select('id', 'parent_id' ,'slug', "name_{$x_localization} AS name");
+                            },
+                            'subcategory.category'=>function($q) use($x_localization){
+                                $q->select('id', 'slug', "name_{$x_localization} AS name");
+                            }    
+                            ,'developments'=>function($q) use($x_localization) {$q->select('id',"title_{$x_localization} AS title",'product_id');}
                             ,'product_tag','galaries','file','video','shortener','ratings'=>function($q) use($x_localization){
                                 $q->select('id', 'user_id', 'product_id', 'rating', "comment_{$x_localization} AS comment",'created_at');
                             }
