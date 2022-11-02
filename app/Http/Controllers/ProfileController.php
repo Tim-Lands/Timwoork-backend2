@@ -31,8 +31,12 @@ class ProfileController extends Controller
      * @param  mixed $username
      * @return void
      */
-    public function show($username)
+    public function show($username, Request $request)
     {
+        $x_localization = 'ar';
+        if ($request->hasHeader('X-localization')) {
+            $x_localization = $request->header('X-localization');
+        }
         // البحث في قاعدة البيانات عن اسم المستخدم
         $user = User::where('username', $username)
             ->orWhere('id', $username)

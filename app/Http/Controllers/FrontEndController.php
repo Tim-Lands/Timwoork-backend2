@@ -440,6 +440,7 @@ class FrontEndController extends Controller
                     $q->select('id','steps','first_name','last_name','avatar','avatar_url','gender','date_of_birth','user_id','country_id'
                 ,'badge_id','level_id','full_name','currency_id')->without('level','badge','wise_account','paypal_account');
                 },
+                'profileSeller.profile.user',
                 'profileSeller.level'=>function($q) use($xlocalization){
                     $q->select('id',"name_{$xlocalization} AS name");
                 },
