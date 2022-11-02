@@ -99,6 +99,15 @@ class ProductController extends Controller
                                 $q->select('id', 'slug', "name_{$x_localization} AS name");
                             }    
                             ,'developments'=>function($q) use($x_localization) {$q->select('id',"title_{$x_localization} AS title",'product_id');}
+                            ,'profileSeller'=>function($q) use($x_localization){
+                                $q->select('id', "bio_{$x_localization} AS bio", 'profile_id', 'seller_badge_id', 'seller_level_id', 'created_at')->without(['paypal_account']);
+                            }
+                            ,'profileSeller.level'=>function($q) use($x_localization){
+                                $q->select("id", "name_{$x_localization} AS name");
+                            }
+                            ,'profileSeller.badge'=>function($q) use($x_localization){
+                                $q->select("id", "name_{$x_localization} AS name");
+                            }
                             ,'product_tag','galaries','file','video','shortener','ratings'=>function($q) use($x_localization){
                                 $q->select('id', 'user_id', 'product_id', 'rating', "comment_{$x_localization} AS comment",'created_at');
                             }
