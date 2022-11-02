@@ -75,7 +75,7 @@ class ProfileController extends Controller
         if ($request->hasHeader('X-localization')) {
             $x_localization = $request->header('X-localization');
         }
-        $user = User::where('username', $username)
+        $user = User::where('username',$username)
             ->orWhere('id', $username)
             ->with([
                 'profile.profile_seller'=>function($q) use($x_localization){
@@ -89,7 +89,9 @@ class ProfileController extends Controller
                     $q->select('id',"name_{$x_localization} AS name");
                 },
                 'profile.profile_seller.products'=>function($q) use($x_localization){
-                    $q->select('id',"title_{$x_localization} AS title", "slug_{$x_localization} AS slug", "content_{$x_localization} AS content", 'price', 'duration', 'count_buying', 'thumbnail', "buyer_instruct_{$x_localization}",'status', 'profile_seller_id', 'ratings_avg', 'ratings_count', 'deleted_at');
+                    $q->select('id',"title_{$x_localization} AS title", "slug_{$x_localization} AS slug", "content_{$x_localization} AS content",
+                     'price', 'duration', 'count_buying', 'thumbnail', "buyer_instruct_{$x_localization}",'status',
+                      'profile_seller_id', 'ratings_avg', 'ratings_count', 'deleted_at')->where('status',1);
                 },
                 'profile' ,
                 'profile.badge'=>function($q) use($x_localization){
