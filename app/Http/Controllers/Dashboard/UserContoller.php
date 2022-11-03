@@ -217,6 +217,10 @@ class UserContoller extends Controller
     public function user_ban($id, Request $request)
     {
         try {
+            $comment_ar=null;
+            $comment_en=null;
+            $comment_fr=null;
+
             $tr = new GoogleTranslate();
             if ($request->header('X-localization') == 'fr')
                 $tr->setSource('fr');
@@ -244,10 +248,13 @@ class UserContoller extends Controller
                 $data['comment'] = $request->comment;
                 $tr->setTarget('ar');
                 $data['comment_ar'] = $tr->translate($request->comment);
+                $comment_ar = $data['comment_ar'];
                 $tr->setTarget('en');
                 $data['comment_en'] = $tr->translate($request->comment);
+                $comment_en = $data['comment_en'];
                 $tr->setTarget('fr');
                 $data['comment_fr'] = $tr->translate($request->comment);
+                $comment_fr = $data['comment_fr'];
             }
 
             DB::beginTransaction();
@@ -256,11 +263,12 @@ class UserContoller extends Controller
             // عمل تسجيل خروج لكل الحسابات
             $user->tokens()->delete();
             // ارسال اشعاؤ للمستخدم
-            event(new BanAccountEvent($user, $request->comment, $request->expired_at));
+            event(new BanAccountEvent($user, $request->comment,$comment_ar , $comment_en, $comment_fr,$request->expired_at));
             DB::commit();
             // رسالة نجاح
             return response()->success(__("messages.user.ban_success"), $user->load('bans'));
         } catch (Exception $ex) {
+            echo $ex;
             return response()->error(__("messages.errors.error_database"), Response::HTTP_FORBIDDEN);
         }
     }
