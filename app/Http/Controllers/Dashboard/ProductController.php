@@ -81,7 +81,7 @@ use Stichoza\GoogleTranslate\GoogleTranslate;
         // جلب جميع الخدمات
         
 
-        $products = Product::select('id',"title_{$xlocalization} AS title", "slug_{$xlocalization} AS slug", "content_{$xlocalization} AS content",'price'
+        $products = Product::select('id',"title_{$xlocalization} AS title", "slug", "content_{$xlocalization} AS content",'price'
         ,'duration','count_buying', 'thumbnail', "buyer_instruct_{$xlocalization} AS buyer_instruct", 'status', 'is_active', 'current_step','is_draft', 'profile_seller_id', 'category_id', 'is_vide','created_at', 'ratings_avg', 'ratings_count')->where('is_completed', 1)
             ->with([
                 'subcategory'=>function($q) use($xlocalization){
