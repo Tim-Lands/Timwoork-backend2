@@ -181,6 +181,73 @@ use Stichoza\GoogleTranslate\GoogleTranslate;
         return response()->success(__("messages.oprations.get_data"), $product);
     }
 
+    public function show1(mixed $id, Request $request)
+    {
+        try{
+            $xlocalization = "ar";
+            if ($request->headers->has('X-localization'))
+                $xlocalization = $request->header('X-localization');
+        $product = Product::select('id',"title_{$xlocalization} AS title", "slug", "content_{$xlocalization} AS content",'price'
+        ,'duration','count_buying', 'thumbnail', "buyer_instruct_{$xlocalization} AS buyer_instruct", 'status', 'is_active', 'current_step','is_draft', 'profile_seller_id', 'category_id', 'is_vide','created_at', 'ratings_avg', 'ratings_count')
+            ->withTrashed()
+            ->whereSlug($id)
+            ->orWhere('id', $id)
+            ->withOnly([
+                'subcategory' => function ($q) use($xlocalization) {
+                    $q->select('id', 'parent_id', "name_{$xlocalization} AS name")
+                        ->with('category', function ($q) {
+                            $q->select('id', 'name_ar')
+                                ->without('subcategories');
+                        })->withCount('products');
+                },
+                'developments' => function ($q) {
+                    $q->select('id', 'title', 'price', 'duration', 'product_id');
+                },
+                'product_tag',
+                'ratings' => function ($q) {
+                    $q->selection()->with('user.profile');
+                },
+                'galaries' => function ($q) {
+                    $q->select('id', 'path', 'product_id');
+                },
+                'video' => function ($q) {
+                    $q->select('id', 'product_id', 'url_video');
+                },
+                'profileSeller' => function ($q) {
+                    $q->select('id', 'profile_id', 'number_of_sales', 'portfolio', 'profile_id', 'seller_badge_id', 'seller_level_id')
+                        ->with([
+                            'profile' =>
+                            function ($q) {
+                                $q->select('id', 'user_id', 'first_name', 'last_name', 'avatar', 'avatar_url', 'precent_rating')
+                                    ->with(['user' => function ($q) {
+                                        $q->select('id', 'username', 'email', 'phone');
+                                    }, 'badge:id,name_ar,name_en,name_fr', 'level:id,name_ar,name_en,name_fr', 'country'])
+                                    ->without('bank_account', 'bank_transfer_detail', 'paypal_account', 'wise_account', 'badge', 'level', 'profile_seller');
+                            },
+                            'level:id,name_ar,name_en,name_fr',
+                            'badge:id,name_ar,name_en,name_fr'
+                        ]);
+                }
+            ])
+            ->where('is_completed', 1)
+            //->withAvg('ratings', 'rating')
+            ->withCount('ratings')
+
+            ->first();
+        // فحص اذا كان يوجد هذا العنصر
+        if (!$product) {
+            // رسالة خطأ
+            return response()->error(__("messages.errors.element_not_found"), 403);
+        }
+        // اظهار العناصر
+        return response()->success(__("messages.oprations.get_data"), $product);
+    }
+    catch(Exception $exc){
+        echo $exc;
+    }
+}
+
+
     /**
      * show_product_for_scan => اظهار الخدمة من اجل قبولها او رفضها
      *

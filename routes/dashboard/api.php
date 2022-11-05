@@ -300,7 +300,7 @@ Route::group(['middleware' => ['XSS']], function () {
             // جلب الخدمات المحذوفة
             Route::get('/archieved', [ProductController::class, 'get_products_soft_deleted']);
             // مسار جلب عنصر الواحد
-            Route::get('/{id}', [ProductController::class, 'show']);
+            Route::get('/{id}', [ProductController::class, 'show1']);
             // مسار جلب عنصر الواحد من اجل الفحص
             Route::get('show_product_checked/{id}', [ProductController::class, 'show_product_for_checked']);
             // مسار تنشيط الخدمة
