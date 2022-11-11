@@ -5,10 +5,11 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Mehradsadeghi\FilterQueryString\FilterQueryString;
 
 class Withdrawal extends Model
 {
-    use HasFactory;
+    use HasFactory, FilterQueryString;
     protected $with = ['withdrawalable.profile'];
 
     // ===========================Contants =============================

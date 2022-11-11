@@ -53,12 +53,16 @@ class WithdrawalController extends Controller
 
     public function index(Request $request)
     {
+      try{
         $paginate = $request->query('paginate') ?? 10;
-        $type = $request->query('type');
-        $withdrawals = Withdrawal::where('status', $type)
-            ->with('withdrawalable')
-            ->paginate($paginate);
+        $withdrawals = Withdrawal::select('*')->with('withdrawalable')
+        ->filter('status', 'type')    
+        ->paginate($paginate);
         return response()->success("لقد تمّ جلب البيانات بنجاح", $withdrawals);
+      }
+      catch(Exception $ex){
+        echo $ex;
+      }
     }
 
     // جلب طلب واحد
