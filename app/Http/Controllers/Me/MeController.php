@@ -136,9 +136,15 @@ class MeController extends Controller
     }
 
     public function unread_notifications_count(Request $request){
+        try{
         $user = $request->user();
-        $unread_notifications_count = $user->unread_notifications_count;
+        $unread_notifications_count = $user->unreadnotifications->count();
+        echo $unread_notifications_count;
         return response($unread_notifications_count);
+        }
+        catch(Exception $ex){
+            echo $ex;
+        }
     }
 
     public function conversations(Request $request)
@@ -196,7 +202,7 @@ public function unread_conversations_count(Request $request){
         $q->whereNull('read_at')
             ->where('user_id', '<>', $user->id);
     }])->where('messages_count','>','0')->sortByDesc('updated_at');
-    return response($unread_messages);
+    return response(['data'=>array_values($unread_messages->toArray()), 'count'=>$unread_messages->count()]);
     }
     catch (Exception $ex){
         echo $ex;
