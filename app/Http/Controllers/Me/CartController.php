@@ -76,7 +76,10 @@ class CartController extends Controller
             if ($request->headers->has('X-localization'))
                 $xlocalization = $request->header('X-localization');
         $cart = Cart::selection()
-            ->with(['cart_items' => function ($q) use($xlocalization) {
+            ->with(['cart_payments'=>function ($q) use($xlocalization){
+                $q->select('cart_payments.id', "name_{$xlocalization} AS name", 'precent_of_payment', 'value_of_cent', 'status', 'cart_payments.created_at', 'cart_payments.updated_at');
+            },
+            'cart_items' => function ($q) use($xlocalization) {
                 $q->select('id','cart_id','product_id',"product_title_{$xlocalization} AS product_title",'price_product','quantity','created_at','updated_at','price_unit')
                     ->with(['cartItem_developments' => function ($q) use($xlocalization) {
                         $q->select('development_id', "title_{$xlocalization}", 'duration', 'price')->get();
