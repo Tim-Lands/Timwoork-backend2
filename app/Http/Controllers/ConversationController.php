@@ -81,6 +81,9 @@ class ConversationController extends Controller
         $message_ar = null;
         $message_en = null;
         $message_fr = null;
+        $title_ar = null;
+        $title_en = null;
+        $title_fr = null;
         $xlocalization = $request->header('X-localization');
         // انشاء مصفوفة و وضع فيها بيانات المرحلة الاولى
         if (!$request->headers->has('X-localization')) {
@@ -94,16 +97,25 @@ class ConversationController extends Controller
                 $message_en = $tr->setTarget('en')->translate($request->initial_message);
                 $message_fr = $tr->setTarget('fr')->translate($request->initial_message);
                 $message_ar = $request->initial_message;
+                $title_en = $tr->setTarget('en')->translate($request->title);
+                $title_fr = $tr->setTarget('fr')->translate($request->title);
+                $title_ar = $request->title;
                 break;
             case 'en':
                 $message_ar = $tr->setTarget('ar')->translate($request->initial_message);
                 $message_fr = $tr->setTarget('fr')->translate($request->initial_message);
                 $message_en = $request->message;
+                $title_ar = $tr->setTarget('ar')->translate($request->title);
+                $title_fr = $tr->setTarget('fr')->translate($request->title);
+                $title_en = $request->title;
                 break;
             case 'fr':
                 $message_en = $tr->setTarget('en')->translate($request->initial_message);
                 $message_ar = $tr->setTarget('ar')->translate($request->initial_message);
                 $message_fr = $request->initial_message;
+                $title_ar = $tr->setTarget('ar')->translate($request->title);
+                $title_fr = $tr->setTarget('fr')->translate($request->title);
+                $title_en = $request->title;
                 break;
             default:
         }
@@ -113,7 +125,10 @@ class ConversationController extends Controller
             DB::beginTransaction();
 
             $conversation = $product->conversations()->create([
-                'title' => $request->title
+                'title' => $request->title,
+                'title_ar'=> $title_ar,
+                'title_en'=> $title_en,
+                'title_fr'=> $title_fr
             ]);
             $conversation->members()->attach([$user_id, $receiver_id]);
             $message = $conversation->messages()->create([
