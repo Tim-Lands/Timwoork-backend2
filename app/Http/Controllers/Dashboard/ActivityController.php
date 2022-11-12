@@ -49,6 +49,9 @@ class ActivityController extends Controller
                 ->orderBy('notifications.created_at', 'desc')
                 ->paginate($paginate);
         }
+        foreach($notifications as $notification){
+            $notification->data = json_decode($notification->data);
+        }
         // اظهار العناصر
         return response()->success(__('messages.oprations.get_all_data'), $notifications);
     }
