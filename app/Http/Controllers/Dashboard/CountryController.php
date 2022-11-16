@@ -7,6 +7,7 @@ use App\Http\Requests\Dashboard\CountryRequest;
 use App\Models\Country;
 use Exception;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\DB;
 
@@ -17,10 +18,13 @@ class CountryController extends Controller
      *
      * @return JsonResponse
      */
-    public function index(): JsonResponse
+    public function index(Request $request): JsonResponse
     {
-        // جلب جميع الدول عن طريق التصفح
-        $countries = Country::Selection()->get();
+        // جلب جميع الدول
+        $xlocalization = "ar";
+        if ($request->headers->has('X-localization'))
+            $xlocalization = $request->header('X-localization');
+        $countries = Country::select('id', "name_{$xlocalization} AS name", 'flag', 'code_phone', 'created_at')->get();
         // اظهار العناصر
         return response()->success(__("messages.oprations.get_all_data"), $countries);
     }
