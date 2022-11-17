@@ -386,7 +386,7 @@ use Stichoza\GoogleTranslate\GoogleTranslate;
             if(!in_array($new_is_archieved,[0,1]))
                 return response()->error('',400);
             //id  جلب العنصر بواسطة
-            $product = Product::find($id);
+            $product = Product::where('id',$id)->withTrashed()->first();
             // شرط اذا كان العنصر موجود
             if (!$product || !is_numeric($id)) {
                 // رسالة خطأ
