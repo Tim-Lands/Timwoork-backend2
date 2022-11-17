@@ -722,6 +722,9 @@ class InsertProductContoller extends Controller
                 ->first();
             // شرط اذا كان العنصر موجود
             if (!$product || !is_numeric($id)) {
+                
+                echo $id;
+                echo "sharaf";
                 // رسالة خطأ
                 return response()->error(__("messages.errors.element_not_found"), 403);
             }

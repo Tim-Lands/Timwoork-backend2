@@ -908,7 +908,7 @@ use Stichoza\GoogleTranslate\GoogleTranslate;
      * @param  mixed $request
      * @return void
      */
-    public function upload_galaries($id, ImagesRequest $request)
+    public function upload_galaries($id, Request $request)
     {
         try {
             //id  جلب العنصر بواسطة
@@ -990,6 +990,7 @@ use Stichoza\GoogleTranslate\GoogleTranslate;
             DB::commit();
             // ================================================================
             // رسالة نجاح عملية الاضافة:
+            echo "sharaf eldeen";
             return response()->success(__("messages.product.success_upload_galaries"), $product->load('galaries'));
         } catch (Exception $ex) {
             return $ex;
