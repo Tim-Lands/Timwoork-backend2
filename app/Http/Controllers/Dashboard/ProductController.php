@@ -397,7 +397,7 @@ use Stichoza\GoogleTranslate\GoogleTranslate;
             // بداية المعاملة مع البيانات المرسلة لقاعدة بيانات :
             DB::beginTransaction();
             // عملية حذف الخدمة
-            if ($new_is_archieved==0)
+            if ($new_is_archieved==1)
                 $product->delete();
             else
                 $product->restore();
