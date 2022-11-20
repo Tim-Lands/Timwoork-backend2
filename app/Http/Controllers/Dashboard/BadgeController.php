@@ -41,7 +41,7 @@ class BadgeController extends Controller
                 'name_ar'            => $request->name_ar,
                 'name_en'            => $request->name_en,
                 'name_fr'            => $request->name_fr,
-                'precent_deducation' => $request->precent_deducation
+              //  'precent_deducation' => $request->precent_deducation
             ];
             // ============= انشاء شارة جديدة ================:
             // بداية المعاملة مع البيانات المرسلة لقاعدة بيانات :
@@ -54,6 +54,7 @@ class BadgeController extends Controller
             // رسالة نجاح عملية الاضافة:
             return response()->success(__('messages.oprations.add_success'), $badge);
         } catch (Exception $ex) {
+            echo $ex;
             // لم تتم المعاملة بشكل نهائي و لن يتم ادخال اي بيانات لقاعدة البيانات
             DB::rollback();
             // رسالة خطأ
