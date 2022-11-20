@@ -105,7 +105,7 @@ class BadgeController extends Controller
             // جلب البيانات و وضعها في مصفوفة:
             $data = [
                 'name_ar'            => $request->name_ar,
-                'precent_deducation' => $request->precent_deducation
+                //'precent_deducation' => $request->precent_deducation
             ];
             //  في حالة ما اذا وجد الاسم بالانجليزية , اضفها الى مصفوفة التعديل:
             if ($request->name_en) {
@@ -127,6 +127,7 @@ class BadgeController extends Controller
             // رسالة نجاح عملية التعديل:
             return response()->success(__("messages.oprations.update_success"), $badge);
         } catch (Exception $ex) {
+            echo $ex;
             // لم تتم المعاملة بشكل نهائي و لن يتم ادخال اي بيانات لقاعدة البيانات
             DB::rollback();
             // رسالة خطأ :
