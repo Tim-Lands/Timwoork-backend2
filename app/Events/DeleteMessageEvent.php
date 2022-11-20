@@ -60,7 +60,7 @@ class DeleteMessageEvent implements ShouldBroadcast
             ],
             'title' =>  "تم حذف رسالتك من طرف الطرف الادارة و ذلك بسبب :". $this->cause,
             'content' => [
-                'user' => $this->user,
+                'user' => ['id'=>$this->user->id, 'username'=>$this->user->username,'email'=>$this->user->email],
                 'cause' => $this->cause
             ],
         ];
