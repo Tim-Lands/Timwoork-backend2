@@ -21,7 +21,7 @@ class TagController extends Controller
     public function index(Request $request): JsonResponse
     {
         // جلب جميع الوسم عن طريق التصفح
-        $q = $request->query('filter');
+        $q = $request->query('name');
         $tags = Tag::Selection()->where('name', 'like', '%'.$q.'%')->paginate(10);
         // اظهار العناصر
         return response()->success(__("messages.oprations.get_all_data"), $tags);
