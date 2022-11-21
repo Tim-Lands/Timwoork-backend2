@@ -52,11 +52,11 @@ class SellerLevelController extends Controller
                 'name_ar'               => $request->name_ar,
                 'name_en'               => $request->name_en,
                 'name_fr'               => $request->name_fr,
-                'type'                  => $request->type,
-                'number_developments'   => $request->number_developments,
-                'price_developments'    => $request->price_developments,
-                'number_sales'          => $request->number_sales,
-                'value_bayer'          => $request->value_bayer,
+                //'type'                  => $request->type,
+                //'number_developments'   => $request->number_developments,
+                //'price_developments'    => $request->price_developments,
+                //'number_sales'          => $request->number_sales,
+                //'value_bayer'          => $request->value_bayer,
             ];
             // ============= انشاء مستوى جديد ================:
             // بداية المعاملة مع البيانات المرسلة لقاعدة بيانات :
@@ -69,6 +69,7 @@ class SellerLevelController extends Controller
             // رسالة نجاح عملية الاضافة:
             return response()->success(__("messages.oprations.add_success"), $seller_level);
         } catch (Exception $ex) {
+            echo $ex;
             // لم تتم المعاملة بشكل نهائي و لن يتم ادخال اي بيانات لقاعدة البيانات
             DB::rollback();
             //return $ex;
