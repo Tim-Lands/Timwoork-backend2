@@ -22,7 +22,7 @@ class TagController extends Controller
     {
         // جلب جميع الوسم عن طريق التصفح
         $q = $request->query('name');
-        $tags = Tag::Selection()->where('name', 'like', '%'.$q.'%')->paginate(10);
+        $tags = Tag::Selection()->where('name', 'like', '%' . $q . '%')->paginate(10);
         // اظهار العناصر
         return response()->success(__("messages.oprations.get_all_data"), $tags);
     }
@@ -48,7 +48,9 @@ class TagController extends Controller
         try {
             // جلب البيانات و وضعها في مصفوفة:
             $data = [
-                'name'            => $request->name,
+                'name'  => $request->name,
+                'label' => $request->name,
+                'value' => $request->name
             ];
             // ============= انشاء وسم جديد ================:
             // بداية المعاملة مع البيانات المرسلة لقاعدة بيانات :
