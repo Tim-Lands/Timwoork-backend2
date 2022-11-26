@@ -96,7 +96,7 @@ class ItemsController extends Controller
                 'order',
                 'order.cart',
                 'order.cart.user'=>function($q){
-                    $q->select('id','username','email',);
+                    $q->select('id','username','email','phone', 'code_phone','status', 'banned_at');
                 },
                 'order.cart.user.profile:user_id,first_name,last_name,avatar_url,gender,avatar,level_id,badge_id'/* =>function($q){
                     $q->select('id','first_name','last_name','avatar_url','gender');
@@ -111,7 +111,12 @@ class ItemsController extends Controller
                     'profileSeller'=>function ($q) use($x_localization){
                         $q->select('id','steps', 'number_of_sales', 'portfolio', "bio_{$x_localization} AS bio", 'profile_id', 'seller_badge_id', 'seller_level_id', 'precent_deducation');
                     },
-                    'profileSeller.products'=>function($q) use($x_localization){
+                    'profileSeller.profile',
+                    'profileSeller.profile.user'=>function ($q) use($x_localization){
+                        $q->select('id','username','email','phone', 'code_phone','status', 'banned_at');
+                        
+                    },
+                        'profileSeller.products'=>function($q) use($x_localization){
                         $q->select('id', "title_{$x_localization} AS title", "content_{$x_localization} AS content", "price", 'duration', 'count_buying', 'thumbnail', "buyer_instruct_{$x_localization} AS buyer_instruct", 
                         'status', 'is_active', 'current_step', 'is_completed', 'is_draft', 'profile_seller_id', 'category_id', 'is_vide', 'ratings_avg', 'ratings_count', 'deleted_at', 'slug');
                     },
