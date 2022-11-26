@@ -139,7 +139,6 @@ class MeController extends Controller
         try{
         $user = $request->user();
         $unread_notifications_count = $user->unreadnotifications->count();
-        echo $unread_notifications_count;
         return response($unread_notifications_count);
         }
         catch(Exception $ex){
