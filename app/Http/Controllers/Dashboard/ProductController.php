@@ -990,7 +990,6 @@ use Stichoza\GoogleTranslate\GoogleTranslate;
             DB::commit();
             // ================================================================
             // رسالة نجاح عملية الاضافة:
-            echo "sharaf eldeen";
             return response()->success(__("messages.product.success_upload_galaries"), $product->load('galaries'));
         } catch (Exception $ex) {
             return $ex;

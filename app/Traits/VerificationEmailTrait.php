@@ -79,18 +79,13 @@ trait VerificationEmailTrait
     {
         // فحص عدد ارسال مرات كود التفعيل
         // استخراج رمز التفعيل من قاعدة البيانات باستعمال البريد الالكتروني
-        echo "before email find";
         $verify = VerifyEmailCode::where('email', $email)
                 //->where('date_expired', '>=', Carbon::now())
                 ->first();
-        echo"after email find";
 
             // في  حالة عدم وجود رمز التفعيل يتم البحث عن البريد الالكتروني هل هو موجود في قاعدة البيانات ام لا
             // في حالة عدم وجوده يتم إرسال رسالة خطأ بعدم وجود الايميل في سجلاتنا
-            echo $email;
             $user = User::where('email',$email)->firstOrFail();
-            echo $user;
-            var_dump($user);
             //  في حالة وجود مستخدم مسجل بالبريد الالكتروني يتم إنشاء  رمز تفعيل جديد له
             $this->store_code_bin($user);
             // بعد إنشاء رمز التفعيل الجديد يتم إرساله

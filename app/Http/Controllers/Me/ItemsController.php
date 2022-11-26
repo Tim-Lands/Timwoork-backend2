@@ -124,6 +124,8 @@ class ItemsController extends Controller
                         $q->select('id','user_id', 'product_id', 'rating', "comment_{$x_localization} AS comment", 'reply', 'item_id');
                     },
                     'conversation.messages',
+                    'conversation.messages.user',
+                    'conversation.messages.user.profile',
                     'conversation.messages.attachments'])
             ->select('id','uuid','number_product','price_product','order_id','status','duration','is_rating','is_item_work','created_at','updated_at',"title_{$x_localization} AS title", 'profile_seller_id')->first();
 
