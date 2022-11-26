@@ -98,7 +98,7 @@ class ItemsController extends Controller
                 'order.cart.user'=>function($q){
                     $q->select('id','username','email',);
                 },
-                'order.cart.user.profile:user_id,first_name,last_name,avatar_url,gender'/* =>function($q){
+                'order.cart.user.profile:user_id,first_name,last_name,avatar_url,gender,avatar,level_id,badge_id'/* =>function($q){
                     $q->select('id','first_name','last_name','avatar_url','gender');
                 } */,
                     'item_rejected',
@@ -108,9 +108,19 @@ class ItemsController extends Controller
                     'conversation'=>function($q) use($x_localization){
                         $q->select('conversationable_id','id', "title_{$x_localization} AS title");
                     },
+                    'profileSeller'=>function ($q) use($x_localization){
+                        $q->select('id','steps', 'number_of_sales', 'portfolio', "bio_{$x_localization} AS bio", 'profile_id', 'seller_badge_id', 'seller_level_id', 'precent_deducation');
+                    },
+                    'profileSeller.products'=>function($q) use($x_localization){
+                        $q->select('id', "title_{$x_localization} AS title", "content_{$x_localization} AS content", "price", 'duration', 'count_buying', 'thumbnail', "buyer_instruct_{$x_localization} AS buyer_instruct", 
+                        'status', 'is_active', 'current_step', 'is_completed', 'is_draft', 'profile_seller_id', 'category_id', 'is_vide', 'ratings_avg', 'ratings_count', 'deleted_at', 'slug');
+                    },
+                    'profileSeller.products.ratings'=>function($q) use($x_localization){
+                        $q->select('id','user_id', 'product_id', 'rating', "comment_{$x_localization} AS comment", 'reply', 'item_id');
+                    },
                     'conversation.messages',
                     'conversation.messages.attachments'])
-            ->select('id','uuid','number_product','price_product','order_id','status','duration','is_rating','is_item_work','created_at','updated_at',"title_{$x_localization} AS title")->first();
+            ->select('id','uuid','number_product','price_product','order_id','status','duration','is_rating','is_item_work','created_at','updated_at',"title_{$x_localization} AS title", 'profile_seller_id')->first();
 
         if (!$item) {
             // رسالة خطأ
