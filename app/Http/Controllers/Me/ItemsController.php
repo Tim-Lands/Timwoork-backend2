@@ -23,14 +23,28 @@ class ItemsController extends Controller
         $q->whereHas('cart', function ($query) use ($buyer) {
             $query->where('user_id', $buyer);
         })->with(['cart']);
-    })->with(['order','profileSeller'=>function ($q){
-        $q->select("id", 'profile_id','seller_badge_id', 'seller_level_id');
+    })->with(['order',
+    'profileSeller'=>function ($q) use($x_localization){
+        $q->select('id','steps', 'number_of_sales', 'portfolio', "bio_{$x_localization} AS bio", 'profile_id', 'seller_badge_id', 'seller_level_id', 'precent_deducation');
     },
     'profileSeller.profile'=>function($q){
-        $q->select('id','first_name', 'last_name', 'full_name', 'avatar',  'gender')->without('paypal_account');
+        $q->select('*')->without('paypal_account','wise_account', 'bank_account', 'bank_transfer_detail');
+    },
+    'profileSeller.profile.level'=>function($q) use($x_localization){
+        $q->select('id', "name_{$x_localization} AS name");
+    },
+    'profileSeller.profile.badge'=>function($q) use($x_localization){
+        $q->select('id', "name_{$x_localization} AS name");
+    },
+    'profileSeller.profile.user'=>function ($q) use($x_localization){
+        $q->select('id','username','email','phone', 'code_phone','status', 'banned_at');
+        
     },
     'profileSeller.level'=>function($q) use($x_localization){
-        $q->select('id', "name_{$x_localization} AS name", 'value_bayer_min', 'value_bayer_max');
+        $q->select('id', "name_{$x_localization} AS name",
+        //'value_bayer_min',
+         //'value_bayer_max'
+        );
     },
     'profileSeller.badge'=>function($q) use($x_localization){
         $q->select('id', "name_{$x_localization} AS name");
@@ -64,7 +78,9 @@ class ItemsController extends Controller
             $q->select('*')->without('wise_account','paypal_account', 'bank_account', 'bank_transfer_detail');
         },
         'order.cart.user.profile.level'=>function($q) use($x_localization){
-            $q->select('id', "name_{$x_localization} AS name", 'value_bayer_min', 'value_bayer_max');
+            $q->select('id', "name_{$x_localization} AS name", 
+            'value_bayer_min',
+             'value_bayer_max');
         },
         'order.cart.user.profile.badge'=>function($q) use($x_localization){
             $q->select('id', "name_{$x_localization} AS name");
