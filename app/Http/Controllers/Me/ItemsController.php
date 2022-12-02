@@ -114,9 +114,15 @@ class ItemsController extends Controller
                 'order.cart.user'=>function($q){
                     $q->select('id','username','email','phone', 'code_phone','status', 'banned_at');
                 },
-                'order.cart.user.profile:user_id,first_name,last_name,avatar_url,gender,avatar,level_id,badge_id'/* =>function($q){
+                'order.cart.user.profile:user_id,first_name,last_name,avatar_url,gender,avatar,level_id,badge_id,full_name'/* =>function($q){
                     $q->select('id','first_name','last_name','avatar_url','gender');
                 } */,
+                'order.cart.user.profile.level'=>function($q) use($x_localization){
+                    $q->select('id',"name_{$x_localization} AS name");
+                },
+                'order.cart.user.profile.badge'=>function($q) use($x_localization){
+                    $q->select('id', "name_{$x_localization} AS name");
+                },
                     'item_rejected',
                     'item_modified',
                     'item_date_expired',
@@ -126,6 +132,9 @@ class ItemsController extends Controller
                     },
                     'profileSeller'=>function ($q) use($x_localization){
                         $q->select('id','steps', 'number_of_sales', 'portfolio', "bio_{$x_localization} AS bio", 'profile_id', 'seller_badge_id', 'seller_level_id', 'precent_deducation');
+                    },
+                    'profileSeller.level'=>function($q) use($x_localization){
+                        $q->select('id', "name_{$x_localization} AS name");
                     },
                     'profileSeller.profile',
                     'profileSeller.profile.user'=>function ($q) use($x_localization){

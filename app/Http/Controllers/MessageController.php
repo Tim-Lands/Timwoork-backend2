@@ -24,8 +24,8 @@ class MessageController extends Controller
             DB::beginTransaction();
             $message = Message::create([
                 'user_id' => $user_id,
-                'user_id' => $conversation_id,
-                'user_id' => $message,
+                'conversation_id' => $conversation_id,
+                'message' => $message,
             ]);
             broadcast(new MessageSent($message));
             DB::commit();
