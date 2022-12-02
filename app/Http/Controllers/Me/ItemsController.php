@@ -197,14 +197,23 @@ class ItemsController extends Controller
         })->where('id',$id)
             ->with([
                 'profileSeller'=>function ($q) use($x_localization){
-                    $q->select('id',"bio_{$x_localization} AS bio",'profile_id');
+                    $q->select('id',"bio_{$x_localization} AS bio",'profile_id','seller_level_id', 'seller_badge_id');
                 },
                 'profileSeller.profile'=>function($q){
-                    $q->select('id','first_name','last_name','avatar_url','gender');
+                    $q->select('id','first_name','last_name','avatar_url','gender', );
                 },
                 /* 'profileSeller.products' => function ($q) use ($product_id) {
                     $q->select('id', 'profile_seller_id', 'buyer_instruct')->where('id', $product_id);
                 }, */
+                'profileSeller.level'=>function($q) use($x_localization){
+                    $q->select('id', "name_{$x_localization} AS name");
+                },
+                'profileSeller.badge'=>function($q) use($x_localization){
+                    $q->select('id', "name_{$x_localization} AS name");
+                },
+                'order.cart.user.profile.level'=>function($q) use($x_localization){
+                    $q->select('id',"name_{$x_localization} AS name");
+                },
                 'item_rejected',
                 'item_modified',
                 'item_date_expired',
