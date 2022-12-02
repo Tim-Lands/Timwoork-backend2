@@ -151,7 +151,8 @@ class ItemsController extends Controller
                     'conversation.messages',
                     'conversation.messages.user',
                     'conversation.messages.user.profile',
-                    'conversation.messages.attachments'])
+                    'conversation.messages.attachments'
+                    ])
             ->select('id','uuid','number_product','price_product','order_id','status','duration','is_rating','is_item_work','created_at','updated_at',"title_{$x_localization} AS title", 'profile_seller_id')->first();
 
         if (!$item) {
@@ -196,6 +197,7 @@ class ItemsController extends Controller
             })->with(['cart']);
         })->where('id',$id)
             ->with([
+                
                 'profileSeller'=>function ($q) use($x_localization){
                     $q->select('id',"bio_{$x_localization} AS bio",'profile_id','seller_level_id', 'seller_badge_id');
                 },
@@ -223,9 +225,12 @@ class ItemsController extends Controller
                     $q->select("id","title_{$x_localization} AS title",'conversationable_type','conversationable_id');
                 },
                 'conversation.messages'=>function($q) use($x_localization){
-                    $q->select("id","conversation_id","message_{$x_localization} AS message", 'read_at','created_at','updated_at');
+                    $q->select("id", 'user_id', "conversation_id","message_{$x_localization} AS message", 'read_at','created_at','updated_at');
                 },
-                'conversation.messages.attachments'
+                'conversation.messages.attachments',
+                    'conversation.messages.user',
+                    'conversation.messages.user.profile',
+                    'conversation.messages.attachments'
             ])->select('id','uuid','number_product','price_product','order_id','profile_seller_id','status','duration','date_expired','created_at','updated_at',"title_{$x_localization} AS title")
             ->first();
 
