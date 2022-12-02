@@ -35,9 +35,9 @@ class MessageSent implements ShouldBroadcast
      */
     public function broadcastOn()
     {
-        var_dump($this->message->conversation->members()
+        $this->message->conversation->members()
         ->where('user_id', '<>', Auth::id())
-        ->first());
+        ->first();
 
         $receiver = $this->message->conversation->members()
             ->where('user_id', '<>', Auth::id())
