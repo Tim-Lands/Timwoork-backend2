@@ -200,7 +200,7 @@ class ItemsController extends Controller
                     $q->select('id',"bio_{$x_localization} AS bio",'profile_id','seller_level_id', 'seller_badge_id');
                 },
                 'profileSeller.profile'=>function($q){
-                    $q->select('id','first_name','last_name','avatar_url','gender', 'avatar');
+                    $q->select('id','first_name','last_name','avatar_url','gender', 'avatar', 'full_name');
                 },
                 'profileSeller.products' => function ($q) use ($product_id) {
                     $q->select('id', 'profile_seller_id', 'buyer_instruct')->where('id', $product_id);
