@@ -202,9 +202,9 @@ class ItemsController extends Controller
                 'profileSeller.profile'=>function($q){
                     $q->select('id','first_name','last_name','avatar_url','gender', );
                 },
-                /* 'profileSeller.products' => function ($q) use ($product_id) {
+                'profileSeller.products' => function ($q) use ($product_id) {
                     $q->select('id', 'profile_seller_id', 'buyer_instruct')->where('id', $product_id);
-                }, */
+                }, 
                 'profileSeller.level'=>function($q) use($x_localization){
                     $q->select('id', "name_{$x_localization} AS name");
                 },
