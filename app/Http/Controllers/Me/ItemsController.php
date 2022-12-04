@@ -72,7 +72,7 @@ class ItemsController extends Controller
             $q->select('id','user_id');
         },
         'order.cart.user'=>function($q) use($x_localization){
-            $q->select('id');
+            $q->select('id', 'username');
         },
         'order.cart.user.profile'=>function($q){
             $q->select('*')->without('wise_account','paypal_account', 'bank_account', 'bank_transfer_detail');
