@@ -118,6 +118,40 @@ class ProfileController extends Controller
         echo $exc;
     }
 }
+
+    public function index(Request $request){
+        try{
+        $x_localization = 'ar';
+        if ($request->hasHeader('X-localization')) {
+            $x_localization = $request->header('X-localization');
+        }
+        $paginate = $request->query('paginate') ? $request->query('paginate') : 12;
+        $res = Profile::select('id', 'steps', 'first_name', 'last_name', 'full_name', 'steps', 'avatar', 'avatar_url', 'gender',
+        'date_of_birth', 'precent_rating', 'user_id', 'country_id', 'badge_id', 'level_id', 'is_completed')
+        ->without(['wise_account', 'paypal_account', 'bank_account', 'bank_transfer_detail'])
+        ->with([
+            'profile_seller'=>function($q) use($x_localization){
+                $q->select('id', 'steps', 'number_of_sales', 'portfolio', "bio_{$x_localization} AS bio", 'profile_id');
+            },
+            'badge'=>function($q) use($x_localization){
+                $q->select('id', "name_{$x_localization} AS name");
+            },
+            'level' =>function($q) use($x_localization){
+                $q->select('id', "name_{$x_localization} AS name");
+            },
+
+        ])
+        ->paginate($paginate);
+        if (!$res->isEmpty()) {
+            return response()->success(__("messages.filter.filter_success"), $res);
+        } else {
+            return response()->success(__("messages.filter.filter_field"), [], 204);
+        }
+    }
+    catch(Exception  $exc){
+        echo $exc;
+    }
+}
     /**
      * step_one => دالة المرحلة الأولى في الملف الشخصي وهي مرحلة المعلومات الشخصية
      *
