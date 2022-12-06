@@ -147,6 +147,7 @@ class ProfileController extends Controller
         $paginate = $request->query('paginate') ? $request->query('paginate') : 12;
         $res = $is_portfolio ?  Profile::select('id', 'steps', 'first_name', 'last_name', 'full_name', 'steps', 'avatar', 'avatar_url', 'gender',
         'date_of_birth', 'precent_rating', 'user_id', 'country_id', 'badge_id', 'level_id', 'is_completed')
+        
         ->without(['wise_account', 'paypal_account', 'bank_account', 'bank_transfer_detail'])
         ->with([
             'profile_seller'=>function($q) use($x_localization){
@@ -162,13 +163,17 @@ class ProfileController extends Controller
             },
 
         ])
+        ->whereHas('profile_seller', function($q) {
+            $q->whereNotNull('id');
+        })
         ->paginate($paginate)
         :Profile::select('id', 'steps', 'first_name', 'last_name', 'full_name', 'steps', 'avatar', 'avatar_url', 'gender',
         'date_of_birth', 'precent_rating', 'user_id', 'country_id', 'badge_id', 'level_id', 'is_completed')
         ->without(['wise_account', 'paypal_account', 'bank_account', 'bank_transfer_detail'])
         ->with([
             'profile_seller'=>function($q) use($x_localization){
-                $q->select('id', 'steps', 'number_of_sales', 'portfolio', "bio_{$x_localization} AS bio", 'profile_id');
+                $q->select('id', 'steps', 'number_of_sales', 'portfolio', "bio_{$x_localization} AS bio", 'profile_id')
+                ->whereIn('profile_id');
             },
             'badge'=>function($q) use($x_localization){
                 $q->select('id', "name_{$x_localization} AS name");
@@ -178,6 +183,7 @@ class ProfileController extends Controller
             },
 
         ])
+        ->whereNotNull('profile_seller')
         ->paginate($paginate);
         if (!$res->isEmpty()) {
             return response()->success(__("messages.filter.filter_success"), $res);

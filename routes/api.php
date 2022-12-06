@@ -31,6 +31,7 @@ use App\Http\Controllers\SalesProcces\OrderController;
 use App\Http\Controllers\SalesProcces\ItemController;
 use App\Http\Controllers\SearchController;
 use App\Http\Controllers\Product\RatingController;
+use App\Http\Controllers\ProfileSellerController;
 use App\Http\Controllers\WithdrawalController;
 use Illuminate\Support\Facades\Broadcast;
 use Illuminate\Support\Facades\Route;
@@ -217,6 +218,12 @@ Route::group(['middleware' => ['XSS','language']], function () {
 
         Route::get('/{username}', [ProfileController::class, 'show1']);
     });
+
+    Route::prefix('profile_sellers')->group(function () {
+        Route::get('/',[ProfileSellerController::class,'index']);
+    });
+
+
 
     /* -------------------------------------------------------------------------- */
     /*                         مسارات الملف الشخصي البائع                         */
