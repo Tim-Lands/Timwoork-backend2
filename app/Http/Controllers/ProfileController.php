@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\ProfilePortfolioRequest;
 use App\Http\Requests\ProfileStepOneRequest;
 use App\Http\Requests\ProfileStepThreeRequest;
 use App\Http\Requests\ProfileStepTwoRequest;
@@ -23,7 +24,7 @@ class ProfileController extends Controller
      */
     public function __construct()
     {
-        $this->middleware(['auth:sanctum','abilities:user'])->except('show','show1');
+        $this->middleware(['auth:sanctum','abilities:user'])->except('show','show1', 'index');
     }
     /**
      * show => اظهار بروفايل المشتري
@@ -119,14 +120,50 @@ class ProfileController extends Controller
     }
 }
 
+    public function storePortfolio(ProfilePortfolioRequest $request){
+        $cover_Path = $request->file('cover');
+        $coverName = 'tw-' . Auth::user()->id .  time() . '.' . $cover_Path->getClientOriginalExtension();
+        // رفع الصورة
+        $cover_Path->storePubliclyAs('portfolio_covers', $coverName, 'do');
+        //$path = Storage::putFileAs('avatars', $request->file('avatar'), $avatarName);
+        // تخزين اسم الصورة في قاعدة البيانات
+        $profile_seller = Auth::user()->profile->profile_seller;
+        // تغيير اسم المستخدم
+        $cover_url = 'https://timwoork-space.ams3.digitaloceanspaces.com/portfolio_covers/' . $coverName;
+        $profile_seller->portfolio_cover = $coverName;
+        $profile_seller->portfolio_cover_url = $cover_url;
+        $profile_seller->portfolio = $request->portfolio;
+        $profile_seller->save(); 
+
+}
+
     public function index(Request $request){
         try{
+        $is_portfolio =!is_null($request->portfolio);
         $x_localization = 'ar';
         if ($request->hasHeader('X-localization')) {
             $x_localization = $request->header('X-localization');
         }
         $paginate = $request->query('paginate') ? $request->query('paginate') : 12;
-        $res = Profile::select('id', 'steps', 'first_name', 'last_name', 'full_name', 'steps', 'avatar', 'avatar_url', 'gender',
+        $res = $is_portfolio ?  Profile::select('id', 'steps', 'first_name', 'last_name', 'full_name', 'steps', 'avatar', 'avatar_url', 'gender',
+        'date_of_birth', 'precent_rating', 'user_id', 'country_id', 'badge_id', 'level_id', 'is_completed')
+        ->without(['wise_account', 'paypal_account', 'bank_account', 'bank_transfer_detail'])
+        ->with([
+            'profile_seller'=>function($q) use($x_localization){
+                $q->select('id', 'steps', 'number_of_sales', 'portfolio', "bio_{$x_localization} AS bio", 'profile_id')
+                ->whereNotNull('portfolio');
+                
+            },
+            'badge'=>function($q) use($x_localization){
+                $q->select('id', "name_{$x_localization} AS name");
+            },
+            'level' =>function($q) use($x_localization){
+                $q->select('id', "name_{$x_localization} AS name");
+            },
+
+        ])
+        ->paginate($paginate)
+        :Profile::select('id', 'steps', 'first_name', 'last_name', 'full_name', 'steps', 'avatar', 'avatar_url', 'gender',
         'date_of_birth', 'precent_rating', 'user_id', 'country_id', 'badge_id', 'level_id', 'is_completed')
         ->without(['wise_account', 'paypal_account', 'bank_account', 'bank_transfer_detail'])
         ->with([

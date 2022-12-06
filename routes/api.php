@@ -211,6 +211,7 @@ Route::group(['middleware' => ['XSS','language']], function () {
         Route::post('/step_two', [ProfileController::class, 'step_two']);
         // انشاء المرحلة الثالثة من البروفايل
         Route::post('/step_three', [ProfileController::class, 'step_three']);
+        Route::post('/portfolio', [ProfileController::class, 'storePortfolio']);
         // اظهار البروفايل
         Route::get('/', [ProfileController::class, 'index']);
 

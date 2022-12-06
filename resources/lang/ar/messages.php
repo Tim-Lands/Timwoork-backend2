@@ -73,7 +73,9 @@ return [
         "message_required" => "الرسالة مطلوبة",
         "bio_required" => "النبذة مطلوبة",
         "bio_min" => "يجب أن تكون النبذة تحتوي على الأقل 26 حرف",
-        "portfolio_required" => "النبذه عنك مطلوب",
+        'portfolio_required'=>'يجب ارفاق رابط معرض الاعمال',
+    'cover_required'=>'يجب ارفاق خلفية لمعرض الاعمال',
+
         "skills_required" => "المهارات مطلوبة",
         "first_name_required" => "الاسم الاول مطلوب",
         "first_name_min" => "الاسم الاول قصير جدا",
