@@ -28,13 +28,14 @@ class StatisticContoller extends Controller
             'products'                        => $products_total,
             'tags'                            => DB::table('tags')->count(),
             'products_wainting_actived'       => $products_pending,
-
             'products_actived'                => $products_accepted,
             'products_rejected'               => $products_rejected,
             'five_last_users'                 => DB::table('users')->take(5)->latest()->count(),
             'five_last_orders'                => DB::table('orders')->take(5)->latest()->count(),
             'five_last_products_pendings'     => DB::table('products')->where('status', null)->take(5)->latest()->count(),
-
+            "profile_sellers"                 => DB::table('profile_sellers')->count(),
+            "buyers"                          => DB::table('profiles')->where('is_seller',0)->count(),
+            "products_disactived"             => DB::table("products")->whereNull('status')->count()
         ];
 
         return response()->success(__("messages.dashboard.statistic_dashboard"), $data);
