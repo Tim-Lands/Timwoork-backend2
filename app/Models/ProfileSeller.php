@@ -121,4 +121,17 @@ class ProfileSeller extends Model
     {
         return $this->hasOne(ExternalAccountRating::class);
     }
+
+    /**
+     * item
+     *
+     * @return HasMany
+     */
+    public function portfolio_items(): HasMany
+    {
+        return $this->hasMany(PortfolioItems::class);
+    }
+
+
+    
 }

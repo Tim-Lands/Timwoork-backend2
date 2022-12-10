@@ -33,6 +33,7 @@ use App\Http\Controllers\SearchController;
 use App\Http\Controllers\Product\RatingController;
 use App\Http\Controllers\ProfileSellerController;
 use App\Http\Controllers\WithdrawalController;
+use App\Http\Controllers\PortfolioController;
 use Illuminate\Support\Facades\Broadcast;
 use Illuminate\Support\Facades\Route;
 
@@ -238,6 +239,8 @@ Route::group(['middleware' => ['XSS','language']], function () {
         Route::post('/step_one', [SellerController::class, 'step_one']);
         // اضافة المرحلة الثانية من بروفايل البائع
         Route::post('/step_two', [SellerController::class, 'step_two']);
+        Route::put('/portfolio_items', [PortfolioController::class,'add']);
+    
     });
 
 

@@ -120,22 +120,7 @@ class ProfileController extends Controller
     }
 }
 
-    public function storePortfolio(ProfilePortfolioRequest $request){
-        $cover_Path = $request->file('cover');
-        $coverName = 'tw-' . Auth::user()->id .  time() . '.' . $cover_Path->getClientOriginalExtension();
-        // رفع الصورة
-        $cover_Path->storePubliclyAs('portfolio_covers', $coverName, 'do');
-        //$path = Storage::putFileAs('avatars', $request->file('avatar'), $avatarName);
-        // تخزين اسم الصورة في قاعدة البيانات
-        $profile_seller = Auth::user()->profile->profile_seller;
-        // تغيير اسم المستخدم
-        $cover_url = 'https://timwoork-space.ams3.digitaloceanspaces.com/portfolio_covers/' . $coverName;
-        $profile_seller->portfolio_cover = $coverName;
-        $profile_seller->portfolio_cover_url = $cover_url;
-        $profile_seller->portfolio = $request->portfolio;
-        $profile_seller->save(); 
-
-}
+    
 
     public function index(Request $request){
         try{

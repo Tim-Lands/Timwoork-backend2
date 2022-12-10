@@ -31,7 +31,8 @@ class SellerController extends Controller
      * @return object
      */
 
-    public function index(Request $request){
+    public function index(Request $request)
+    {
         $x_localization = 'ar';
         if ($request->hasHeader('X-localization')) {
             $x_localization = $request->header('X-localization');
@@ -43,9 +44,17 @@ class SellerController extends Controller
         $profile_json->bio = $profile->$bio_localization;
         $profile_json->level->name = $profile_json->level->$name_localization;
         $profile_json->badge->name = $profile_json->badge->$name_localization;
-        unset($profile_json->bio_ar, $profile_json->bio_en, $profile_json->bio_fr,$profile_json->level->name_ar,
-         $profile_json->level->name_en, $profile_json->level->name_fr,
-         $profile_json->badge->name_ar,$profile_json->badge->name_en,$profile_json->badge->name_fr);
+        unset(
+            $profile_json->bio_ar,
+            $profile_json->bio_en,
+            $profile_json->bio_fr,
+            $profile_json->level->name_ar,
+            $profile_json->level->name_en,
+            $profile_json->level->name_fr,
+            $profile_json->badge->name_ar,
+            $profile_json->badge->name_en,
+            $profile_json->badge->name_fr
+        );
         return $profile_json;
     }
 
@@ -85,6 +94,8 @@ class SellerController extends Controller
     public function detailsStore(ProfileSellerStoreRequest $request)
     {
         try {
+            
+
             $tr = new GoogleTranslate(); // Translates to 'en' from auto-detected language by default
             $xlocalization = "ar";
             $tr->setSource();
@@ -141,6 +152,15 @@ class SellerController extends Controller
             $seller->bio_fr = $bio_fr;
             $seller->bio_ar = $bio_ar;
             $seller->portfolio = $request->portfolio;
+            if($request->hasFile('cover')){
+            $cover_Path = $request->file('cover');
+            $coverName = 'tw-' . Auth::user()->id .  time() . '.' . $cover_Path->getClientOriginalExtension();
+            // رفع الصورة
+            $cover_Path->storePubliclyAs('portfolio_covers', $coverName, 'do');
+            $cover_url = 'https://timwoork-space.ams3.digitaloceanspaces.com/portfolio_covers/' . $coverName;
+            $seller->portfolio_cover = $coverName;
+            $seller->portfolio_cover_url = $cover_url;
+            }
             $seller->save();
             // تسجيل المهارات الخاصة للبائع
             /*             $skills = [];
