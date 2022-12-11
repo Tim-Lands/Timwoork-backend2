@@ -220,6 +220,12 @@ Route::group(['middleware' => ['XSS','language']], function () {
         Route::get('/{username}', [ProfileController::class, 'show1']);
     });
 
+    Route::prefix('portfolios')->group(function(){
+        Route::post('/', [PortfolioController::class,'store']);
+        Route::post('/items',[PortfolioController::class,'add']);
+        Route::get('/',[PortfolioController::class,'index']);
+    });
+
     Route::prefix('profile_sellers')->group(function () {
         Route::get('/',[ProfileSellerController::class,'index']);
     });

@@ -30,7 +30,7 @@ class PortfolioItems extends Model
      */
     public function gallery(): HasMany
     {
-        return $this->hasMany(PortfolioGallery::class);
+        return $this->hasMany(PortfolioGallery::class,'portfolio_item_id');
     }
 
     /**
@@ -50,7 +50,7 @@ class PortfolioItems extends Model
      */
     public function tags(): BelongsToMany
     {
-        return $this->belongsToMany(Tag::class)->withPivot('value', 'label');
+        return $this->belongsToMany(Tag::class,'portfolio_item_tags','portfolio_item_id')->withPivot('value', 'label');
     }
 
 }

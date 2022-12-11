@@ -14,9 +14,9 @@ class AddTranslateToPortfolioItems extends Migration
     public function up()
     {
         Schema::table('portfolio_items', function (Blueprint $table) {
-            $table->string('content_ar')->nullable(false);
-            $table->string('content_en')->nullable(false);
-            $table->string('content_fr')->nullable(false);
+            $table->text('content_ar')->nullable(false);
+            $table->text('content_en')->nullable(false);
+            $table->text('content_fr')->nullable(false);
             $table->string('title_ar')->nullable(false);
             $table->string('title_en')->nullable(false);
             $table->string('title_fr')->nullable(false);
