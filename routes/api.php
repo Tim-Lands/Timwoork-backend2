@@ -222,9 +222,12 @@ Route::group(['middleware' => ['XSS','language']], function () {
 
     Route::prefix('portfolios')->group(function(){
         Route::post('/items',[PortfolioController::class,'add']);
+        Route::post('/items/{id}/update',[PortfolioController::class,'update']);
         Route::get('/items',[PortfolioController::class,'index']);
         Route::get('/items/{id}',[PortfolioController::class,'show']);
+        Route::delete('/items/{id}', [PortfolioController::class,'delete']);
         Route::get('/{username}',[PortfolioController::class,'indexByUser']);
+        Route::delete('/items/images/{id}',[PortfolioController::class,'deleteImage']);
     });
 
     Route::prefix('profile_sellers')->group(function () {
