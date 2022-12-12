@@ -18,14 +18,29 @@ class PortfolioController extends Controller
         $this->middleware(['auth:sanctum', 'abilities:user'])->except('show', 'show1', 'index');
     }
 
-    public function index(Request $request){
-        try{
-        $paginate = $request->query('paginate') ? $request->query('paginate') : 12;
+    public function index(Request $request)
+    {
+        try {
+            $x_localization = 'ar';
+            if ($request->hasHeader('X-localization')) {
+                $x_localization = $request->header('X-localization');
+            }
+            $paginate = $request->query('paginate') ? $request->query('paginate') : 12;
 
-        $portfolio_items = PortfolioItems::select('*')->paginate($paginate);
-        return response()->success(__("messages.filter.filter_success"), $portfolio_items);
-        }
-        catch(Exception $exc){
+            $portfolio_items = PortfolioItems::select('id', 'created_at', 'seller_id', "content_{$x_localization} AS content",
+             "title_{$x_localization} AS title", 'cover_url', 'url', 'completed_date')
+             ->with([
+                'gallery',
+                "seller"=>function($q) use($x_localization){
+                    $q->select('id', 'profile_id');
+                },
+                'seller.profile'=>function($q) use($x_localization){
+                    $q->select('id', 'first_name', 'last_name', 'avatar', 'avatar_url', 'full_name')->without(['wise_account', 'paypal_account', 'bank_account', 'bank_transfer_details']);
+                }
+                ])
+             ->paginate($paginate);
+            return response()->success(__("messages.filter.filter_success"), $portfolio_items);
+        } catch (Exception $exc) {
             echo $exc;
         }
     }
@@ -50,7 +65,7 @@ class PortfolioController extends Controller
     public function add(Request $request)
     {
         try {
-            
+
             $tr = new GoogleTranslate(); // Translates to 'en' from auto-detected language by default
 
             $tr->setSource();
@@ -158,8 +173,8 @@ class PortfolioController extends Controller
                 'title_fr' => $title_fr,
                 'seller_id' => Auth::user()->profile->profile_seller->id,
                 'cover_url' => $cover_url,
-                'url'=>$request->url,
-                'completed_date'=>$request->completed_date
+                'url' => $request->url,
+                'completed_date' => $request->completed_date
             ]);
             $time = time();
 
@@ -170,16 +185,16 @@ class PortfolioController extends Controller
             // عدد الصور التي تم رفعها
             if (count($request->file('images')) > 5 || count($request->file('images')) == 0) {
                 return response()->error(__("messages.product.count_galaries"), 403);
-            } 
+            }
             foreach ($request->file('images') as $key => $value) {
                 $imagelName = "portfolio-{$key}-{$time}.{$value->getClientOriginalExtension()}";
                 // وضع المعلومات 
                 $value->storePubliclyAs('portfolios/galaries-images', $imagelName, 'do');
                 $galaries_images[$key] = [
-                    'image_url' => "https://timwoork-space.ams3.digitaloceanspaces.com/portfolios/galaries-images/".$imagelName,
+                    'image_url' => "https://timwoork-space.ams3.digitaloceanspaces.com/portfolios/galaries-images/" . $imagelName,
 
                 ];
-            }   
+            }
 
             if (!empty($new_tags)) {
                 // عمل لوب من اجل اضافة كلمة جيدة
