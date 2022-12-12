@@ -50,6 +50,7 @@ class PortfolioController extends Controller
     public function add(Request $request)
     {
         try {
+            
             $tr = new GoogleTranslate(); // Translates to 'en' from auto-detected language by default
 
             $tr->setSource();
@@ -157,7 +158,9 @@ class PortfolioController extends Controller
                 'title_en' => $title_en,
                 'title_fr' => $title_fr,
                 'seller_id' => Auth::user()->profile->profile_seller->id,
-                'cover_url' => $cover_url
+                'cover_url' => $cover_url,
+                'url'=>$request->url,
+                'completed_date'=>$request->completed_date
             ]);
             $time = time();
 
