@@ -38,15 +38,19 @@ class PortfolioController extends Controller
                 "title_{$x_localization} AS title",
                 'cover_url',
                 'url',
-                'completed_date'
+                'completed_date',
             )
                 ->with([
                     'gallery',
                     "seller" => function ($q) use ($x_localization) {
-                        $q->select('id', 'profile_id');
+                        $q->select('id', 'profile_id', "bio_{$x_localization} AS bio");
                     },
                     'seller.profile' => function ($q) use ($x_localization) {
-                        $q->select('id', 'first_name', 'last_name', 'avatar', 'avatar_url', 'full_name')->without(['wise_account', 'paypal_account', 'bank_account', 'bank_transfer_details']);
+                        $q->select('id', 'first_name', 'last_name', 'avatar', 'avatar_url', 'full_name', 'level_id')
+                        ->without(['wise_account', 'paypal_account', 'bank_account', 'bank_transfer_details']);
+                    },
+                    'seller.profile.level'=>function($q) use($x_localization){
+                        $q->select('id', "name_{$x_localization} AS name");
                     }
                 ])
                 ->paginate($paginate);
@@ -104,10 +108,13 @@ class PortfolioController extends Controller
             ->with([
                 'gallery',
                 "seller" => function ($q) use ($x_localization) {
-                    $q->select('id', 'profile_id');
+                    $q->select('id', 'profile_id', "bio_{$x_localization} AS bio");
                 },
                 'seller.profile' => function ($q) use ($x_localization) {
-                    $q->select('id', 'first_name', 'last_name', 'avatar', 'avatar_url', 'full_name')->without(['wise_account', 'paypal_account', 'bank_account', 'bank_transfer_details']);
+                    $q->select('id', 'first_name', 'last_name', 'avatar', 'avatar_url', 'full_name', 'level_id')->without(['wise_account', 'paypal_account', 'bank_account', 'bank_transfer_details']);
+                },
+                "seller.profile.level"=>function($q) use($x_localization){
+                    $q->select('id', "name_{$x_localization} AS name");
                 }
             ])->first();
 
