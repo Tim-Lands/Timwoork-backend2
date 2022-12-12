@@ -58,9 +58,18 @@ class PortfolioItems extends Model
      *
      * @return BelongsToMany
      */
-    public function tags(): BelongsToMany
+    public function tags($query, $value)
     {
-        return $this->belongsToMany(Tag::class,'portfolio_item_tags','portfolio_item_id')->withPivot('value', 'label');
+        $tag_ids = explode(',', $value);
+
+        return $query->whereHas('portfolio_item_tags', function ($q) use ($tag_ids) {
+            $q->whereIn('tag_id', $tag_ids);
+        });
+    }
+
+    public function portfolio_item_tags(): BelongsToMany
+    {
+        return $this->belongsToMany(Tag::class,'portfolio_item_tags','portfolio_item_id');
     }
 
 }

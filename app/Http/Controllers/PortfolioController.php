@@ -91,6 +91,7 @@ class PortfolioController extends Controller
 
     public function show($id, Request $request)
     {
+        try{
         $x_localization = 'ar';
         if ($request->hasHeader('X-localization')) {
             $x_localization = $request->header('X-localization');
@@ -115,13 +116,19 @@ class PortfolioController extends Controller
                 },
                 "seller.profile.level"=>function($q) use($x_localization){
                     $q->select('id', "name_{$x_localization} AS name");
-                }
+                },
+                'portfolio_item_tags'
             ])->first();
 
         if (!$portfolio_item)
             return response()->error(__("messages.errors.element_not_found"));
         return response()->success(__("messages.oprations.get_data"), $portfolio_item);
     }
+    catch(Exception $exc)
+    {
+        echo $exc;
+    }
+}
 
     public function add(PortfolioAddRequest $request)
     {
