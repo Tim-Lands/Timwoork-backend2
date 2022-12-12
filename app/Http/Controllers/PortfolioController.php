@@ -279,10 +279,10 @@ class PortfolioController extends Controller
                     $ids[] = $tag->id;
                 }
                 // اضافة وسوم التابع للخدمة
-                $portfolio_item->tags()->sync($ids);
+                $portfolio_item->portfolio_item_tags()->sync($ids);
             } else {
                 // اضافة وسوم التابع للخدمة
-                $portfolio_item->tags()->sync($ids);
+                $portfolio_item->portfolio_item_tags()->sync($ids);
             }
             $portfolio_item->gallery()->createMany($galaries_images);
             DB::commit();
