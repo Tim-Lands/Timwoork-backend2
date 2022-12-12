@@ -62,7 +62,7 @@ class PortfolioController extends Controller
         if ($request->hasHeader('X-localization')) {
             $x_localization = $request->header('X-localization');
         }
-        $user = User::where('username', $username)->first();
+        $user = User::where('username', $username)->orWhere('id',$username)->first();
         if (!$user)
             return response()->error(__("messages.errors.element_not_found"));
         $profileSeller = $user->profile->profile_seller;
@@ -461,10 +461,14 @@ class PortfolioController extends Controller
         }
     }
 
-    public function delete(Request $request)
+    public function delete($id, Request $request)
     {
-        $id = $request->id;
-        PortfolioItems::where('id', $id)->delete();
+        $portfolio_item = PortfolioItems::where('id', $id)->first();
+        $portfolio_user_id = $portfolio_item->seller->profile->user->id;
+        $auth_id = Auth::user()->id;
+        if($portfolio_user_id != $auth_id)
+            return response()->error(__("messages.errors.element_not_found"));
+        $portfolio_item->delete();
         return response()->success(__("messages.oprations.get_all_data"));
     }
 
