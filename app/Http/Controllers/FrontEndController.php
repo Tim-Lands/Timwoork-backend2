@@ -28,14 +28,19 @@ class FrontEndController extends Controller
 
     public function detectLang(Request $request)
     {
-
+        try{
         $tr = new GoogleTranslate(); // Translates to 'en' from auto-detected language by default
         $tr->setSource(); // Translate from English
         $tr->setTarget('fr');
+        if(is_null($request->sentence))
+            $request->sentence = "";
         $tr->translate($request->sentence);
         $lang = $tr->getLastDetectedSource();
         return response()->success('success',$lang);
-
+        }
+        catch(Exception $ex){
+            echo $ex;
+        }
     }
 
     public function get_top_main_categories(Request $request)

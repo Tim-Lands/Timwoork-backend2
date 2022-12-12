@@ -140,7 +140,6 @@ class PortfolioController extends Controller
             })));
             // جلب الاسماء الجديدة الغير موجودة في قواعد البيانات
             $new_tags = array_values(array_diff($tag_request_values, $get_name_tags));
-
             $cover_Path = $request->file('cover');
             $coverName = 'tw-' . Auth::user()->id .  time() . '.' . $cover_Path->getClientOriginalExtension();
             $cover_Path->storePubliclyAs('portfolio_covers', $coverName, 'do');
