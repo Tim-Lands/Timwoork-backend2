@@ -6,6 +6,7 @@ use App\Events\UserOffline;
 use App\Events\UserOnline;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\GetMeProducts;
+use App\Models\PortfolioItems;
 use App\Models\Product;
 use App\Models\Profile;
 use App\Models\User;
@@ -27,7 +28,7 @@ class MeController extends Controller
         }
         $user =  $request->user();
         $email_verified = True;
-        if(is_null($user->email_verified_at))
+        if (is_null($user->email_verified_at))
             $email_verified = False;
         $user->email_verified = $email_verified;
         unset($user->email_verified_at);
@@ -59,15 +60,15 @@ class MeController extends Controller
         return response()->json($data, Response::HTTP_OK); */
     }
 
-    public function currency(Request $request){
-        try{
-        $x_localization = 'ar';
-        if ($request->hasHeader('X-localization')) {
-            $x_localization = $request->header('X-localization');
-        }
-        return Auth::user()->profile->currency;
-        }
-        catch(Exception $exc){
+    public function currency(Request $request)
+    {
+        try {
+            $x_localization = 'ar';
+            if ($request->hasHeader('X-localization')) {
+                $x_localization = $request->header('X-localization');
+            }
+            return Auth::user()->profile->currency;
+        } catch (Exception $exc) {
             echo $exc;
         }
     }
@@ -81,17 +82,18 @@ class MeController extends Controller
         }
         $user_id =  $request->user()->id;
         $profile = Profile::where(['user_id' => $user_id])
-        ->with(
-        ['country'=>function($q) use($x_localization){
-            $q->select('id',"name_{$x_localization} AS name");
-        }
-        ,'badge'=>function($q) use($x_localization){
-            $q->select('id',"name_{$x_localization} AS name");
-        },
-        'level'=>function($q) use($x_localization){
-            $q->select('id',"name_{$x_localization} AS name", 'value_bayer_min', 'value_bayer_max','type', 'number_developments', 'price_developments', 'number_sales');
-        },
-        ])->first();
+            ->with(
+                [
+                    'country' => function ($q) use ($x_localization) {
+                        $q->select('id', "name_{$x_localization} AS name");
+                    }, 'badge' => function ($q) use ($x_localization) {
+                        $q->select('id', "name_{$x_localization} AS name");
+                    },
+                    'level' => function ($q) use ($x_localization) {
+                        $q->select('id', "name_{$x_localization} AS name", 'value_bayer_min', 'value_bayer_max', 'type', 'number_developments', 'price_developments', 'number_sales');
+                    },
+                ]
+            )->first();
         return response()->json($profile, Response::HTTP_OK);
     }
 
@@ -102,8 +104,8 @@ class MeController extends Controller
             $x_localization = $request->header('X-localization');
         }
         $user_id =  $request->user()->id;
-        $badge = Profile::with(['badge'=>function($query) use($x_localization){
-            $query->select('id',"name_{$x_localization} AS name");
+        $badge = Profile::with(['badge' => function ($query) use ($x_localization) {
+            $query->select('id', "name_{$x_localization} AS name");
         }])->where(['user_id' => $user_id])->get()->first()->badge;
         return response()->json($badge, Response::HTTP_OK);
     }
@@ -115,8 +117,8 @@ class MeController extends Controller
             $x_localization = $request->header('X-localization');
         }
         $user_id =  $request->user()->id;
-        $level = Profile::with(['level'=>function($query) use($x_localization){
-            $query->select("id","name_{$x_localization} AS name","value_bayer_min","value_bayer_max");
+        $level = Profile::with(['level' => function ($query) use ($x_localization) {
+            $query->select("id", "name_{$x_localization} AS name", "value_bayer_min", "value_bayer_max");
         }])->where(['user_id' => $user_id])->first()->level;
         return response()->json($level, Response::HTTP_OK);
     }
@@ -132,94 +134,127 @@ class MeController extends Controller
         $user = $request->user();
         $notifications = $user->notifications()->paginate($paginate);
         return response()->json(
-            $notifications,Response::HTTP_OK);
+            $notifications,
+            Response::HTTP_OK
+        );
     }
 
-    public function unread_notifications_count(Request $request){
-        try{
-        $user = $request->user();
-        $unread_notifications_count = $user->unreadnotifications->count();
-        return response($unread_notifications_count);
-        }
-        catch(Exception $ex){
+    public function unread_notifications_count(Request $request)
+    {
+        try {
+            $user = $request->user();
+            $unread_notifications_count = $user->unreadnotifications->count();
+            return response($unread_notifications_count);
+        } catch (Exception $ex) {
             echo $ex;
         }
     }
 
     public function conversations(Request $request)
     {
-        try{
+        try {
+            $x_localization = 'ar';
+            if ($request->hasHeader('X-localization')) {
+                $x_localization = $request->header('X-localization');
+            }
+            $paginate = $request->query('paginate') ? $request->query('paginate') : 10;
+            $user = Auth::user();
+
+            $conversations = $user->conversations()->with(['latestMessage', 'members' => function ($q) use ($user, $x_localization) {
+                $q->where('user_id', '<>', $user->id)
+                    #->without(['profile.bank_d'])
+                    ->with([
+                        'profile' => function ($q) use ($x_localization) {
+                            $q->select('id', 'first_name', 'last_name', 'avatar', 'avatar_url', 'gender', 'is_seller', 'user_id', 'country_id', 'badge_id', 'level_id', 'full_name');
+                        },
+                        'profile.level' => function ($q) use ($x_localization) {
+                            $q->select('id', "name_{$x_localization} AS name");
+                        },
+                        'profile.badge' => function ($q) use ($x_localization) {
+                            $q->select('id', "name_{$x_localization} AS name");
+                        },
+                        'profile.country' => function ($q) use ($x_localization) {
+                            $q->select('id', 'flag', 'code_phone', "name_{$x_localization} AS name ");
+                        },
+                        'profile.paypal_account' => function ($q) use ($x_localization) {
+                            $q->select('created_at');
+                        },
+                        'profile.bank_account' => function ($q) use ($x_localization) {
+                            $q->select('created_at');
+                        },
+                        'profile.bank_transfer_detail' => function ($q) use ($x_localization) {
+                            $q->select('created_at');
+                        },
+                    ]);
+            }])->withCount(['messages' => function (Builder $query) use ($user) {
+                $query->where('user_id', '<>', $user->id)
+                    ->whereNull('read_at');
+            }])
+                ->orderBy('updated_at', 'desc')
+                ->paginate($paginate);
+            return response()->success('ok', $conversations);
+        } catch (Exception $exc) {
+            echo ($exc);
+        }
+    }
+
+    public function unread_conversations_count(Request $request)
+    {
+        try {
+            $user = $request->user();
+            $unread_messages = $user->conversations->loadCount(['messages' => function ($q) use ($user) {
+                $q->whereNull('read_at')
+                    ->where('user_id', '<>', $user->id);
+            }])->where('messages_count', '>', '0')->sortByDesc('updated_at');
+            return response(['data' => array_values($unread_messages->toArray()), 'count' => $unread_messages->count()]);
+        } catch (Exception $ex) {
+            echo $ex;
+        }
+    }
+    public function status(User $user, Request $request)
+    {
+
+        $status = strtolower($request->status) == "true";
+        $user->status = $status;
+        $user->save();
+        if ($status) {
+            broadcast(new UserOnline($user));
+        } else {
+            broadcast(new UserOffline($user));
+        }
+    }
+
+    public function portfolio(User $user, Request $request)
+    {
         $x_localization = 'ar';
         if ($request->hasHeader('X-localization')) {
             $x_localization = $request->header('X-localization');
         }
-        $paginate = $request->query('paginate') ? $request->query('paginate') : 10;
-        $user = Auth::user();
-
-        $conversations = $user->conversations()->with(['latestMessage', 'members' => function ($q) use ($user, $x_localization) {
-            $q->where('user_id', '<>', $user->id)
-            #->without(['profile.bank_d'])
-            ->with(['profile'=>function ($q) use($x_localization){
-                $q->select('id', 'first_name', 'last_name', 'avatar', 'avatar_url', 'gender', 'is_seller', 'user_id', 'country_id', 'badge_id', 'level_id', 'full_name');
-            },
-        'profile.level'=>function($q) use($x_localization){
-            $q->select('id', "name_{$x_localization} AS name");
-        },
-        'profile.badge'=>function($q) use($x_localization){
-            $q->select('id', "name_{$x_localization} AS name");
-        },
-        'profile.country'=> function($q) use($x_localization){
-            $q->select('id','flag', 'code_phone', "name_{$x_localization} AS name ");
-        },
-        'profile.paypal_account'=>function($q) use($x_localization){
-            $q->select('created_at');
-        },
-        'profile.bank_account'=>function($q) use($x_localization){
-            $q->select('created_at');
-        },
-        'profile.bank_transfer_detail'=>function($q) use($x_localization){
-            $q->select('created_at');
-        },
-    ]);
-        }])->withCount(['messages' => function (Builder $query) use ($user) {
-            $query->where('user_id', '<>', $user->id)
-                ->whereNull('read_at');
-        }])
-            ->orderBy('updated_at', 'desc')
+        $paginate = $request->query('paginate') ? $request->query('paginate') : 12;
+        $portfolio_items = $user->profile->profile_seller->portfolio->select(
+            'id',
+            'created_at',
+            'seller_id',
+            "content_{$x_localization} AS content",
+            "title_{$x_localization} AS title",
+            'cover_url',
+            'url',
+            'completed_date'
+        )
+            ->with([
+                'gallery',
+                "seller" => function ($q) use ($x_localization) {
+                    $q->select('id', 'profile_id');
+                },
+                'seller.profile' => function ($q) use ($x_localization) {
+                    $q->select('id', 'first_name', 'last_name', 'avatar', 'avatar_url', 'full_name')->without(['wise_account', 'paypal_account', 'bank_account', 'bank_transfer_details']);
+                }
+            ])
             ->paginate($paginate);
-        return response()->success('ok', $conversations);
-    }
-    catch(Exception $exc){
-        echo($exc); 
-    }
-}
-
-public function unread_conversations_count(Request $request){
-    try{
-    $user = $request->user();
-    $unread_messages = $user->conversations->loadCount(['messages' => function ($q) use ($user) {
-        $q->whereNull('read_at')
-            ->where('user_id', '<>', $user->id);
-    }])->where('messages_count','>','0')->sortByDesc('updated_at');
-    return response(['data'=>array_values($unread_messages->toArray()), 'count'=>$unread_messages->count()]);
-    }
-    catch (Exception $ex){
-        echo $ex;
-    }
-}
-public function status(User $user, Request $request){
-    
-    $status = strtolower($request->status)=="true";
-    $user->status = $status;
-        $user->save();
-        if($status){
-            broadcast(new UserOnline($user));
-        }
-            else{
-            broadcast(new UserOffline($user));
-        }
+            return response()->success(__("messages.filter.filter_success"), $portfolio_items);
+        
     }
     //
-    
+
 
 }

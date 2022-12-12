@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\PortfolioAddRequest;
 use App\Http\Requests\ProfilePortfolioRequest;
 use App\Models\PortfolioItems;
 use App\Models\Tag;
@@ -27,42 +28,64 @@ class PortfolioController extends Controller
             }
             $paginate = $request->query('paginate') ? $request->query('paginate') : 12;
 
-            $portfolio_items = PortfolioItems::select('id', 'created_at', 'seller_id', "content_{$x_localization} AS content",
-             "title_{$x_localization} AS title", 'cover_url', 'url', 'completed_date')
-             ->with([
-                'gallery',
-                "seller"=>function($q) use($x_localization){
-                    $q->select('id', 'profile_id');
-                },
-                'seller.profile'=>function($q) use($x_localization){
-                    $q->select('id', 'first_name', 'last_name', 'avatar', 'avatar_url', 'full_name')->without(['wise_account', 'paypal_account', 'bank_account', 'bank_transfer_details']);
-                }
+            $portfolio_items = PortfolioItems::select(
+                'id',
+                'created_at',
+                'seller_id',
+                "content_{$x_localization} AS content",
+                "title_{$x_localization} AS title",
+                'cover_url',
+                'url',
+                'completed_date'
+            )
+                ->with([
+                    'gallery',
+                    "seller" => function ($q) use ($x_localization) {
+                        $q->select('id', 'profile_id');
+                    },
+                    'seller.profile' => function ($q) use ($x_localization) {
+                        $q->select('id', 'first_name', 'last_name', 'avatar', 'avatar_url', 'full_name')->without(['wise_account', 'paypal_account', 'bank_account', 'bank_transfer_details']);
+                    }
                 ])
-             ->paginate($paginate);
+                ->paginate($paginate);
             return response()->success(__("messages.filter.filter_success"), $portfolio_items);
         } catch (Exception $exc) {
             echo $exc;
         }
     }
 
-    public function storePortfolio(ProfilePortfolioRequest $request)
+    public function show($id, Request $request)
     {
-        $cover_Path = $request->file('cover');
-        $coverName = 'tw-' . Auth::user()->id .  time() . '.' . $cover_Path->getClientOriginalExtension();
-        // رفع الصورة
-        $cover_Path->storePubliclyAs('portfolio_covers', $coverName, 'do');
-        //$path = Storage::putFileAs('avatars', $request->file('avatar'), $avatarName);
-        // تخزين اسم الصورة في قاعدة البيانات
-        $profile_seller = Auth::user()->profile->profile_seller;
-        // تغيير اسم المستخدم
-        $cover_url = 'https://timwoork-space.ams3.digitaloceanspaces.com/portfolio_covers/' . $coverName;
-        $profile_seller->portfolio_cover = $coverName;
-        $profile_seller->portfolio_cover_url = $cover_url;
-        $profile_seller->portfolio = $request->portfolio;
-        $profile_seller->save();
+        $x_localization = 'ar';
+        if ($request->hasHeader('X-localization')) {
+            $x_localization = $request->header('X-localization');
+        }
+        $portfolio_item = PortfolioItems::select(
+            'id',
+            'created_at',
+            'seller_id',
+            "content_{$x_localization} AS content",
+            "title_{$x_localization} AS title",
+            'cover_url',
+            'url',
+            'completed_date'
+        )->where('id', $id)
+            ->with([
+                'gallery',
+                "seller" => function ($q) use ($x_localization) {
+                    $q->select('id', 'profile_id');
+                },
+                'seller.profile' => function ($q) use ($x_localization) {
+                    $q->select('id', 'first_name', 'last_name', 'avatar', 'avatar_url', 'full_name')->without(['wise_account', 'paypal_account', 'bank_account', 'bank_transfer_details']);
+                }
+            ])->first();
+
+        if (!$portfolio_item)
+            return response()->error(__("messages.errors.element_not_found"));
+        return response()->success(__("messages.oprations.get_data"), $portfolio_item);
     }
 
-    public function add(Request $request)
+    public function add(PortfolioAddRequest $request)
     {
         try {
 
@@ -130,6 +153,8 @@ class PortfolioController extends Controller
                     $title_fr = $request->title;
                     break;
             }
+            if(is_null($request->tags))
+                $request->tags = array();
 
             $request_tags = array_map(function ($key) {
                 return json_decode($key);

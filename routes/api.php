@@ -221,9 +221,9 @@ Route::group(['middleware' => ['XSS','language']], function () {
     });
 
     Route::prefix('portfolios')->group(function(){
-        Route::post('/', [PortfolioController::class,'store']);
         Route::post('/items',[PortfolioController::class,'add']);
-        Route::get('/',[PortfolioController::class,'index']);
+        Route::get('/items',[PortfolioController::class,'index']);
+        Route::get('/items/{id}',[PortfolioController::class,'show']);
     });
 
     Route::prefix('profile_sellers')->group(function () {
