@@ -224,6 +224,7 @@ Route::group(['middleware' => ['XSS','language']], function () {
         Route::post('/items',[PortfolioController::class,'add']);
         Route::get('/items',[PortfolioController::class,'index']);
         Route::get('/items/{id}',[PortfolioController::class,'show']);
+        Route::get('/{username}',[PortfolioController::class,'indexByUser']);
     });
 
     Route::prefix('profile_sellers')->group(function () {
@@ -245,7 +246,6 @@ Route::group(['middleware' => ['XSS','language']], function () {
         Route::post('/step_one', [SellerController::class, 'step_one']);
         // اضافة المرحلة الثانية من بروفايل البائع
         Route::post('/step_two', [SellerController::class, 'step_two']);
-        Route::put('/portfolio_items', [PortfolioController::class,'add']);
     
     });
 

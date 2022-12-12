@@ -129,7 +129,7 @@ class ProfileSeller extends Model
      */
     public function portfolio_items(): HasMany
     {
-        return $this->hasMany(PortfolioItems::class);
+        return $this->hasMany(PortfolioItems::class,'seller_id');
     }
 
 

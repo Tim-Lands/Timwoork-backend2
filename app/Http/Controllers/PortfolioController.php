@@ -6,6 +6,7 @@ use App\Http\Requests\PortfolioAddRequest;
 use App\Http\Requests\ProfilePortfolioRequest;
 use App\Models\PortfolioItems;
 use App\Models\Tag;
+use App\Models\User;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -52,6 +53,35 @@ class PortfolioController extends Controller
         } catch (Exception $exc) {
             echo $exc;
         }
+    }
+
+    public function indexByUser($username, Request $request)
+    {
+        $x_localization = 'ar';
+        if ($request->hasHeader('X-localization')) {
+            $x_localization = $request->header('X-localization');
+        }
+        $user = User::where('username', $username)->first();
+        if (!$user)
+            return response()->error(__("messages.errors.element_not_found"));
+        $profileSeller = $user->profile->profile_seller;
+        if (!$profileSeller)
+            return response()->error(__("messages.errors.element_not_found"));
+        $portfolio_items = $profileSeller->portfolio_items;
+        $portfolio_items = $portfolio_items->map(function ($item) use ($x_localization) {
+            $tiitle_localization = "title_{$x_localization}";
+            $content_localization = "content_{$x_localization}";
+            $item['title'] = $item[$tiitle_localization];
+            $item['content'] = $item[$content_localization];
+            unset($item['title_ar']);
+            unset($item['title_en']);
+            unset($item['title_fr']);
+            unset($item['content_ar']);
+            unset($item['content_en']);
+            unset($item['content_fr']);
+            return $item;
+        });
+        return $portfolio_items;
     }
 
     public function show($id, Request $request)
@@ -153,7 +183,7 @@ class PortfolioController extends Controller
                     $title_fr = $request->title;
                     break;
             }
-            if(is_null($request->tags))
+            if (is_null($request->tags))
                 $request->tags = array();
 
             $request_tags = array_map(function ($key) {

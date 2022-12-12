@@ -23,6 +23,7 @@ Route::prefix('profile_seller')->group(function () {
 });
 Route::get('/', [MeController::class,'index']);
 Route::get('/currency',[MeController::class,'currency']);
+Route::get('/portfolio',[MeController::class,'portfolio']);
 Route::get('/cart',[CartController::class, 'index']);
 Route::put('/cart/items',[CartController::class,'store']);
 Route::patch('/cart/items/{id}',[CartController::class,'update']);
