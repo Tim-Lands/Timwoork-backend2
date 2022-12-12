@@ -318,22 +318,21 @@ class PortfolioController extends Controller
                     case "ar":
                         if (is_null($content_en)) {
                             $tr->setTarget('en');
-                            
+
                             $content_en = $request->content ? $tr->translate($request->content) : $content_en;
-                            
+
                             $title_en = $request->title ? $tr->translate($request->title) : $title_en;
-                            
                         }
-                        
+
                         if (is_null($content_fr)) {
                             $tr->setTarget('fr');
                             $content_fr = $request->content ? $tr->translate($request->content) : $content_fr;
                             $title_fr = $request->title ? $tr->translate($request->title) : $title_fr;
                         }
-                        
+
                         $content_ar = $request->content;
                         $title_ar = $request->title;
-                        
+
                         break;
                     case 'en':
                         if (is_null($content_ar)) {
@@ -418,12 +417,12 @@ class PortfolioController extends Controller
 
             // شرط اذا لم يجد الصور التي يرسلهم المستخدم في حالة الانشاء لاول مرة   
             if ($request->file('images')) {
-                
+
                 $get_galaries_images =  $portfolio_item->gallery;
                 if ((count($request->file('images'))) > 5 || count($request->file('images')) == 0) {
                     return response()->error(__("messages.product.count_galaries"), 403);
                 }
-                
+
                 foreach ($request->file('images') as $key => $value) {
                     $imagelName = "portfolio-{$key}-{$time}.{$value->getClientOriginalExtension()}";
                     // وضع المعلومات 
@@ -469,11 +468,20 @@ class PortfolioController extends Controller
         return response()->success(__("messages.oprations.get_all_data"));
     }
 
-    public function deleteImage($id ,Request $request){
-        $image = PortfolioGallery::where('id', $id);
-        $user = $image->portfolio_item->seller->profile->user;
-        return $user;
+    public function deleteImage($id, Request $request)
+    {
+        try {
+            $image = PortfolioGallery::where('id', $id)->first();
+            if (!$image)
+                return response()->error(__("messages.errors.element_not_found"));
+            $image_user_id = $image->portfolio_item->seller->profile->user->id;
+            $auth_id = Auth::user()->id;
+            if ($image_user_id != $auth_id)
+                return response()->error(__("messages.errors.element_not_found"));
+            $image->delete();
+            return response()->success(__("messages.oprations.get_all_data"));
+        } catch (Exception $exc) {
+            echo $exc;
+        }
     }
-
-
 }
