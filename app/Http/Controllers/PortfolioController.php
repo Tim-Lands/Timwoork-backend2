@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\PortfolioAddRequest;
 use App\Http\Requests\ProfilePortfolioRequest;
+use App\Models\PortfolioGallery;
 use App\Models\PortfolioItems;
 use App\Models\Tag;
 use App\Models\User;
@@ -17,7 +18,7 @@ class PortfolioController extends Controller
 {
     public function __construct()
     {
-        $this->middleware(['auth:sanctum', 'abilities:user'])->except('show', 'show1', 'index');
+        $this->middleware(['auth:sanctum', 'abilities:user'])->except('show', 'show1', 'index', 'indexByUser');
     }
 
     public function index(Request $request)
@@ -461,12 +462,18 @@ class PortfolioController extends Controller
         }
     }
 
-
-
     public function delete(Request $request)
     {
         $id = $request->id;
         PortfolioItems::where('id', $id)->delete();
         return response()->success(__("messages.oprations.get_all_data"));
     }
+
+    public function deleteImage($id ,Request $request){
+        $image = PortfolioGallery::where('id', $id);
+        $user = $image->portfolio_item->seller->profile->user;
+        return $user;
+    }
+
+
 }
