@@ -47,8 +47,8 @@ class PortfolioAddRequest extends FormRequest
         return [
             'url'=>__("messages.validation.url"),
             'cover.required' => __("messages.validation.cover_required"),
-            'content.required'=>__('messages.validation.content_required'),
-            'content.min'=>__('messages.validation.content_min'),
+            'content.required'=>__('messages.validation.portfolio_details_required'),
+            'content.min'=>__('messages.validation.portfolio_details_min'),
             'title.required'=>__('messages.validation.title_required'),
             'title.min' =>__("messages.validation.title_size"),
             'title.max' =>__("messages.validation.title_size"),

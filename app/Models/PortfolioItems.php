@@ -40,7 +40,17 @@ class PortfolioItems extends Model
      */
     public function fans(): BelongsToMany
     {
-        return $this->belongsToMany(User::class,'favorites');
+        return $this->belongsToMany(Profile::class,'favourites', 'portfolio_item_id');
+    }
+
+    /**
+     * item
+     *
+     * @return BelongsToMany
+     */
+    public function likers(): BelongsToMany
+    {
+        return $this->belongsToMany(Profile::class,'likes', 'portfolio_item_id');
     }
 
     /**

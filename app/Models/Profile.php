@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 
@@ -143,4 +144,26 @@ class Profile extends Model
     {
         return $this->hasOne(BankTransferDetail::class);
     }
+
+
+     /**
+     * item
+     *
+     * @return BelongsToMany
+     */
+    public function liked_portfolios(): BelongsToMany
+    {
+        return $this->belongsToMany(PortfolioItems::class,'likes', 'profile_id');
+    }
+
+     /**
+     * item
+     *
+     * @return BelongsToMany
+     */
+    public function favourites(): BelongsToMany
+    {
+        return $this->belongsToMany(PortfolioItems::class,'favourites', 'profile_id');
+    }
+
 }
