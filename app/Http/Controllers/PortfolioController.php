@@ -541,7 +541,7 @@ class PortfolioController extends Controller
     {
         try {
             $profile = Auth::user()->profile;
-            $profile->favourites()->attach($id);
+            $profile->favourites()->toggle($id);
             return response()->success(__("messages.oprations.get_all_data"));
         } catch (Exception $exc) {
             return response()->error(__("messages.errors.element_not_found"));
@@ -563,9 +563,10 @@ class PortfolioController extends Controller
     {
         try {
             $profile = Auth::user()->profile;
-            $profile->liked_portfolios()->attach($id);
+            $profile->liked_portfolios()->toggle($id);
             return response()->success(__("messages.oprations.get_all_data"));
         } catch (Exception $exc) {
+            echo $exc;
             return response()->error(__("messages.errors.element_not_found"));
         }
     }

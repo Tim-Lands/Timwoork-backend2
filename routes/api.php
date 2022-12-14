@@ -225,12 +225,10 @@ Route::group(['middleware' => ['XSS','language']], function () {
     Route::prefix('portfolios')->group(function(){
         Route::post('/items',[PortfolioController::class,'add']);
         Route::post('/items/{id}/update',[PortfolioController::class,'update']);
-        Route::get('/items',[PortfolioController::class,'index']);
+        Route::get('/itmes',[PortfolioController::class,'index']);
         Route::get('/items/{id}',[PortfolioController::class,'show']);
         Route::post('/items/{id}/favourite', [PortfolioController::class, 'favourite']);
-        Route::post('/items/{id}/unfavourite', [PortfolioController::class, 'unfavourite']);
         Route::post('/items/{id}/like', [PortfolioController::class, 'like']);
-        Route::post('/items/{id}/unlike', [PortfolioController::class, 'unlike']);
         Route::delete('/items/{id}', [PortfolioController::class,'delete']);
         Route::get('/{username}',[PortfolioController::class,'indexByUser']);
         Route::delete('/items/images/{id}',[PortfolioController::class,'deleteImage']);
