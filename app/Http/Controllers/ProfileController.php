@@ -307,16 +307,22 @@ class ProfileController extends Controller
     }
 
     public function follow($id, Request $request){
+        try{
         $profile = Auth::user()->profile;
         if ($id == $profile->id)
             return response()->error(400);
         $profile->following()->attach($id);
-        return 'sharaf';
+        return response()->success(__("messages.oprations.get_all_data"));
     }
+    catch(Exception $exc){
+        return response()->error(__("messages.errors.element_not_found"));
+        
+    }
+}
 
     public function unfollow($id, Request $request){
         $profile = Auth::user()->profile;
         $profile->following()->detach($id);
-        return "sharaf";
+        return response()->success(__("messages.oprations.get_all_data"));
     }
 }

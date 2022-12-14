@@ -153,7 +153,7 @@ class Profile extends Model
      */
     public function liked_portfolios(): BelongsToMany
     {
-        return $this->belongsToMany(PortfolioItems::class, 'likes', 'profile_id');
+        return $this->belongsToMany(PortfolioItems::class, 'likes', 'profile_id')->withTimestamps();
     }
 
     /**
@@ -163,7 +163,7 @@ class Profile extends Model
      */
     public function favourites(): BelongsToMany
     {
-        return $this->belongsToMany(PortfolioItems::class, 'favourites', 'profile_id');
+        return $this->belongsToMany(PortfolioItems::class, 'favourites', 'profile_id', 'portfolio_item_id')->withTimestamps();
     }
 
     /**

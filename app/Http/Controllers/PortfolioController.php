@@ -47,9 +47,9 @@ class PortfolioController extends Controller
                     },
                     'seller.profile' => function ($q) use ($x_localization) {
                         $q->select('id', 'first_name', 'last_name', 'avatar', 'avatar_url', 'full_name', 'level_id')
-                        ->without(['wise_account', 'paypal_account', 'bank_account', 'bank_transfer_details']);
+                            ->without(['wise_account', 'paypal_account', 'bank_account', 'bank_transfer_details']);
                     },
-                    'seller.profile.level'=>function($q) use($x_localization){
+                    'seller.profile.level' => function ($q) use ($x_localization) {
                         $q->select('id', "name_{$x_localization} AS name");
                     }
                 ])
@@ -66,7 +66,7 @@ class PortfolioController extends Controller
         if ($request->hasHeader('X-localization')) {
             $x_localization = $request->header('X-localization');
         }
-        $user = User::where('username', $username)->orWhere('id',$username)->first();
+        $user = User::where('username', $username)->orWhere('id', $username)->first();
         if (!$user)
             return response()->error(__("messages.errors.element_not_found"));
         $profileSeller = $user->profile->profile_seller;
@@ -91,44 +91,42 @@ class PortfolioController extends Controller
 
     public function show($id, Request $request)
     {
-        try{
-        $x_localization = 'ar';
-        if ($request->hasHeader('X-localization')) {
-            $x_localization = $request->header('X-localization');
-        }
-        $portfolio_item = PortfolioItems::select(
-            'id',
-            'created_at',
-            'seller_id',
-            "content_{$x_localization} AS content",
-            "title_{$x_localization} AS title",
-            'cover_url',
-            'url',
-            'completed_date'
-        )->where('id', $id)
-            ->with([
-                'gallery',
-                "seller" => function ($q) use ($x_localization) {
-                    $q->select('id', 'profile_id', "bio_{$x_localization} AS bio");
-                },
-                'seller.profile' => function ($q) use ($x_localization) {
-                    $q->select('id', 'first_name', 'last_name', 'avatar', 'avatar_url', 'full_name', 'level_id')->without(['wise_account', 'paypal_account', 'bank_account', 'bank_transfer_details']);
-                },
-                "seller.profile.level"=>function($q) use($x_localization){
-                    $q->select('id', "name_{$x_localization} AS name");
-                },
-                'portfolio_item_tags'
-            ])->first();
+        try {
+            $x_localization = 'ar';
+            if ($request->hasHeader('X-localization')) {
+                $x_localization = $request->header('X-localization');
+            }
+            $portfolio_item = PortfolioItems::select(
+                'id',
+                'created_at',
+                'seller_id',
+                "content_{$x_localization} AS content",
+                "title_{$x_localization} AS title",
+                'cover_url',
+                'url',
+                'completed_date'
+            )->where('id', $id)
+                ->with([
+                    'gallery',
+                    "seller" => function ($q) use ($x_localization) {
+                        $q->select('id', 'profile_id', "bio_{$x_localization} AS bio");
+                    },
+                    'seller.profile' => function ($q) use ($x_localization) {
+                        $q->select('id', 'first_name', 'last_name', 'avatar', 'avatar_url', 'full_name', 'level_id')->without(['wise_account', 'paypal_account', 'bank_account', 'bank_transfer_details']);
+                    },
+                    "seller.profile.level" => function ($q) use ($x_localization) {
+                        $q->select('id', "name_{$x_localization} AS name");
+                    },
+                    'portfolio_item_tags'
+                ])->first();
 
-        if (!$portfolio_item)
-            return response()->error(__("messages.errors.element_not_found"));
-        return response()->success(__("messages.oprations.get_data"), $portfolio_item);
+            if (!$portfolio_item)
+                return response()->error(__("messages.errors.element_not_found"));
+            return response()->success(__("messages.oprations.get_data"), $portfolio_item);
+        } catch (Exception $exc) {
+            echo $exc;
+        }
     }
-    catch(Exception $exc)
-    {
-        echo $exc;
-    }
-}
 
     public function add(PortfolioAddRequest $request)
     {
@@ -480,7 +478,7 @@ class PortfolioController extends Controller
         $portfolio_item = PortfolioItems::where('id', $id)->first();
         $portfolio_user_id = $portfolio_item->seller->profile->user->id;
         $auth_id = Auth::user()->id;
-        if($portfolio_user_id != $auth_id)
+        if ($portfolio_user_id != $auth_id)
             return response()->error(__("messages.errors.element_not_found"));
         $portfolio_item->delete();
         return response()->success(__("messages.oprations.get_all_data"));
@@ -500,6 +498,50 @@ class PortfolioController extends Controller
             return response()->success(__("messages.oprations.get_all_data"));
         } catch (Exception $exc) {
             echo $exc;
+        }
+    }
+
+    public function favourite($id, Request $request)
+    {
+        try {
+            $profile = Auth::user()->profile;
+            $profile->favourites()->attach($id);
+            return response()->success(__("messages.oprations.get_all_data"));
+        } catch (Exception $exc) {
+            return response()->error(__("messages.errors.element_not_found"));
+        }
+    }
+
+    public function unfavourite($id, Request $request)
+    {
+        try {
+            $profile = Auth::user()->profile;
+            $profile->favourites()->detach($id);
+            return response()->success(__("messages.oprations.get_all_data"));
+        } catch (Exception $exc) {
+            return response()->error(__("messages.errors.element_not_found"));
+        }
+    }
+
+    public function like($id, Request $request)
+    {
+        try {
+            $profile = Auth::user()->profile;
+            $profile->liked_portfolios()->attach($id);
+            return response()->success(__("messages.oprations.get_all_data"));
+        } catch (Exception $exc) {
+            return response()->error(__("messages.errors.element_not_found"));
+        }
+    }
+
+    public function unlike($id, Request $request)
+    {
+        try {
+            $profile = Auth::user()->profile;
+            $profile->liked_portfolios()->detach($id);
+            return response()->success(__("messages.oprations.get_all_data"));
+        } catch (Exception $exc) {
+            return response()->error(__("messages.errors.element_not_found"));
         }
     }
 }
