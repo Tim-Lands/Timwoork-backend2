@@ -218,6 +218,8 @@ Route::group(['middleware' => ['XSS','language']], function () {
         Route::get('/', [ProfileController::class, 'index']);
 
         Route::get('/{username}', [ProfileController::class, 'show1']);
+        Route::post('/{id}/follow', [ProfileController::class, 'follow']);
+        Route::post('/{id}/unfollow', [ProfileController::class, 'unfollow']);
     });
 
     Route::prefix('portfolios')->group(function(){

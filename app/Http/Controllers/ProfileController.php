@@ -305,4 +305,18 @@ class ProfileController extends Controller
             return response()->error(__("messages.errors.error_database"));
         }
     }
+
+    public function follow($id, Request $request){
+        $profile = Auth::user()->profile;
+        if ($id == $profile->id)
+            return response()->error(400);
+        $profile->following()->attach($id);
+        return 'sharaf';
+    }
+
+    public function unfollow($id, Request $request){
+        $profile = Auth::user()->profile;
+        $profile->following()->detach($id);
+        return "sharaf";
+    }
 }
