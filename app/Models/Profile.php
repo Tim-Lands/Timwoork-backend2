@@ -153,7 +153,7 @@ class Profile extends Model
      */
     public function liked_portfolios(): BelongsToMany
     {
-        return $this->belongsToMany(PortfolioItems::class, 'likes', 'profile_id')->withTimestamps();
+        return $this->belongsToMany(PortfolioItems::class, 'likes', 'profile_id','portfolio_item_id')->withTimestamps();
     }
 
     /**

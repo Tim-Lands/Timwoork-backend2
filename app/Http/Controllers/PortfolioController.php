@@ -53,6 +53,10 @@ class PortfolioController extends Controller
                         $q->select('id', "name_{$x_localization} AS name");
                     }
                 ])
+                ->withCount([
+                    'likers',
+                    'fans',
+                ])
                 ->paginate($paginate);
             return response()->success(__("messages.filter.filter_success"), $portfolio_items);
         } catch (Exception $exc) {
@@ -62,31 +66,38 @@ class PortfolioController extends Controller
 
     public function indexByUser($username, Request $request)
     {
+        try{
         $x_localization = 'ar';
         if ($request->hasHeader('X-localization')) {
             $x_localization = $request->header('X-localization');
         }
-        $user = User::where('username', $username)->orWhere('id', $username)->first();
+        $user = User::where('username', $username)->orWhere('id', $username)
+        ->select("id")
+        ->with([
+            'profile'=>function($q){
+                $q->select('id', 'user_id')->without(['paypal_account','wise_account','bank_account','bank_transfer_detail']);
+            },
+            'profile.profile_seller'=>function($q){
+                $q->select('id', 'profile_id');
+            },
+            'profile.profile_seller.portfolio_items'=>function($q) use($x_localization){
+                $q->select('id', 'created_at', 'updated_at', 'seller_id', "content_{$x_localization} AS content", 
+                "title_{$x_localization} AS title", 'cover_url', 'url', 'completed_date')
+                ->withCount(['likers', 'fans']);
+            }
+            ])
+        ->first();
+    
         if (!$user)
             return response()->error(__("messages.errors.element_not_found"));
-        $profileSeller = $user->profile->profile_seller;
-        if (!$profileSeller)
-            return response()->error(__("messages.errors.element_not_found"));
-        $portfolio_items = $profileSeller->portfolio_items;
-        $portfolio_items = $portfolio_items->map(function ($item) use ($x_localization) {
-            $tiitle_localization = "title_{$x_localization}";
-            $content_localization = "content_{$x_localization}";
-            $item['title'] = $item[$tiitle_localization];
-            $item['content'] = $item[$content_localization];
-            unset($item['title_ar']);
-            unset($item['title_en']);
-            unset($item['title_fr']);
-            unset($item['content_ar']);
-            unset($item['content_en']);
-            unset($item['content_fr']);
-            return $item;
-        });
+        $portfolio_items = $user->profile->profile_seller->portfolio_items;
         return $portfolio_items;
+        
+        //return $portfolio_items;
+    }
+    catch(Exception $exc){
+        echo $exc;
+    }
     }
 
     public function show($id, Request $request)
@@ -118,10 +129,23 @@ class PortfolioController extends Controller
                         $q->select('id', "name_{$x_localization} AS name");
                     },
                     'portfolio_item_tags'
-                ])->first();
-
+                ])
+                ->withCount(['likers','fans'])
+                ->first();
+            
             if (!$portfolio_item)
                 return response()->error(__("messages.errors.element_not_found"));
+            
+            //$like = Auth::user()->profile->liked_portfolios->contains($id);
+            $is_liked = false;
+            $is_favourite = false;
+            $user= $request->user('sanctum');
+            if($user){
+                $is_liked = $portfolio_item->likers->contains($user->id);
+                $is_favourite = $portfolio_item->fans->contains($user->id);
+            }
+            $portfolio_item->is_liked=$is_liked;
+            $portfolio_item->is_favourite = $is_favourite;
             return response()->success(__("messages.oprations.get_data"), $portfolio_item);
         } catch (Exception $exc) {
             echo $exc;
@@ -487,7 +511,19 @@ class PortfolioController extends Controller
     public function deleteImage($id, Request $request)
     {
         try {
-            $image = PortfolioGallery::where('id', $id)->first();
+            DB::enableQueryLog();
+            $image = PortfolioGallery::where('id', $id)
+            /*->with([
+                'portfolio_item',
+                'portfolio_item.seller',
+                'portfolio_item.seller.profile'
+                ])
+            //->where('portfolio_item_id','=',8)
+            /*->whereHas('portfolio_item',function($q){
+                $q->where('id',8);
+            })*/
+            ->first();
+            //return $image;
             if (!$image)
                 return response()->error(__("messages.errors.element_not_found"));
             $image_user_id = $image->portfolio_item->seller->profile->user->id;
