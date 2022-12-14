@@ -48,6 +48,17 @@ class PortfolioItems extends Model
      *
      * @return BelongsToMany
      */
+    public function viewers(): BelongsToMany
+    {
+        return $this->belongsToMany(Profile::class,'portfolio_views', 'portfolio_item_id');
+    }
+
+
+    /**
+     * item
+     *
+     * @return BelongsToMany
+     */
     public function likers(): BelongsToMany
     {
         return $this->belongsToMany(Profile::class,'likes', 'portfolio_item_id');

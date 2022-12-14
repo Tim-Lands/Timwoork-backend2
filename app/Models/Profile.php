@@ -61,9 +61,9 @@ class Profile extends Model
     {
         return $this->belongsTo(Country::class, "country_id");
     }
-    public function currency():BelongsTo
+    public function currency(): BelongsTo
     {
-        return $this->BelongsTo(Currency::class,'currency_id', 'id');
+        return $this->BelongsTo(Currency::class, 'currency_id', 'id');
     }
     /**
      * badge
@@ -146,24 +146,45 @@ class Profile extends Model
     }
 
 
-     /**
+    /**
      * item
      *
      * @return BelongsToMany
      */
     public function liked_portfolios(): BelongsToMany
     {
-        return $this->belongsToMany(PortfolioItems::class,'likes', 'profile_id');
+        return $this->belongsToMany(PortfolioItems::class, 'likes', 'profile_id');
     }
 
-     /**
+    /**
      * item
      *
      * @return BelongsToMany
      */
     public function favourites(): BelongsToMany
     {
-        return $this->belongsToMany(PortfolioItems::class,'favourites', 'profile_id');
+        return $this->belongsToMany(PortfolioItems::class, 'favourites', 'profile_id');
     }
 
+    /**
+     * item
+     *
+     * @return BelongsToMany
+     */
+    public function viewed_portfolios(): BelongsToMany
+    {
+        return $this->belongsToMany(PortfolioItems::class, 'portfolio_views', 'profile_id');
+    }
+
+    // users that are followed by this user
+    public function following()
+    {
+        return $this->belongsToMany($this::class, 'follows', 'follower_id', 'following_id');
+    }
+
+    // users that follow this user
+    public function followers()
+    {
+        return $this->belongsToMany($this::class, 'follows', 'following_id', 'follower_id');
+    }
 }
