@@ -225,7 +225,7 @@ Route::group(['middleware' => ['XSS','language']], function () {
     Route::prefix('portfolios')->group(function(){
         Route::post('/items',[PortfolioController::class,'add']);
         Route::post('/items/{id}/update',[PortfolioController::class,'update']);
-        Route::get('/itmes',[PortfolioController::class,'index']);
+        Route::get('/items',[PortfolioController::class,'index']);
         Route::get('/items/{id}',[PortfolioController::class,'show']);
         Route::post('/items/{id}/favourite', [PortfolioController::class, 'favourite']);
         Route::post('/items/{id}/like', [PortfolioController::class, 'like']);
