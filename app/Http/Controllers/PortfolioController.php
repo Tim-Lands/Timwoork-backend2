@@ -76,7 +76,7 @@ class PortfolioController extends Controller
             $curr_user = $request->user('sanctum');
             if ($curr_user)
                 $id = $curr_user->profile->id;
-            $user = is_null($id)
+            $user = !is_null($id)
                 ? User::where('username', $username)->orWhere('id', $username)
                 ->select("id")
                 ->with([
