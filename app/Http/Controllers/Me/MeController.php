@@ -60,6 +60,60 @@ class MeController extends Controller
         return response()->json($data, Response::HTTP_OK); */
     }
 
+    public function followers(Request $request)
+    {
+        $x_localization = 'ar';
+        if ($request->hasHeader('X-localization')) {
+            $x_localization = $request->header('X-localization');
+        }
+
+        $followers = Auth::user()->load([
+            'profile' => function ($q) {
+                $q->select('id', 'user_id')->without(['paypal_account', 'wise_account', 'bank_account', 'bank_transfer_detail']);
+            },
+            'profile.followers' => function ($q) {
+                $q->select('follower_id', 'following_id', 'first_name', 'last_name', 'full_name', 'avatar', 'avatar_url', 'is_seller', 'level_id', 'badge_id')
+                    ->without(['paypal_account', 'wise_account', 'bank_account', 'bank_transfer_detail']);
+            },
+            'profile.followers.level' => function ($q) use ($x_localization) {
+                $q->select('id', "name_{$x_localization} AS name");
+            },
+            'profile.followers.badge' => function ($q) use ($x_localization) {
+                $q->select('id', "name_{$x_localization} AS name");
+            }
+        ]);
+        return $followers;
+    }
+
+    public function followings(Request $request)
+    {
+        try {
+            $x_localization = 'ar';
+            if ($request->hasHeader('X-localization')) {
+                $x_localization = $request->header('X-localization');
+            }
+
+            $followings = Auth::user()->load([
+                'profile' => function ($q) {
+                    $q->select('id', 'user_id')->without(['paypal_account', 'wise_account', 'bank_account', 'bank_transfer_detail']);
+                },
+                'profile.followings' => function ($q) {
+                    $q->select('follower_id', 'following_id', 'first_name', 'last_name', 'full_name', 'avatar', 'avatar_url', 'is_seller', 'level_id', 'badge_id')
+                        ->without(['paypal_account', 'wise_account', 'bank_account', 'bank_transfer_detail']);
+                },
+                'profile.followings.level' => function ($q) use ($x_localization) {
+                    $q->select('id', "name_{$x_localization} AS name");
+                },
+                'profile.followings.badge' => function ($q) use ($x_localization) {
+                    $q->select('id', "name_{$x_localization} AS name");
+                }
+            ]);
+            return $followings;
+        } catch (Exception $exc) {
+            echo $exc;
+        }
+    }
+
     public function currency(Request $request)
     {
         try {
@@ -232,7 +286,7 @@ class MeController extends Controller
                 $x_localization = $request->header('X-localization');
             }
             $portfolio_items = Auth::user()->profile->profile_seller->portfolio_items;
-            $portfolio_items = $portfolio_items->map(function ($item) use($x_localization) {
+            $portfolio_items = $portfolio_items->map(function ($item) use ($x_localization) {
                 $tiitle_localization = "title_{$x_localization}";
                 $content_localization = "content_{$x_localization}";
                 $item['title'] = $item[$tiitle_localization];

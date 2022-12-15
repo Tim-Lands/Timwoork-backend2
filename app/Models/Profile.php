@@ -177,7 +177,7 @@ class Profile extends Model
     }
 
     // users that are followed by this user
-    public function following()
+    public function followings()
     {
         return $this->belongsToMany($this::class, 'follows', 'follower_id', 'following_id')->withTimestamps();
     }
