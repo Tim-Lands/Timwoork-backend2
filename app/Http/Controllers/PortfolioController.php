@@ -72,7 +72,12 @@ class PortfolioController extends Controller
         if ($request->hasHeader('X-localization')) {
             $x_localization = $request->header('X-localization');
         }
-        $user = User::where('username', $username)->orWhere('id', $username)
+        $id = null;
+        $curr_user= $request->user('sanctum');
+        if($curr_user)
+            $id = $curr_user->profile->id;
+        $user = is_null($id) 
+        ? User::where('username', $username)->orWhere('id', $username)
         ->select("id")
         ->with([
             'profile'=>function($q){
@@ -81,7 +86,31 @@ class PortfolioController extends Controller
             'profile.profile_seller'=>function($q){
                 $q->select('id', 'profile_id');
             },
-            'profile.profile_seller.portfolio_items'=>function($q) use($x_localization){
+            'profile.profile_seller.portfolio_items'=>function($q) use($id, $x_localization){
+                $q->select('id', 'created_at', 'updated_at', 'seller_id', "content_{$x_localization} AS content", 
+                "title_{$x_localization} AS title", 'cover_url', 'url', 'completed_date')
+                ->withCount(['likers', 'fans'])
+                ->withExists([
+                    'likers AS is_liked'=>function($q) use($id){
+                        $q->where('profile_id',$id);
+                    },
+                    'fans AS is_favorite'=>function($q) use ($id){
+                        $q->where('profile_id', $id);
+                    }
+                ]);
+            }
+            ])
+        ->first()
+        :User::where('username', $username)->orWhere('id', $username)
+        ->select("id")
+        ->with([
+            'profile'=>function($q){
+                $q->select('id', 'user_id')->without(['paypal_account','wise_account','bank_account','bank_transfer_detail']);
+            },
+            'profile.profile_seller'=>function($q){
+                $q->select('id', 'profile_id');
+            },
+            'profile.profile_seller.portfolio_items'=>function($q) use($id, $x_localization){
                 $q->select('id', 'created_at', 'updated_at', 'seller_id', "content_{$x_localization} AS content", 
                 "title_{$x_localization} AS title", 'cover_url', 'url', 'completed_date')
                 ->withCount(['likers', 'fans']);
