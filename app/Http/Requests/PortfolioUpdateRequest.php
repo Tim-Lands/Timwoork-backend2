@@ -27,12 +27,12 @@ class PortfolioUpdateRequest extends FormRequest
         $dt1 = new Carbon();
         $before = $dt1->now()->format('Y-m-d');
         return [
-            "cover" => 'image|mimes:png,jpg,jpeg|max:2048',
-            'content'=>'min:30',
-            'title'               => 'string|min:20|max:60',
-            'images.*'       => 'image|mimes:png,jpg,jpeg|max:2048',
-            'url'=>"url",
-            'completed_date'=>'date_format:Y-m-d|before_or_equal:' . $before
+            "cover" => 'sometimes|image|mimes:png,jpg,jpeg|max:2048',
+            'content'=>'sometimes|min:30',
+            'title'               => 'sometimes|string|min:20|max:60',
+            'images.*'       => 'sometimes|image|mimes:png,jpg,jpeg|max:2048',
+            'url'=>"sometimes|url",
+            'completed_date'=>'sometimes|date_format:Y-m-d|before_or_equal:' . $before
         ];
     }
 

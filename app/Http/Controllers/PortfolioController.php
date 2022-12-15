@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\PortfolioAddRequest;
+use App\Http\Requests\PortfolioUpdateRequest;
 use App\Http\Requests\ProfilePortfolioRequest;
 use App\Models\PortfolioGallery;
 use App\Models\PortfolioItems;
@@ -315,7 +316,7 @@ class PortfolioController extends Controller
         }
     }
 
-    public function update(Request $request)
+    public function update(PortfolioUpdateRequest $request)
     {
         try {
             $id = $request->id;
