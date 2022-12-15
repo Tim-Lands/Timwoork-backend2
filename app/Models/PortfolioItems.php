@@ -50,7 +50,7 @@ class PortfolioItems extends Model
      */
     public function viewers(): BelongsToMany
     {
-        return $this->belongsToMany(Profile::class,'portfolio_views', 'portfolio_item_id');
+        return $this->belongsToMany(Profile::class,'views', 'portfolio_item_id');
     }
 
 

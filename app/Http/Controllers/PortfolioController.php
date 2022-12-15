@@ -67,67 +67,84 @@ class PortfolioController extends Controller
 
     public function indexByUser($username, Request $request)
     {
-        try{
-        $x_localization = 'ar';
-        if ($request->hasHeader('X-localization')) {
-            $x_localization = $request->header('X-localization');
-        }
-        $id = null;
-        $curr_user= $request->user('sanctum');
-        if($curr_user)
-            $id = $curr_user->profile->id;
-        $user = is_null($id) 
-        ? User::where('username', $username)->orWhere('id', $username)
-        ->select("id")
-        ->with([
-            'profile'=>function($q){
-                $q->select('id', 'user_id')->without(['paypal_account','wise_account','bank_account','bank_transfer_detail']);
-            },
-            'profile.profile_seller'=>function($q){
-                $q->select('id', 'profile_id');
-            },
-            'profile.profile_seller.portfolio_items'=>function($q) use($id, $x_localization){
-                $q->select('id', 'created_at', 'updated_at', 'seller_id', "content_{$x_localization} AS content", 
-                "title_{$x_localization} AS title", 'cover_url', 'url', 'completed_date')
-                ->withCount(['likers', 'fans'])
-                ->withExists([
-                    'likers AS is_liked'=>function($q) use($id){
-                        $q->where('profile_id',$id);
+        try {
+            $x_localization = 'ar';
+            if ($request->hasHeader('X-localization')) {
+                $x_localization = $request->header('X-localization');
+            }
+            $id = null;
+            $curr_user = $request->user('sanctum');
+            if ($curr_user)
+                $id = $curr_user->profile->id;
+            $user = is_null($id)
+                ? User::where('username', $username)->orWhere('id', $username)
+                ->select("id")
+                ->with([
+                    'profile' => function ($q) {
+                        $q->select('id', 'user_id')->without(['paypal_account', 'wise_account', 'bank_account', 'bank_transfer_detail']);
                     },
-                    'fans AS is_favourite'=>function($q) use ($id){
-                        $q->where('profile_id', $id);
+                    'profile.profile_seller' => function ($q) {
+                        $q->select('id', 'profile_id');
+                    },
+                    'profile.profile_seller.portfolio_items' => function ($q) use ($id, $x_localization) {
+                        $q->select(
+                            'id',
+                            'created_at',
+                            'updated_at',
+                            'seller_id',
+                            "content_{$x_localization} AS content",
+                            "title_{$x_localization} AS title",
+                            'cover_url',
+                            'url',
+                            'completed_date'
+                        )
+                            ->withCount(['likers', 'fans'])
+                            ->withExists([
+                                'likers AS is_liked' => function ($q) use ($id) {
+                                    $q->where('profile_id', $id);
+                                },
+                                'fans AS is_favourite' => function ($q) use ($id) {
+                                    $q->where('profile_id', $id);
+                                }
+                            ]);
                     }
-                ]);
-            }
-            ])
-        ->first()
-        :User::where('username', $username)->orWhere('id', $username)
-        ->select("id")
-        ->with([
-            'profile'=>function($q){
-                $q->select('id', 'user_id')->without(['paypal_account','wise_account','bank_account','bank_transfer_detail']);
-            },
-            'profile.profile_seller'=>function($q){
-                $q->select('id', 'profile_id');
-            },
-            'profile.profile_seller.portfolio_items'=>function($q) use($id, $x_localization){
-                $q->select('id', 'created_at', 'updated_at', 'seller_id', "content_{$x_localization} AS content", 
-                "title_{$x_localization} AS title", 'cover_url', 'url', 'completed_date')
-                ->withCount(['likers', 'fans']);
-            }
-            ])
-        ->first();
-    
-        if (!$user)
-            return response()->error(__("messages.errors.element_not_found"));
-        $portfolio_items = $user->profile->profile_seller->portfolio_items;
-        return $portfolio_items;
-        
-        //return $portfolio_items;
-    }
-    catch(Exception $exc){
-        echo $exc;
-    }
+                ])
+                ->first()
+                : User::where('username', $username)->orWhere('id', $username)
+                ->select("id")
+                ->with([
+                    'profile' => function ($q) {
+                        $q->select('id', 'user_id')->without(['paypal_account', 'wise_account', 'bank_account', 'bank_transfer_detail']);
+                    },
+                    'profile.profile_seller' => function ($q) {
+                        $q->select('id', 'profile_id');
+                    },
+                    'profile.profile_seller.portfolio_items' => function ($q) use ($id, $x_localization) {
+                        $q->select(
+                            'id',
+                            'created_at',
+                            'updated_at',
+                            'seller_id',
+                            "content_{$x_localization} AS content",
+                            "title_{$x_localization} AS title",
+                            'cover_url',
+                            'url',
+                            'completed_date'
+                        )
+                            ->withCount(['likers', 'fans']);
+                    }
+                ])
+                ->first();
+
+            if (!$user)
+                return response()->error(__("messages.errors.element_not_found"));
+            $portfolio_items = $user->profile->profile_seller->portfolio_items;
+            return $portfolio_items;
+
+            //return $portfolio_items;
+        } catch (Exception $exc) {
+            echo $exc;
+        }
     }
 
     public function show($id, Request $request)
@@ -160,21 +177,23 @@ class PortfolioController extends Controller
                     },
                     'portfolio_item_tags'
                 ])
-                ->withCount(['likers','fans'])
+                ->withCount(['likers', 'fans'])
                 ->first();
-            
+
             if (!$portfolio_item)
                 return response()->error(__("messages.errors.element_not_found"));
-            
+
             //$like = Auth::user()->profile->liked_portfolios->contains($id);
             $is_liked = false;
             $is_favourite = false;
-            $user= $request->user('sanctum');
-            if($user){
+            $user = $request->user('sanctum');
+            if ($user) {
                 $is_liked = $portfolio_item->likers->contains($user->id);
                 $is_favourite = $portfolio_item->fans->contains($user->id);
+                $views = $portfolio_item->viewers->count();
+                $portfolio_item->views = $views;
             }
-            $portfolio_item->is_liked=$is_liked;
+            $portfolio_item->is_liked = $is_liked;
             $portfolio_item->is_favourite = $is_favourite;
             return response()->success(__("messages.oprations.get_data"), $portfolio_item);
         } catch (Exception $exc) {
@@ -543,7 +562,7 @@ class PortfolioController extends Controller
         try {
             DB::enableQueryLog();
             $image = PortfolioGallery::where('id', $id)
-            /*->with([
+                /*->with([
                 'portfolio_item',
                 'portfolio_item.seller',
                 'portfolio_item.seller.profile'
@@ -552,7 +571,7 @@ class PortfolioController extends Controller
             /*->whereHas('portfolio_item',function($q){
                 $q->where('id',8);
             })*/
-            ->first();
+                ->first();
             //return $image;
             if (!$image)
                 return response()->error(__("messages.errors.element_not_found"));
@@ -578,17 +597,6 @@ class PortfolioController extends Controller
         }
     }
 
-    public function unfavourite($id, Request $request)
-    {
-        try {
-            $profile = Auth::user()->profile;
-            $profile->favourites()->detach($id);
-            return response()->success(__("messages.oprations.get_all_data"));
-        } catch (Exception $exc) {
-            return response()->error(__("messages.errors.element_not_found"));
-        }
-    }
-
     public function like($id, Request $request)
     {
         try {
@@ -601,13 +609,18 @@ class PortfolioController extends Controller
         }
     }
 
-    public function unlike($id, Request $request)
+
+    public function view($id, Request $request)
     {
         try {
             $profile = Auth::user()->profile;
-            $profile->liked_portfolios()->detach($id);
+            $viewed_portfolios  = $profile->viewed_portfolios;
+            if ($viewed_portfolios->contains($id))
+                return response()->success(__("messages.oprations.get_all_data"));
+            $profile->viewed_portfolios()->attach($id);
             return response()->success(__("messages.oprations.get_all_data"));
         } catch (Exception $exc) {
+            echo $exc;
             return response()->error(__("messages.errors.element_not_found"));
         }
     }

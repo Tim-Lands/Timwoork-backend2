@@ -173,7 +173,7 @@ class Profile extends Model
      */
     public function viewed_portfolios(): BelongsToMany
     {
-        return $this->belongsToMany(PortfolioItems::class, 'portfolio_views', 'profile_id');
+        return $this->belongsToMany(PortfolioItems::class, 'views', 'profile_id', 'portfolio_item_id')->withTimestamps();
     }
 
     // users that are followed by this user
@@ -187,4 +187,6 @@ class Profile extends Model
     {
         return $this->belongsToMany($this::class, 'follows', 'following_id', 'follower_id')->withTimestamps();
     }
+
+    
 }

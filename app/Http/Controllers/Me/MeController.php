@@ -311,21 +311,19 @@ class MeController extends Controller
             if ($request->hasHeader('X-localization')) {
                 $x_localization = $request->header('X-localization');
             }
-            $portfolio_items = Auth::user()->profile->profile_seller->portfolio_items;
-            $portfolio_items = $portfolio_items->map(function ($item) use ($x_localization) {
-                $tiitle_localization = "title_{$x_localization}";
-                $content_localization = "content_{$x_localization}";
-                $item['title'] = $item[$tiitle_localization];
-                $item['content'] = $item[$content_localization];
-                unset($item['title_ar']);
-                unset($item['title_en']);
-                unset($item['title_fr']);
-                unset($item['content_ar']);
-                unset($item['content_en']);
-                unset($item['content_fr']);
-                return $item;
-            });
-            return $portfolio_items;
+            $portfolio = Auth::user()->load([
+                'profile'=>function($q){
+                    $q->select('id', 'user_id');
+                },
+                'profile.profile_seller'=>function($q){
+                    $q->select('id', 'profile_id');
+                },
+                'profile.profile_seller.portfolio_items'=>function ($q) use($x_localization){
+                    $q->select('id', 'seller_id', "title_{$x_localization} AS title", "content_{$x_localization} AS content", 'url', 'cover_url', 'completed_date')
+                    ->withCount(['viewers AS views']);
+                }
+            ])->profile->profile_seller->portfolio_items;
+            return $portfolio;
         } catch (Exception $exc) {
             echo $exc;
         }

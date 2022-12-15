@@ -229,6 +229,7 @@ Route::group(['middleware' => ['XSS','language']], function () {
         Route::get('/items/{id}',[PortfolioController::class,'show']);
         Route::post('/items/{id}/favourite', [PortfolioController::class, 'favourite']);
         Route::post('/items/{id}/like', [PortfolioController::class, 'like']);
+        Route::post('/items/{id}/view', [PortfolioController::class, 'view']);
         Route::delete('/items/{id}', [PortfolioController::class,'delete']);
         Route::get('/{username}',[PortfolioController::class,'indexByUser']);
         Route::delete('/items/images/{id}',[PortfolioController::class,'deleteImage']);
