@@ -127,9 +127,12 @@ class MeController extends Controller
                     $q->select('id', 'user_id')->without(['paypal_account', 'wise_account', 'bank_account', 'bank_transfer_detail']);
                 },
                 'profile.favourites'=>function($q) use($x_localization){
-                    $q->select('favourites.id', 'profile_id', "content_{$x_localization} AS content", "title_{$x_localization} AS title", 'cover_url', 'url', 'completed_date');
+                    $q->select('favourites.id', 'profile_id', "content_{$x_localization} AS content", "title_{$x_localization} AS title", 'cover_url', 'url', 'completed_date')
+                    ->withCount(['likers AS likers_count', 'fans AS fans_count']);
                 },
-            ])->profile->favourites;
+            ])
+            ->profile
+            ->favourites;
             return $favourites;
 
         } catch (Exception $exc) {
