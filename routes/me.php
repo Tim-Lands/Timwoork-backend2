@@ -22,6 +22,7 @@ Route::prefix('profile_seller')->group(function () {
     Route::post('/step_two', [SellerController::class, 'step_two']);
 });
 Route::get('/', [MeController::class,'index']);
+Route::get('/favourites', [MeController::class,'favourites']);
 Route::get('/followers', [MeController::class,'followers']);
 Route::get('/followings', [MeController::class,'followings']);
 Route::get('/currency',[MeController::class,'currency']);

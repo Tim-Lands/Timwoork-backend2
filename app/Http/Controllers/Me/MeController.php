@@ -114,6 +114,29 @@ class MeController extends Controller
         }
     }
 
+    public function favourites(Request $request)
+    {
+        try {
+            $x_localization = 'ar';
+            if ($request->hasHeader('X-localization')) {
+                $x_localization = $request->header('X-localization');
+            }
+
+            $favourites = Auth::user()->load([
+                'profile'=>function($q) {
+                    $q->select('id', 'user_id')->without(['paypal_account', 'wise_account', 'bank_account', 'bank_transfer_detail']);
+                },
+                'profile.favourites'=>function($q) use($x_localization){
+                    $q->select('favourites.id', 'profile_id', "content_{$x_localization} AS content", "title_{$x_localization} AS title", 'cover_url', 'url', 'completed_date');
+                },
+            ])->profile->favourites;
+            return $favourites;
+
+        } catch (Exception $exc) {
+            echo $exc;
+        }
+    }
+
     public function currency(Request $request)
     {
         try {
