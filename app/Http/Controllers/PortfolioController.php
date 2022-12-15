@@ -94,7 +94,7 @@ class PortfolioController extends Controller
                     'likers AS is_liked'=>function($q) use($id){
                         $q->where('profile_id',$id);
                     },
-                    'fans AS is_favorite'=>function($q) use ($id){
+                    'fans AS is_favourite'=>function($q) use ($id){
                         $q->where('profile_id', $id);
                     }
                 ]);
