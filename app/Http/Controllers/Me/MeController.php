@@ -147,7 +147,7 @@ class MeController extends Controller
                     $q->select('id', 'first_name', 'last_name', 'avatar', 'avatar_url', 'user_id', 'level_id')->without(['paypal_account', 'wise_account', 'bank_account', 'bank_transfer_detail']);
                 },
                 'profile.favourites.seller.profile.level'=>function($q) use($x_localization){
-                    $q->select('id', "name_{$x_localization}");
+                    $q->select('id', "name_{$x_localization} AS name");
                 },
                 'profile.favourites.seller.profile.user'=>function($q){
                     $q->select('id', 'username');

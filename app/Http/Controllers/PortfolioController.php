@@ -410,9 +410,14 @@ class PortfolioController extends Controller
     {
         try {
             $id = $request->id;
+            $user_id = Auth::user()->id;
             $portfolio_item = PortfolioItems::where('id', $id)->first();
             if (!$portfolio_item)
                 return response()->error(__("messages.errors.element_not_found"));
+
+            if($id!=$user_id){
+                return response(403);
+            }
 
             $tr = new GoogleTranslate(); // Translates to 'en' from auto-detected language by default
 
