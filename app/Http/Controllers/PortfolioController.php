@@ -550,7 +550,9 @@ class PortfolioController extends Controller
                 'title_fr' => $title_fr ? $title_fr : $portfolio_item->title_fr,
                 'cover_url' => $cover_url ? $cover_url : $portfolio_item->cover_url,
                 'url' => $request->url ? $request->url : $portfolio_item->url,
-                'completed_date' => $request->completed_date ? $request->completed_date : $portfolio_item->completed_date
+                'completed_date' => $request->completed_date ? $request->completed_date : $portfolio_item->completed_date,
+                'category_id'  =>$request->subcategory?(int)$request->subcategory : $portfolio_item->category_id,
+                
             ];
             $portfolio_item->update($data);
             $time = time();
