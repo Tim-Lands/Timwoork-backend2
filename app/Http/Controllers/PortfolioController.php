@@ -48,6 +48,9 @@ class PortfolioController extends Controller
             )
                 ->with([
                     'gallery',
+                    'subcategory' => function ($q) use ($x_localization) {
+                        $q->select('id', "slug", 'icon', 'image', 'parent_id', "name_{$x_localization} AS name");
+                    },
                     "seller" => function ($q) use ($x_localization) {
                         $q->select('id', 'profile_id', "bio_{$x_localization} AS bio");
                     },
@@ -78,6 +81,9 @@ class PortfolioController extends Controller
                 ->filter('tags')
                 ->with([
                     'gallery',
+                    'subcategory' => function ($q) use ($x_localization) {
+                        $q->select('id', "slug", 'icon', 'image', 'parent_id', "name_{$x_localization} AS name");
+                    },
                     "seller" => function ($q) use ($x_localization) {
                         $q->select('id', 'profile_id', "bio_{$x_localization} AS bio");
                     },
@@ -139,8 +145,12 @@ class PortfolioController extends Controller
                             "title_{$x_localization} AS title",
                             'cover_url',
                             'url',
-                            'completed_date'
+                            'completed_date',
+                            'category_id'
                         )
+                            ->with(['subcategory' => function ($q) use ($x_localization) {
+                                $q->select('id', "slug", 'icon', 'image', 'parent_id', "name_{$x_localization} AS name");
+                            },])
                             ->withCount(['likers', 'fans'])
                             ->withExists([
                                 'likers AS is_liked' => function ($q) use ($id) {
@@ -156,6 +166,7 @@ class PortfolioController extends Controller
                 : User::where('username', $username)->orWhere('id', $username)
                 ->select("id")
                 ->with([
+
                     'profile' => function ($q) {
                         $q->select('id', 'user_id')->without(['paypal_account', 'wise_account', 'bank_account', 'bank_transfer_detail']);
                     },
@@ -172,8 +183,12 @@ class PortfolioController extends Controller
                             "title_{$x_localization} AS title",
                             'cover_url',
                             'url',
-                            'completed_date'
+                            'completed_date',
+                            'category_id'
                         )
+                            ->with(['subcategory' => function ($q) use ($x_localization) {
+                                $q->select('id', "slug", 'icon', 'image', 'parent_id', "name_{$x_localization} AS name");
+                            },])
                             ->withCount(['likers', 'fans']);
                     }
                 ])
@@ -205,10 +220,14 @@ class PortfolioController extends Controller
                 "title_{$x_localization} AS title",
                 'cover_url',
                 'url',
-                'completed_date'
+                'completed_date',
+                'category_id'
             )->where('id', $id)
                 ->with([
                     'gallery',
+                    'subcategory' => function ($q) use ($x_localization) {
+                        $q->select('id', "slug", 'icon', 'image', 'parent_id', "name_{$x_localization} AS name");
+                    },
                     "seller" => function ($q) use ($x_localization) {
                         $q->select('id', 'profile_id', "bio_{$x_localization} AS bio");
                     },
@@ -418,12 +437,12 @@ class PortfolioController extends Controller
     {
         try {
             $id = $request->id;
-            $user_id = Auth::user()->id;
+            $seller_id = Auth::user()->profile->profile_seller->id;
             $portfolio_item = PortfolioItems::where('id', $id)->first();
             if (!$portfolio_item)
                 return response()->error(__("messages.errors.element_not_found"));
 
-            if($id!=$user_id){
+            if ($portfolio_item->seller_id != $seller_id) {
                 return response(403);
             }
 
@@ -551,8 +570,8 @@ class PortfolioController extends Controller
                 'cover_url' => $cover_url ? $cover_url : $portfolio_item->cover_url,
                 'url' => $request->url ? $request->url : $portfolio_item->url,
                 'completed_date' => $request->completed_date ? $request->completed_date : $portfolio_item->completed_date,
-                'category_id'  =>$request->subcategory?(int)$request->subcategory : $portfolio_item->category_id,
-                
+                'category_id'  => $request->subcategory ? (int)$request->subcategory : $portfolio_item->category_id,
+
             ];
             $portfolio_item->update($data);
             $time = time();
