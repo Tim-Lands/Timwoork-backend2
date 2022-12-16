@@ -121,14 +121,24 @@ class MeController extends Controller
             if ($request->hasHeader('X-localization')) {
                 $x_localization = $request->header('X-localization');
             }
-
-            $favourites = Auth::user()->load([
+            $user = Auth::user();
+            $id = $user->id;
+            $favourites = $user->load([
                 'profile'=>function($q) {
                     $q->select('id', 'user_id')->without(['paypal_account', 'wise_account', 'bank_account', 'bank_transfer_detail']);
                 },
-                'profile.favourites'=>function($q) use($x_localization){
+                'profile.favourites'=>function($q) use($x_localization, $id){
                     $q->select('favourites.id', 'profile_id', "content_{$x_localization} AS content", "title_{$x_localization} AS title", 'cover_url', 'url', 'completed_date')
-                    ->withCount(['likers AS likers_count', 'fans AS fans_count']);
+                    ->withCount(['likers AS likers_count', 'fans AS fans_count'])
+                    ->withExists([
+                        'likers AS is_liked' => function ($q) use ($id) {
+                            $q->where('profile_id', $id);
+                        },
+                        'fans AS is_favourite' => function ($q) use ($id) {
+                            $q->where('profile_id', $id);
+                        }
+                    ]);
+                    
                 },
             ])
             ->profile

@@ -30,8 +30,12 @@ class PortfolioController extends Controller
                 $x_localization = $request->header('X-localization');
             }
             $paginate = $request->query('paginate') ? $request->query('paginate') : 12;
-
-            $portfolio_items = PortfolioItems::select(
+            $id = null;
+            $curr_user = $request->user('sanctum');
+            if ($curr_user)
+                $id = $curr_user->profile->id;
+            $is_user = is_null($id);
+            $portfolio_items = $is_user? PortfolioItems::select(
                 'id',
                 'created_at',
                 'seller_id',
@@ -58,7 +62,44 @@ class PortfolioController extends Controller
                     'likers',
                     'fans',
                 ])
-                ->paginate($paginate);
+                ->paginate($paginate)
+                :
+                PortfolioItems::select(
+                    'id',
+                    'created_at',
+                    'seller_id',
+                    "content_{$x_localization} AS content",
+                    "title_{$x_localization} AS title",
+                    'cover_url',
+                    'url',
+                    'completed_date',
+                )
+                    ->with([
+                        'gallery',
+                        "seller" => function ($q) use ($x_localization) {
+                            $q->select('id', 'profile_id', "bio_{$x_localization} AS bio");
+                        },
+                        'seller.profile' => function ($q) use ($x_localization) {
+                            $q->select('id', 'first_name', 'last_name', 'avatar', 'avatar_url', 'full_name', 'level_id')
+                                ->without(['wise_account', 'paypal_account', 'bank_account', 'bank_transfer_details']);
+                        },
+                        'seller.profile.level' => function ($q) use ($x_localization) {
+                            $q->select('id', "name_{$x_localization} AS name");
+                        }
+                    ])
+                    ->withCount([
+                        'likers',
+                        'fans',
+                    ])
+                    ->withExists([
+                        'likers AS is_liked' => function ($q) use ($id) {
+                            $q->where('profile_id', $id);
+                        },
+                        'fans AS is_favourite' => function ($q) use ($id) {
+                            $q->where('profile_id', $id);
+                        }
+                    ])
+                    ->paginate($paginate);
             return response()->success(__("messages.filter.filter_success"), $portfolio_items);
         } catch (Exception $exc) {
             echo $exc;
