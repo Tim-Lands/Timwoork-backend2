@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Requests\PortfolioAddRequest;
 use App\Http\Requests\PortfolioUpdateRequest;
 use App\Http\Requests\ProfilePortfolioRequest;
+use App\Models\Category;
 use App\Models\PortfolioGallery;
 use App\Models\PortfolioItems;
 use App\Models\Tag;
@@ -311,6 +312,11 @@ class PortfolioController extends Controller
                     $title_fr = $request->title;
                     break;
             }
+            $subcategory = Category::child()->where('id', $request->subcategory)->exists();
+            // التحقق اذا كان موجود ام لا
+            if (!$subcategory) {
+                return response()->error(__("messages.errors.element_not_found"), 403);
+            }
             if (is_null($request->tags))
                 $request->tags = array();
 
@@ -357,7 +363,9 @@ class PortfolioController extends Controller
                 'seller_id' => Auth::user()->profile->profile_seller->id,
                 'cover_url' => $cover_url,
                 'url' => $request->url,
-                'completed_date' => $request->completed_date
+                'completed_date' => $request->completed_date,
+                'category_id'       =>  (int)$request->subcategory,
+
             ]);
             $time = time();
 

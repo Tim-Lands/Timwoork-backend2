@@ -13,7 +13,7 @@ class PortfolioItems extends Model
 {
     use HasFactory, FilterQueryString;
     protected $table = 'portfolio_items';
-    
+
     /**
      * item
      *
@@ -31,7 +31,7 @@ class PortfolioItems extends Model
      */
     public function gallery(): HasMany
     {
-        return $this->hasMany(PortfolioGallery::class,'portfolio_item_id');
+        return $this->hasMany(PortfolioGallery::class, 'portfolio_item_id');
     }
 
     /**
@@ -41,7 +41,7 @@ class PortfolioItems extends Model
      */
     public function fans(): BelongsToMany
     {
-        return $this->belongsToMany(Profile::class,'favourites', 'portfolio_item_id');
+        return $this->belongsToMany(Profile::class, 'favourites', 'portfolio_item_id');
     }
 
     /**
@@ -51,7 +51,7 @@ class PortfolioItems extends Model
      */
     public function viewers(): BelongsToMany
     {
-        return $this->belongsToMany(Profile::class,'views', 'portfolio_item_id');
+        return $this->belongsToMany(Profile::class, 'views', 'portfolio_item_id');
     }
 
 
@@ -62,7 +62,7 @@ class PortfolioItems extends Model
      */
     public function likers(): BelongsToMany
     {
-        return $this->belongsToMany(Profile::class,'likes', 'portfolio_item_id');
+        return $this->belongsToMany(Profile::class, 'likes', 'portfolio_item_id');
     }
 
     /**
@@ -81,7 +81,48 @@ class PortfolioItems extends Model
 
     public function portfolio_item_tags(): BelongsToMany
     {
-        return $this->belongsToMany(Tag::class,'portfolio_item_tags','portfolio_item_id');
+        return $this->belongsToMany(Tag::class, 'portfolio_item_tags', 'portfolio_item_id');
+    }
+
+    /**
+     * category => الاقسام الرئيسية
+     *
+     * @param  mixed $query
+     * @param  mixed $value
+     * @return Object
+     */
+    public function category($query, $value)
+    {
+        $cat_ids = explode(',', $value);
+        return $query->whereHas('subcategory', function ($query) use ($cat_ids) {
+            $query->whereIn('parent_id', $cat_ids);
+        });
+    }
+    
+    /**
+     * subcategories
+     *
+     * @param  mixed $query
+     * @param  mixed $value
+     * @return Object
+     */
+    public function subcategories($query, $value)
+    {
+        $subcat_ids = explode(',', $value);
+        return $query->whereHas('subcategory', function ($query) use ($subcat_ids) {
+            $query->whereIn('id', $subcat_ids);
+        });
+    }
+
+
+    /**
+     * category
+     *
+     * @return BelongsTo
+     */
+    public function subcategory(): BelongsTo
+    {
+        return $this->belongsTo(Category::class, 'category_id');
     }
 
 }
