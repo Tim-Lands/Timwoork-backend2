@@ -128,7 +128,7 @@ class MeController extends Controller
                     $q->select('id', 'user_id')->without(['paypal_account', 'wise_account', 'bank_account', 'bank_transfer_detail']);
                 },
                 'profile.favourites'=>function($q) use($x_localization, $id){
-                    $q->select('favourites.id','seller_id', 'profile_id', "content_{$x_localization} AS content", "title_{$x_localization} AS title", 'cover_url', 'url', 'completed_date')
+                    $q->select('favourites.id AS favourite_id', 'portfolio_item_id AS id', 'seller_id', 'profile_id', "content_{$x_localization} AS content", "title_{$x_localization} AS title", 'cover_url', 'url', 'completed_date')
                     ->withCount(['likers AS likers_count', 'fans AS fans_count'])
                     ->withExists([
                         'likers AS is_liked' => function ($q) use ($id) {
@@ -144,7 +144,7 @@ class MeController extends Controller
                     $q->select('id', 'profile_id')->without(['paypal_account', 'wise_account', 'bank_account', 'bank_transfer_detail']);
                 },
                 'profile.favourites.seller.profile'=>function($q) use($x_localization){
-                    $q->select('id', 'first_name', 'last_name', 'avatar', 'avatar_url', 'user_id', 'level_id')->without(['paypal_account', 'wise_account', 'bank_account', 'bank_transfer_detail']);
+                    $q->select('id', 'first_name', 'last_name', 'full_name','avatar', 'avatar_url', 'user_id', 'level_id')->without(['paypal_account', 'wise_account', 'bank_account', 'bank_transfer_detail']);
                 },
                 'profile.favourites.seller.profile.level'=>function($q) use($x_localization){
                     $q->select('id', "name_{$x_localization} AS name");

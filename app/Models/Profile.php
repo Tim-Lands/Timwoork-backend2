@@ -165,7 +165,7 @@ class Profile extends Model
     {
         return $this->belongsToMany(PortfolioItems::class, 'favourites', 'profile_id', 'portfolio_item_id')->withTimestamps();
     }
-
+    
     /**
      * item
      *

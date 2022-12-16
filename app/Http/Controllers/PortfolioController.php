@@ -629,7 +629,7 @@ class PortfolioController extends Controller
             $image->delete();
             return response()->success(__("messages.oprations.get_all_data"));
         } catch (Exception $exc) {
-            echo $exc;
+            return response()->error(__("messages.errors.error_database"));
         }
     }
 
@@ -651,7 +651,6 @@ class PortfolioController extends Controller
             $profile->liked_portfolios()->toggle($id);
             return response()->success(__("messages.oprations.get_all_data"));
         } catch (Exception $exc) {
-            echo $exc;
             return response()->error(__("messages.errors.element_not_found"));
         }
     }
