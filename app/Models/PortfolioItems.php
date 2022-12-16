@@ -7,10 +7,11 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Mehradsadeghi\FilterQueryString\FilterQueryString;
 
 class PortfolioItems extends Model
 {
-    use HasFactory;
+    use HasFactory, FilterQueryString;
     protected $table = 'portfolio_items';
     
     /**
