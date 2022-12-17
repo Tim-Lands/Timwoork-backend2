@@ -250,10 +250,16 @@ class PortfolioController extends Controller
             $is_favourite = false;
             $user = $request->user('sanctum');
             if ($user) {
+                $profile = $user->profile;
+                $buyer_profile = $portfolio_item->seller->profile;
                 $is_liked = $portfolio_item->likers->contains($user->id);
                 $is_favourite = $portfolio_item->fans->contains($user->id);
-                $views = $portfolio_item->viewers->count();
-                $portfolio_item->views = $views;
+                if ($profile->id == $buyer_profile->id){
+                    $views = $portfolio_item->viewers->count();
+                    $portfolio_item->viewers_count = $views;
+                }
+                else
+                    $portfolio_item->viewers()->attach($user->id);
             }
             $portfolio_item->is_liked = $is_liked;
             $portfolio_item->is_favourite = $is_favourite;
