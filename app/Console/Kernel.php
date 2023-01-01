@@ -2,6 +2,8 @@
 
 namespace App\Console;
 
+use App\Console\Commands\ChangeAmount;
+use App\Console\Commands\UpdateCurrency;
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
 
@@ -14,6 +16,7 @@ class Kernel extends ConsoleKernel
      */
     protected $commands = [
         //
+        UpdateCurrency::class
     ];
 
     /**
@@ -30,6 +33,10 @@ class Kernel extends ConsoleKernel
         $schedule->command('amount:withdrawable')->everyFiveMinutes();
         // حذف يومي للخدمات التي لم تتم تعبئتها
         $schedule->command('product:vide')->daily();
+        $schedule->command(UpdateCurrency::class)
+        ->everyFifteenMinutes();
+        $schedule->command(ChangeAmount::class)
+        ->daily();
     }
 
     /**
