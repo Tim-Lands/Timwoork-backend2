@@ -72,7 +72,7 @@ class RegisterController extends Controller
             return $this->login_with_token($user);
         } catch (Exception $ex) {
             DB::rollback();
-            return $ex;
+            echo $ex;
             // رسالة خطأ
             return response()->error(__('messages.errors.error_database'), 403);
         }
