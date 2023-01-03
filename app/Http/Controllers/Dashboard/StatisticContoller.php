@@ -35,7 +35,7 @@ class StatisticContoller extends Controller
             'five_last_products_pendings'     => DB::table('products')->where('status', null)->take(5)->latest()->count(),
             "profile_sellers"                 => DB::table('profile_sellers')->count(),
             "buyers"                          => DB::table('profiles')->where('is_seller',0)->count(),
-            "products_disactived"             => DB::table("products")->whereNull('status')->count()
+            "products_disactived"             => DB::table("products")->whereNull('status')->whereNotNull('is_active')->count()
         ];
 
         return response()->success(__("messages.dashboard.statistic_dashboard"), $data);
