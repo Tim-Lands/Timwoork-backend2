@@ -46,6 +46,8 @@ class PortfolioController extends Controller
                 'url',
                 'completed_date',
             )
+            ->filter('category_id')
+
                 ->with([
                     'gallery',
                     'subcategory' => function ($q) use ($x_localization) {
@@ -78,7 +80,7 @@ class PortfolioController extends Controller
                     'url',
                     'completed_date',
                 )
-                ->filter('tags')
+                ->filter('category_id')
                 ->with([
                     'gallery',
                     'subcategory' => function ($q) use ($x_localization) {
