@@ -155,7 +155,7 @@ class PortfolioController extends Controller
                             ->with(['subcategory' => function ($q) use ($x_localization) {
                                 $q->select('id', "slug", 'icon', 'image', 'parent_id', "name_{$x_localization} AS name");
                             },])
-                            ->withCount(['likers', 'fans'])
+                            ->withCount(['likers', 'fans', 'viewers AS views'])
                             ->withExists([
                                 'likers AS is_liked' => function ($q) use ($id) {
                                     $q->where('profile_id', $id);
@@ -193,7 +193,7 @@ class PortfolioController extends Controller
                             ->with(['subcategory' => function ($q) use ($x_localization) {
                                 $q->select('id', "slug", 'icon', 'image', 'parent_id', "name_{$x_localization} AS name");
                             },])
-                            ->withCount(['likers', 'fans']);
+                            ->withCount(['likers', 'fans', 'viewers AS views']);
                     }
                 ])
                 ->first();
@@ -243,7 +243,7 @@ class PortfolioController extends Controller
                     },
                     'portfolio_item_tags'
                 ])
-                ->withCount(['likers', 'fans'])
+                ->withCount(['likers', 'fans', 'viewers AS views'])
                 ->first();
 
             if (!$portfolio_item)
