@@ -33,7 +33,7 @@ class PortfolioController extends Controller
             $paginate = $request->query('paginate') ? $request->query('paginate') : 12;
             $id = null;
             $curr_user = $request->user('sanctum');
-            if ($curr_user)
+            if ($curr_user && $curr_user->profile)
                 $id = $curr_user->profile->id;
             $is_user = is_null($id);
             $portfolio_items = $is_user ? PortfolioItems::select(
@@ -67,6 +67,7 @@ class PortfolioController extends Controller
                 ->withCount([
                     'likers',
                     'fans',
+                    'viewers AS views'
                 ])
                 ->paginate($paginate)
                 :
@@ -100,6 +101,7 @@ class PortfolioController extends Controller
                 ->withCount([
                     'likers',
                     'fans',
+                    'viewers AS views'
                 ])
                 ->withExists([
                     'likers AS is_liked' => function ($q) use ($id) {
