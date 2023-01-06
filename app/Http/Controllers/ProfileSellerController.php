@@ -66,7 +66,7 @@ class ProfileSellerController extends Controller
             }
 
             $sellers = DB::table("profile_sellers")
-                ->select(DB::raw("profile_sellers.id, portfolio, bio_{$x_localization}, portfolio_cover, portfolio_cover_url, count(views.id) views"))
+                ->select(DB::raw("profile_sellers.id, portfolio, bio_{$x_localization} AS bio, portfolio_cover, portfolio_cover_url, count(views.id) views"))
                 ->join('portfolio_items', 'profile_sellers.id', '=', 'portfolio_items.seller_id')
                 ->join('views', 'views.portfolio_item_id', '=', 'portfolio_items.id')
                 ->groupBy(['seller_id'])
