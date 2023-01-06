@@ -41,7 +41,7 @@ class UpdateCurrency extends Command
      */
     public function handle()
     {
-
+        echo "sharaf";
         $url = "https://api.currencyapi.com/v3/latest?apikey="
             . env('CURRENCY_API_KEY');
         $curl = curl_init($url);

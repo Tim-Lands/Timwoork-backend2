@@ -236,6 +236,7 @@ Route::group(['middleware' => ['XSS','language']], function () {
 
     Route::prefix('profile_sellers')->group(function () {
         Route::get('/',[ProfileSellerController::class,'index']);
+        Route::get('/topPortfolioViews', [ProfileSellerController::class, 'getTopFivePortfolioViews']);
     });
 
 

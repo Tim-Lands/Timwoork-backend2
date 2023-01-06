@@ -16,7 +16,6 @@ class Kernel extends ConsoleKernel
      */
     protected $commands = [
         //
-        UpdateCurrency::class
     ];
 
     /**
@@ -33,9 +32,9 @@ class Kernel extends ConsoleKernel
         $schedule->command('amount:withdrawable')->everyFiveMinutes();
         // حذف يومي للخدمات التي لم تتم تعبئتها
         $schedule->command('product:vide')->daily();
-        $schedule->command(UpdateCurrency::class)
-        ->everyFifteenMinutes();
-        $schedule->command(ChangeAmount::class)
+        $schedule->command('command:update_currency')
+        ->everyFiveMinutes();
+        $schedule->command('amount:change')
         ->daily();
     }
 
