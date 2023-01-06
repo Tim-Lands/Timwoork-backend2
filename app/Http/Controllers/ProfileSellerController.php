@@ -76,6 +76,12 @@ class ProfileSellerController extends Controller
                 ->groupBy(['seller_id'])
                 ->orderByDesc('views')
                 ->get();
+            
+            $sellers = $sellers->map(function($seller){
+                if($seller->portfolio_cover_url == 'https://api.timwoork.com/avatars/avatar.png')
+                    $seller->portfolio_cover_url = null;
+                return $seller;
+            });
             return response()->success('mbrok', $sellers);
         } catch (Exception $exc) {
             echo $exc;
