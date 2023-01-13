@@ -2,6 +2,8 @@
 
 namespace Tests\Feature;
 
+use App\Models\Country;
+use App\Models\User;
 use Exception;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
@@ -14,6 +16,19 @@ class AuthTest extends TestCase
      *
      * @return void 
      */
+    public function setUp():void{
+        parent::setUp();
+        $user = User::where('email','eldeenshraf2@gmail.com')->first();
+        $user->forceDelete();
+        $country = new Country([
+            'name_ar'=>"مصر",
+            "name_en"=>'egypt',
+            "name_fr"=>'egyptee',
+            'code_phone'=>'+20'
+        ]);
+        $country->save();
+        
+    }
     public function test_register()
     {
             $payload = [
@@ -46,7 +61,6 @@ class AuthTest extends TestCase
  */
     public function tearDown(): void
     {
-        parent::tearDown();
-        echo "sharafl eldeen end";
+        
     }
 }
