@@ -10,6 +10,7 @@ return [
         'required' => 'password required'
     ],
     "validation" => [
+        
         "required_name_en" => "Arabic name is required",
         "required_precent_deducation" => "deduction percentage is required",
         "unique" => "This field already exists, check your data",
@@ -109,7 +110,8 @@ return [
          'phone_number_numeric' => 'phone number must contain numbers',
          'code_phone_required' => 'You must enter the phone code for your country',
          'phone_digits_between'=>'The phone number must be between 4 and 16 digits',
-        'username_regex' => 'Username must contain letters and numbers only'
+        'username_regex' => 'Username must contain letters and numbers only',
+        'is_tutorial_boolean'=>'is_tutorial field can only be a boolean value'
     ],
 
     /* --------------------------------- الرسائل -------------------------------- */
