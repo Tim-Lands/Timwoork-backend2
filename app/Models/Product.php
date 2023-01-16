@@ -366,6 +366,10 @@ class Product extends Model
         return $this->belongsTo(Category::class, 'category_id');
     }
 
+    public function sessions():HasMany{
+        return $this->hasMany(MeetingCalender::class, 'product_id');
+    }
+
     /**
      * develpments
      *
