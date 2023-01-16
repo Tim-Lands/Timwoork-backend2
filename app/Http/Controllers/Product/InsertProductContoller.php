@@ -80,7 +80,7 @@ class InsertProductContoller extends Controller
             $langs = ['ar', 'en', 'fr'];
             $tr = new GoogleTranslate(); // Translates to 'en' from auto-detected language by default
             $xlocalization = "ar";
-            if ($request->headers->has('X-localization') && in_array($request->header('X-localization'),$langs) )
+            if ($request->headers->has('X-localization') && in_array($request->header('X-localization'), $langs))
                 $xlocalization = $request->header('X-localization');
             else {
                 $tr->setSource();
@@ -149,6 +149,7 @@ class InsertProductContoller extends Controller
                 'slug'              => $product->id . '-' . slug_with_arabic($request->title),
                 'category_id'       =>  (int)$request->subcategory,
                 'is_vide'           => 0,
+                'is_tutorial'       => is_null($request->is_tutorial) ? false : $request->is_tutorial
             ];
             // دراسة حالة المرحلة
             if ($product->is_completed == 1 || $product->current_step > Product::PRODUCT_STEP_ONE) {
@@ -255,11 +256,11 @@ class InsertProductContoller extends Controller
             $langs = ['ar', 'en', 'fr'];
             $tr = new GoogleTranslate(); // Translates to 'en' from auto-detected language by default
             $xlocalization = "ar";
-            if ($request->headers->has('X-localization') && in_array($request->header('X-localization'),$langs) )
+            if ($request->headers->has('X-localization') && in_array($request->header('X-localization'), $langs))
                 $xlocalization = $request->header('X-localization'); // Translates to 'en' from auto-detected language by default
 
             // شرط اذا كانت هناك توجد تطورات
-            if ($request->only('developments') != null && count($request->developments)>0) {
+            if ($request->only('developments') != null && count($request->developments) > 0) {
                 if (count($request->developments) > $number_developments_max) {
                     return response()->error(__("messages.product.number_developments_max"), 422);
                 }
@@ -364,7 +365,7 @@ class InsertProductContoller extends Controller
             $langs = ['ar', 'en', 'fr'];
             $tr = new GoogleTranslate(); // Translates to 'en' from auto-detected language by default
             $xlocalization = "ar";
-            if ($request->headers->has('X-localization') && in_array($request->header('X-localization'),$langs) )
+            if ($request->headers->has('X-localization') && in_array($request->header('X-localization'), $langs))
                 $xlocalization = $request->header('X-localization');
             else {
                 $tr->setSource();
@@ -722,7 +723,7 @@ class InsertProductContoller extends Controller
                 ->first();
             // شرط اذا كان العنصر موجود
             if (!$product || !is_numeric($id)) {
-                
+
                 echo $id;
                 echo "sharaf";
                 // رسالة خطأ
