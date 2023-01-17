@@ -24,8 +24,9 @@ class StoreSessionInfoRequest extends FormRequest
     public function rules()
     {
         return [
-            'repeating_type' => 'sometimes|in:DAILY,WEEKLY,MONTHLY',
-            'session_date' => 'required|date'
+            'sessions'=>'required',
+            'sessions.*.repeating_type' => 'sometimes|in:DAILY,WEEKLY,MONTHLY',
+            'sessions.*.session_date' => 'required|date'
         ];
     }
 
@@ -37,7 +38,7 @@ class StoreSessionInfoRequest extends FormRequest
     public function messages()
     {
         return [
-            'repeating_type.in'=>__("messages.validation.repeating_type_in"),
+            'sessions.*.repeating_type.in'=>__("messages.validation.repeating_type_in"),
 
         ];
     }
