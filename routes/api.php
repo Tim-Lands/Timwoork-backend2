@@ -272,6 +272,7 @@ Route::group(['middleware' => ['XSS','language']], function () {
         Route::post('/{id}/product-step-two', [InsertProductContoller::class, 'storeStepTwo']);
         // المحلة الثالثة
         Route::post('/{id}/product-step-three', [InsertProductContoller::class, 'storeStepThree']);
+        Route::post('/{id}/sessions', [InsertProductContoller::class, 'storeSessionInfo']);
         // رفع الصورة البارزة
         Route::post('/{id}/upload-thumbnail-step-four', [InsertProductContoller::class, 'upload_thumbnail']);
         // رفع الصور العرض

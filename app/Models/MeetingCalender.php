@@ -8,6 +8,6 @@ use Illuminate\Database\Eloquent\Model;
 class MeetingCalender extends Model
 {
     use HasFactory;
-    protected $table = 'meetings_calender';
+    protected $table = 'meeting_calender';
 
 }

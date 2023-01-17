@@ -9,6 +9,7 @@ use App\Http\Requests\Products\ProductStepFourRequest;
 use App\Http\Requests\Products\ProductStepOneRequest;
 use App\Http\Requests\Products\ProductStepThreeRequest;
 use App\Http\Requests\Products\ProductStepTwoRequest;
+use App\Http\Requests\products\StoreSessionInfoRequest;
 use App\Http\Requests\Products\ThumbnailRequest;
 use App\Models\Category;
 use App\Models\Galary;
@@ -575,6 +576,21 @@ class InsertProductContoller extends Controller
      * @param  mixed $id
      * @return JsonResponse
      */
+
+    public function storeSessionInfo(mixed $id, StoreSessionInfoRequest $request)
+    {
+        try {
+            $product = Product::where('id', $id)->first();
+            if (!$product || !$product->is_tutorial)
+                return response()->error(__("messages.errors.element_not_found"), 404);
+            $product->sessions()->createMany($request->sessions);
+            return response()->success($product);
+        } catch (Exception $exc) {
+            echo $exc;
+            return response()->error(__("messages.errors.error_database"), 403);
+        }
+    }
+
     public function storeStepFive($id): JsonResponse
     {
         try {
