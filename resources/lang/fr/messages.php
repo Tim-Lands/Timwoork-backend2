@@ -185,7 +185,9 @@ return [
         "url_not_found" => "Ce lien n’existe pas",
         "upload_images" => "Vous devez importer des photos",
         "too_many_attempts" => "Vos tentatives autorisées ont été dépassées, attendez une minute jusqu'à ce que vous puissiez répéter le processus",
-    ],
+        "meeting_not_complete"=>"Product can't be compleeted as session info is missing"
+        
+      ],
 /* Tableau de bord ------------------------------- ------------------------------*/
     "dahshboard" => [
         "statistic_dashboard" => "Statistiques du tableau de bord",

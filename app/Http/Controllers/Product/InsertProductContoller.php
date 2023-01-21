@@ -17,6 +17,7 @@ use App\Models\Product;
 use App\Models\Shortener;
 use App\Models\Tag;
 use App\Models\Video;
+use Carbon\Carbon;
 use Exception;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -620,6 +621,11 @@ class InsertProductContoller extends Controller
                 'is_completed'  => Product::PRODUCT_IS_COMPLETED,
                 'is_active'     => Product::PRODUCT_ACTIVE,
             ];
+            if($product->is_tutorial){
+                if($product->sessions()->whereNotNull('repeating_type')->orWhere('session_date','>',Carbon::now())->count()==0){
+                    return response()->error(__("messages.errors.meeting_not_complete"));
+                }
+            }
             // ============= انشاء المرحلة الاخيرة في الخدمة و نشرها ================:
             // بداية المعاملة مع البيانات المرسلة لقاعدة بيانات :
             DB::beginTransaction();
@@ -629,7 +635,7 @@ class InsertProductContoller extends Controller
             if (!$shorterner) {
                 $product->shortener()->create($data_shortener);
             }
-            // انهاء المعاملة بشكل جيد :
+            // انهاء المعاملة بشكل جيد : 
             DB::commit();
             // ================================================================
             // رسالة نجاح عملية الاضافة:

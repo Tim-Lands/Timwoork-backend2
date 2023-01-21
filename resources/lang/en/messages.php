@@ -184,6 +184,7 @@ return [
          "element_not_found" => "This element does not exist",
          "url_not_found" => "This link does not exist",
          "too_many_attempts" => "Your allowed attempts have been exceeded, wait a minute until you can repeat the process",
+         "meeting_not_complete"=>"Product can't be compleeted as session info is missing"
      ],
     /* ------------------------------- لوحة التحكم ------------------------------ */
     "dashboard" => [
